@@ -1,0 +1,190 @@
+#+title: pspmacs-python
+#+PROPERTY: header-args :tangle pspmacs-python.el :mkdirp t :results no :eval no
+
+* Header Copyright
+#+begin_src emacs-lisp
+;;; pspmacs-prog.el --- python ide -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+
+;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+;; Keywords: help, languages
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU Lesser General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU Lesser General Public License for more details.
+
+;; You should have received a copy of the GNU Lesser General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+#+end_src
+
+* Base package
+#+begin_src emacs-lisp
+  (use-package python-mode
+    :hook
+    ((envrc-mode . (lambda ()
+             (when (executable-find "ipython")
+               (setq python-shell-interpreter
+                 (executable-find "ipython"))))))
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'python-mode-map "'" 'run-python)
+
+    (python-mode-map
+     :states 'normal "gz" nil "C-j" nil)
+
+    (python-mode-map
+     :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
+
+    :init
+    (setq python-indent-offset 0)
+    (defun pspmacs/py-indent-or-complete ()
+      (interactive "*")
+      (window-configuration-to-register py--windows-config-register)
+      (cond
+       ((use-region-p)
+    (py-indent-region (region-beginning) (region-end)))
+       ((or (bolp)
+        (member (char-before) (list 9 10 12 13 32 ?:  ;; ([{
+                    ?\) ?\] ?\}))
+        ;; (not (looking-at "[ \t]*$"))
+        )
+    (py-indent-line))
+       ((comint-check-proc (current-buffer))
+    (ignore-errors (completion-at-point)))
+       (t (completion-at-point))))
+
+    (font-lock-add-keywords
+     nil '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+        1 '(:foreground "#9f7fff") t)))
+
+    (font-lock-add-keywords
+     nil '(("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+        1 '(:foreground "#bf8fa7") t)))
+
+    (font-lock-add-keywords nil '(("``\\(.*?\\)``" 1 '(:box t) t)))
+
+    (with-eval-after-load 'lsp-mode
+      (when
+      (string= major-mode "python-mode")
+    (pspmacs/extend-list
+     'lsp-file-watch-ignored-directories
+     '(
+       ;; python directories
+       "[/\\\\]docs\\'"
+       "[/\\\\]build\\'"
+       "[/\\\\]tests\\'"
+       "[/\\\\]\\.?venv\\'"
+       "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
+       "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
+
+    (pspmacs/mode-prettify '("code" "python"))
+
+    :config
+    (setq python-shell-interpreter-args "-i --simple-prompt --no-color-info"
+      python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+      python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
+      python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+      python-shell-completion-setup-code
+      "from IPython.core.completerlib import module_completion"
+      python-shell-completion-string-code
+      "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
+
+#+end_src
+* Automatic imports
+- Requirements:
+  - importmagic
+  - epc
+
+#+begin_src emacs-lisp
+  (use-package importmagic
+    :general
+    (pspmacs/local-leader-keys
+      :states 'normal
+      :keymaps 'importmagic-mode-map
+      "rf" '(importmagic-fix-symbol-at-point :wk "fix at point")
+      "ri" '(importmagic-fix-imports :wk "fix imports")
+      "rI" '(importmagic-fix-symbol :wk "arbitrary import"))
+    :config
+    (add-to-list 'helm-boring-buffer-regexp-list "\\*epc con")
+    :hook
+    (python-mode . importmagic-mode))
+
+#+end_src
+
+* Auto - format before saving
+1. sort
+2. yet another python formatter (yapf)
+#+begin_src emacs-lisp
+  (use-package pyimpsort
+    :ensure t
+    :config
+    (add-hook 'before-save-hook 'pyimpsort-buffer))
+
+  (use-package yapfify
+    :hook (python-mode . yapf-mode))
+
+
+  ;; (use-package python-pytest
+  ;;   :general
+  ;;   (pspmacs/local-leader-keys
+  ;;     :keymaps 'python-mode-map
+  ;;     "t" '(:ignore t :wk "test")
+  ;;     "t d" '(python-pytest-dispatch :wk "dispatch")
+  ;;     "t f" '(python-pytest-file :wk "file")
+  ;;     "t t" '(python-pytest-function :wk "function"))
+  ;;   :init
+  ;;   (setq python-pytest-arguments '("--color" "--failed-first"))
+  ;;   (defun pspmacs/pytest-use-venv (orig-fun &rest args)
+  ;;     (if-let ((python-pytest-executable (executable-find "pytest")))
+  ;;         (apply orig-fun args)
+  ;;       (apply orig-fun args)))
+  ;;   :config
+  ;;   (advice-add 'python-pytest--run :around #'pspmacs/pytest-use-venv))
+
+  #+end_src
+
+* language server protocol
+1. Microsoft's pyright
+2. flycheck flake8 for error checks
+
+#+begin_src emacs-lisp
+  (use-package lsp-pyright
+    :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
+
+  (use-package flycheck
+    :hook
+    ((lsp-mode . flycheck-mode)
+     (envrc-mode . (lambda ()
+             (setq flycheck-python-flake8-executable
+               (executable-find "python"))
+             (setq flycheck-checker 'python-flake8)
+             (setq flycheck-flake8rc ".flake8"))))
+    :init
+    (setq flycheck-indication-mode 'right-fringe) ;; only check on save
+    (defun pspmacs/prettify-python ()
+      (pspmacs/mode-prettify '("code" "python")))
+    (add-hook 'python-mode-hook 'pspmacs/prettify-python)
+    :general
+    (pspmacs/leader-keys
+      "en" '(flycheck-next-error :wk "next error")
+      "ep" '(flycheck-previous-error :wk "previous error"))
+    (setq flycheck-check-syntax-automatically '(mode-enabled save)))
+#+end_src
+
+* Inherit from private and local
+ #+begin_src emacs-lisp
+   (pspmacs/load-inherit)
+   (provide 'pspmacs-python)
+   ;;; prog.el ends here
+#+end_src

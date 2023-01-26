@@ -1,0 +1,56 @@
+#+title: pspmacs-reveal
+#+PROPERTY: header-args :tangle pspmacs-reveal.el :mkdirp t :results no :eval no
+
+* Header Copyright
+#+begin_src emacs-lisp
+;;; pspmacs-prog.el --- reveal exports -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+
+;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+;; Keywords: help, languages
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU Lesser General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU Lesser General Public License for more details.
+
+;; You should have received a copy of the GNU Lesser General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;; revealjs exports
+
+;;; Code:
+#+end_src
+
+* emacs-reveal
+- Wrapper for oer/emacs-reveal
+
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(emacs-reveal :host gitlab :repo "oer/emacs-reveal"))
+
+  (use-package emacs-reveal
+    :ensure t
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'org-mode-map
+      "v" '(:ignore t :wk "reveal")
+      "vv" '(org-pandoc-export-to-revealjs :wk "export")
+      "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
+    :hook (org-mode . reveal-mode))
+
+#+end_src
+
+* Inherit from private and local
+ #+begin_src emacs-lisp
+   (pspmacs/load-inherit)
+   (provide 'pspmacs-reveal)
+   ;;; pspmacs-reveal.el ends here
+#+end_src

@@ -1,0 +1,8 @@
+#+title: modules
+#+PROPERTY: header-args :tangle pspmacs-os.el :mkdirp t :results no :eval no
+#+auto_tangle: t
+
+* Modules
+- Each org-mode file in this directory contains a module that is loaded using the function ~org-babel-load-file~.
+- Each module file name is of the form "pspmacs-<module-name>.org".
+  To load the module, add the part <module-name> to the section [[file:~/.local/share/pspman/src/pspmacs/late/index.org::*Load modules][Load modules]] in the file =late/init.el=

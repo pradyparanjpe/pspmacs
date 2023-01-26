@@ -1,0 +1,109 @@
+#+title: README
+#+PROPERTY: header-args :tangle t :mkdirp t :results no
+#+auto_tangle: t
+
+* Introduction
+#+begin_seealso
+file:ACKNOWLEDGEMENTS.org
+#+end_seealso
+I was a SpaceMacs user for more than 2 years before [[https://github.com/syl20bnr/spacemacs/issues/15667][this]] issue landed.
+It was high time I became independent of opinionated emacs configurations,
+especially because it seriously affected by python programming workflow.
+
+** BAD Opinionated
+I didn't like doom-emacs for a similar reason.
+Dependence on either of them makes one rely on /another set of commits/ being flawless in addition to Gnu Emacs' production.
+Further opinionated configuration imposes restrictions. Downstream modification of template opinions break (as they *have* for me) when the upstream code gets some incompatible commits.
+
+* My Attempt
+This is my /hitherto successful/ attempt to configure Emacs from scratch to use it as a /text editor/ (🤣).
+
+* Inheritance principle
+- The configuration is made with three *inherited work-trees*.
+- Each file in this configuration (other than some obvious documented exceptions) calls a function [[file:modules/pspmacs-org.org::*Org mode auto-load][pspmacs/load-inherit]] 
+  at the end. This function ensures the following.
+
+** Inherited work-trees
+*** Global: =user-emacs-directory=
+- This is the default emacs directory =~/.emacs.d=. However, *this* configuration is meant to occupy that location.
+  Since this configuration is git-version-controlled, any changes in =~/.emacs.d= may cause commit-conflicts. Hence,
+  We try to put *nothing* more in this location than what it already contains.
+  
+*** Private: =pvt-emacs-directory=
+- A user may want to make over-writing (supersede) changes and need to synchronize then across a private repository.
+  Such changes should be placed in 'exactly the same location' as that of the file to be superseded,
+  but relative to a separate location, =pvt-emacs-directory=.
+- They may include settings such as full-name, email, etc. 
+- The value of this variable is learnt from the environment variable =PVT_EMACS_HOME=.
+- When version-controlling =pvt-emacs-directory=, add =local.d= to =.gitignore=.
+  
+*** Local: =local-emacs-directory=
+- Local changes, cache, etc. cannot be synchronized even across private repositories.
+  Such changes should be placed in 'exactly the same location' as that of the file to be superseded,
+  but relative to a separate location, =local-emacs-directory=.
+- They may include settings based on screen-size, local caches, etc.
+- The value of this variable is learnt from the environment variable =LOCAL_EMACS_HOME=.
+  - If =LOCAL_EMACS_HOME= is not set, =PVT_EMACS_HOME/local.d= is used when =PVT_EMACS_HOME= is defined, else =USER_EMACS_HOME/local.d= is used.
+
+** Load-order
+- Emacs loads configuration in =user-emacs-directory/early-init.el=, and =user-emacs-directory/init.el=. This configuration redirects it to load various files located in the =user-emacs-directory= work-tree. Each file performs its configuration settings and looks for a file located at the same location relative to =pvt-emacs-directory= and then, =local-emacs-directory=. If such a file exists, it is loaded.
+- Example, the file =user-emacs-directory/late/definitions.el= attempts to load files =pvt-emacs-directory/late/definitions.el= and =local-emacs-directory/late/definitions.el=. If they are present, they can overwrite configuration applied by the =user-emacs-directory/late/definitions.el=
+#+begin_tip
+The user is advised to place in private and local work-trees, code similar to the corresponding file in the global work-tree
+#+end_tip
+
+** Early-init
+- This init should *NEVER* throw errors.
+- If error is encountered, emacs is never launched and exits with error.
+- Since we won't use built-in org-mode, we shall refrain from using the function ~org-babel-load-file~
+#+begin_tip
+- this section only establishes platform for configuration and doesn't in fact affect the final configuration outcome.
+  - many settings in =early-init= may be over-written by *this very config* during /late/ init.
+#+end_tip
+
+#+begin_warning
+- Any privately synchronized or locally determined over-writing configuration *may not* throw errors.
+- Any privately synchronized or locally determined over-writing configuration *may not* use org-mode or its derived functions.
+#+end_warning
+
+- Code
+  - Each section of =early-init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =early=.
+ #+begin_src emacs-lisp :tangle early-init.el
+   ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+   ;;; Early definitions init configs
+
+   (load (expand-file-name "early/definitions.el" user-emacs-directory)
+         nil 'nomessage)
+
+   (load (expand-file-name "early/init.el" user-emacs-directory)
+         nil 'nomessage)
+
+   (load (expand-file-name "early/config.el" user-emacs-directory)
+         nil 'nomessage)
+#+end_src
+
+** Init
+- Errors thrown by this section accumulate in =*Messages*= buffer.
+- Each section of =init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =late=.
+#+begin_warning
+- Any privately synchronized or locally determined over-writing configuration *may* use org-mode or its derived functions only in files =late/init.el= and =late/config.el=.
+#+end_warning
+
+- Code
+  - Each section of =late-init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =late=.
+  - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modlues=.
+#+begin_src emacs-lisp :tangle init.el
+  ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+  ;;; late definitions init configs
+
+  (load (expand-file-name "late/definitions.el" user-emacs-directory)
+        nil 'nomessage)
+
+  (load (expand-file-name "late/init.el" user-emacs-directory)
+        nil 'nomessage)
+
+  (load (expand-file-name "late/config.el" user-emacs-directory)
+        nil 'nomessage)
+
+#+end_src
+

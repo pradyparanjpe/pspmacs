@@ -1,0 +1,18 @@
+image: iquiw/alpine-emacs
+
+stages:
+- publish
+
+pages:
+  stage: publish
+  script:
+  - rm -rf public
+  - echo "Exporting to html..."
+  - mkdir -p "docs/"
+  - emacs --batch --no-init-file --load publish.el --funcall "pspmacs/publish-all"
+  - mv docs public
+  artifacts:
+    paths:
+    - public
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

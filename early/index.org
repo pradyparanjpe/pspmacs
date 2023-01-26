@@ -1,0 +1,207 @@
+#+title: early/index
+#+property: header-args :tangle t :mkdirp t :results no :eval never
+#+OPTIONS: _:nil
+#+auto_tangle: t
+
+* Definitions
+- Define early variables, functions, etc.
+** headers
+#+begin_src emacs-lisp :tangle definitions.el
+  ;;; early/definitions.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+#+end_src
+
+** Grabage Collection
+- Increase the GC threshold for faster startup. The default is 800 kilobytes.
+#+begin_src emacs-lisp :tangle definitions.el
+  (setq gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.6)
+#+end_src
+
+** package management
+- We shall use straight.el. For that to work, emacs's internal ~package~ should never load.
+#+begin_src emacs-lisp :tangle definitions.el
+  (setq package-enable-at-startup nil
+        package-quickstart nil)
+#+end_src
+
+** Source compilation
+- We shall use straight.el. For that to work, emacs's internal ~package~ should never load.
+- Prefer loading newest compiled =.el= file
+#+begin_src emacs-lisp :tangle definitions.el
+  (customize-set-variable 'load-prefer-newer t)
+#+end_src
+
+** Inheritance / superceding order
+- Get values from environment variables.
+
+*** Private, version controlled
+If envrionment variables are not set, ignore
+ #+begin_src emacs-lisp :tangle definitions.el
+   (defvar pvt-emacs-directory
+     (file-name-as-directory
+      (cond
+       ((featurep 'chemacs)
+        (if (getenv "PVT_EMACS_HOME")
+            (expand-file-name (getenv "PVT_EMACS_HOME"))))
+       ((getenv "PVT_EMACS_HOME")
+        (expand-file-name (getenv "PVT_EMACS_HOME")))))
+     "Private version controlled, privately synchronized configuration directory")
+#+end_src
+
+*** Local, machine-specific
+If envrionment variables are not set, use:
+- ~<pvt-emacs-directory>/local.d~ or 
+- ~<user-emacs-directory>/local.d~
+ #+begin_src emacs-lisp :tangle definitions.el
+   (defvar local-emacs-directory
+     (file-name-as-directory
+      (cond
+       ((featurep 'chemacs)
+        (if
+            (getenv "LOCAL_EMACS_HOME")
+            (expand-file-name (getenv "LOCAL_EMACS_HOME"))))
+       ((getenv "LOCAL_EMACS_HOME")
+        (expand-file-name (getenv "LOCAL_EMACS_HOME")))
+       (t (cond
+           (pvt-emacs-directory
+            (expand-file-name "local.d" pvt-emacs-directory))
+           (t
+            (expand-file-name "local.d" user-emacs-directory))))))
+     "Local, machine-specific, un-synchronized configuration directory")
+#+end_src
+
+** Inherence
+- Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
+  - Later, this function is overwritten by a [[file:~/.local/share/pspman/src/pspmacs/modules/pspmacs-org.org::*Org mode auto-load][generalized version]] that also loads orgmode files.
+#+begin_seealso
+#+end_seealso
+#+begin_src emacs-lisp :tangle definitions.el
+   (defun pspmacs/load-inherit (&optional fname)
+     "Inherit all equivalent files.
+
+   Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
+   If FNAME is supplied, *that* corresponding file name is attempted, else,
+   stem of `load-file-name' is attempted."
+     (let ((name-branch
+        (file-relative-name (or fname load-file-name) user-emacs-directory)))
+       (dolist (config-dir `(,pvt-emacs-directory ,local-emacs-directory) nil)
+         (let* ((modular-init (expand-file-name name-branch config-dir)))
+           (if (file-exists-p modular-init)
+           (load modular-init nil 'nomessage))))))
+#+end_src
+
+** Custom file
+- The custom file is found in the =local-emacs-directory=. It contains
+ customizations of variables and faces that are made by the user through the
+ Customization UI, as well as any customizations made by packages.")
+
+#+begin_src emacs-lisp :tangle definitions.el
+  (defvar pspmacs/load-custom-file t
+    "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
+#+end_src
+
+** Package management (straight)
+- User may overwrite the pspmacs/packaging-directory in private or local init-tree to customize packaging system.
+#+begin_src emacs-lisp :tangle definitions.el
+  (defvar pspmacs/packaging-directory
+    (expand-file-name "pspackaging" user-emacs-directory)
+    "Packaging system (straight) to use.")
+#+end_src
+
+** Inherit
+#+begin_src emacs-lisp :tangle definitions.el
+  (pspmacs/load-inherit)
+#+end_src
+
+* Init
+Initialize configurations
+** headers
+#+begin_src emacs-lisp :tangle init.el
+  ;;; early/init.el --- early init -*- lexical-binding: t; no-byte-compile: t; -*-
+#+end_src
+
+** Load Path
+- Ensure the ={local,pvt}-emacs-directory= is on the load path.
+#+begin_src emacs-lisp :tangle init.el
+(if (file-exists-p pvt-emacs-directory)
+  (add-to-list 'load-path (expand-file-name pvt-emacs-directory)))
+(add-to-list 'load-path (expand-file-name local-emacs-directory))
+#+end_src
+
+** Ensure that a =local-emacs-directory=
+- Make if absent
+#+begin_src emacs-lisp :tangle init.el
+(unless (file-exists-p local-emacs-directory)
+  (mkdir local-emacs-directory t))
+#+end_src
+
+** Native compilation settings
+#+begin_src emacs-lisp :tangle init.el
+  (when (featurep 'native-compile)
+    ;; Silence compiler warnings as they can be pretty disruptive
+    (setq native-comp-async-report-warnings-errors nil)
+
+    ;; Make native compilation happen asynchronously
+    (setq native-comp-deferred-compilation t)
+
+    ;; Set the right directory to store the native compilation cache
+    ;; NOTE the method for setting the eln-cache directory
+    ;; depends on the emacs version
+    (when (fboundp 'startup-redirect-eln-cache)
+      (if (version< emacs-version "29")
+          (add-to-list
+            'native-comp-eln-load-path
+            (convert-standard-filename
+              (expand-file-name "var/eln-cache/" local-emacs-directory)))
+          (startup-redirect-eln-cache
+            (convert-standard-filename
+              (expand-file-name "var/eln-cache/" local-emacs-directory)))))
+    (add-to-list
+      'native-comp-eln-load-path
+      (expand-file-name "eln-cache/" local-emacs-directory)))
+#+end_src
+
+** Inherit
+#+begin_src emacs-lisp :tangle init.el
+  (pspmacs/load-inherit)
+#+end_src
+
+* Config
+** Headers
+#+begin_src emacs-lisp :tangle config.el
+;;; early/config.el --- Early config for speedy launch -*- lexical-binding: t; no-byte-compile: t; -*-
+#+end_src
+
+** UI configuration
+*** Remove some unnecessary UI elements temporarily
+#+begin_src emacs-lisp :tangle config.el
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (global-display-line-numbers-mode 1)
+  (blink-cursor-mode -1)
+#+end_src
+
+** Temporary blue theme
+- If anything till [[file:~/.local/share/pspman/src/pspmacs/modules/pspmacs-uxui.org::*Theme, Modeline][Theme, Modeline]] fails
+#+begin_src emacs-lisp :tangle config.el
+  (load-theme 'deeper-blue t)
+#+end_src
+
+** Unnecessary features.
+#+begin_src emacs-lisp :tangle config.el
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (setq inhibit-splash-screen nil)
+  (setq use-file-dialog nil)
+  (setq tab-bar-new-button-show nil)
+  (setq tab-bar-close-button-show nil)
+  (setq tab-line-close-button-show nil)
+  (setq native-comp-async-report-warnings-errors nil)
+  (setq byte-compile-warnings
+        '(not free-vars unresolved noruntime lexical make-local))
+#+end_src
+
+** Inherit
+#+begin_src emacs-lisp :tangle config.el
+  (pspmacs/load-inherit)
+#+end_src

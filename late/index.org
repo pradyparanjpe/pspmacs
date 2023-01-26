@@ -1,0 +1,302 @@
+#+title: late/index
+#+property: header-args :tangle t :mkdirp t :results no :eval never
+#+OPTIONS: _:nil
+#+auto_tangle: t
+
+* Definitions
+** Header
+#+begin_src emacs-lisp :tangle definitions.el
+;;; late/definitions.el --- identifies platform -*- lexical-binding: t; -*-
+#+end_src
+
+** Identify platform
+- In future, the same configuration may be extended to Windows/MacOS, although, current target is GNU/Linux only.
+#+begin_src emacs-lisp :tangle definitions.el
+(defconst ON-LINUX   (eq system-type 'gnu/linux))
+(defconst ON-MAC     (eq system-type 'darwin))
+(defconst ON-BSD     (or ON-MAC (eq system-type 'berkeley-unix)))
+(defconst ON-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+#+end_src
+
+** XDG
+- Emacs must respect =XDG= system
+#+begin_src emacs-lisp :tangle definitions.el
+(load (expand-file-name "late/xdg.el" user-emacs-directory) nil 'nomessage)
+#+end_src
+
+*** XDG File system conventions
+**** Header
+#+begin_src emacs-lisp :tangle xdg.el
+  ;;; late/xdg.el --- Personal xdg-definitions file -*- lexical-binding: t; -*-
+#+end_src
+**** Quick environment look-up to assign XDG locations
+#+begin_src emacs-lisp :tangle xdg.el
+  (defun xdg/assign-base (xdg-var default-path)
+    "Emacs's default xdg-specified locations.
+
+  If xdg's variable is defined by system, use it, else return default
+  If XDG-VAR is defined in the environment, use XDG-VAR/emacs,
+  else use DEFAULT-PATH/emacs"
+    (directory-file-name (expand-file-name "emacs" (or (getenv xdg-var)
+                                                     default-path))))
+#+end_src
+
+**** XDG_CONFIG_HOME
+- This is *THE CONFIG DIRECTORY*
+#+begin_src emacs-lisp :tangle xdg.el
+  (defvaralias 'xdg/emacs-config-directory 'user-emacs-directory
+    "Location of local machine-specific emacs-configuration files
+
+  alias of USER_EMACS_DIRECTORY")
+#+end_src
+
+**** XDG_CACHE_HOME
+#+begin_src emacs-lisp :tangle xdg.el
+  ;; ${XDG_CACHE_HOME:-${HOME}/.cache}/emacs
+  (defvar xdg/emacs-cache-directory
+    (xdg/assign-base "XDG_CACHE_HOME" "~/.cache/")
+    "Location of runtime cache files for emacs
+
+  ${XDG_CONFIG_HOME:-${HOME}/.cache}/emacs")
+#+end_src
+
+**** XDG_DATA_HOME
+#+begin_src emacs-lisp :tangle xdg.el
+
+  ;; ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs
+  (defvar xdg/emacs-data-directory
+    (xdg/assign-base "XDG_DATA_HOME" "~/.local/share")
+    "Location of persistent data files for emacs
+
+  ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs")
+#+end_src
+
+**** XDG_STATE_HOME
+#+begin_src emacs-lisp :tangle xdg.el
+  ;; ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs
+  (defvar xdg/emacs-state-directory
+    (xdg/assign-base "XDG_state_HOME" "~/.local/state")
+
+    "Location of volatile state files for emacs
+  ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs")
+#+end_src
+
+**** Ensure
+- Ensure that all emacs-xdg directories exist
+#+begin_src emacs-lisp :tangle xdg.el
+  (dolist (xdg-base '(xdg/emacs-data-directory
+                      xdg/emacs-cache-directory
+                      xdg/emacs-state-directory))
+    (make-directory (eval xdg-base) t))
+#+end_src
+
+**** All cached files should be saved in XDG_CACHE_HOME
+#+begin_src emacs-lisp :tangle xdg.el
+  (defun locate-user-emacs-file (new-name &optional old-name)
+    "This function supersedes emacs-native function.
+
+  Return an absolute per-user Emacs-specific file name.
+  If NEW-NAME exists in `xdg/emacs-cache-directory', return it.
+  Else if OLD-NAME is non-nil and ~/OLD-NAME exists, return ~/OLD-NAME.
+  Else return NEW-NAME in `xdg/emacs-cache-directory', creating the
+  directory if it does not exist."
+    (convert-standard-filename
+     (let* ((home (concat "~" (or init-file-user "")))
+            (at-home (and old-name (expand-file-name old-name home)))
+            (bestname (abbreviate-file-name
+                       (expand-file-name new-name xdg/emacs-cache-directory))))
+       (if (and at-home (not (file-readable-p bestname))
+                (file-readable-p at-home))
+           at-home
+         ;; Make sure `xdg/emacs-cache-directory' exists,
+         ;; unless we're in batch mode or dumping Emacs.
+         (or noninteractive
+             dump-mode
+             (let (errtype)
+               (if (file-directory-p xdg/emacs-cache-directory)
+                   (or (file-accessible-directory-p xdg/emacs-cache-directory)
+                       (setq errtype "access"))
+                 (with-file-modes ?\700
+                   (condition-case nil
+                       (make-directory xdg/emacs-cache-directory t)
+                     (error (setq errtype "create")))))
+               (when (and errtype
+                          xdg/emacs-cache-directory-warning
+                          (not (get 'xdg/emacs-cache-directory-warning 'this-session)))
+                 ;; Warn only once per Emacs session.
+                 (put 'xdg/emacs-cache-directory-warning 'this-session t)
+                 (display-warning 'initialization
+                                  (format "\
+  Unable to %s `xdg/emacs-cache-directory' (%s).
+  Any data that would normally be written there may be lost!
+  If you never want to see this message again,
+  customize the variable `xdg/emacs-cache-directory-warning'."
+                                          errtype xdg/emacs-cache-directory)))))
+         bestname))))
+#+end_src
+
+**** Inherit
+- No need
+
+** Inherit
+#+begin_src emacs-lisp :tangle definitions.el
+    (pspmacs/load-inherit)
+#+end_src
+
+* Init
+** Header
+#+begin_src emacs-lisp :tangle init.el
+;;; late/init.el --- Late init file, loads modules -*- lexical-binding: t; -*-
+#+end_src
+
+** Chemacs correction
+ [[https://github.com/plexus/chemacs2][Chemacs]] moves the =package-user-dir= to the profile's definition
+of the =user-emacs-directory= then loads this file.
+We need to reset that configuration here when using =chemacs=.
+#+begin_src emacs-lisp :tangle init.el
+(when (featurep 'chemacs)
+  (customize-set-variable 'package-user-dir
+                          (expand-file-name "elpa" local-emacs-directory)))
+#+end_src
+
+** Package system
+- Load the package-system (=straight.el=).
+  This file is maintained separately.
+#+begin_src emacs-lisp :tangle init.el
+(load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
+      nil 'nomessage)
+#+end_src
+
+** Load-path
+- Add the modules to the top of the load-path so any user custom-modules take overwrite privileges.
+#+begin_src emacs-lisp :tangle init.el
+  (dolist (init-dir
+           `(,user-emacs-directory
+             ,pvt-emacs-directory
+             ,local-emacs-directory) nil)
+    (let ((modular-modules (expand-file-name "modules/" init-dir)))
+      (when (file-directory-p modular-modules)
+        (setq load-path
+              (append (let ((load-path (list))
+                            (default-directory modular-modules))
+                        (add-to-list 'load-path modular-modules)
+                        ;;(normal-top-level-add-to-load-path '("."))
+                        (normal-top-level-add-subdirs-to-load-path)
+                        load-path)
+                      load-path)))))
+#+end_src
+
+** Custom file
+- The file ~custom-file~ is used by the Customization UI to store value-setting forms in a customization file,
+ rather than at the end of the =~/.emacs.d/init.el= file. It defaults to =~/.emacs.d/custom.el=. The file is loaded after =late/config.el= file. Any variable values set till that point (=late/config.el=) will be overridden with the values set with the Customization UI and saved in the custom file.
+#+begin_src emacs-lisp :tangle init.el
+  (customize-set-variable 'custom-file
+    (expand-file-name "custom.el" local-emacs-directory))
+#+end_src
+** Reset gc-cons
+- To hasten early-init, gc-cons was set to highest possible value in =early/definitions.el=
+  - Let's reduce it back to 2MB.
+#+begin_src emacs-lisp :tangle init.el
+    ;; Make GC pauses faster by decreasing the threshold.
+  (setq gc-cons-threshold (* 2 1000 1000))
+#+end_src
+
+** Initiate org mode with latest release
+- Emacs is shipped with a built-in org-mode. However, we shall use the latest release.
+  #+begin_src emacs-lisp :tangle org-latest.el
+    ;;;; pspmacs-org.el --- org-mode -*- lexical-binding: t; -*-
+
+    ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+
+    ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+    ;; Keywords: help, languages
+
+    ;; This program is free software; you can redistribute it and/or modify
+    ;; it under the terms of the GNU Lesser General Public License as published by
+    ;; the Free Software Foundation, either version 3 of the License, or
+    ;; (at your option) any later version.
+
+    ;; This program is distributed in the hope that it will be useful,
+    ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ;; GNU Lesser General Public License for more details.
+
+    ;; You should have received a copy of the GNU Lesser General Public License
+    ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    ;;; Commentary:
+
+    ;;; Code:
+
+
+    (use-package org
+      ;; :straight (:type built-in)
+      :ensure t)
+
+    (pspmacs/load-inherit)
+    (provide 'pspmacs-org-latest)
+
+  #+end_src
+
+- Load contents of the above file
+  #+begin_src emacs-lisp :tangle init.el
+    (load (expand-file-name "late/org-latest.el" user-emacs-directory))
+  #+end_src
+
+** Load modules
+- Load org-mode first, so that the correct org-mode version occupies the field.
+- Load each of the remaining modules sequentially.
+#+begin_src emacs-lisp :tangle init.el
+  (dolist (autofile
+           '("keybindings"
+             "funcs"
+             "org"
+             "os"
+             "steno"
+             "version-control"
+             "navigate"
+             "browse"
+             "markup"
+             "reveal"
+             "uxui"
+             "prog"
+             "python"
+             "srv-cfg")
+           nil)
+    (let ((lit-module
+       (expand-file-name
+        (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
+      (if (file-readable-p lit-module)
+      (org-babel-load-file lit-module))))
+#+end_src
+
+** Inherit
+#+begin_src emacs-lisp :tangle init.el
+    (pspmacs/load-inherit)
+#+end_src
+
+* Config
+- Allow for very late configurations.
+  - User-defined configurations defined in =local-emacs-directory= will even override ~custom.el~
+** Headers
+#+begin_src emacs-lisp :tangle config.el
+;;; late/config.el --- Personal configuration file -*- lexical-binding: t; -*-
+#+end_src
+
+** Custom file
+- The custom file will only be loaded if `pspmacs/load-custom-file' is set to a non-nil value in the user's `config.el'.
+#+begin_src emacs-lisp :tangle config.el
+  (when pspmacs/load-custom-file
+    (load custom-file t))
+#+end_src
+
+** Default directory
+- Finally, set default directory to home
+#+begin_src emacs-lisp :tangle config.el
+(setq default-directory "~/")
+#+end_src
+
+** Inherit
+#+begin_src emacs-lisp :tangle config.el
+    (pspmacs/load-inherit)
+#+end_src

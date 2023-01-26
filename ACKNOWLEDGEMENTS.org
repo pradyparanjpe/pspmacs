@@ -1,0 +1,19 @@
+# -*- coding: utf-8; mode: org -*-
+* [[https://github.com/SystemCrafters/crafted-emacs][SystemCrafters]]
+Configuration framework was literally *copied* from SystemCrafters and modified.
+However, I wasn't in agreement with most of what it had. I kept replacing it as
+I read it line-by-line. At one point, I simply deleted all of it and moved to
+[[*\[\[https://github.com/patrl/emacs.d\]\[Patrick Elliot\]\]][Patrick Elliot's]] configuration.
+
+* [[https://github.com/patrl/emacs.d][Patrick Elliot]]
+This helped my form the basic structure. However, since this configuration appears to be
+primarily directed towards LaTeX, I ended up dropping much of this code too.
+This configuration kept referring to [[*\[\[https://www.lucacambiaghi.com/vanilla-emacs/readme.html\]\[Luca's Literate Emacs Config\]\]][Luca's Literate Emacs Config]].
+
+* [[https://www.lucacambiaghi.com/vanilla-emacs/readme.html][Luca's Literate Emacs Config]]
+Many parts of the configuration are borrowed gratefully from here.
+By the time I reached here, I was pretty well-versed with configuring packages myself...
+
+* [[https://www.spacemacs.org/][Spacemacs]]
+I was originally a SpaceMacs user. Hence, most of my configuration could appear
+to have been inspired by SpaceMacs'.

@@ -1,0 +1,21 @@
+# Publication documents
+docs/
+sitemap.org
+
+# local-emacs-config directory
+local.d/
+
+# known emacs cache
+recentf
+projects
+.custom-settings
+.lsp-session-v1
+.org-timestamps/
+projectile-bookmarks.eld
+recentf
+undo-tree/
+.dap-breakpoints
+.mc-lists.el
+lsp/
+projectile-bookmarks.tld
+transient/

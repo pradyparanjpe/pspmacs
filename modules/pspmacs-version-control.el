@@ -1,0 +1,69 @@
+;;; pspmacs-version-control.el --- git it -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+
+;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+;; Keywords: help, languages
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU Lesser General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU Lesser General Public License for more details.
+
+;; You should have received a copy of the GNU Lesser General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+(use-package magit
+  :general
+  (pspmacs/leader-keys
+   "g" '(:ignore t :kw "git")
+   "g b" 'magit-blame
+   "g s" 'magit-status
+   "g S" 'magit-status-here
+   "g l" 'magit-log)
+  (general-nmap
+    :keymaps '(magit-status-mode-map
+               magit-stash-mode-map
+               magit-revision-mode-map
+               magit-process-mode-map
+               magit-diff-mode-map)
+    "TAB" #'magit-section-toggle
+    "<escape>" #'transient-quit-one)
+  :init
+  (setq
+   magit-display-buffer-function
+   #'magit-display-buffer-same-window-except-diff-v1)
+  (setq magit-log-arguments '("--graph" "--decorate" "--color"))
+  (setq git-commit-fill-column 72)
+  (let
+      ((transient-cache-directory (expand-file-name
+                   "transient" xdg/emacs-cache-directory)))
+    (setq transient-history-file (expand-file-name
+                  "history.el" transient-cache-directory))
+    (setq transient-values-file (expand-file-name
+                  "history.el" transient-cache-directory))
+    (setq transient-levels-file (expand-file-name
+                  "history.el" transient-cache-directory)))
+  ;; (setq magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+  ;; (when pspmacs/is-ipad (require 'sendmail))
+  :config
+  (setq magit-buffer-name-format (concat "*" magit-buffer-name-format "*"))
+  (evil-define-key* '(normal visual) magit-mode-map
+    "zz" #'evil-scroll-line-to-center))
+
+(use-package diff-hl
+  :config
+  (global-diff-hl-mode))
+
+(pspmacs/load-inherit)
+(provide 'pspmacs-version-control)
+;;; pspmacs-version-control.el ends here
