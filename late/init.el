@@ -31,25 +31,24 @@
 (load (expand-file-name "late/org-latest.el" user-emacs-directory))
 
 (dolist (autofile
-         '("keybindings"
-           "funcs"
-           "org"
-           "os"
-           "steno"
-           "version-control"
-           "navigate"
-           "browse"
+         '("interface-enhancement"
+           "editing-enhancement"
+           "emacs-lisp"
+           "integration"
+           "keys-cheat-sheet"
            "markup"
-           "reveal"
-           "uxui"
-           "prog"
+           "navigate"
+           "note"
+           "programming"
+           "project-management"
            "python"
-           "srv-cfg")
+           "theme"
+           "version-control")
          nil)
   (let ((lit-module
      (expand-file-name
       (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
     (if (file-readable-p lit-module)
-    (org-babel-load-file lit-module))))
+        (pspmacs/load-suitable lit-module))))
 
 (pspmacs/load-inherit)

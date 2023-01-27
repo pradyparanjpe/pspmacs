@@ -1,9 +1,10 @@
-#+title: pspmacs-reveal
-#+PROPERTY: header-args :tangle pspmacs-reveal.el :mkdirp t :results no :eval no
+#+title: pspmacs-keys-cheat-sheet
+#+PROPERTY: header-args :tangle pspmacs-keys-cheat-sheet.el :mkdirp t :results no :eval no
+#+auto_tangle: t
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;; pspmacs-prog.el --- reveal exports -*- lexical-binding: t; -*-
+;;; pspmacs-funcs.el --- Keybinding maps using general.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -24,33 +25,24 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; revealjs exports
 
 ;;; Code:
 #+end_src
 
-* emacs-reveal
-- Wrapper for oer/emacs-reveal
-
+* Which key
+- key-bindings hints
 #+begin_src emacs-lisp
-  (straight-use-package
-   '(emacs-reveal :host gitlab :repo "oer/emacs-reveal"))
+  (use-package which-key
+    :after evil
+    :init
+    (which-key-mode)
+    :config
+    (which-key-setup-minibuffer))
+ #+end_src
 
-  (use-package emacs-reveal
-    :ensure t
-    :general
-    (pspmacs/local-leader-keys
-      :keymaps 'org-mode-map
-      "v" '(:ignore t :wk "reveal")
-      "vv" '(org-pandoc-export-to-revealjs :wk "export")
-      "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
-    :hook (org-mode . reveal-mode))
-
-#+end_src
-
-* Inherit from private and local
- #+begin_src emacs-lisp
-   (pspmacs/load-inherit)
-   (provide 'pspmacs-reveal)
-   ;;; pspmacs-reveal.el ends here
+* Inherit private and local
+#+begin_src emacs-lisp
+  (pspmacs/load-inherit)
+  (provide 'pspmacs-keys-cheat-sheet)
+  ;;; pspmacs-keys-cheat-sheet.el ends here
 #+end_src

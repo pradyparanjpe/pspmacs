@@ -4,29 +4,29 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;;; pspmacs-markup.el --- filesystem markup -*- lexical-binding: t; -*-
+  ;;;; pspmacs-markup.el --- filesystem markup -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+  ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
-;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
-;; Keywords: help, languages
+  ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+  ;; Keywords: help, languages
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU Lesser General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+  ;; This program is free software; you can redistribute it and/or modify
+  ;; it under the terms of the GNU Lesser General Public License as published by
+  ;; the Free Software Foundation, either version 3 of the License, or
+  ;; (at your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU Lesser General Public License for more details.
+  ;; This program is distributed in the hope that it will be useful,
+  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ;; GNU Lesser General Public License for more details.
 
-;; You should have received a copy of the GNU Lesser General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  ;; You should have received a copy of the GNU Lesser General Public License
+  ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary:
+  ;;; Commentary:
 
-;;; Code:
+  ;;; Code:
 #+end_src
 
 * Yaml mode
@@ -51,6 +51,166 @@
     :init (setq markdown-command "multimarkdown"))
 
 #+end_src
+
+* LaTeX
+#+begin_src emacs-lisp
+  (use-package org-auctex
+    :straight (:type git :host github :repo
+                     "karthink/org-auctex")
+    :hook (org-mode . org-auctex-mode))
+
+  (use-package auctex
+    :no-require t
+    :mode ("\\.tex\\'" . LaTeX-mode)
+    :init
+    (setq TeX-parse-self t ; parse on load
+          reftex-plug-into-AUCTeX t
+          TeX-auto-save t  ; parse on save
+          TeX-source-correlate-mode t
+          TeX-source-correlate-method 'synctex
+          TeX-source-correlate-start-server nil
+          TeX-electric-sub-and-superscript t
+          TeX-engine 'luatex ;; use lualatex by default
+          TeX-save-query nil))
+
+  (use-package latex
+    :straight auctex
+    :general
+    (pspmacs/local-leader-keys
+     :keymaps 'LaTeX-mode-map
+     "=" '(reftex-toc :wk "reftex toc")
+     "(" '(reftex-latex :wk "reftex label")
+     ")" '(reftex-reference :wk "reftex ref")
+     "m" '(LaTeX-macro :wk "insert macro")
+     "s" '(LaTeX-section :wk "insert section header")
+     "e" '(LaTeX-environment :wk "insert environment")
+     "p" '(preview-at-point :wk "preview at point")
+     "f" '(TeX-font :wk "font")
+     "c" '(TeX-command-run-all :wk "compile"))
+    :init
+    (setq TeX-electric-math (cons "\\(" "\\)"))
+    ;; (setq preview-scale-function 1.5) ;; too big on vivacia
+    :config
+    ;; (add-hook 'TeX-mode-hook #'visual-line-mode)
+    (add-hook 'TeX-mode-hook #'reftex-mode)
+    (add-hook 'TeX-mode-hook #'olivetti-mode)
+    (add-hook 'TeX-mode-hook #'turn-on-auto-fill)
+    (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+    (add-hook 'TeX-after-compilation-finished-functions
+              #'TeX-revert-document-buffer)
+    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+    (add-hook 'TeX-mode-hook #'outline-minor-mode)
+    ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
+    (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura")))
+
+  (use-package evil-tex
+    :hook (LaTeX-mode . evil-tex-mode))
+
+  (use-package citar
+    :after all-the-icons
+    :init
+    (defun citar-setup-capf ()
+      (add-to-list 'completion-at-point-functions 'citar-capf))
+    :hook
+    (LaTeX-mode . citar-setup-capf)
+    (org-mode . citar-setup-capf)
+    :config
+    ;; icon support via all-the-icons
+    (setq citar-symbols
+          `((file ,(all-the-icons-faicon "file-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
+            (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
+            (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
+    (setq citar-symbol-separator "  ")
+    :general
+    (pspmacs/leader-keys
+      "nb" '(citar-open :wk "citar")))
+
+  (use-package citar-embark
+    :after citar embark
+    :config (citar-embark-mode))
+
+  (use-package company-auctex
+    :after (company latex))
+
+  (use-package company-math
+    :defer t)
+#+end_src
+
+* emacs-reveal
+- Wrapper for oer/emacs-reveal
+
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(emacs-reveal :host gitlab :repo "oer/emacs-reveal"))
+
+  (use-package emacs-reveal
+    :ensure t
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'org-mode-map
+      "v" '(:ignore t :wk "reveal")
+      "vv" '(org-pandoc-export-to-revealjs :wk "export")
+      "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
+    :hook (org-mode . reveal-mode))
+#+end_src
+
+* Org-publish alist
+- For bulk exporting org-files to html
+#+begin_src emacs-lisp
+  (defun pspmacs/project-to-publish-alist
+      (org-root html-root org-templates)
+    "Set root locations for source ORG-ROOT and target HTML-ROOT
+
+  to publish orgmode files to html."
+    (interactive
+     (let (org-root html-root org-templates)
+       (setq org-root (read-directory-name
+               "ORG Directory:\t"
+               nil default-directory
+               ".*" nil))
+       (setq html-root (read-directory-name
+            "HTML Directory:\t"
+            (expand-file-name "../html" org-root) nil
+            ".*" nil))
+       (setq org-templates (read-directory-name
+                "Templates Directory:\t"
+                (expand-file-name "templates"
+                          pspmacs/org-template-path)
+                nil ".*" nil))
+       (list org-root html-root org-templates)))
+
+    (catch 'pspmacs/mk-tag
+      (unless (file-directory-p html-root)
+    (if (yes-or-no-p (format "%s doesn't exist. Create? " html-root))
+        (make-directory html-root t)
+      (throw 'pspmacs/mk-tag nil)))
+      (setq org-publish-project-alist
+        (list
+         (list "org-notes"
+           :base-directory org-root
+           :base-extension "org"
+           :publishing-directory html-root
+           :recursive t
+           :publishing-function 'org-html-publish-to-html
+           :headline-levels 4
+           :auto-preamble t)
+         (list "org-static"
+           :base-directory org-root
+           :base-extension
+           "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+           :publishing-directory html-root
+           :recursive t
+           :publishing-function 'org-publish-attachment)
+         (list "org-templates"
+           :base-directory org-templates
+           :base-extension
+           "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+           :publishing-directory html-root
+           :recursive t
+           :publishing-function 'org-publish-attachment)
+         (list "org" :components
+           '("org-notes" "org-static" "org-templates"))))))
+           #+end_src
 
 * Inherit from private and local
 #+begin_src emacs-lisp

@@ -36,6 +36,7 @@
     "ws" '(evil-window-split :wk "split window horizontally")
     "wv" '(evil-window-vsplit :wk "split window vertically"))
   (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
+
   :init
   (setq evil-search-module 'isearch)
   (setq evil-want-C-u-scroll t) ;; allow scroll up with 'C-u'

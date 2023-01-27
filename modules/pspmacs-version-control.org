@@ -31,69 +31,52 @@
 
 * Magical Git
 #+begin_src emacs-lisp
-(use-package magit
-  :general
-  (pspmacs/leader-keys
-   "g" '(:ignore t :kw "git")
-   "g b" 'magit-blame
-   "g s" 'magit-status
-   "g S" 'magit-status-here
-   "g l" 'magit-log)
-  (general-nmap
-    :keymaps '(magit-status-mode-map
-               magit-stash-mode-map
-               magit-revision-mode-map
-               magit-process-mode-map
-               magit-diff-mode-map)
-    "TAB" #'magit-section-toggle
-    "<escape>" #'transient-quit-one)
-  :init
-  (setq
-   magit-display-buffer-function
-   #'magit-display-buffer-same-window-except-diff-v1)
-  (setq magit-log-arguments '("--graph" "--decorate" "--color"))
-  (setq git-commit-fill-column 72)
-  (let
-      ((transient-cache-directory (expand-file-name
-                   "transient" xdg/emacs-cache-directory)))
-    (setq transient-history-file (expand-file-name
-                  "history.el" transient-cache-directory))
-    (setq transient-values-file (expand-file-name
-                  "history.el" transient-cache-directory))
-    (setq transient-levels-file (expand-file-name
-                  "history.el" transient-cache-directory)))
-  ;; (setq magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
-  ;; (when pspmacs/is-ipad (require 'sendmail))
-  :config
-  (setq magit-buffer-name-format (concat "*" magit-buffer-name-format "*"))
-  (evil-define-key* '(normal visual) magit-mode-map
-    "zz" #'evil-scroll-line-to-center))
-
-(use-package diff-hl
-  :config
-  (global-diff-hl-mode))
-
+  (use-package magit
+    :general
+    (pspmacs/leader-keys
+     "g" '(:ignore t :kw "git")
+     "g b" 'magit-blame
+     "g s" 'magit-status
+     "g S" 'magit-status-here
+     "g l" 'magit-log)
+    (general-nmap
+      :keymaps '(magit-status-mode-map
+                 magit-stash-mode-map
+                 magit-revision-mode-map
+                 magit-process-mode-map
+                 magit-diff-mode-map)
+      "TAB" #'magit-section-toggle
+      "<escape>" #'transient-quit-one)
+    :init
+    (setq
+     magit-display-buffer-function
+     #'magit-display-buffer-same-window-except-diff-v1)
+    (setq magit-log-arguments '("--graph" "--decorate" "--color"))
+    (setq git-commit-fill-column 72)
+    (let
+        ((transient-cache-directory (expand-file-name
+                     "transient" xdg/emacs-cache-directory)))
+      (setq transient-history-file (expand-file-name
+                    "history.el" transient-cache-directory))
+      (setq transient-values-file (expand-file-name
+                    "history.el" transient-cache-directory))
+      (setq transient-levels-file (expand-file-name
+                    "history.el" transient-cache-directory)))
+    ;; (setq magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+    ;; (when pspmacs/is-ipad (require 'sendmail))
+    :config
+    (setq magit-buffer-name-format (concat "*" magit-buffer-name-format "*"))
+    (evil-define-key* '(normal visual) magit-mode-map
+      "zz" #'evil-scroll-line-to-center))
 #+end_src
 
-* Undo-tree
-- set cache to xdg/emacs-cache-directory
-  #+begin_src emacs-lisp :tangle no
-    (use-package undo-tree
-      :ensure t
-      :general
-      (general-define-key
-       :keymaps 'evil-normal-state-map
-       "u" #'undo-tree-undo
-       "C-r" #'undo-tree-redo)
-      :init
-      (global-undo-tree-mode)
-      :custom
-      (undo-tree-auto-save-history t)
-      (undo-tree-history-directory-alist 
-       `(("." . ,(expand-file-name "undo-tree" xdg/emacs-cache-directory))))
-      (undo-tree-visualizer-diff t)
-      (undo-tree-visualizer-timestamps t))
- #+end_src
+* diff-hl
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :config
+    (global-diff-hl-mode))
+#+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

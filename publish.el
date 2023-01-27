@@ -55,3 +55,6 @@
   "Publish everything"
   (mkdir "docs/" t)
   (org-publish-all t nil))
+
+(unless (getenv "CI_PAGES_URL")
+  (pspmacs/publish-all))

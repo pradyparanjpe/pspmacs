@@ -3,6 +3,14 @@
 #+auto_tangle: t
 
 * Modules
-- Each org-mode file in this directory contains a module that is loaded using the function ~org-babel-load-file~.
-- Each module file name is of the form "pspmacs-<module-name>.org".
-  To load the module, add the part <module-name> to the section [[file:~/.local/share/pspman/src/pspmacs/late/index.org::*Load modules][Load modules]] in the file =late/init.el=
+- Packages belonging to same category are placed in a module in a tangled org-mode file in modules directory.
+  - Categories are prefixed with =pspmacs-= and named in =lower-case-kebab-case=.
+#+begin_example
+pspmacs-module-category.org
+#+end_example
+- Wherever available, modular arrangement of packages is according to their level-1 headings in [[https://github.com/emacs-tw/awesome-emacs][emacs-tw/awesome-emacs]].
+  - As an exception:
+    1. Programming languages (python, R, ...) are maintained as separate modules.
+    2. Markup languages (yaml, html, ...) are maintained in =pspmacs-markup.org=.
+- Modules are loaded using the function [[file:~/.local/share/pspman/src/pspmacs/late/index.org::*Org mode auto-load][pspmacs/load-suitable]].
+- To load the module, add the part <module-category> to the section [[file:~/.local/share/pspman/src/pspmacs/late/index.org::*Load modules][Load modules]] in [[file:../late/init.el]]

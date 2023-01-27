@@ -13,7 +13,7 @@ especially because it seriously affected by python programming workflow.
 ** BAD Opinionated
 I didn't like doom-emacs for a similar reason.
 Dependence on either of them makes one rely on /another set of commits/ being flawless in addition to Gnu Emacs' production.
-Further opinionated configuration imposes restrictions. Downstream modification of template opinions break (as they *have* for me) when the upstream code gets some incompatible commits.
+Further, opinionated configuration imposes restrictions. Downstream modification of template opinions break (as they *did* for me) when the upstream code gets some incompatible commits.
 
 * My Attempt
 This is my /hitherto successful/ attempt to configure Emacs from scratch to use it as a /text editor/ (🤣).
@@ -30,7 +30,7 @@ This is my /hitherto successful/ attempt to configure Emacs from scratch to use 
   We try to put *nothing* more in this location than what it already contains.
   
 *** Private: =pvt-emacs-directory=
-- A user may want to make over-writing (supersede) changes and need to synchronize then across a private repository.
+- A user may want to make over-writing (supersede) changes and need to synchronize them across a private repository.
   Such changes should be placed in 'exactly the same location' as that of the file to be superseded,
   but relative to a separate location, =pvt-emacs-directory=.
 - They may include settings such as full-name, email, etc. 
@@ -46,15 +46,15 @@ This is my /hitherto successful/ attempt to configure Emacs from scratch to use 
   - If =LOCAL_EMACS_HOME= is not set, =PVT_EMACS_HOME/local.d= is used when =PVT_EMACS_HOME= is defined, else =USER_EMACS_HOME/local.d= is used.
 
 ** Load-order
-- Emacs loads configuration in =user-emacs-directory/early-init.el=, and =user-emacs-directory/init.el=. This configuration redirects it to load various files located in the =user-emacs-directory= work-tree. Each file performs its configuration settings and looks for a file located at the same location relative to =pvt-emacs-directory= and then, =local-emacs-directory=. If such a file exists, it is loaded.
+- Emacs loads configuration in =user-emacs-directory/early-init.el= before launching the GUI, and =user-emacs-directory/init.el= after. This configuration redirects it to load various files located in the =user-emacs-directory= work-tree. Each file performs its configuration settings and looks for a file located at the same location relative to =pvt-emacs-directory= and then, =local-emacs-directory=. If such a file exists, it is loaded.
 - Example, the file =user-emacs-directory/late/definitions.el= attempts to load files =pvt-emacs-directory/late/definitions.el= and =local-emacs-directory/late/definitions.el=. If they are present, they can overwrite configuration applied by the =user-emacs-directory/late/definitions.el=
 #+begin_tip
 The user is advised to place in private and local work-trees, code similar to the corresponding file in the global work-tree
 #+end_tip
 
-** Early-init
+** [[file:early/index.org][early-init.el]]
 - This init should *NEVER* throw errors.
-- If error is encountered, emacs is never launched and exits with error.
+- If error is encountered, Emacs never launches GUI and exits with error.
 - Since we won't use built-in org-mode, we shall refrain from using the function ~org-babel-load-file~
 #+begin_tip
 - this section only establishes platform for configuration and doesn't in fact affect the final configuration outcome.
@@ -69,7 +69,7 @@ The user is advised to place in private and local work-trees, code similar to th
 - Code
   - Each section of =early-init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =early=.
  #+begin_src emacs-lisp :tangle early-init.el
-   ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+   ;;; early-init.el --- Early Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
    ;;; Early definitions init configs
 
    (load (expand-file-name "early/definitions.el" user-emacs-directory)
@@ -82,7 +82,7 @@ The user is advised to place in private and local work-trees, code similar to th
          nil 'nomessage)
 #+end_src
 
-** Init
+** [[file:late/index.org][init.el]]
 - Errors thrown by this section accumulate in =*Messages*= buffer.
 - Each section of =init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =late=.
 #+begin_warning
@@ -93,7 +93,7 @@ The user is advised to place in private and local work-trees, code similar to th
   - Each section of =late-init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =late=.
   - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modlues=.
 #+begin_src emacs-lisp :tangle init.el
-  ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+  ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
   ;;; late definitions init configs
 
   (load (expand-file-name "late/definitions.el" user-emacs-directory)

@@ -17,3 +17,6 @@ By the time I reached here, I was pretty well-versed with configuring packages m
 * [[https://www.spacemacs.org/][Spacemacs]]
 I was originally a SpaceMacs user. Hence, most of my configuration could appear
 to have been inspired by SpaceMacs'.
+
+* [[https://github.com/emacs-tw/awesome-emacs][emacs-tw/awesome-emacs]]
+- Module contents were derived and arranged according to their categories in awesome-emacs.

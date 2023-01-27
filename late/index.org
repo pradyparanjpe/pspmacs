@@ -232,11 +232,59 @@ We need to reset that configuration here when using =chemacs=.
     (use-package org
       ;; :straight (:type built-in)
       :ensure t)
+  #+end_src
 
+*** Org mode auto-load
+- Expand faculties of [[file:~/.local/share/pspman/src/pspmacs/early/index.org::*Inherence][pspmacs/load-inherit]] to =org-babel-load-file=
+ #+begin_src emacs-lisp :tangle org-latest.el
+   (defun pspmacs/load-suitable (fname &optional nag)
+     "Load emacs init file FNAME.
+
+   If FNAME is found, load it and return.
+   If org/el counterpart of FNAME is found, load it and return.
+   To load,
+
+   If extension `string='s 'org', use function `org-babel-load-file'.
+   If extension `string='s 'el', use function `load'
+
+   If nothing is found and if NAG is `t', throw error. Default: return"
+     (cond
+      ((string= (file-name-extension fname) "org")
+       (cond ((file-readable-p fname)
+              (org-babel-load-file fname))
+             ((file-readable-p (file-name-with-extension fname "el"))
+              (load (file-name-with-extension fname "el") nil 'nomessage))))
+      ((string= (file-name-extension fname) "el")
+       (cond ((file-readable-p fname)
+              (load fname nil 'nomessage))
+             ((file-readable-p (file-name-with-extension fname "org"))
+              (org-babel-load-file (file-name-with-extension fname "el")))))
+      (nag (user-error (format "Neither %s.{el,org} found."
+                               (file-name-sans-extension fname))))))
+
+   (defun pspmacs/load-inherit (&optional fname)
+     "Inherit all equivalent files.
+
+   Re-definition of early-loaded function after the correct orgmode is loaded.
+   Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
+   If FNAME is supplied, *that* corresponding file name is attempted, else,
+   stem of `load-file-name' is attempted.
+   Init files are loaded using the function `pspmacs-load-suitable'.
+   Settings loaded from files located in `pvt-emacs-directory' are overwritten
+   by settings loaded from files located in `local-emacs-directory'."
+     (let ((name-branch
+        (file-relative-name (or fname load-file-name) user-emacs-directory)))
+       (dolist (config-dir `(,pvt-emacs-directory ,local-emacs-directory) nil)
+     (let* ((modular-init (expand-file-name name-branch config-dir)))
+       (if (file-exists-p modular-init)
+           (pspmacs/load-suitable modular-init))))))
+#+end_src
+
+*** Inherit
+#+begin_src emacs-lisp :tangle org-latest.el
     (pspmacs/load-inherit)
     (provide 'pspmacs-org-latest)
-
-  #+end_src
+#+end_src
 
 - Load contents of the above file
   #+begin_src emacs-lisp :tangle init.el
@@ -248,26 +296,25 @@ We need to reset that configuration here when using =chemacs=.
 - Load each of the remaining modules sequentially.
 #+begin_src emacs-lisp :tangle init.el
   (dolist (autofile
-           '("keybindings"
-             "funcs"
-             "org"
-             "os"
-             "steno"
-             "version-control"
-             "navigate"
-             "browse"
+           '("interface-enhancement"
+             "editing-enhancement"
+             "emacs-lisp"
+             "integration"
+             "keys-cheat-sheet"
              "markup"
-             "reveal"
-             "uxui"
-             "prog"
+             "navigate"
+             "note"
+             "programming"
+             "project-management"
              "python"
-             "srv-cfg")
+             "theme"
+             "version-control")
            nil)
     (let ((lit-module
        (expand-file-name
         (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
       (if (file-readable-p lit-module)
-      (org-babel-load-file lit-module))))
+          (pspmacs/load-suitable lit-module))))
 #+end_src
 
 ** Inherit

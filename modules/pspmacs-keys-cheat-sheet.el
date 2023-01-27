@@ -1,10 +1,4 @@
-#+title: pspmacs-markup
-#+PROPERTY: header-args :tangle pspmacs-srv-cfg.el :mkdirp t :results no :eval no
-#+auto_tangle: t
-
-* Header Copyright
-#+begin_src emacs-lisp
-;;;; pspmacs-markup.el --- filesystem markup -*- lexical-binding: t; -*-
+;;; pspmacs-funcs.el --- Keybinding maps using general.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -27,20 +21,14 @@
 ;;; Commentary:
 
 ;;; Code:
-#+end_src
 
-* Systemd
-#+begin_src emacs-lisp
-  (use-package systemd)
-#+end_src
+(use-package which-key
+  :after evil
+  :init
+  (which-key-mode)
+  :config
+  (which-key-setup-minibuffer))
 
-* Nginx mode
-#+begin_src emacs-lisp
-  (use-package nginx-mode
-    :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
-#+end_src
-* Inherit from private and local
-#+begin_src emacs-lisp
-  (pspmacs/load-inherit)
-  (provide 'pspmacs-srv-cfg)
-#+end_src
+(pspmacs/load-inherit)
+(provide 'pspmacs-keys-cheat-sheet)
+;;; pspmacs-keys-cheat-sheet.el ends here

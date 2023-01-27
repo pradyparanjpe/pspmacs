@@ -1,10 +1,10 @@
-#+title: pspmacs-org
-#+PROPERTY: header-args :tangle pspmacs-org.el :mkdirp t :results no :eval no
+#+title: pspmacs-note
+#+PROPERTY: header-args :tangle pspmacs-note.el :mkdirp t :results no :eval no
 #+auto-tangle: t
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;;; pspmacs-org.el --- org-mode -*- lexical-binding: t; -*-
+;;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -36,7 +36,6 @@
 
 - pspmacs/org-journal-path: path to org journal
 #+begin_src emacs-lisp
-
   (defvar pspmacs/org-path (expand-file-name "org/" xdg/emacs-data-directory)
     "Org mode base")
 
@@ -52,7 +51,7 @@
 #+begin_src emacs-lisp
   (use-package org
     :init
-    (defun pspmacs/prettify-org ()
+    (defun pspmacs/prettify-note ()
       (pspmacs/mode-prettify '("lisp" "org")))
 
     :general
@@ -152,16 +151,15 @@
        (R . t)
        (awk . t)))
     :hook
-    ((org-mode . pspmacs/prettify-org)
+    ((org-mode . pspmacs/prettify-note)
      (org-mode . visual-line-mode)))
 #+end_src
+
 * Pretty bullets
 - Pretty heading bullets
-
 #+begin_src emacs-lisp
   (use-package org-bullets
   :hook (org-mode . (lambda () (org-bullets-mode 1))))
-
 #+end_src
 * Auto-tangle
 #+begin_src emacs-lisp
@@ -169,48 +167,15 @@
     :ensure t
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
-* Org mode auto-load
-- Expand faculties of [[file:~/.local/share/pspman/src/pspmacs/early/index.org::*Inherence][pspmacs/load-inherit]] to =org-babel-load-file=
+
+* Org-roam
 #+begin_src emacs-lisp
-  (defun pspmacs/load-suitable (fname)
-    "Load emacs init file FNAME.
-
-  If FNAME is found, load it and return.
-  If org/el counterpart of FNAME is found, load it and return.
-  To load,
-  If extension `equal's 'org', use function `org-babel-load-file'.
-  If extension `equal's 'el', use function `load'"
-    (cond
-     ((equal (file-name-extension fname) "org")
-      (cond ((file-readable-p fname)
-         (org-bable-load-file fname))
-        ((file-readable-p (file-name-with-extension fname "el"))
-         (load (file-name-with-extension fname "el") nil 'nomessage))))
-     ((equal (file-name-extension fname) "el")
-      (cond ((file-readable-p fname)
-         (load fname nil 'nomessage))
-        ((file-readable-p (file-name-with-extension fname "org"))
-         (org-babel-load-file (file-name-with-extension fname "el")))))))
-
-  (defun pspmacs/load-inherit (&optional fname)
-    "Inherit all equivalent files.
-
-  Re-definition of early-loaded function after the correct orgmode is loaded.
-  Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
-  If FNAME is supplied, *that* corresponding file name is attempted, else,
-  stem of `load-file-name' is attempted.
-  Init files are loaded using the function `pspmacs-load-suitable'.
-  Settings loaded from files located in `pvt-emacs-directory' are overwritten
-  by settings loaded from files located in `local-emacs-directory'."
-    (let ((name-branch
-       (file-relative-name (or fname load-file-name) user-emacs-directory)))
-      (dolist (config-dir `(,pvt-emacs-directory ,local-emacs-directory) nil)
-    (let* ((modular-init (expand-file-name name-branch config-dir)))
-      (if (file-exists-p modular-init)
-          (pspmacs/load-suitable modular-init))))))
-#+end_src
+  (use-package org-roam
+    :custom
+    (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
+ #+end_src
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-org)
+  (provide 'pspmacs-note)
 #+end_src

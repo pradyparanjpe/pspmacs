@@ -6,6 +6,7 @@ sitemap.org
 local.d/
 
 # known emacs cache
+.cache/
 recentf
 projects
 .custom-settings

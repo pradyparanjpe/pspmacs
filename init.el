@@ -1,4 +1,4 @@
-;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;; late definitions init configs
 
 (load (expand-file-name "late/definitions.el" user-emacs-directory)

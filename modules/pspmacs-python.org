@@ -33,9 +33,9 @@
   (use-package python-mode
     :hook
     ((envrc-mode . (lambda ()
-             (when (executable-find "ipython")
-               (setq python-shell-interpreter
-                 (executable-find "ipython"))))))
+                     (when (executable-find "ipython")
+                       (setq python-shell-interpreter
+                             (executable-find "ipython"))))))
     :general
     (pspmacs/local-leader-keys
       :keymaps 'python-mode-map "'" 'run-python)
@@ -53,53 +53,57 @@
       (window-configuration-to-register py--windows-config-register)
       (cond
        ((use-region-p)
-    (py-indent-region (region-beginning) (region-end)))
+
+        (py-indent-region (region-beginning) (region-end)))
        ((or (bolp)
-        (member (char-before) (list 9 10 12 13 32 ?:  ;; ([{
-                    ?\) ?\] ?\}))
-        ;; (not (looking-at "[ \t]*$"))
-        )
-    (py-indent-line))
+            (member (char-before) (list 9 10 12 13 32 ?:  ;; ([{
+                                                                ?\) ?\] ?\}))
+            ;; (not (looking-at "[ \t]*$"))
+            )
+
+        (py-indent-line))
        ((comint-check-proc (current-buffer))
-    (ignore-errors (completion-at-point)))
+        (ignore-errors (completion-at-point)))
        (t (completion-at-point))))
+
+    (defun pspmacs/prettify-python ()
+      (pspmacs/mode-prettify '("code" "python")))
 
     (font-lock-add-keywords
      nil '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-        1 '(:foreground "#9f7fff") t)))
+            1 '(:foreground "#9f7fff") t)))
 
     (font-lock-add-keywords
      nil '(("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-        1 '(:foreground "#bf8fa7") t)))
+            1 '(:foreground "#bf8fa7") t)))
 
     (font-lock-add-keywords nil '(("``\\(.*?\\)``" 1 '(:box t) t)))
 
     (with-eval-after-load 'lsp-mode
       (when
-      (string= major-mode "python-mode")
-    (pspmacs/extend-list
-     'lsp-file-watch-ignored-directories
-     '(
-       ;; python directories
-       "[/\\\\]docs\\'"
-       "[/\\\\]build\\'"
-       "[/\\\\]tests\\'"
-       "[/\\\\]\\.?venv\\'"
-       "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
-       "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
+          (string= major-mode "python-mode")
+        (pspmacs/extend-list
+         'lsp-file-watch-ignored-directories
+         '(
+           ;; python directories
+           "[/\\\\]docs\\'"
+           "[/\\\\]build\\'"
+           "[/\\\\]tests\\'"
+           "[/\\\\]\\.?venv\\'"
+           "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
+           "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
 
     (pspmacs/mode-prettify '("code" "python"))
 
     :config
     (setq python-shell-interpreter-args "-i --simple-prompt --no-color-info"
-      python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-      python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
-      python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-      python-shell-completion-setup-code
-      "from IPython.core.completerlib import module_completion"
-      python-shell-completion-string-code
-      "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
-
+          python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+          python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
+          python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+          python-shell-completion-setup-code
+          "from IPython.core.completerlib import module_completion"
+          python-shell-completion-string-code
+          "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"))
 #+end_src
 * Automatic imports
 - Requirements:
@@ -162,24 +166,6 @@
   (use-package lsp-pyright
     :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
 
-  (use-package flycheck
-    :hook
-    ((lsp-mode . flycheck-mode)
-     (envrc-mode . (lambda ()
-             (setq flycheck-python-flake8-executable
-               (executable-find "python"))
-             (setq flycheck-checker 'python-flake8)
-             (setq flycheck-flake8rc ".flake8"))))
-    :init
-    (setq flycheck-indication-mode 'right-fringe) ;; only check on save
-    (defun pspmacs/prettify-python ()
-      (pspmacs/mode-prettify '("code" "python")))
-    (add-hook 'python-mode-hook 'pspmacs/prettify-python)
-    :general
-    (pspmacs/leader-keys
-      "en" '(flycheck-next-error :wk "next error")
-      "ep" '(flycheck-previous-error :wk "previous error"))
-    (setq flycheck-check-syntax-automatically '(mode-enabled save)))
 #+end_src
 
 * Inherit from private and local

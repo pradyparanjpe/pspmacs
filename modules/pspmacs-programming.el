@@ -1,26 +1,44 @@
-;;; pspmacs-prog.el --- common programming config -*- lexical-binding: t; -*-
+;;; pspmacs-programming.el --- common programming config -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: help, languages
 
-;; This program is free software; you can redistribute it and/or modify
+;; This programmingram is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU Lesser General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
+;; This programmingram is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU Lesser General Public License for more details.
 
 ;; You should have received a copy of the GNU Lesser General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this programmingram.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
 ;;; Code:
+
+(use-package company
+  :ensure t
+  :diminish
+  :commands (company-mode company-indent-or-complete-common)
+  :config
+  (setq company-dabbrev-other-buffers t
+    company-dabbrev-code-other-buffers t)
+  :hook ((text-mode . company-mode)
+     (prog-mode . company-mode)))
+
+(use-package company-quickhelp
+  :after company
+  :bind (:map company-active-map
+      ("C-c ?" . company-quickhelp-manual-begin)))
+
+(use-package gtags
+  :hook (prog-mode . gtags-mode))
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -74,16 +92,6 @@
    (setq lsp-ui-doc-enable t
      lsp-ui-doc-delay 1)
    :hook (lsp-mode . lsp-ui-mode))
-
-(use-package display-fill-column-indicator
-  :demand t
-  :hook
-  (prog-mode . display-fill-column-indicator-mode)
-  :init
-  (setq-default fill-column 80))
-
-(use-package eldoc
-  :hook (emacs-lisp-mode cider-mode))
 
 (use-package dap-mode
    :hook
@@ -208,14 +216,14 @@
                   :name "mill"
                   :type "python"
                   :request "launch"
-                  :program (expand-file-name "~/git/Sodra.Common.FlightTower/flight_tower/__main__.py")
+                  :programmingram (expand-file-name "~/git/Sodra.Common.FlightTower/flight_tower/__main__.py")
                   ;; :env '(("NO_JSON_LOG" . "true"))
                   :args ["-m" "mill" "--config" "user_luca"]))
    (defvar flight-tower-calibration (list
                      :name "mill"
                      :type "python"
                      :request "launch"
-                     :program (expand-file-name "~/git/Sodra.Common.FlightTower/flight_tower/__main__.py")
+                     :programmingram (expand-file-name "~/git/Sodra.Common.FlightTower/flight_tower/__main__.py")
                      ;; :env '(("NO_JSON_LOG" . "true"))
                      :args ["-m" "mill"
                         ;; "--config" "user_luca"
@@ -227,7 +235,7 @@
                  :name "mill"
                  :type "python"
                  :request "launch"
-                 :program (expand-file-name "~/git/Sodra.Common.FlightTower/flight_tower/__main__.py")
+                 :programmingram (expand-file-name "~/git/Sodra.Common.FlightTower/flight_tower/__main__.py")
                  ;; :env '(("NO_JSON_LOG" . "true"))
                  :args ["-m" "wood_processing_e2e"
                     "--config" "user_luca"]))
@@ -245,6 +253,33 @@
        (dap-debug dap-script-args))
 :wk "script")))
 
+(use-package flycheck
+  :hook
+  ((lsp-mode . flycheck-mode)
+   (envrc-mode . (lambda ()
+           (setq flycheck-python-flake8-executable
+             (executable-find "python"))
+           (setq flycheck-checker 'python-flake8)
+           (setq flycheck-flake8rc ".flake8"))))
+  :init
+  (setq flycheck-indication-mode 'right-fringe) ;; only check on save
+  (add-hook 'python-mode-hook 'pspmacs/prettify-python)
+  :general
+  (pspmacs/leader-keys
+    "en" '(flycheck-next-error :wk "next error")
+    "ep" '(flycheck-previous-error :wk "previous error"))
+  (setq flycheck-check-syntax-automatically '(mode-enabled save)))
+
+(use-package eldoc
+  :hook (emacs-lisp-mode cider-mode))
+
+(use-package display-fill-column-indicator
+  :demand t
+  :hook
+  (programming-mode . display-fill-column-indicator-mode)
+  :init
+  (setq-default fill-column 80))
+
 (pspmacs/load-inherit)
-(provide 'pspmacs-prog)
-;;; prog.el ends here
+(provide 'pspmacs-programming)
+;;; programming.el ends here
