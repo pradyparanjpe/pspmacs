@@ -135,8 +135,11 @@
          bestname))))
 #+end_src
 
-**** Inherit
-- No need
+** Inherit
+#+begin_src emacs-lisp :tangle xdg.el
+    (pspmacs/load-inherit)
+#+end_src
+
 
 ** Inherit
 #+begin_src emacs-lisp :tangle definitions.el
@@ -150,18 +153,15 @@
 #+end_src
 
 ** Chemacs correction
- [[https://github.com/plexus/chemacs2][Chemacs]] moves the =package-user-dir= to the profile's definition
-of the =user-emacs-directory= then loads this file.
-We need to reset that configuration here when using =chemacs=.
+[[https://github.com/plexus/chemacs2][Chemacs]] moves the =package-user-dir= to the profile's definition of the =user-emacs-directory= then loads this file. We need to reset that configuration here when using =chemacs=.
 #+begin_src emacs-lisp :tangle init.el
-(when (featurep 'chemacs)
-  (customize-set-variable 'package-user-dir
-                          (expand-file-name "elpa" local-emacs-directory)))
+  (when (featurep 'chemacs)
+    (customize-set-variable 'package-user-dir
+                            (expand-file-name "elpa" local-emacs-directory)))
 #+end_src
 
 ** Package system
-- Load the package-system (=straight.el=).
-  This file is maintained separately.
+- Load the package-system (=straight.el=). This file is maintained separately.
 #+begin_src emacs-lisp :tangle init.el
 (load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
       nil 'nomessage)
@@ -187,8 +187,7 @@ We need to reset that configuration here when using =chemacs=.
 #+end_src
 
 ** Custom file
-- The file ~custom-file~ is used by the Customization UI to store value-setting forms in a customization file,
- rather than at the end of the =~/.emacs.d/init.el= file. It defaults to =~/.emacs.d/custom.el=. The file is loaded after =late/config.el= file. Any variable values set till that point (=late/config.el=) will be overridden with the values set with the Customization UI and saved in the custom file.
+- The file ~custom-file~ is used by the Customization UI to store value-setting forms in a customization file, rather than at the end of the =~/.emacs.d/init.el= file. It defaults to =~/.emacs.d/custom.el=. The file is loaded after =late/config.el= file. Any variable values set till that point (=late/config.el=) will be overridden with the values set with the Customization UI and saved in the custom file.
 #+begin_src emacs-lisp :tangle init.el
   (customize-set-variable 'custom-file
     (expand-file-name "custom.el" local-emacs-directory))
@@ -197,9 +196,12 @@ We need to reset that configuration here when using =chemacs=.
 - To hasten early-init, gc-cons was set to highest possible value in =early/definitions.el=
   - Let's reduce it back to 2MB.
 #+begin_src emacs-lisp :tangle init.el
-    ;; Make GC pauses faster by decreasing the threshold.
   (setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
+
+#+begin_note
+gcmh, which is a package presumed to be better at handling gc shall be loaded in the module [[file:../modules/pspmacs-interface-enhancement.org]]
+#+end_note
 
 ** Initiate org mode with latest release
 - Emacs is shipped with a built-in org-mode. However, we shall use the latest release.
@@ -235,7 +237,7 @@ We need to reset that configuration here when using =chemacs=.
   #+end_src
 
 *** Org mode auto-load
-- Expand faculties of [[file:~/.local/share/pspman/src/pspmacs/early/index.org::*Inherence][pspmacs/load-inherit]] to =org-babel-load-file=
+- Expand faculties of [[*Org mode auto-load][pspmacs/load-inherit]] to =org-babel-load-file=
  #+begin_src emacs-lisp :tangle org-latest.el
    (defun pspmacs/load-suitable (fname &optional nag)
      "Load emacs init file FNAME.
@@ -291,9 +293,7 @@ We need to reset that configuration here when using =chemacs=.
     (load (expand-file-name "late/org-latest.el" user-emacs-directory))
   #+end_src
 
-** Load modules
-- Load org-mode first, so that the correct org-mode version occupies the field.
-- Load each of the remaining modules sequentially.
+** [[file:../modules/index.org][Load Modules]]
 #+begin_src emacs-lisp :tangle init.el
   (dolist (autofile
            '("interface-enhancement"

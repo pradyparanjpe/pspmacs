@@ -25,7 +25,6 @@
 (customize-set-variable 'custom-file
   (expand-file-name "custom.el" local-emacs-directory))
 
-;; Make GC pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
 
 (load (expand-file-name "late/org-latest.el" user-emacs-directory))

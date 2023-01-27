@@ -72,9 +72,7 @@ If envrionment variables are not set, use:
 
 ** Inherence
 - Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
-  - Later, this function is overwritten by a [[file:~/.local/share/pspman/src/pspmacs/modules/pspmacs-org.org::*Org mode auto-load][generalized version]] that also loads orgmode files.
-#+begin_seealso
-#+end_seealso
+  - Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads orgmode files.
 #+begin_src emacs-lisp :tangle definitions.el
    (defun pspmacs/load-inherit (&optional fname)
      "Inherit all equivalent files.
@@ -183,7 +181,7 @@ Initialize configurations
 #+end_src
 
 ** Temporary blue theme
-- If anything till [[file:~/.local/share/pspman/src/pspmacs/modules/pspmacs-uxui.org::*Theme, Modeline][Theme, Modeline]] fails
+- If anything till [[file:../modules/pspmacs-theme.org]] fails
 #+begin_src emacs-lisp :tangle config.el
   (load-theme 'deeper-blue t)
 #+end_src

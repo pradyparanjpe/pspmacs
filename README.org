@@ -20,7 +20,7 @@ This is my /hitherto successful/ attempt to configure Emacs from scratch to use 
 
 * Inheritance principle
 - The configuration is made with three *inherited work-trees*.
-- Each file in this configuration (other than some obvious documented exceptions) calls a function [[file:modules/pspmacs-org.org::*Org mode auto-load][pspmacs/load-inherit]] 
+- Each file in this configuration (other than some obvious documented exceptions) calls a function [[file:late/index.org::*Org mode auto-load][pspmacs/load-inherit]]
   at the end. This function ensures the following.
 
 ** Inherited work-trees

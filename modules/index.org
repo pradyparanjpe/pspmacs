@@ -12,5 +12,5 @@ pspmacs-module-category.org
   - As an exception:
     1. Programming languages (python, R, ...) are maintained as separate modules.
     2. Markup languages (yaml, html, ...) are maintained in =pspmacs-markup.org=.
-- Modules are loaded using the function [[file:~/.local/share/pspman/src/pspmacs/late/index.org::*Org mode auto-load][pspmacs/load-suitable]].
-- To load the module, add the part <module-category> to the section [[file:~/.local/share/pspman/src/pspmacs/late/index.org::*Load modules][Load modules]] in [[file:../late/init.el]]
+- Modules are loaded using the function [[file:../late/index.org::*Org mode auto-load][pspmacs/load-inherit]].
+- To load the module, add the part =<module-category>= to the modules section in [[file:../late/init.el]].

@@ -81,3 +81,5 @@ If you never want to see this message again,
 customize the variable `xdg/emacs-cache-directory-warning'."
                                         errtype xdg/emacs-cache-directory)))))
        bestname))))
+
+(pspmacs/load-inherit)

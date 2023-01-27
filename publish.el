@@ -48,7 +48,7 @@
          :publishing-directory "docs/"
          :recursive t
          :publishing-function org-publish-attachment)
-      
+
         ("org" :components ("pspmacs" "org-static"))))
 
 (defun pspmacs/publish-all ()

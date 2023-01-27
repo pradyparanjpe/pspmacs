@@ -106,29 +106,6 @@
   (use-package evil-tex
     :hook (LaTeX-mode . evil-tex-mode))
 
-  (use-package citar
-    :after all-the-icons
-    :init
-    (defun citar-setup-capf ()
-      (add-to-list 'completion-at-point-functions 'citar-capf))
-    :hook
-    (LaTeX-mode . citar-setup-capf)
-    (org-mode . citar-setup-capf)
-    :config
-    ;; icon support via all-the-icons
-    (setq citar-symbols
-          `((file ,(all-the-icons-faicon "file-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
-            (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
-            (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
-    (setq citar-symbol-separator "  ")
-    :general
-    (pspmacs/leader-keys
-      "nb" '(citar-open :wk "citar")))
-
-  (use-package citar-embark
-    :after citar embark
-    :config (citar-embark-mode))
-
   (use-package company-auctex
     :after (company latex))
 
