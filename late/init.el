@@ -29,24 +29,10 @@
 
 (load (expand-file-name "late/org-latest.el" user-emacs-directory))
 
-(dolist (autofile
-         '("interface-enhancement"
-           "editing-enhancement"
-           "emacs-lisp"
-           "integration"
-           "keys-cheat-sheet"
-           "markup"
-           "navigate"
-           "note"
-           "programming"
-           "project-management"
-           "python"
-           "theme"
-           "version-control")
-         nil)
+(dolist (autofile pspmacs/modules-order nil)
   (let ((lit-module
-     (expand-file-name
-      (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
+         (expand-file-name
+          (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
     (if (file-readable-p lit-module)
         (pspmacs/load-suitable lit-module))))
 

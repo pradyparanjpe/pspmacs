@@ -6,22 +6,24 @@
 * Definitions
 ** Header
 #+begin_src emacs-lisp :tangle definitions.el
-;;; late/definitions.el --- identifies platform -*- lexical-binding: t; -*-
+  ;;; late/definitions.el --- identifies platform -*- lexical-binding: t; -*-
+  (require 'yaml)
+  (require 'ht)
 #+end_src
 
 ** Identify platform
 - In future, the same configuration may be extended to Windows/MacOS, although, current target is GNU/Linux only.
 #+begin_src emacs-lisp :tangle definitions.el
-(defconst ON-LINUX   (eq system-type 'gnu/linux))
-(defconst ON-MAC     (eq system-type 'darwin))
-(defconst ON-BSD     (or ON-MAC (eq system-type 'berkeley-unix)))
-(defconst ON-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+  (defconst ON-LINUX   (eq system-type 'gnu/linux))
+  (defconst ON-MAC     (eq system-type 'darwin))
+  (defconst ON-BSD     (or ON-MAC (eq system-type 'berkeley-unix)))
+  (defconst ON-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 #+end_src
 
 ** XDG
 - Emacs must respect =XDG= system
 #+begin_src emacs-lisp :tangle definitions.el
-(load (expand-file-name "late/xdg.el" user-emacs-directory) nil 'nomessage)
+  (load (expand-file-name "late/xdg.el" user-emacs-directory) nil 'nomessage)
 #+end_src
 
 *** XDG File system conventions
@@ -135,11 +137,40 @@
          bestname))))
 #+end_src
 
-** Inherit
+*** Inherit
 #+begin_src emacs-lisp :tangle xdg.el
     (pspmacs/load-inherit)
 #+end_src
 
+** Order of pspmacs modules to load
+#+begin_src emacs-lisp :tangle definitions.el
+  (defvar pspmacs/modules-order-list
+    (let
+        ((modules-dir
+          (mapcar
+           (lambda (x)
+             (expand-file-name "modules" x))
+           `(,user-emacs-directory
+             ,pvt-emacs-directory
+             ,local-emacs-directory))))
+         (apply
+           'vconcat (mapcar
+                     (lambda (x) (cdr x))
+                     (sort
+                      (ht->alist
+                       (apply
+                        'ht-merge
+                        (remq 'nil
+                              (mapcar
+                               (lambda (x)
+                                 (let
+                                     ((order-file (expand-file-name "load-order.yml" x)))
+                                   (if (file-readable-p order-file)
+                                       (yaml-parse-string (f-read-text order-file)))))
+                               modules-dir))))
+                      (lambda (a b) (< (car a) (car b)))))))
+  "Ordered list of pspmacs/modules to load")
+#+end_src
 
 ** Inherit
 #+begin_src emacs-lisp :tangle definitions.el
@@ -295,24 +326,10 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 ** [[file:../modules/index.org][Load Modules]]
 #+begin_src emacs-lisp :tangle init.el
-  (dolist (autofile
-           '("interface-enhancement"
-             "editing-enhancement"
-             "emacs-lisp"
-             "integration"
-             "keys-cheat-sheet"
-             "markup"
-             "navigate"
-             "note"
-             "programming"
-             "project-management"
-             "python"
-             "theme"
-             "version-control")
-           nil)
+  (dolist (autofile pspmacs/modules-order nil)
     (let ((lit-module
-       (expand-file-name
-        (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
+           (expand-file-name
+            (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
       (if (file-readable-p lit-module)
           (pspmacs/load-suitable lit-module))))
 #+end_src
