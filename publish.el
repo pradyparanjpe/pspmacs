@@ -1,10 +1,10 @@
 (when (getenv "CI_PAGES_URL")
   (require 'package)
   (package-initialize)
-  (add-to-list 'package-archives '("elpa" .  "https://elpa.gnu.org/packages/" ) t)
+  (add-to-list
+   'package-archives '("elpa" . "https://elpa.gnu.org/packages/" ) t)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-refresh-contents)
-  ;; (package-install 'org-contrib)
   (package-install 'htmlize)
   (setq user-full-name nil))
 

@@ -13,4 +13,13 @@ pspmacs-module-category.org
     1. Programming languages (python, R, ...) are maintained as separate modules.
     2. Markup languages (yaml, html, ...) are maintained in =pspmacs-markup.org=.
 - Modules are loaded using the function [[file:../late/index.org::*Org mode auto-load][pspmacs/load-inherit]].
-- To load the module, add the part =<module-category>= to the modules section in [[file:../late/init.el]].
+
+* Order of loading modules
+- Order of loaded modules follows =modules/load-order.yml=.
+- Objects with arbitrary keys containing list of =<module-category>=
+  - lists from objects are loaded according to sort-order of object-keys.
+- Lists defined in superseding files *replace*
+  - To load additional modules, add them with a *new* object key in superseding files.
+- Only the earliest occurrence of module =modules/pspmacs-<module-category>.org= in the inheritance work-trees is loaded.
+  - Which obviously inherits from others.
+  - If not found, error is *NOT* thrown.
