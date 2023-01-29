@@ -33,7 +33,6 @@
 
 ** Inheritance / superceding order
 - Get values from environment variables.
-
 *** Private, version controlled
 If envrionment variables are not set, ignore
  #+begin_src emacs-lisp :tangle definitions.el
@@ -45,7 +44,9 @@ If envrionment variables are not set, ignore
             (expand-file-name (getenv "PVT_EMACS_HOME"))))
        ((getenv "PVT_EMACS_HOME")
         (expand-file-name (getenv "PVT_EMACS_HOME")))))
-     "Private version controlled, privately synchronized configuration directory")
+     "Private version controlled
+
+   privately synchronized configuration directory")
 #+end_src
 
 *** Local, machine-specific
@@ -70,22 +71,14 @@ If envrionment variables are not set, use:
      "Local, machine-specific, un-synchronized configuration directory")
 #+end_src
 
-** Inherence
-- Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
-  - Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads orgmode files.
+*** Inheritance list
 #+begin_src emacs-lisp :tangle definitions.el
-   (defun pspmacs/load-inherit (&optional fname)
-     "Inherit all equivalent files.
-
-   Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
-   If FNAME is supplied, *that* corresponding file name is attempted, else,
-   stem of `load-file-name' is attempted."
-     (let ((name-branch
-        (file-relative-name (or fname load-file-name) user-emacs-directory)))
-       (dolist (config-dir `(,pvt-emacs-directory ,local-emacs-directory) nil)
-         (let* ((modular-init (expand-file-name name-branch config-dir)))
-           (if (file-exists-p modular-init)
-           (load modular-init nil 'nomessage))))))
+  (defvar pspmacs/user-worktrees
+    `(,pvt-emacs-directory ,local-emacs-directory)
+    "user's worktrees to load")
+  (defvar pspmacs/worktrees
+    `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory)
+    "worktrees to load")
 #+end_src
 
 ** Custom file
@@ -105,6 +98,25 @@ If envrionment variables are not set, use:
     (expand-file-name "pspackaging" user-emacs-directory)
     "Packaging system (straight) to use.")
 #+end_src
+
+** Inherence
+- Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
+  - Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads orgmode files.
+#+begin_src emacs-lisp :tangle definitions.el
+  (defun pspmacs/load-inherit (&optional fname)
+    "Inherit all equivalent files.
+
+  Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
+  If FNAME is supplied, *that* corresponding file name is attempted, else,
+  stem of `load-file-name' is attempted."
+    (let ((name-branch
+       (file-relative-name (or fname load-file-name) user-emacs-directory)))
+      (dolist (config-dir pspmacs/user-worktrees nil)
+        (let* ((modular-init (expand-file-name name-branch config-dir)))
+          (if (file-exists-p modular-init)
+          (load modular-init nil 'nomessage))))))
+#+end_src
+
 
 ** Inherit
 #+begin_src emacs-lisp :tangle definitions.el

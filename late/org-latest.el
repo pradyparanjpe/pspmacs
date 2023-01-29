@@ -64,7 +64,7 @@ Settings loaded from files located in `pvt-emacs-directory' are overwritten
 by settings loaded from files located in `local-emacs-directory'."
   (let ((name-branch
      (file-relative-name (or fname load-file-name) user-emacs-directory)))
-    (dolist (config-dir `(,pvt-emacs-directory ,local-emacs-directory) nil)
+    (dolist (config-dir pspmacs/user-worktrees nil)
   (let* ((modular-init (expand-file-name name-branch config-dir)))
     (if (file-exists-p modular-init)
         (pspmacs/load-suitable modular-init))))))

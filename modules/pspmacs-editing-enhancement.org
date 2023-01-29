@@ -134,20 +134,25 @@ Multi cursor edit mode
 
 * fuco1/smartparens
 - Autocomplete pairs
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package smartparens
     :ensure t
     :config
     (setq sp-show-pair-from-inside nil)
+    (sp-with-modes 'emacs-lisp-mode
+      ;; disable ', it's the quote character!
+      (sp-local-pair "'" nil :actions nil)
+      ;; also only use the pseudo-quote inside strings where it
+      ;; serves as hyperlink.
+      (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p)))
     (show-paren-mode t)
-    (require 'smartparens-config)
-    :diminish smartparens-mode)
+    (smartparens-global-mode t))
 #+end_src
 
 * emacs/undo-tree
 - Undo history cache
 - set cache to xdg/emacs-cache-directory
-  #+begin_src emacs-lisp :tangle no
+  #+begin_src emacs-lisp
     (use-package undo-tree
       :ensure t
       :general
@@ -168,14 +173,25 @@ Multi cursor edit mode
 Insert snippets of frequently used topics.
 #+begin_src emacs-lisp
   (use-package yasnippet
+    :ensure t
     :general
+    (pspmacs/leader-keys
+      "y" '(:ignore t "yas")
+      "yn" '(yas-new-snippet :wk "new")
+      "yi" '(yas-insert-snippet :wk "insert"))
     (yas-minor-mode-map
      :states 'insert
      "TAB" 'nil
      "C-TAB" 'yas-expand)
+    :config
+    (pspmacs/extend-list
+     'yas-snippet-dirs
+     (mapcar
+      (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
     :hook
-    ((prog-mode org-mode) . yas-minor-mode))
+    (((prog-mode org-mode) . yas-minor-mode)))
 #+end_src
+
 * FlySpell
 Spell-check on-the-fly
 #+begin_src emacs-lisp
@@ -189,7 +205,5 @@ Spell-check on-the-fly
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  
   ;;; pspmacs-editing-enhancement.el ends here
 #+end_src
-

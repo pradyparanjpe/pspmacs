@@ -99,14 +99,53 @@
     "sef" '(mc/mark-all-symbols-like-this-in-defun :wk "function")
     "seb" '(mc/mark-all-symbols-like-this :wk "buffer")))
 
-(use-package yasnippet
+(use-package smartparens
+  :ensure t
+  :config
+  (setq sp-show-pair-from-inside nil)
+  (sp-with-modes 'emacs-lisp-mode
+    ;; disable ', it's the quote character!
+    (sp-local-pair "'" nil :actions nil)
+    ;; also only use the pseudo-quote inside strings where it
+    ;; serves as hyperlink.
+    (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p)))
+  (show-paren-mode t)
+  (smartparens-global-mode t))
+
+(use-package undo-tree
+  :ensure t
   :general
+  (general-define-key
+   :keymaps 'evil-normal-state-map
+   "u" #'undo-tree-undo
+   "C-r" #'undo-tree-redo)
+  :init
+  (global-undo-tree-mode)
+  :custom
+  (undo-tree-auto-save-history t)
+  (undo-tree-history-directory-alist 
+   `(("." . ,(expand-file-name "undo-tree" xdg/emacs-cache-directory))))
+  (undo-tree-visualizer-diff t)
+  (undo-tree-visualizer-timestamps t))
+
+(use-package yasnippet
+  :ensure t
+  :general
+  (pspmacs/leader-keys
+    "y" '(:ignore t "yas")
+    "yn" '(yas-new-snippet :wk "new")
+    "yi" '(yas-insert-snippet :wk "insert"))
   (yas-minor-mode-map
    :states 'insert
    "TAB" 'nil
    "C-TAB" 'yas-expand)
+  :config
+  (pspmacs/extend-list
+   'yas-snippet-dirs
+   (mapcar
+    (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
   :hook
-  ((prog-mode org-mode) . yas-minor-mode))
+  (((prog-mode org-mode) . yas-minor-mode)))
 
 (general-add-hook 'org-mode-hook 'flyspell-mode)
 (pspmacs/leader-keys
@@ -116,5 +155,4 @@
   "Sp" '(evil-prev-flyspell-error :wk "previous"))
 
 (pspmacs/load-inherit)
-
 ;;; pspmacs-editing-enhancement.el ends here

@@ -102,6 +102,8 @@
     "v" '(:ignore t :wk "reveal")
     "vv" '(org-pandoc-export-to-revealjs :wk "export")
     "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
+  :config
+  (setq org-re-reveal-single-file t)
   :hook (org-mode . reveal-mode))
 
 (defun pspmacs/project-to-publish-alist

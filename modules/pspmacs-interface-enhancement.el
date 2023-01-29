@@ -245,7 +245,6 @@
     "wr" '(evil-window-right :wk "right window")
     "ws" '(evil-window-split :wk "split window horizontally")
     "wv" '(evil-window-vsplit :wk "split window vertically"))
-  (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
 
   :init
   (setq evil-search-module 'isearch)
@@ -256,7 +255,8 @@
   (setq evil-split-window-below t)
   (setq evil-vsplit-window-right t)
   (setq evil-want-C-i-jump nil) ;; hopefully this will fix weird tab behaviour
-  (setq evil-undo-system 'undo-redo) ;; undo via 'u', and redo the undone change via 'C-r'; only available in emacs 28+.
+  (setq evil-undo-system 'undo-tree)
+  ;; undo via 'u', and redo the undone change via 'C-r'; only available in emacs 28+.
   (setq evil-normal-state-cursor '(box "orange"))
   (setq evil-insert-state-cursor '((bar . 3) "green"))
   (setq evil-visual-state-cursor '(box "light blue"))

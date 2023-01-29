@@ -16,7 +16,9 @@
          (expand-file-name (getenv "PVT_EMACS_HOME"))))
     ((getenv "PVT_EMACS_HOME")
      (expand-file-name (getenv "PVT_EMACS_HOME")))))
-  "Private version controlled, privately synchronized configuration directory")
+  "Private version controlled
+
+privately synchronized configuration directory")
 
 (defvar local-emacs-directory
   (file-name-as-directory
@@ -34,6 +36,20 @@
          (expand-file-name "local.d" user-emacs-directory))))))
   "Local, machine-specific, un-synchronized configuration directory")
 
+(defvar pspmacs/user-worktrees
+  `(,pvt-emacs-directory ,local-emacs-directory)
+  "user's worktrees to load")
+(defvar pspmacs/worktrees
+  `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory)
+  "worktrees to load")
+
+(defvar pspmacs/load-custom-file t
+  "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
+
+(defvar pspmacs/packaging-directory
+  (expand-file-name "pspackaging" user-emacs-directory)
+  "Packaging system (straight) to use.")
+
 (defun pspmacs/load-inherit (&optional fname)
   "Inherit all equivalent files.
 
@@ -42,16 +58,9 @@ If FNAME is supplied, *that* corresponding file name is attempted, else,
 stem of `load-file-name' is attempted."
   (let ((name-branch
      (file-relative-name (or fname load-file-name) user-emacs-directory)))
-    (dolist (config-dir `(,pvt-emacs-directory ,local-emacs-directory) nil)
+    (dolist (config-dir pspmacs/user-worktrees nil)
       (let* ((modular-init (expand-file-name name-branch config-dir)))
         (if (file-exists-p modular-init)
         (load modular-init nil 'nomessage))))))
-
-(defvar pspmacs/load-custom-file t
-  "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
-
-(defvar pspmacs/packaging-directory
-  (expand-file-name "pspackaging" user-emacs-directory)
-  "Packaging system (straight) to use.")
 
 (pspmacs/load-inherit)

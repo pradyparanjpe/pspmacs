@@ -92,7 +92,9 @@
   :ensure t
   :defer t
   :init
-  (setq treemacs-persist-file (expand-file-name "treemacs-persist" xdg/emacs-cache-directory))
+  (setq treemacs-persist-file
+        (expand-file-name "treemacs-persist" xdg/emacs-cache-directory))
+  (add-to-list 'recentf-exclude ".*treemacs-persist\\'")
   :general
   (pspmacs/leader-keys
     "0" '(treemacs-select-window :wk "treemacs"))

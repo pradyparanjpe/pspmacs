@@ -94,7 +94,6 @@
     (setq org-pretty-entities t)
     (setq org-return-follows-link t)
     (setq org-hide-emphasis-markers t)
-    (setq org-re-reveal-single-file t)
     (setq org-roam-dailies-directory pspmacs/org-journal-path)
     (setq org-startup-folded t)
 
