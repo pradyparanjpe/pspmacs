@@ -78,5 +78,5 @@
   :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-integration)
-;;; os.el ends here
+
+;;; pspmacs-os.el ends here

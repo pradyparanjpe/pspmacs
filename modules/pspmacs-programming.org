@@ -4,7 +4,7 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;; pspmacs-programming.el --- common programming config -*- lexical-binding: t; -*-
+;;; programming.el --- common programming config -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -323,6 +323,6 @@
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)
-   (provide 'pspmacs-programming)
-   ;;; programming.el ends here
+   
+   ;;; pspmacs-programming.el ends here
 #+end_src

@@ -508,6 +508,6 @@ TODO: replace
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-interface-enhancement)
-  ;;; interface-enhancement.el ends here
+  
+  ;;; pspmacs-interface-enhancement.el ends here
 #+end_src

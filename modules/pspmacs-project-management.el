@@ -1,4 +1,4 @@
-;;;; pspmacs-project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
+;;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -197,4 +197,3 @@
       `((".*" ,(expand-file-name "backups" xdg/emacs-data-directory) t)))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-project-managementrs)

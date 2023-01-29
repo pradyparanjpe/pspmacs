@@ -159,4 +159,3 @@ to publish orgmode files to html."
          '("org-notes" "org-static" "org-templates"))))))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-markups)

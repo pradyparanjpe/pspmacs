@@ -177,5 +177,5 @@
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-note)
+  
 #+end_src

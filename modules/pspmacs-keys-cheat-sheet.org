@@ -4,7 +4,7 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;; pspmacs-funcs.el --- Keybinding maps using general.el -*- lexical-binding: t; -*-
+;;; pspmacs-funcs.el --- Keybinding maps using pspmacs-general.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -43,6 +43,6 @@
 * Inherit private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-keys-cheat-sheet)
+  
   ;;; pspmacs-keys-cheat-sheet.el ends here
 #+end_src

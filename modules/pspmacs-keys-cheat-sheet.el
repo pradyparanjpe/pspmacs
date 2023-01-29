@@ -1,4 +1,4 @@
-;;; pspmacs-funcs.el --- Keybinding maps using general.el -*- lexical-binding: t; -*-
+;;; pspmacs-funcs.el --- Keybinding maps using pspmacs-general.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -30,5 +30,5 @@
   (which-key-setup-minibuffer))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-keys-cheat-sheet)
+
 ;;; pspmacs-keys-cheat-sheet.el ends here

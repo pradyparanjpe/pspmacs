@@ -1,4 +1,4 @@
-;;; pspmacs-prog.el --- python ide -*- lexical-binding: t; -*-
+;;; prog.el --- python ide -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -140,5 +140,5 @@
   :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-python)
-;;; prog.el ends here
+
+;;; pspmacs-prog.el ends here

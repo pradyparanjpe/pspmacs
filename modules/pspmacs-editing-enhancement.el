@@ -116,5 +116,5 @@
   "Sp" '(evil-prev-flyspell-error :wk "previous"))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-editing-enhancement)
-;;; editing-enhancement.el ends here
+
+;;; pspmacs-editing-enhancement.el ends here

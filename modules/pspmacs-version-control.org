@@ -80,6 +80,6 @@
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-version-control)
+  
   ;;; pspmacs-version-control.el ends here
 #+end_src

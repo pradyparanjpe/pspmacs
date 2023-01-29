@@ -189,7 +189,7 @@ Spell-check on-the-fly
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-editing-enhancement)
-  ;;; editing-enhancement.el ends here
+  
+  ;;; pspmacs-editing-enhancement.el ends here
 #+end_src
 

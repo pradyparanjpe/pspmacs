@@ -1,4 +1,4 @@
-;;;; pspmacs-org.el --- org-mode -*- lexical-binding: t; -*-
+;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -59,7 +59,7 @@ Re-definition of early-loaded function after the correct orgmode is loaded.
 Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
 If FNAME is supplied, *that* corresponding file name is attempted, else,
 stem of `load-file-name' is attempted.
-Init files are loaded using the function `pspmacs-load-suitable'.
+Init files are loaded using the function `pspmacs/load-suitable'.
 Settings loaded from files located in `pvt-emacs-directory' are overwritten
 by settings loaded from files located in `local-emacs-directory'."
   (let ((name-branch
@@ -70,4 +70,3 @@ by settings loaded from files located in `local-emacs-directory'."
         (pspmacs/load-suitable modular-init))))))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-org-latest)

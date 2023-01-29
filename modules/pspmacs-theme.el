@@ -44,5 +44,5 @@
    (space-theming-update-current-theme))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-theme)
-;;; interface-enhancement.el ends here
+
+;;; pspmacs-interface-enhancement.el ends here

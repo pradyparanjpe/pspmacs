@@ -7,8 +7,6 @@
 ** Header
 #+begin_src emacs-lisp :tangle definitions.el
   ;;; late/definitions.el --- identifies platform -*- lexical-binding: t; -*-
-  (require 'yaml)
-  (require 'ht)
 #+end_src
 
 ** Identify platform
@@ -142,36 +140,6 @@
     (pspmacs/load-inherit)
 #+end_src
 
-** Order of pspmacs modules to load
-#+begin_src emacs-lisp :tangle definitions.el
-  (defvar pspmacs/modules-order-list
-    (let
-        ((modules-dir
-          (mapcar
-           (lambda (x)
-             (expand-file-name "modules" x))
-           `(,user-emacs-directory
-             ,pvt-emacs-directory
-             ,local-emacs-directory))))
-         (apply
-           'vconcat (mapcar
-                     (lambda (x) (cdr x))
-                     (sort
-                      (ht->alist
-                       (apply
-                        'ht-merge
-                        (remq 'nil
-                              (mapcar
-                               (lambda (x)
-                                 (let
-                                     ((order-file (expand-file-name "load-order.yml" x)))
-                                   (if (file-readable-p order-file)
-                                       (yaml-parse-string (f-read-text order-file)))))
-                               modules-dir))))
-                      (lambda (a b) (< (car a) (car b)))))))
-  "Ordered list of pspmacs/modules to load")
-#+end_src
-
 ** Inherit
 #+begin_src emacs-lisp :tangle definitions.el
     (pspmacs/load-inherit)
@@ -231,13 +199,13 @@
 #+end_src
 
 #+begin_note
-gcmh, which is a package presumed to be better at handling gc shall be loaded in the module [[file:../modules/pspmacs-interface-enhancement.org]]
+gcmh, which is a package presumed to be better at handling gc shall be loaded in the module [[file:../modules/interface-enhancement.org]]
 #+end_note
 
 ** Initiate org mode with latest release
 - Emacs is shipped with a built-in org-mode. However, we shall use the latest release.
   #+begin_src emacs-lisp :tangle org-latest.el
-    ;;;; pspmacs-org.el --- org-mode -*- lexical-binding: t; -*-
+    ;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
 
     ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -266,6 +234,43 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
       ;; :straight (:type built-in)
       :ensure t)
   #+end_src
+
+** Order of pspmacs modules to load
+#+begin_src emacs-lisp :tangle init.el
+  (use-package yaml)
+  (use-package ht)
+  (use-package f)
+
+  (defvar pspmacs/modules-order
+    (let
+        ((modules-dir
+          (mapcar
+           (lambda (x)
+             (expand-file-name "modules" x))
+           `(,user-emacs-directory
+             ,pvt-emacs-directory
+             ,local-emacs-directory))))
+         (apply
+           'vconcat (mapcar
+                     (lambda (x) (cdr x))
+                     (sort
+                      (ht->alist
+                       (apply
+                        'ht-merge
+                        (remq 'nil
+                              (mapcar
+                               (lambda (x)
+                                 (let
+                                     ((order-file
+                                       (expand-file-name "load-order.yml" x)))
+                                   (if (file-readable-p order-file)
+                                       (yaml-parse-string
+                                        (f-read-text order-file)))))
+                               modules-dir))))
+                      (lambda (a b) (< (car a) (car b)))))))
+  "Ordered list of pspmacs/modules to load")
+#+end_src
+
 
 *** Org mode auto-load
 - Expand faculties of [[*Org mode auto-load][pspmacs/load-inherit]] to =org-babel-load-file=
@@ -302,7 +307,7 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
    Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
    If FNAME is supplied, *that* corresponding file name is attempted, else,
    stem of `load-file-name' is attempted.
-   Init files are loaded using the function `pspmacs-load-suitable'.
+   Init files are loaded using the function `pspmacs/load-suitable'.
    Settings loaded from files located in `pvt-emacs-directory' are overwritten
    by settings loaded from files located in `local-emacs-directory'."
      (let ((name-branch
@@ -316,7 +321,6 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 *** Inherit
 #+begin_src emacs-lisp :tangle org-latest.el
     (pspmacs/load-inherit)
-    (provide 'pspmacs-org-latest)
 #+end_src
 
 - Load contents of the above file
@@ -326,12 +330,19 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 ** [[file:../modules/index.org][Load Modules]]
 #+begin_src emacs-lisp :tangle init.el
-  (dolist (autofile pspmacs/modules-order nil)
-    (let ((lit-module
-           (expand-file-name
-            (format "modules/pspmacs-%s.org" autofile) user-emacs-directory)))
-      (if (file-readable-p lit-module)
-          (pspmacs/load-suitable lit-module))))
+  (seq-doseq (autofile pspmacs/modules-order nil)
+    (dolist
+        (work-tree
+         `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory)
+         nil)
+      (catch 'load-success
+        (let* ((lit-module
+                (expand-file-name
+                 (format "modules/pspmacs-%s.org" autofile) work-tree))
+               (found (when (file-readable-p lit-module)
+                        (pspmacs/load-suitable lit-module)
+                        lit-module)))
+          (when found (throw 'load-success lit-module))))))
 #+end_src
 
 ** Inherit

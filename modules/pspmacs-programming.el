@@ -1,4 +1,4 @@
-;;; pspmacs-programming.el --- common programming config -*- lexical-binding: t; -*-
+;;; programming.el --- common programming config -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -281,5 +281,5 @@
   (setq-default fill-column 80))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-programming)
-;;; programming.el ends here
+
+;;; pspmacs-programming.el ends here

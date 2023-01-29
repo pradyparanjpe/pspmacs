@@ -427,5 +427,5 @@ Return value is the new value of LIST-VAR"
         tab-width 4))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-interface-enhancement)
-;;; interface-enhancement.el ends here
+
+;;; pspmacs-interface-enhancement.el ends here

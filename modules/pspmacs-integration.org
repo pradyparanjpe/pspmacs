@@ -117,6 +117,6 @@ Primary to bind restart key
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)
-   (provide 'pspmacs-integration)
-   ;;; os.el ends here
+   
+   ;;; pspmacs-os.el ends here
 #+end_src

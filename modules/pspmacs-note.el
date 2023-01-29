@@ -149,4 +149,3 @@
   (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-note)

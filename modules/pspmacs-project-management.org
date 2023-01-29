@@ -4,7 +4,7 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;;; pspmacs-project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
+;;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -216,5 +216,5 @@
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-project-managementrs)
+  
 #+end_src

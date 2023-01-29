@@ -54,6 +54,6 @@
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-theme)
-  ;;; interface-enhancement.el ends here
+  
+  ;;; pspmacs-interface-enhancement.el ends here
 #+end_src

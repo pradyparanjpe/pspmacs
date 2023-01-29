@@ -36,7 +36,6 @@
   (defun pspmacs/prettify-emacs-lisp ()
       (pspmacs/mode-prettify '("code" "emacs-lisp")))
   (add-hook 'emacs-lisp-mode-hook 'pspmacs/prettify-emacs-lisp)
-  (provide 'pspmacs-emacs-lisp)
   ;;; pspmacs-emacs-lisp.el ends here
 #+end_src
 
@@ -54,5 +53,5 @@
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  (provide 'pspmacs-emacs-lisp)
+  
 #+end_src

@@ -25,7 +25,6 @@
 (defun pspmacs/prettify-emacs-lisp ()
     (pspmacs/mode-prettify '("code" "emacs-lisp")))
 (add-hook 'emacs-lisp-mode-hook 'pspmacs/prettify-emacs-lisp)
-(provide 'pspmacs-emacs-lisp)
 ;;; pspmacs-emacs-lisp.el ends here
 
 (pspmacs/local-leader-keys
@@ -36,4 +35,3 @@
   "eb" '(eval-buffer :wk "buffer"))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-emacs-lisp)

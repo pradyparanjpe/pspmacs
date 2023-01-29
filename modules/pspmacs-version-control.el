@@ -65,5 +65,5 @@
   (global-diff-hl-mode))
 
 (pspmacs/load-inherit)
-(provide 'pspmacs-version-control)
+
 ;;; pspmacs-version-control.el ends here
