@@ -32,7 +32,3 @@
   - version-control
   - markup
 #+end_src
-
-* TODO Load modules in groups [1/2]
-- [X] Combine all yaml lists in order of sorted keys from all worktrees
-- [ ] Look for module-names in ~<worktree>/modules/~ and load it

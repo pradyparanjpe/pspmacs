@@ -31,9 +31,12 @@
   (setq interprogram-paste-function 'wl-paste))
 
 (defun pspmacs/yank-file-name ()
-  "Yank file-name to clipboard"
+  "Yank file-name to clipboard
+
+Also, display file name in echo area"
   (interactive)
-  (kill-new buffer-file-name))
+  (kill-new buffer-file-name)
+  (message (format "Copied: %s"buffer-file-name)))
 
 (use-package restart-emacs
   :general

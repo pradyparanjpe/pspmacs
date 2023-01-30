@@ -127,12 +127,9 @@
 
 * emacs-reveal
 - Wrapper for oer/emacs-reveal
-
 #+begin_src emacs-lisp
-  (straight-use-package
-   '(emacs-reveal :host gitlab :repo "oer/emacs-reveal"))
-
   (use-package emacs-reveal
+    :straight (:type git :host gitlab :repo "oer/emacs-reveal")
     :ensure t
     :general
     (pspmacs/local-leader-keys

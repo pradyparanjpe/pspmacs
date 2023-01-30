@@ -32,7 +32,31 @@
      (clojure-mode . rainbow-delimiters-mode)))
 
 (use-package whitespace
-  :hook ((prog-mode org-mode) . whitespace-mode))
+  ;; gratefully borrowed from
+  ;; https://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/
+  :init
+  (setq whitespace-display-mappings
+        ;; all numbers are Unicode codepoint in decimal.
+        ;; try (insert-char 182 ) to see it
+        '(
+          ;; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+          (space-mark 32 [183] [46])
+          ;; 10 LINE FEED
+          (newline-mark 10 [182 10])
+          ;; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+          (tab-mark 9 [187 9] [9655 9] [92 9]))
+        whitespace-style '(face tabs trailing tab-mark))
+  :config
+  (set-face-attribute 'whitespace-tab nil
+                      :background "#f0f0f0"
+                      :foreground "#00a8a8"
+                      :weight 'bold)
+  (set-face-attribute 'whitespace-trailing nil
+                      :background "#ffffff"
+                      :foreground "#183bc8"
+                      :weight 'normal)
+  :hook
+  ((prog-mode org-mode) . whitespace-mode))
 
 (use-package whitespace-cleanup-mode
   :hook (prog-mode . whitespace-cleanup))
@@ -43,47 +67,6 @@
 (use-package all-the-icons-dired
   :hook
   (dired-mode . all-the-icons-dired-mode))
-
-(setq pspmacs/pretty-alist
-      '(("code" . (("\\n" . ?⏎)
-                   ("\\t" . ?↹)
-                   (">=" . ?≥)
-                   ("<=" . ?≤)
-                   ("!=" . ?≠)
-                   ("==" . ?≅)))
-        ("lisp" . (("lambda" . ?λ)))
-        ("org" . (("#+setupfile" . ?🛒)
-                  ("#+author" . ?🖋)
-                  ("#+begin_src" . ?)
-                  ("#+end_src" . ?⏎)
-                  ("#+email" . ?✉)
-                  ("#+language" . ?🗣)
-                  ("#+options" . ?🔘)
-                  ("#+property" . ?⚙)
-                  ("#+results" . ?📜)
-                  ("#+startup" . ?)
-                  ("#+html_head" . ?)
-                  ("#+title" . ?§)
-                  ("tangle" . ?🔗)
-                  ("[x]" . ?✔)
-                  ("[ ]" . ?❌)
-                  ("[-]" . ?⏳)))
-        ("python" . (("and" . ?∩)
-                     ("or" . ?∪)
-                     ("->" . ?⇒)))))
-
-(defun pspmacs/mode-prettify (sub-modes)
-  "Apply pretiffy mode alist according to active-mode"
-  (progn
-    (setq
-     prettify-symbols-alist
-     (mapcan (lambda (x)
-               (list x `(,(upcase (car x)) . ,(cdr x))))
-             (apply #'append
-                    (mapcar
-                     (lambda (y)
-                       (cdr (assoc y pspmacs/pretty-alist))) sub-modes))))
-    (prettify-symbols-mode)))
 
 (use-package multiple-cursors
   :after evil
@@ -104,13 +87,6 @@
   :ensure t
   :custom
   (sp-show-pair-from-inside nil)
-  :config
-  (sp-with-modes 'emacs-lisp-mode
-    ;; disable ', it's the quote character!
-    (sp-local-pair "'" nil :actions nil)
-    ;; also only use the pseudo-quote inside strings where it
-    ;; serves as hyperlink.
-    (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p)))
   (show-paren-mode t)
   (smartparens-global-mode t))
 

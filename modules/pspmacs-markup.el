@@ -104,10 +104,8 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography))
 
-(straight-use-package
- '(emacs-reveal :host gitlab :repo "oer/emacs-reveal"))
-
 (use-package emacs-reveal
+  :straight (:type git :host gitlab :repo "oer/emacs-reveal")
   :ensure t
   :general
   (pspmacs/local-leader-keys

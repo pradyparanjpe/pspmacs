@@ -99,6 +99,7 @@
     (org-hide-emphasis-markers t)
     (org-roam-dailies-directory pspmacs/org-journal-path)
     (org-startup-folded t)
+    (org-todo-keyword-faces pspmacs/hl-tag-faces)
     (org-todo-keywords
      '((sequence
         "FAIL(f)"
@@ -121,27 +122,6 @@
         "DONE(d)"
         "DONT(!)"
         "CANT(c)")))
-
-    (org-todo-keyword-faces
-     '(("FAIL"  .  "#ff3f3f")
-       ("FIXME" .  "#ff6f3f")
-       ("TEMP"  .  "#ff9f3f")
-       ("HACK"  .  "#ffcf3f")
-       ("TODO"  .  "#ffff3f")
-       ("LAZY"  .  "#e7ff3f")
-       ("WAIT"  .  "#cfff3f")
-       ("NEXT"  .  "#9fff3f")
-       ("ALGO"  .  "#6fff3f")
-       ("PROG"  .  "#3fff3f")
-       ("TEST"  .  "#3fe757")
-       ("ACTS"  .  "#3fcf6f")
-       ("SENT"  .  "#3f9f9f")
-       ("OKAY"  .  "#3f6fcf")
-       ("DONE"  .  "#3f3fff")
-       ("NOTE"  .  "#ffcf6f")
-       ("XXXX"  .  "#ff9f9f")
-       ("DONT"  .  "#ff6fcf")
-       ("CANT"  .  "#ff3fff")))
 
     :config
     (org-babel-do-load-languages
