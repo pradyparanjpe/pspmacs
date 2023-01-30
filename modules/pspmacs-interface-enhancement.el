@@ -331,6 +331,10 @@
           :box '(:line-width 8 :color "#262033")
           :overline nil
           :underline nil)
+  (set-face-attribute 'doom-modeline-buffer-file nil
+          :foreground "#009f9f")
+  (set-face-attribute 'doom-modeline-time nil
+          :foreground "#9fafbf")
   (set-face-attribute 'doom-modeline-evil-insert-state nil
           :foreground "green")
   (set-face-attribute 'doom-modeline-evil-normal-state nil

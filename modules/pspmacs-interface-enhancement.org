@@ -360,10 +360,9 @@ Flash highlight hints on evil actions
     (setq read-extended-command-predicate
           #'command-completion-default-include-p))
 #+end_src
-
-* seagle0128/doom-modeline
-- Doom Modeline
-TODO: replace
+* mode-line
+** seagle0128/doom-modeline
+- [ ] replace
 #+begin_src emacs-lisp
   (use-package doom-modeline
     :demand t
@@ -387,6 +386,10 @@ TODO: replace
             :box '(:line-width 8 :color "#262033")
             :overline nil
             :underline nil)
+    (set-face-attribute 'doom-modeline-buffer-file nil
+            :foreground "#009f9f")
+    (set-face-attribute 'doom-modeline-time nil
+            :foreground "#9fafbf")
     (set-face-attribute 'doom-modeline-evil-insert-state nil
             :foreground "green")
     (set-face-attribute 'doom-modeline-evil-normal-state nil

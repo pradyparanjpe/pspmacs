@@ -144,6 +144,8 @@
    'yas-snippet-dirs
    (mapcar
     (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
+  (dolist (snippets-wt yas-snippet-dirs nil)
+    (mkdir snippets-wt t))
   :hook
   (((prog-mode org-mode) . yas-minor-mode)))
 
