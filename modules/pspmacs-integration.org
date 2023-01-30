@@ -65,7 +65,7 @@ Primary to bind restart key
       "qr" '(restart-emacs :wk "and restart")))
 #+end_src
 
-* Helm search (ag)
+* Search
 - Attempted order
   1. ripgrep (~rg~)
   2. platinum searcher (~pt~)
@@ -73,19 +73,60 @@ Primary to bind restart key
   4. silver-search (~ag~)
   5. fallback grep (~grep~)
 
+** minad/consult
 #+begin_src emacs-lisp
+  ;; Example configuration for Consult
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :commands (consult-ripgrep)
+    :general
+    (pspmacs/leader-keys
+      "b b" '(consult-buffer :wk "buffer")
+      "/" '(consult-ripgrep :wk "find in project")
+      "*" '(lambda ()
+             (interactive)
+             (consult-ripgrep nil (thing-at-point 'symbol))
+             :kw "find in project"))
+
+    (pspmacs/local-leader-keys
+      "M-x" '(consult-mode-command))
+    ;; Enable automatic preview at point in the *Completions* buffer. This is
+    ;; relevant when you use the default completion UI.
+    :hook (completion-list-mode . consult-preview-at-point-mode)
+    :init
+    (setq register-preview-delay 0.5
+          register-preview-function #'consult-register-format)
+    (advice-add #'register-preview :override #'consult-register-window)
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+    :config
+    (consult-customize
+     consult-theme :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-file-register
+     consult--source-recent-file consult--source-project-recent-file
+     ;; :preview-key "M-."
+     :preview-key '(:debounce 0.4 any))
+    (setq consult-narrow-key "<") ;; "C-+"
+    (autoload 'projectile-project-root "projectile")
+    (setq consult-project-root-function #'projectile-project-root))
+#+end_src
+** Helm search (ag)
+- Deprecate with helm
+#+begin_src emacs-lisp :tangle no :export no
   (use-package helm-ag
     :general
     (pspmacs/leader-keys
       "/" '(lambda ()
              (interactive)
-             (helm-do-ag (or projectile-project-root default-directory)))
-      :kw "find in project"
+             (helm-do-ag (or projectile-project-root default-directory))
+             :kw "find in project")
       "*" '(lambda ()
              (interactive)
              (helm-do-ag (or projectile-project-root default-directory) nil
-                         (thing-at-point 'symbol)))
-      :kw "find in project")
+                         (thing-at-point 'symbol))
+             :kw "find in project"))
     :init
     (cond
      ((executable-find "rg")

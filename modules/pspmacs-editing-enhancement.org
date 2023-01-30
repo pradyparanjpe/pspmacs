@@ -122,7 +122,16 @@ Multi cursor edit mode
     :custom
     (sp-show-pair-from-inside nil)
     (show-paren-mode t)
-    (smartparens-global-mode t))
+    (smartparens-global-mode t)
+    :config
+    (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
+    (sp-local-pair 'python-mode "__" "__")
+    (sp-with-modes 'emacs-lisp-mode-map
+      ;; disable ', it's the quote character!
+      (sp-local-pair "'" nil :actions nil)
+      ;; also only use the pseudo-quote inside strings where it
+      ;; serves as hyperlink.
+      (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))))
 #+end_src
 
 * emacs/undo-tree

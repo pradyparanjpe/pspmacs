@@ -92,6 +92,10 @@
         (switch-to-buffer (other-buffer (current-buffer) 1)))
       :which-key "last buffer")
     "bd" '(kill-this-buffer :wk "kill this buffer")
+    "b TAB" '((lambda ()
+                (interactive)
+                (switch-to-buffer (other-buffer (current-buffer) 1)))
+              :which-key "toggle")
     "bm" '((lambda ()
          (interactive) (switch-to-buffer (get-buffer-create "*Messages*")))
        :which-key "messages")
@@ -117,6 +121,7 @@
   ;; file
   (pspmacs/leader-keys
     "f" '(:ignore t :wk "file")
+    "ff" '(find-file :wk "find")
     "fe" '(:ignote t :wk "emacs")
     "fec" '((lambda ()
       (interactive)
@@ -139,7 +144,6 @@
     "fy" '(pspmacs/yank-file-name :wk "Copy file name"))
 
   ;; help
-  ;; namespace mostly used by 'helpful'
   (pspmacs/leader-keys "h" (general-simulate-key "C-h"))
 
   ;; universal argument
@@ -246,6 +250,7 @@
     "wr" '(evil-window-right :wk "right window")
     "ws" '(evil-window-split :wk "split window horizontally")
     "wv" '(evil-window-vsplit :wk "split window vertically"))
+  (evil-insert-state-map "C-k" nil)
   :init
   (setq
    ;; allow scroll up with 'C-u'
@@ -296,23 +301,88 @@
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
 
-(use-package helm
-  :demand t
-  :bind (("M-x" . helm-M-x))
+;; Enable vertico
+(use-package vertico
+  :general
+  (:keymaps 'vertico-map
+            "C-j" #'vertico-next
+            "C-k" #'vertico-previous
+            "<escape>" #'minibuffer-keyboard-quit ; Close minibuffer
+            ;; "C-;" #'kb/vertico-multiform-flat-toggle
+            "M-<backspace>" #'vertico-directory-delete-word)
+  (pspmacs/leader-keys
+    "SPC" '(execute-extended-command :wk "vertico M-x"))
+  :init
+  (vertico-mode))
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; A few more useful configurations...
+(use-package emacs
+  :init
+  ;; Add prompt indicator to `completing-read-multiple'.
+  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+  (defun crm-indicator (args)
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+  ;; Vertico commands are hidden in normal buffers.
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
+
+  ;; Enable recursive minibuffers
+  (setq enable-recursive-minibuffers t))
+
+(use-package marginalia
+  ;; Either bind `marginalia-cycle' globally or only in the minibuffer
+  :after vertico
   :general
   (general-define-key
-   :keymaps 'helm-map
-   "TAB" #'helm-execute-persistent-action
-   "C-z" #'helm-select-action)
-  (pspmacs/leader-keys
-    "SPC" '(helm-M-x :wk "helm-M-x"))
-  (pspmacs/leader-keys
-    "ff" '(helm-find-files :wk "find files")
-    "bb" '(helm-buffers-list :wk "switch buffer"))
+   :keymaps 'minibuffer-local-map
+   "M-A" #'marginalia-cycle)
+  :init
+  (marginalia-mode))
+
+(use-package orderless
+  :after vertico
+  :init
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package embark
+  :ensure t
+  :after vertico
   :config
-  (helm-mode 1)
-  (setq read-extended-command-predicate
-        #'command-completion-default-include-p))
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t;
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package doom-modeline
   :demand t

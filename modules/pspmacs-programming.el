@@ -22,23 +22,69 @@
 
 ;;; Code:
 
-(use-package company
-  :ensure t
-  :diminish
-  :commands (company-mode company-indent-or-complete-common)
+(use-package corfu
+  ;; Optional customizations
   :custom
-  (company-dabbrev-other-buffers t)
-  (company-dabbrev-code-other-buffers t)
-  :hook ((text-mode . company-mode)
-         (prog-mode . company-mode)))
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
 
-(use-package company-quickhelp
-  :after company
-  :general
-  (pspmacs/leader-keys
-    :keymaps 'company-active-map
-    "H" '(:ignore t :wk "quickhelp")
-    "H?" '(company-quickhelp-manual-begin)))
+  ;; Enable Corfu only for certain modes.
+  ;; :hook ((prog-mode . corfu-mode)
+            ;;        (shell-mode . corfu-mode)
+            ;;        (eshell-mode . corfu-mode)
+            ;;        (org-mode . corfu-mode))
+  ;; ;; Recommended: Enable Corfu globally.
+  ;; ;; This is recommended since Dabbrev can be used globally (M-/).
+  ;; See also `corfu-excluded-modes'.
+  :config
+  (global-corfu-mode))
+
+  ;; A few more useful configurations...
+(use-package emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete))
+
+(use-package cape
+  :init
+  ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
+  (add-to-list 'completion-at-point-functions #'cape-file t))
+  ;; (fset #'cape-path (cape-company-to-capf #'company-files))
+  ;; (add-to-list 'completion-at-point-functions #'cape-path t)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line))
+
+(use-package kind-icon
+  :ensure t
+  :after corfu
+  :custom
+  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 (use-package gtags
   :hook (prog-mode . gtags-mode))
@@ -123,5 +169,4 @@
   (setq-default fill-column 80))
 
 (pspmacs/load-inherit)
-
 ;;; pspmacs-programming.el ends here

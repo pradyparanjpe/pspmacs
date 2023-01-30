@@ -43,30 +43,42 @@ Also, display file name in echo area"
   (pspmacs/leader-keys
     "qr" '(restart-emacs :wk "and restart")))
 
-(use-package helm-ag
+;; Example configuration for Consult
+(use-package consult
+  ;; Replace bindings. Lazily loaded due by `use-package'.
+  :commands (consult-ripgrep)
   :general
   (pspmacs/leader-keys
-    "/" '(lambda ()
-           (interactive)
-           (helm-do-ag (or projectile-project-root default-directory)))
-    :kw "find in project"
+    "b b" '(consult-buffer :wk "buffer")
+    "/" '(consult-ripgrep :wk "find in project")
     "*" '(lambda ()
            (interactive)
-           (helm-do-ag (or projectile-project-root default-directory) nil
-                       (thing-at-point 'symbol)))
-    :kw "find in project")
+           (consult-ripgrep nil (thing-at-point 'symbol))
+           :kw "find in project"))
+
+  (pspmacs/local-leader-keys
+    "M-x" '(consult-mode-command))
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
   :init
-  (cond
-   ((executable-find "rg")
-    (custom-set-variables
-     '(helm-ag-base-command "rg --no-heading")
-     `(helm-ag-success-exit-status '(0 2))))
-   ((executable "pt")
-    (custom-set-variables
-     '(helm-ag-base-command "pt -e --nocolor --nogroup")))
-   ((executable "ack")
-    (custom-set-variables
-     '(helm-ag-base-command "ack --nocolor --nogroup")))))
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+  :config
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+  (setq consult-narrow-key "<") ;; "C-+"
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-root-function #'projectile-project-root))
 
 (use-package systemd)
 
