@@ -1,16 +1,18 @@
 (use-package doom-themes
-  :config
+  :custom
   ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t ; if nil, bold is universally disabled
-    doom-themes-enable-italic t)
+  ;; if nil, bold is universally disabled
+  (doom-themes-enable-bold t)
   ; if nil, italics is universally disabled
-  (load-theme 'doom-one t)
+  (doom-themes-enable-italic t)
 
+  :config
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
 
   ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  (load-theme 'doom-one t))
 
  (straight-use-package
   '(space-theming :host github :repo "p3r7/space-theming"))
@@ -39,8 +41,8 @@
    (setq custom--inhibit-theme-enable nil)
 
    :config
-   (space-theming-init-theming)
    (setq space-theming--current-theme 'doom-one)
+   (space-theming-init-theming)
    (space-theming-update-current-theme))
 
 (pspmacs/load-inherit)

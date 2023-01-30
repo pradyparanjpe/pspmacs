@@ -2,10 +2,8 @@
   :general
   (pspmacs/leader-keys
     "'" '((lambda () (interactive)
-            (let ((term-window (split-window-below)))
-              (select-window term-window)
-              (vterm)))
-          :wk "terminal"))
+            (pspmacs/inferior-interpreter 'vterm))
+           :wk "terminal"))
   :init
   (setq vterm-always-compile-module t
         vterm-ignore-blink-cursor t)
@@ -43,34 +41,29 @@
     "qr" '(restart-emacs :wk "and restart")))
 
 (use-package helm-ag
+  :general
+  (pspmacs/leader-keys
+    "/" '(lambda ()
+           (interactive)
+           (helm-do-ag (or projectile-project-root default-directory)))
+    :kw "find in project"
+    "*" '(lambda ()
+           (interactive)
+           (helm-do-ag (or projectile-project-root default-directory) nil
+                       (thing-at-point 'symbol)))
+    :kw "find in project")
   :init
   (cond
    ((executable-find "rg")
-(custom-set-variables
- '(helm-ag-base-command "rg --no-heading")
- `(helm-ag-success-exit-status '(0 2))))
+    (custom-set-variables
+     '(helm-ag-base-command "rg --no-heading")
+     `(helm-ag-success-exit-status '(0 2))))
    ((executable "pt")
-(custom-set-variables
- '(helm-ag-base-command "pt -e --nocolor --nogroup")))
+    (custom-set-variables
+     '(helm-ag-base-command "pt -e --nocolor --nogroup")))
    ((executable "ack")
-(custom-set-variables
- '(helm-ag-base-command "ack --nocolor --nogroup"))))
-
-  :general
-  (pspmacs/leader-keys
-"/" '(lambda ()
-       (interactive)
-       (helm-do-ag (or projectile-project-root default-directory)))
-:kw "find in project"
-"*" '(lambda ()
-       (interactive)
-       (helm-do-ag (or projectile-project-root default-directory) nil
-           (thing-at-point 'symbol)))
-:kw "find in project")
-
-  :config
-  (setq treemacs-no-png-images t treemacs-width 24)
-  :bind ("C-c t" . treemacs))
+    (custom-set-variables
+     '(helm-ag-base-command "ack --nocolor --nogroup")))))
 
 (use-package systemd)
 

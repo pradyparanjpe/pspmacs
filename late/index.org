@@ -18,6 +18,20 @@
   (defconst ON-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 #+end_src
 
+** Commonly used functions
+#+begin_src emacs-lisp :tangle definitions.el
+  (defun pspmacs/inferior-interpreter (executable)
+    "Open an inferior interpreter in split window
+
+  Open EXECUTABLE interpreter in an inferior window
+  and kill buffer and destroy window when EXECUTABLE
+  process exits"
+    (interactive)
+    (message (format "executing: %s" executable))
+    (let ((interpreter-window (split-window-below)))
+      (select-window interpreter-window)
+      (call-interactively executable)))
+#+end_src
 ** XDG
 - Emacs must respect =XDG= system
 #+begin_src emacs-lisp :tangle definitions.el
@@ -342,7 +356,8 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 * Config
 - Allow for very late configurations.
-  - User-defined configurations defined in =local-emacs-directory= will even override ~custom.el~
+  - User-defined configurations defined in =local-emacs-directory=
+    will even override ~custom.el~
 ** Headers
 #+begin_src emacs-lisp :tangle config.el
 ;;; late/config.el --- Personal configuration file -*- lexical-binding: t; -*-

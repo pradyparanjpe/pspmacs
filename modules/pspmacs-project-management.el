@@ -122,7 +122,7 @@
           treemacs-max-git-entries                 5000
           treemacs-missing-project-action          'ask
           treemacs-move-forward-on-expand          nil
-          treemacs-no-png-images                   nil
+          treemacs-no-png-images                   t
           treemacs-no-delete-other-windows         t
           treemacs-project-follow-cleanup          nil
           treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
@@ -169,7 +169,6 @@
        (treemacs-git-mode 'deferred))
       (`(t . _)
        (treemacs-git-mode 'simple)))
-
     (treemacs-hide-gitignored-files-mode nil)))
 
 (use-package treemacs-evil

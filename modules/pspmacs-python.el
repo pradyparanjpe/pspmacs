@@ -23,23 +23,18 @@
 ;;; Code:
 
 (use-package python-mode
-  :hook
-  ((envrc-mode . (lambda ()
-                   (when (executable-find "ipython")
-                     (setq python-shell-interpreter
-                           (executable-find "ipython"))))))
   :general
   (pspmacs/local-leader-keys
-    :keymaps 'python-mode-map "'" 'run-python)
-
+    :keymaps 'python-mode-map
+    "'" '((lambda () (interactive)
+            (pspmacs/inferior-interpreter 'run-python))
+          :wk "python"))
   (python-mode-map
    :states 'normal "gz" nil "C-j" nil)
-
   (python-mode-map
    :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
 
   :init
-  (setq python-indent-offset 0)
   (defun pspmacs/py-indent-or-complete ()
     (interactive "*")
     (window-configuration-to-register py--windows-config-register)
@@ -87,16 +82,25 @@
 
   (pspmacs/mode-prettify '("code" "python"))
 
+  :custom
+  (python-indent-offset 0)
+  (python-shell-interpreter-args "-i --simple-prompt --no-color-info")
+  (python-shell-prompt-regexp "In \\[[0-9]+\\]: ")
+  (python-shell-prompt-block-regexp "\\.\\.\\.\\.: ")
+  (python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: ")
+  (python-shell-completion-setup-code
+   "from IPython.core.completerlib import module_completion")
+  (python-shell-completion-string-code
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
   :config
-  (setq python-shell-interpreter-args "-i --simple-prompt --no-color-info"
-        python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-        python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
-        python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-        python-shell-completion-setup-code
-        "from IPython.core.completerlib import module_completion"
-        python-shell-completion-string-code
-        "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
-  (sp-local-pair 'python-mode "\"\"\"" "\"\"\""))
+  (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
+
+  :hook
+  ((envrc-mode . (lambda ()
+                   (when (executable-find "ipython")
+                     (setq python-shell-interpreter
+                           (executable-find "ipython")))))
+   (python-mode . pspmacs/prettify-python)))
 
 (use-package importmagic
   :general
@@ -118,7 +122,6 @@
 
 (use-package yapfify
   :hook (python-mode . yapf-mode))
-
 
 ;; (use-package python-pytest
 ;;   :general

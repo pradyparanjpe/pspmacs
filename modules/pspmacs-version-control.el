@@ -39,24 +39,20 @@
     "TAB" #'magit-section-toggle
     "<escape>" #'transient-quit-one)
   :init
-  (setq
-   magit-display-buffer-function
+  (setq git-commit-fill-column 50)
+  (setq transient-history-file
+        (expand-file-name "transient/history.el" xdg/emacs-cache-directory))
+  (setq transient-values-file
+        (expand-file-name "transient/values.el" xdg/emacs-cache-directory))
+  (setq transient-levels-file
+        (expand-file-name "transient/levels.el" xdg/emacs-cache-directory))
+  :custom
+  (magit-display-buffer-function
    #'magit-display-buffer-same-window-except-diff-v1)
-  (setq magit-log-arguments '("--graph" "--decorate" "--color"))
-  (setq git-commit-fill-column 72)
-  (let
-      ((transient-cache-directory (expand-file-name
-                   "transient" xdg/emacs-cache-directory)))
-    (setq transient-history-file (expand-file-name
-                  "history.el" transient-cache-directory))
-    (setq transient-values-file (expand-file-name
-                  "history.el" transient-cache-directory))
-    (setq transient-levels-file (expand-file-name
-                  "history.el" transient-cache-directory)))
-  ;; (setq magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
-  ;; (when pspmacs/is-ipad (require 'sendmail))
+  (magit-log-arguments '("--graph" "--decorate" "--color"))
+  ;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+
   :config
-  (setq magit-buffer-name-format (concat "*" magit-buffer-name-format "*"))
   (evil-define-key* '(normal visual) magit-mode-map
     "zz" #'evil-scroll-line-to-center))
 

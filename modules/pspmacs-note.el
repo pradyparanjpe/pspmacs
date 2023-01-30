@@ -62,6 +62,7 @@
     "xw" '(org-pandoc-export-to-docs :wk "windows docx")
     ">" '(org-demote-subtree :wk "demote subtree")
     "<" '(org-promote-subtree :wk "demote subtree"))
+
   (:keymaps 'org-agenda-mode-map
             "j" '(org-agenda-next-line)
             "h" '(org-agenda-previous-line))
@@ -69,61 +70,63 @@
    :states 'normal
    "S-TAB" 'org-global-cycle)
 
-  :config
+  :custom
+  (org-cite-global-bibliography
+   `(,(expand-file-name "references.bib" pspmacs/org-path)))
   ;; edit settings
-  (setq org-special-ctrl-a/e t)
-  (setq org-ellipsis " ↷")
-  (setq org-src-fontify-natively t)
-  (setq org-pretty-entities t)
-  (setq org-return-follows-link t)
-  (setq org-hide-emphasis-markers t)
-  (setq org-roam-dailies-directory pspmacs/org-journal-path)
-  (setq org-startup-folded t)
+  (org-special-ctrl-a/e t)
+  (org-ellipsis " ↷")
+  (org-src-fontify-natively t)
+  (org-pretty-entities t)
+  (org-return-follows-link t)
+  (org-hide-emphasis-markers t)
+  (org-roam-dailies-directory pspmacs/org-journal-path)
+  (org-startup-folded t)
+  (org-todo-keywords
+   '((sequence
+      "FAIL(f)"
+      "FIXME(m)"
+      "TEMP(u)"
+      "HACK(h)"
+      "TODO(t)"
+      "LAZY(l)"
+      "WAIT(w)"
+      "NEXT(n)"
+      "ALGO(g)"
+      "PROG(p)"
+      "TEST(q)"
+      "ACTS(a)"
+      "SENT(s)"
+      "OKAY(o)"
+      "NOTE(n)"
+      "XXXX(x)"
+      "|"
+      "DONE(d)"
+      "DONT(!)"
+      "CANT(c)")))
 
-  ;; todo setup
-  (setq org-todo-keywords
-    '((sequence
-       "FAIL(f)"
-       "FIXME(m)"
-       "TEMP(u)"
-       "HACK(h)"
-       "TODO(t)"
-       "LAZY(l)"
-       "WAIT(w)"
-       "NEXT(n)"
-       "ALGO(g)"
-       "PROG(p)"
-       "TEST(q)"
-       "ACTS(a)"
-       "SENT(s)"
-       "OKAY(o)"
-       "NOTE(n)"
-       "XXXX(x)"
-       "|"
-       "DONE(d)"
-       "DONT(!)"
-       "CANT(c)")))
+  (org-todo-keyword-faces
+   '(("FAIL"  .  "#ff3f3f")
+     ("FIXME" .  "#ff6f3f")
+     ("TEMP"  .  "#ff9f3f")
+     ("HACK"  .  "#ffcf3f")
+     ("TODO"  .  "#ffff3f")
+     ("LAZY"  .  "#e7ff3f")
+     ("WAIT"  .  "#cfff3f")
+     ("NEXT"  .  "#9fff3f")
+     ("ALGO"  .  "#6fff3f")
+     ("PROG"  .  "#3fff3f")
+     ("TEST"  .  "#3fe757")
+     ("ACTS"  .  "#3fcf6f")
+     ("SENT"  .  "#3f9f9f")
+     ("OKAY"  .  "#3f6fcf")
+     ("DONE"  .  "#3f3fff")
+     ("NOTE"  .  "#ffcf6f")
+     ("XXXX"  .  "#ff9f9f")
+     ("DONT"  .  "#ff6fcf")
+     ("CANT"  .  "#ff3fff")))
 
-  (setq org-todo-keyword-faces
-    '(("FAIL"  .  "#ff3f3f")
-      ("FIXME" .  "#ff6f3f")
-      ("TEMP"  .  "#ff9f3f")
-      ("HACK"  .  "#ffcf3f")
-      ("TODO"  .  "#ffff3f")
-      ("LAZY"  .  "#e7ff3f")
-      ("WAIT"  .  "#cfff3f")
-      ("NEXT"  .  "#9fff3f")
-      ("ALGO"  .  "#6fff3f")
-      ("PROG"  .  "#3fff3f")
-      ("TEST"  .  "#3fe757")
-      ("ACTS"  .  "#3fcf6f")
-      ("SENT"  .  "#3f9f9f")
-      ("OKAY"  .  "#3f6fcf")
-      ("DONE"  .  "#3f3fff")
-      ("NOTE"  .  "#ffcf6f")
-      ("XXXX"  .  "#ff9f9f")
-      ("DONT"  .  "#ff6fcf")
-      ("CANT"  .  "#ff3fff")))
+  :config
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t)
@@ -132,6 +135,7 @@
      (emacs-lisp . t)
      (R . t)
      (awk . t)))
+
   :hook
   ((org-mode . pspmacs/prettify-note)
    (org-mode . visual-line-mode)))

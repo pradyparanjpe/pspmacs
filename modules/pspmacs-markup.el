@@ -31,7 +31,7 @@
 
 (use-package markdown-mode
   :mode ("README\\.md\\'" . gfm-mode)
-  :init (setq markdown-command "multimarkdown"))
+  :custom (markdown-command "multimarkdown"))
 
 (use-package org-auctex
   :straight (:type git :host github :repo
@@ -90,6 +90,19 @@
 
 (use-package company-math
   :defer t)
+
+(use-package citar
+  :no-require
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'org-mode-map
+    "@" '(:ignore :wk "cite")
+    "@i" '(org-cite-insert :wk "insert"))
+  :custom
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-bibliography org-cite-global-bibliography))
 
 (straight-use-package
  '(emacs-reveal :host gitlab :repo "oer/emacs-reveal"))

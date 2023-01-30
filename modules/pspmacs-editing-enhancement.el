@@ -32,7 +32,7 @@
      (clojure-mode . rainbow-delimiters-mode)))
 
 (use-package whitespace
-  :hook (prog-mode . whitespace-mode))
+  :hook ((prog-mode org-mode) . whitespace-mode))
 
 (use-package whitespace-cleanup-mode
   :hook (prog-mode . whitespace-cleanup))
@@ -75,13 +75,14 @@
 (defun pspmacs/mode-prettify (sub-modes)
   "Apply pretiffy mode alist according to active-mode"
   (progn
-    (setq prettify-symbols-alist
-          (mapcan (lambda (x)
-                    (list x `(,(upcase (car x)) . ,(cdr x))))
-                  (apply #'append
-                         (mapcar
-                          (lambda (y)
-                            (cdr (assoc y pspmacs/pretty-alist))) sub-modes))))
+    (setq
+     prettify-symbols-alist
+     (mapcan (lambda (x)
+               (list x `(,(upcase (car x)) . ,(cdr x))))
+             (apply #'append
+                    (mapcar
+                     (lambda (y)
+                       (cdr (assoc y pspmacs/pretty-alist))) sub-modes))))
     (prettify-symbols-mode)))
 
 (use-package multiple-cursors
@@ -101,8 +102,9 @@
 
 (use-package smartparens
   :ensure t
+  :custom
+  (sp-show-pair-from-inside nil)
   :config
-  (setq sp-show-pair-from-inside nil)
   (sp-with-modes 'emacs-lisp-mode
     ;; disable ', it's the quote character!
     (sp-local-pair "'" nil :actions nil)
