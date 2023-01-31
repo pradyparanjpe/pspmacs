@@ -15,7 +15,7 @@ pspmacs-module-category.org
 - Modules are loaded using the function [[file:../late/index.org::*Org mode auto-load][pspmacs/load-inherit]].
 
 * Order of loading modules
-- Order of loaded modules follows =modules/load-order.yml=.
+- Order of loaded modules follows [[file:load-order.org][modules/load-order.yml]].
 - Objects with arbitrary keys containing list of =<module-category>=
   - lists from objects are loaded according to sort-order of object-keys.
 - Lists defined in superseding files *replace*

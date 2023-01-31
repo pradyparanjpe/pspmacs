@@ -359,7 +359,7 @@
 #+end_src
 
 #+begin_note
-gcmh, which is a package presumed to be better at handling gc shall be loaded in the module [[file:../modules/interface-enhancement.org]]
+gcmh, which is a package presumed to be better at handling gc shall be loaded in the module [[file:../modules/pspmacs-interface-enhancement.org]]
 #+end_note
 
 ** Initiate org mode with latest release
@@ -430,7 +430,7 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 
 *** Org mode auto-load
-- Expand faculties of [[*Org mode auto-load][pspmacs/load-inherit]] to =org-babel-load-file=
+- Expand faculties of [[file:../early/index.org::*Inherence][pspmacs/load-inherit]] to =org-babel-load-file=
  #+begin_src emacs-lisp :tangle org-latest.el
    (defun pspmacs/load-suitable (fname &optional nag)
      "Load emacs init file FNAME.

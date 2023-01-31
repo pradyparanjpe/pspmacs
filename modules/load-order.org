@@ -14,6 +14,25 @@
   - If one intend to extend the set of loaded modules, one should create a new list with additional modules.
   - If one intends to replace a set of loaded modules, one should redefine a list identified by that key.
     - To silence loading a list, it may be redefined as an empty list.
+** 0: Interface
+- [[file:pspmacs-interface-enhancement.org][interface-enhancement]]
+- [[file:pspmacs-keys-cheat-sheet.org][keys-cheat-sheet]]
+- [[file:pspmacs-theme.org][theme]]
+
+** 1: Editing
+- [[file:pspmacs-editing-enhancement.org][editing-enhancement]]
+- [[file:pspmacs-note.org][note]]
+
+** 2: project / file-system / Operating system
+- [[file:pspmacs-project-management.org][project-management]]
+- [[file:pspmacs-integration.org][integration]]
+
+** 3: Programming
+- [[file:pspmacs-programming.org][programming]]
+- [[file:pspmacs-python.org][python]]
+- [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
+- [[file:pspmacs-version-control.org][version-control]]
+- [[file:pspmacs-markup.org][markup]]
 #+begin_src yaml
   0:
   - interface-enhancement
