@@ -23,13 +23,10 @@
 ;;; Code:
 
 (use-package rainbow-mode
-  :hook ((prog-mode . rainbow-mode)
-     (org-mode . rainbow-mode)
-     (emacs-lisp-mode . rainbow-mode)))
+  :hook (((prog-mode org mode) . rainbow-mode)))
 
 (use-package rainbow-delimiters
-  :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
-     (clojure-mode . rainbow-delimiters-mode)))
+  :hook (((prog-mode org-mode) . rainbow-delimiters-mode)))
 
 (use-package whitespace
   ;; gratefully borrowed from

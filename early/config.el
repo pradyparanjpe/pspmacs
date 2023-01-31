@@ -5,6 +5,7 @@
 (scroll-bar-mode -1)
 (global-display-line-numbers-mode 1)
 (blink-cursor-mode -1)
+(setq-default display-line-numbers 'relative)
 
 (load-theme 'deeper-blue t)
 

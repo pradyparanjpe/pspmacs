@@ -477,7 +477,7 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 - Because it is practically useless
 #+begin_src emacs-lisp :tangle config.el
   (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
-#+end_src 
+#+end_src
 ** Custom file
 - The custom file will only be loaded if `pspmacs/load-custom-file' is set to a non-nil value in the user's `config.el'.
 #+begin_src emacs-lisp :tangle config.el

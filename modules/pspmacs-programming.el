@@ -86,6 +86,18 @@
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
+(use-package corfu-terminal
+  :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode t)))
+
+(use-package corfu-doc-terminal
+  :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
+  :config
+  (unless (display-graphic-p)
+    (corfu-doc-terminal-mode t)))
+
 (use-package gtags
   :hook (prog-mode . gtags-mode))
 
@@ -121,26 +133,33 @@
   :hook (python-mode . lsp-deferred))
 
 (use-package lsp-ui
-   :general
-   (lsp-ui-peek-mode-map
-    :states 'normal
-    "C-j" 'lsp-ui-peek--select-next
-    "C-k" 'lsp-ui-peek--select-prev)
+  :general
+  (lsp-ui-peek-mode-map
+   :states 'normal
+   "C-j" 'lsp-ui-peek--select-next
+   "C-k" 'lsp-ui-peek--select-prev)
 
-   (outline-mode-map
-    :states 'normal
-    "C-j" 'nil
-    "C-k" 'nil)
+  (outline-mode-map
+   :states 'normal
+   "C-j" 'nil
+   "C-k" 'nil)
 
-   :custom
-   ;; (lsp-ui-doc-show-with-mouse nil)
-   (lsp-ui-doc-show-with-cursor t)
-   (lsp-ui-peek-always-show t)
-   (lsp-ui-peek-fontify 'always)
-   :config
-   (setq lsp-ui-doc-enable t
-     lsp-ui-doc-delay 1)
-   :hook (lsp-mode . lsp-ui-mode))
+  :init
+  (defun pspmacs/lsp-ui-disable-modes ()
+    "Disable certian modes from lsp-ui"
+    (display-line-numbers-mode -1)
+    (whitespace-mode -1))
+  :custom
+  ;; (lsp-ui-doc-show-with-mouse nil)
+  (lsp-ui-doc-show-with-cursor t)
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-peek-fontify 'always)
+
+  :config
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-delay 1)
+  :hook (lsp-mode . lsp-ui-mode)
+  (lsp-ui-doc-frame-mode . pspmacs/lsp-ui-disable-modes))
 
 (use-package flycheck
   :general

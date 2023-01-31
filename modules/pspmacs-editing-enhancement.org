@@ -33,17 +33,14 @@
 - color codes (rgb[a], hex, names)
 #+begin_src emacs-lisp
   (use-package rainbow-mode
-    :hook ((prog-mode . rainbow-mode)
-       (org-mode . rainbow-mode)
-       (emacs-lisp-mode . rainbow-mode)))
+    :hook (((prog-mode org mode) . rainbow-mode)))
 #+end_src
 
 * Fanael/rainbow-delimiters
 - rainbow-colored delimiters
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
-    :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
-       (clojure-mode . rainbow-delimiters-mode)))
+    :hook (((prog-mode org-mode) . rainbow-delimiters-mode)))
 #+end_src
 
 * Whitespace
