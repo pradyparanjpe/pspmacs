@@ -82,6 +82,11 @@ Also, display file name in echo area"
 
 (use-package systemd)
 
+(use-package pass
+  :general
+  (pspmacs/leader-keys
+    "P" 'pass))
+
 (use-package nginx-mode
   :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 

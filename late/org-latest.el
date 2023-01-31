@@ -48,7 +48,7 @@ If nothing is found and if NAG is `t', throw error. Default: return"
     (cond ((file-readable-p fname)
            (load fname nil 'nomessage))
           ((file-readable-p (file-name-with-extension fname "org"))
-           (org-babel-load-file (file-name-with-extension fname "el")))))
+           (org-babel-load-file (file-name-with-extension fname "org")))))
    (nag (user-error (format "Neither %s.{el,org} found."
                             (file-name-sans-extension fname))))))
 
@@ -65,8 +65,7 @@ by settings loaded from files located in `local-emacs-directory'."
   (let ((name-branch
      (file-relative-name (or fname load-file-name) user-emacs-directory)))
     (dolist (config-dir pspmacs/user-worktrees nil)
-  (let* ((modular-init (expand-file-name name-branch config-dir)))
-    (if (file-exists-p modular-init)
-        (pspmacs/load-suitable modular-init))))))
+  (let ((modular-init (expand-file-name name-branch config-dir)))
+    (pspmacs/load-suitable modular-init)))))
 
 (pspmacs/load-inherit)

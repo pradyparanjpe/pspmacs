@@ -45,6 +45,10 @@
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
+    "=" '(:ignore t :wk "count")
+    "=w" '(:ignore t :wk "words")
+    "=ww" '(count-words t :wk "all")
+    "=wr" '(count-words-region t :wk "region")
     "l" '(:ignore t :wk "link")
     "ll" '(org-insert-link t :wk "put")
     "lL" '(org-store-link t :wk "grab")
@@ -67,7 +71,6 @@
     "xw" '(org-pandoc-export-to-docs :wk "windows docx")
     ">" '(org-demote-subtree :wk "demote subtree")
     "<" '(org-promote-subtree :wk "demote subtree"))
-
   (:keymaps 'org-agenda-mode-map
             "j" '(org-agenda-next-line)
             "h" '(org-agenda-previous-line))

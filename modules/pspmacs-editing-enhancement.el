@@ -105,10 +105,12 @@
    "C-r" #'undo-tree-redo)
   :init
   (global-undo-tree-mode)
+  :config
+  (mkdir (expand-file-name "undo-tree/" xdg/emacs-cache-directory) t)
   :custom
   (undo-tree-auto-save-history t)
-  (undo-tree-history-directory-alist 
-   `(("." . ,(expand-file-name "undo-tree" xdg/emacs-cache-directory))))
+  (undo-tree-history-directory-alist
+   `((".*" . ,(expand-file-name "undo-tree/" xdg/emacs-cache-directory))))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t))
 
@@ -130,6 +132,7 @@
     (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
   (dolist (snippets-wt yas-snippet-dirs nil)
     (mkdir snippets-wt t))
+  (yas-reload-all)
   :hook
   (((prog-mode org-mode) . yas-minor-mode)))
 

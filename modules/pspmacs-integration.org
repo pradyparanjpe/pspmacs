@@ -146,6 +146,13 @@ Primary to bind restart key
   (use-package systemd)
 #+end_src
 
+* unix password-manager
+#+begin_src emacs-lisp
+  (use-package pass
+    :general
+    (pspmacs/leader-keys
+      "P" 'pass))
+#+end_src
 * Nginx mode
 #+begin_src emacs-lisp
   (use-package nginx-mode

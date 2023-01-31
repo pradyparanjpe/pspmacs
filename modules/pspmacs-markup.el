@@ -49,7 +49,7 @@
         TeX-source-correlate-method 'synctex
         TeX-source-correlate-start-server nil
         TeX-electric-sub-and-superscript t
-        TeX-engine 'luatex ;; use lualatex by default
+        TeX-engine 'xetex ;; use lualatex by default
         TeX-save-query nil))
 
 (use-package latex

@@ -55,10 +55,10 @@
   ;;  "jk" 'evil-normal-state)
   (general-imap "j"
     (general-key-dispatch 'self-insert-command
-  "k" 'evil-normal-state))
+      "k" 'evil-normal-state))
   (general-rmap "j"
     (general-key-dispatch 'self-insert-command
-  "k" 'evil-normal-state))
+      "k" 'evil-normal-state))
 
   ;; unbind some annoying default bindings
   (general-unbind
@@ -87,10 +87,6 @@
   ;; see 'bufler' and 'popper'
   (pspmacs/leader-keys
     "b" '(:ignore t :wk "buffer")
-    "b TAB" '((lambda ()
-        (interactive)
-        (switch-to-buffer (other-buffer (current-buffer) 1)))
-      :which-key "last buffer")
     "bd" '(kill-this-buffer :wk "kill this buffer")
     "b TAB" '((lambda ()
                 (interactive)
@@ -126,25 +122,41 @@
     "fec" '((lambda ()
       (interactive)
       (find-file custom-file))
-        :wk "custom file")
-    "fel" '((lambda ()
-      (interactive)
-      (find-file local-emacs-directory))
-        :wk "local directory")
-    "fep" '((lambda ()
-      (interactive)
-      (find-file pvt-emacs-directory))
-        :wk "private directory")
+            :wk "custom file")
+    "fw" '(:ignote t :wk "worktree")
+    "fwl" '((lambda ()
+              (interactive)
+              (let ((default-directory local-emacs-directory))
+                (find-file "")))
+            :wk "local")
+    "fwp" '((lambda ()
+              (interactive)
+              (find-file pvt-emacs-directory))
+            :wk "private")
+    "fwg" '((lambda ()
+              (interactive)
+              (message "disabled")) :wk "global <disabled>")
     "fD" '((lambda ()
          (interactive)
          (delete-file (buffer-file-name)))
        :wk "delete File")
     "fR" '(rename-file :wk "rename")
     "fs" '(save-buffer :wk "save file")
+    "fS" '(write-file :wk "save as")
     "fy" '(pspmacs/yank-file-name :wk "Copy file name"))
 
   ;; help
   (pspmacs/leader-keys "h" (general-simulate-key "C-h"))
+
+  ;; major mode
+  (pspmacs/leader-keys
+    "M" '(:ignore t :wk "Major Mode")
+    "Me" 'emacs-lisp-mode
+    "Mo" 'org-mode
+    "Mp" 'python-mode
+    "Mr" 'ess-r-mode
+    "Ms" 'shell-script-mode
+    "M-" 'fundamental-mode)
 
   ;; universal argument
   (pspmacs/leader-keys
@@ -186,8 +198,6 @@
     "wD" 'kill-buffer-and-window
     "w C-d" '(delete-other-windows :wk "delete other")))
 
-;; "c" '(org-capture :wk "capture")))
-
 (use-package dashboard
   :demand t
   :diminish dashboard-mode
@@ -204,15 +214,17 @@
   :custom
   (dashboard-startup-banner
     (expand-file-name "data/Tux.svg" user-emacs-directory))
+  (dashboard-set-heading-icons t)
   (dashboard-banner-logo-title
     "Prady' Structured, Personalized Emacs")
   (dashboard-items '((projects . 2)
-              (recents . 5)
-              (agenda . 5)))
+                     (recents . 5)
+                     (agenda . 5)))
   (dashboard-center-content t)
   (initial-buffer-choice (lambda () (pspmacs/home-splash)))
   (dashboard-set-footer nil)
   :config
+  (setq-default default-directory "~/")
   (dashboard-setup-startup-hook))
 
 (use-package helpful
@@ -354,7 +366,7 @@
   :general
   (general-define-key
    :keymaps 'minibuffer-local-map
-   "M-A" #'marginalia-cycle)
+   "M-a" #'marginalia-cycle)
   :init
   (marginalia-mode))
 
@@ -386,12 +398,22 @@
 
 (use-package doom-modeline
   :demand t
+  :init
+  (setq display-time-24hr-format t)
+  (display-time-mode)
+  (setq display-time-default-load-average nil)
+  (line-number-mode t)
+  (column-number-mode t)
   :custom
+  (doom-modeline-icon t)
+  (doom-modeline-modal-icon t)
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-major-mode-color-icon t)
   (doom-modeline-env-version t)
+  (doom-modeline-buffer-file-name-style 'relative-to-project)
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-height 15)
   (doom-modeline-project-detection 'projectile)
-  (doom-modeline-icon t)
   :config
   (doom-modeline-mode 1)
   (set-face-attribute 'mode-line nil
@@ -442,24 +464,15 @@
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8)
 
-  ;;; UI
-  (setq display-time-24hr-format t)
-  (customize-set-variable 'large-file-warning-threshold (* 100 1000 1000))
-  (global-hl-line-mode 1)
-  (column-number-mode t)
-  (display-fill-column-indicator-mode)
-  (display-time-mode)
-
   ;;; Font
   (set-face-attribute 'default nil :font "Fira Code" :height 150)
   (global-set-key (kbd "C-=") 'text-scale-increase)
   (global-set-key (kbd "C--") 'text-scale-decrease)
 
-  ;;; auto-complete
+  ;;; scroll
+  (setq scroll-margin 5)
   ;; tabs
-  (setq-default indent-tabs-mode nil
-        tab-width 4))
+  (setq-default indent-tabs-mode nil tab-width 4))
 
 (pspmacs/load-inherit)
-
 ;;; pspmacs-interface-enhancement.el ends here

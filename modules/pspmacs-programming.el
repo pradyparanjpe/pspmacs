@@ -76,7 +76,7 @@
   ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line))
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
 
 (use-package kind-icon
   :ensure t
@@ -120,7 +120,7 @@
   :custom
   (lsp-restart 'ignore)
   (lsp-session-file (expand-file-name
-                     ".lsp-session-v1" xdg/emacs-cache-directory))
+                     ".lsp-session-v1" xdg/emacs-state-directory))
   ;; (lsp-eldoc-enable-hover nil)
   ;; (lsp-enable-file-watchers nil)
   ;; (lsp-signature-auto-activate nil)
@@ -183,7 +183,7 @@
 (use-package display-fill-column-indicator
   :demand t
   :hook
-  (programming-mode . display-fill-column-indicator-mode)
+  (prog-mode . display-fill-column-indicator-mode)
   :init
   (setq-default fill-column 80))
 

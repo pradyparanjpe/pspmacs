@@ -95,7 +95,6 @@
   (setq treemacs-persist-file
         (expand-file-name "treemacs-persist" xdg/emacs-cache-directory))
   (add-to-list 'recentf-exclude ".*treemacs-persist\\'")
-  (add-to-list 'recentf-exclude ".*straight/build\\'")
   :general
   (pspmacs/leader-keys
     "0" '(treemacs-select-window :wk "treemacs"))
@@ -193,9 +192,17 @@
   :ensure t
   :config (treemacs-set-scope-type 'Tabs))
 
+(mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
 (setq backup-directory-alist
       `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))
-(setq auto-save-file-name-transforms
-      `((".*" ,(expand-file-name "backups" xdg/emacs-data-directory) t)))
+
+(mkdir (expand-file-name "auto-saves" xdg/emacs-state-directory) t)
+(setq auto-save-file-name-transforms `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                                        ,(expand-file-name
+                                          "auto-saves/\\2"
+                                          xdg/emacs-state-directory) t))
+      auto-save-list-file-prefix (expand-file-name
+                                  "auto-saves/sessions"
+                                  xdg/emacs-state-directory))
 
 (pspmacs/load-inherit)
