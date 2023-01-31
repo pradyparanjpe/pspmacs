@@ -1,6 +1,7 @@
 #+title: README
 #+PROPERTY: header-args :tangle t :mkdirp t :results no
 #+auto_tangle: t
+#+export_file_name: index.html
 
 * Introduction
 #+begin_seealso
