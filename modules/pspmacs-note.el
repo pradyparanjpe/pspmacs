@@ -22,15 +22,20 @@
 
 ;;; Code:
 
-(defvar pspmacs/org-path (expand-file-name "org/" xdg/emacs-data-directory)
-  "Org mode base")
+(defcustom pspmacs/org-path
+  (expand-file-name "org/" xdg/emacs-data-directory)
+  "Org mode base"
+  :group 'pspmacs)
 
-(defvar pspmacs/org-template-path
+(defcustom pspmacs/org-template-path
   (expand-file-name "templates" pspmacs/org-path)
-  "Org mode templates (setupfile)")
+  "Org mode templates (setupfile)"
+  :group 'pspmacs)
 
-(defvar pspmacs/org-journal-path (expand-file-name "journal" pspmacs/org-path)
-  "Journal entries.")
+(defcustom pspmacs/org-journal-path
+  (expand-file-name "journal" pspmacs/org-path)
+  "Journal entries."
+  :group 'pspmacs)
 
 (use-package org
   :init

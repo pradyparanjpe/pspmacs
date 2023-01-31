@@ -1,5 +1,11 @@
 ;;; late/definitions.el --- identifies platform -*- lexical-binding: t; -*-
 
+(load (expand-file-name "late/version.el" user-emacs-directory) nil 'nomessage)
+
+(defgroup pspmacs nil
+  "PSPMacs Custom init configuration for Emacs"
+  :version pspmacs/version)
+
 (defconst ON-LINUX   (eq system-type 'gnu/linux))
 (defconst ON-MAC     (eq system-type 'darwin))
 (defconst ON-BSD     (or ON-MAC (eq system-type 'berkeley-unix)))
@@ -55,7 +61,7 @@ Return value is the new value of LIST-VAR"
                      sub-modes))))
     (prettify-symbols-mode)))
 
-(defvar pspmacs/hl-tag-faces
+(defcustom pspmacs/hl-tag-faces
   '(("FAIL"  .  "#ff3f3f")
     ("FIXME" .  "#ff6f3f")
     ("TEMP"  .  "#ff9f3f")
@@ -75,35 +81,38 @@ Return value is the new value of LIST-VAR"
     ("XXXX"  .  "#ff9f9f")
     ("DONT"  .  "#ff6fcf")
     ("CANT"  .  "#ff3fff"))
-  "Highlight colors for TODO tags")
+  "Highlight colors for TODO tags"
+  :group 'pspmacs)
 
-(setq pspmacs/pretty-alist
-      '(("code" . (("\\n" . ?⏎)
-                   ("\\t" . ?↹)
-                   (">=" . ?≥)
-                   ("<=" . ?≤)
-                   ("!=" . ?≠)
-                   ("==" . ?≅)))
-        ("lisp" . (("lambda" . ?λ)))
-        ("org" . (("#+setupfile" . ?🛒)
-                  ("#+author" . ?🖋)
-                  ("#+begin_src" . ?)
-                  ("#+end_src" . ?⏎)
-                  ("#+email" . ?✉)
-                  ("#+language" . ?🗣)
-                  ("#+options" . ?🔘)
-                  ("#+property" . ?⚙)
-                  ("#+results" . ?📜)
-                  ("#+startup" . ?)
-                  ("#+html_head" . ?)
-                  ("#+title" . ?§)
-                  ("tangle" . ?🔗)
-                  ("[x]" . ?✔)
-                  ("[ ]" . ?❌)
-                  ("[-]" . ?⏳)))
-        ("python" . (("and" . ?∩)
-                     ("or" . ?∪)
-                     ("->" . ?⇒)))))
+(defcustom pspmacs/pretty-alist
+  '(("code" . (("\\n" . ?⏎)
+               ("\\t" . ?↹)
+               (">=" . ?≥)
+               ("<=" . ?≤)
+               ("!=" . ?≠)
+               ("==" . ?≅)))
+    ("lisp" . (("lambda" . ?λ)))
+    ("org" . (("#+setupfile" . ?🛒)
+              ("#+author" . ?🖋)
+              ("#+begin_src" . ?)
+              ("#+end_src" . ?⏎)
+              ("#+email" . ?✉)
+              ("#+language" . ?🗣)
+              ("#+options" . ?🔘)
+              ("#+property" . ?⚙)
+              ("#+results" . ?📜)
+              ("#+startup" . ?)
+              ("#+html_head" . ?)
+              ("#+title" . ?§)
+              ("tangle" . ?🔗)
+              ("[x]" . ?✔)
+              ("[ ]" . ?❌)
+              ("[-]" . ?⏳)))
+    ("python" . (("and" . ?∩)
+                 ("or" . ?∪)
+                 ("->" . ?⇒))))
+  "pretty symbols"
+  :group 'pspmacs)
 
 (load (expand-file-name "late/xdg.el" user-emacs-directory) nil 'nomessage)
 

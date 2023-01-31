@@ -28,7 +28,7 @@
 (use-package ht)
 (use-package f)
 
-(defvar pspmacs/modules-order
+(defcustom pspmacs/modules-order
   (let
       ((modules-dir
         (mapcar
@@ -51,7 +51,8 @@
                                  (f-read-text order-file)))))
                         modules-dir))))
                (lambda (a b) (< (car a) (car b)))))))
-  "Ordered list of pspmacs/modules to load")
+  "Ordered list of pspmacs/modules to load"
+  :group 'pspmacs)
 
 (load (expand-file-name "late/org-latest.el" user-emacs-directory))
 

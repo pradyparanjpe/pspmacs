@@ -7,33 +7,37 @@ If xdg's variable is defined by system, use it, else return default
 If XDG-VAR is defined in the environment, use XDG-VAR/emacs,
 else use DEFAULT-PATH/emacs"
   (directory-file-name (expand-file-name "emacs" (or (getenv xdg-var)
-                                                   default-path))))
+                                                     default-path))))
 
-(defvaralias 'xdg/emacs-config-directory 'user-emacs-directory
+(defcustom xdg/emacs-config-directory 'user-emacs-directory
   "Location of local machine-specific emacs-configuration files
 
-alias of USER_EMACS_DIRECTORY")
+alias of USER_EMACS_DIRECTORY"
+  :group 'pspmacs)
 
 ;; ${XDG_CACHE_HOME:-${HOME}/.cache}/emacs
-(defvar xdg/emacs-cache-directory
+(defcustom xdg/emacs-cache-directory
   (xdg/assign-base "XDG_CACHE_HOME" "~/.cache/")
   "Location of runtime cache files for emacs
 
-${XDG_CONFIG_HOME:-${HOME}/.cache}/emacs")
+${XDG_CONFIG_HOME:-${HOME}/.cache}/emacs"
+  :group 'pspmacs)
 
 ;; ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs
-(defvar xdg/emacs-data-directory
+(defcustom xdg/emacs-data-directory
   (xdg/assign-base "XDG_DATA_HOME" "~/.local/share")
   "Location of persistent data files for emacs
 
-${XDG_DATA_HOME:-${HOME}/.local/share}/emacs")
+${XDG_DATA_HOME:-${HOME}/.local/share}/emacs"
+  :group 'pspmacs)
 
 ;; ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs
-(defvar xdg/emacs-state-directory
+(defcustom xdg/emacs-state-directory
   (xdg/assign-base "XDG_state_HOME" "~/.local/state")
 
   "Location of volatile state files for emacs
-${XDG_STATE_HOME:-${HOME}/.local/state}/emacs")
+${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
+  :group 'pspmacs)
 
 (dolist (xdg-base '(xdg/emacs-data-directory
                     xdg/emacs-cache-directory

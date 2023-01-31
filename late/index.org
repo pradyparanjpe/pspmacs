@@ -1,3 +1,4 @@
+
 #+title: late/index
 #+property: header-args :tangle t :mkdirp t :results no :eval never
 #+OPTIONS: _:nil
@@ -7,6 +8,37 @@
 ** Header
 #+begin_src emacs-lisp :tangle definitions.el
   ;;; late/definitions.el --- identifies platform -*- lexical-binding: t; -*-
+#+end_src
+
+** PSPMACS version
+*** Header
+#+begin_src emacs-lisp :tangle version.el
+  ;;; late/version.el --- package version -*- lexical-binding: t; -*-
+ #+end_src
+
+*** Define
+- Maintain a pspmacs version variable and caller function.
+  #+begin_src emacs-lisp :tangle version.el
+    (defconst pspmacs/version
+      "0.0.1"
+      "PSPMACS version")
+
+    (defun pspmacs/version ()
+      "Version of pspmacs"
+      (interactive)
+      (message pspmacs/version))
+  #+end_src
+
+*** Derive
+#+begin_src emacs-lisp :tangle definitions.el
+  (load (expand-file-name "late/version.el" user-emacs-directory) nil 'nomessage)
+#+end_src
+
+** pspmacs-group
+#+begin_src emacs-lisp :tangle definitions.el
+  (defgroup pspmacs nil
+    "PSPMacs Custom init configuration for Emacs"
+    :version pspmacs/version)
 #+end_src
 
 ** Identify platform
@@ -84,10 +116,10 @@
                        sub-modes))))
       (prettify-symbols-mode)))
 #+end_src
-** Common variables
+** Common custom variables
 *** Highlighted tags
 #+begin_src emacs-lisp :tangle definitions.el
-  (defvar pspmacs/hl-tag-faces
+  (defcustom pspmacs/hl-tag-faces
     '(("FAIL"  .  "#ff3f3f")
       ("FIXME" .  "#ff6f3f")
       ("TEMP"  .  "#ff9f3f")
@@ -107,39 +139,41 @@
       ("XXXX"  .  "#ff9f9f")
       ("DONT"  .  "#ff6fcf")
       ("CANT"  .  "#ff3fff"))
-    "Highlight colors for TODO tags")
-
+    "Highlight colors for TODO tags"
+    :group 'pspmacs)
 #+end_src
 
 *** Prettify data
 #+begin_src emacs-lisp :tangle definitions.el
-  (setq pspmacs/pretty-alist
-        '(("code" . (("\\n" . ?⏎)
-                     ("\\t" . ?↹)
-                     (">=" . ?≥)
-                     ("<=" . ?≤)
-                     ("!=" . ?≠)
-                     ("==" . ?≅)))
-          ("lisp" . (("lambda" . ?λ)))
-          ("org" . (("#+setupfile" . ?🛒)
-                    ("#+author" . ?🖋)
-                    ("#+begin_src" . ?)
-                    ("#+end_src" . ?⏎)
-                    ("#+email" . ?✉)
-                    ("#+language" . ?🗣)
-                    ("#+options" . ?🔘)
-                    ("#+property" . ?⚙)
-                    ("#+results" . ?📜)
-                    ("#+startup" . ?)
-                    ("#+html_head" . ?)
-                    ("#+title" . ?§)
-                    ("tangle" . ?🔗)
-                    ("[x]" . ?✔)
-                    ("[ ]" . ?❌)
-                    ("[-]" . ?⏳)))
-          ("python" . (("and" . ?∩)
-                       ("or" . ?∪)
-                       ("->" . ?⇒)))))
+  (defcustom pspmacs/pretty-alist
+    '(("code" . (("\\n" . ?⏎)
+                 ("\\t" . ?↹)
+                 (">=" . ?≥)
+                 ("<=" . ?≤)
+                 ("!=" . ?≠)
+                 ("==" . ?≅)))
+      ("lisp" . (("lambda" . ?λ)))
+      ("org" . (("#+setupfile" . ?🛒)
+                ("#+author" . ?🖋)
+                ("#+begin_src" . ?)
+                ("#+end_src" . ?⏎)
+                ("#+email" . ?✉)
+                ("#+language" . ?🗣)
+                ("#+options" . ?🔘)
+                ("#+property" . ?⚙)
+                ("#+results" . ?📜)
+                ("#+startup" . ?)
+                ("#+html_head" . ?)
+                ("#+title" . ?§)
+                ("tangle" . ?🔗)
+                ("[x]" . ?✔)
+                ("[ ]" . ?❌)
+                ("[-]" . ?⏳)))
+      ("python" . (("and" . ?∩)
+                   ("or" . ?∪)
+                   ("->" . ?⇒))))
+    "pretty symbols"
+    :group 'pspmacs)
 #+end_src
 
 ** XDG
@@ -162,47 +196,52 @@
   If XDG-VAR is defined in the environment, use XDG-VAR/emacs,
   else use DEFAULT-PATH/emacs"
     (directory-file-name (expand-file-name "emacs" (or (getenv xdg-var)
-                                                     default-path))))
+                                                       default-path))))
 #+end_src
 
 **** XDG_CONFIG_HOME
 - This is *THE CONFIG DIRECTORY*
 #+begin_src emacs-lisp :tangle xdg.el
-  (defvaralias 'xdg/emacs-config-directory 'user-emacs-directory
+  (defcustom xdg/emacs-config-directory 'user-emacs-directory
     "Location of local machine-specific emacs-configuration files
 
-  alias of USER_EMACS_DIRECTORY")
+  alias of USER_EMACS_DIRECTORY"
+    :group 'pspmacs)
 #+end_src
 
 **** XDG_CACHE_HOME
 #+begin_src emacs-lisp :tangle xdg.el
   ;; ${XDG_CACHE_HOME:-${HOME}/.cache}/emacs
-  (defvar xdg/emacs-cache-directory
+  (defcustom xdg/emacs-cache-directory
     (xdg/assign-base "XDG_CACHE_HOME" "~/.cache/")
     "Location of runtime cache files for emacs
 
-  ${XDG_CONFIG_HOME:-${HOME}/.cache}/emacs")
+  ${XDG_CONFIG_HOME:-${HOME}/.cache}/emacs"
+    :group 'pspmacs)
 #+end_src
 
 **** XDG_DATA_HOME
 #+begin_src emacs-lisp :tangle xdg.el
 
   ;; ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs
-  (defvar xdg/emacs-data-directory
+  (defcustom xdg/emacs-data-directory
     (xdg/assign-base "XDG_DATA_HOME" "~/.local/share")
     "Location of persistent data files for emacs
 
-  ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs")
+  ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs"
+    :group 'pspmacs)
+
 #+end_src
 
 **** XDG_STATE_HOME
 #+begin_src emacs-lisp :tangle xdg.el
   ;; ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs
-  (defvar xdg/emacs-state-directory
+  (defcustom xdg/emacs-state-directory
     (xdg/assign-base "XDG_state_HOME" "~/.local/state")
 
     "Location of volatile state files for emacs
-  ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs")
+  ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
+    :group 'pspmacs)
 #+end_src
 
 **** Ensure
@@ -358,34 +397,35 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 ** Order of pspmacs modules to load
 #+begin_src emacs-lisp :tangle init.el
-  (use-package yaml)
-  (use-package ht)
-  (use-package f)
+    (use-package yaml)
+    (use-package ht)
+    (use-package f)
 
-  (defvar pspmacs/modules-order
-    (let
-        ((modules-dir
-          (mapcar
-           (lambda (x) (expand-file-name "modules" x)) pspmacs/worktrees)))
-      (apply
-       'vconcat (mapcar
-                 (lambda (x) (cdr x))
-                 (sort
-                  (ht->alist
-                  (apply
-                   'ht-merge
-                   (remq 'nil
-                         (mapcar
-                          (lambda (x)
-                            (let
-                                ((order-file
-                                  (expand-file-name "load-order.yml" x)))
-                              (if (file-readable-p order-file)
-                                  (yaml-parse-string
-                                   (f-read-text order-file)))))
-                          modules-dir))))
-                 (lambda (a b) (< (car a) (car b)))))))
-    "Ordered list of pspmacs/modules to load")
+    (defcustom pspmacs/modules-order
+      (let
+          ((modules-dir
+            (mapcar
+             (lambda (x) (expand-file-name "modules" x)) pspmacs/worktrees)))
+        (apply
+         'vconcat (mapcar
+                   (lambda (x) (cdr x))
+                   (sort
+                    (ht->alist
+                    (apply
+                     'ht-merge
+                     (remq 'nil
+                           (mapcar
+                            (lambda (x)
+                              (let
+                                  ((order-file
+                                    (expand-file-name "load-order.yml" x)))
+                                (if (file-readable-p order-file)
+                                    (yaml-parse-string
+                                     (f-read-text order-file)))))
+                            modules-dir))))
+                   (lambda (a b) (< (car a) (car b)))))))
+      "Ordered list of pspmacs/modules to load"
+      :group 'pspmacs)
 #+end_src
 
 

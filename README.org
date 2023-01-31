@@ -3,6 +3,9 @@
 #+auto_tangle: t
 #+export_file_name: index.html
 
+* Pages
+- All /Org/ files in this project are published in [[https://docs.readthedocs.io/en/stable/][read-the-docs]] format using [[https://github.com/fniessen/org-html-themes][fniessen/org-html-themes/readtheorg]] at [[pradyparanjpe.gitlab.io/pspmacs/index.html][gitlab-pages]].
+
 * Introduction
 #+begin_seealso
 file:ACKNOWLEDGEMENTS.org
@@ -105,6 +108,4 @@ The user is advised to place in private and local work-trees, code similar to th
 
   (load (expand-file-name "late/config.el" user-emacs-directory)
         nil 'nomessage)
-
 #+end_src
-
