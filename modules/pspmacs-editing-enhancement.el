@@ -62,8 +62,11 @@
 
 ;; prettify dired with icons
 (use-package all-the-icons-dired
+  :if (display-graphic-p)
   :hook
-  (dired-mode . all-the-icons-dired-mode))
+  (dired-mode . (lambda () (interactive)
+                        (unless (file-remote-p default-directory)
+                          (all-the-icons-dired-mode)))))
 
 (use-package multiple-cursors
   :after evil

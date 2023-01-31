@@ -88,6 +88,24 @@
     "Git status in project."
     (projectile-vc)))
 
+(use-package dired
+  :straight (:type built-in)
+  :custom
+  (dired-listing-switches "-lah"))
+
+(use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
+
+(use-package dired-rsync
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'dired-mode-map
+    :states 'normal
+    "r" 'dired-rsync))
+
 (use-package treemacs
   :ensure t
   :defer t

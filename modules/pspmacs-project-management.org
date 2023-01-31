@@ -101,6 +101,30 @@
 
 #+end_src
 
+* Dired
+** dired customization
+#+begin_src emacs-lisp
+  (use-package dired
+    :straight (:type built-in)
+    :custom
+    (dired-listing-switches "-lah"))
+
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
+    #+end_src
+
+** dired rsync
+#+begin_src emacs-lisp
+  (use-package dired-rsync
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'dired-mode-map
+      :states 'normal
+      "r" 'dired-rsync))
+  #+end_src
 * Alexander-Miller/treemacs
 #+begin_src emacs-lisp
   (use-package treemacs
@@ -207,6 +231,7 @@
     :ensure t
     :config (treemacs-set-scope-type 'Tabs))
 #+end_src
+
 * Backups
 #+begin_src emacs-lisp
   (mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
