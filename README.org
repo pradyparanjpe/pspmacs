@@ -74,10 +74,13 @@ The user is advised to place in private and local work-trees, code similar to th
 #+end_warning
 
 - Code
-  - Each section of =early-init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =early=.
+  - Each section of =early-init=, /viz/. =prune=, =definitions=, =init=, =config= is maintained separately in the directory =early=.
  #+begin_src emacs-lisp :tangle early-init.el
    ;;; early-init.el --- Early Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
    ;;; Early definitions init configs
+
+   (load (expand-file-name "early/prune.el" user-emacs-directory)
+         nil 'nomessage)
 
    (load (expand-file-name "early/definitions.el" user-emacs-directory)
          nil 'nomessage)
@@ -97,11 +100,16 @@ The user is advised to place in private and local work-trees, code similar to th
 #+end_warning
 
 - Code
-  - Each section of =late-init=, /viz/. =definitions=, =init=, =config= is maintained separately in the directory =late=.
+  - Each section of =late-init=, /viz/. =package-management=, =definitions=, =init=, =config=
+    is maintained separately in the directory =late=.
   - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modlues=.
+  - The custom file will only be loaded if `pspmacs/load-custom-file' is set to a non-nil value in the user's `config.el'.
 #+begin_src emacs-lisp :tangle init.el
   ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
   ;;; late definitions init configs
+
+  (load (expand-file-name "late/package-management.el" user-emacs-directory)
+        nil 'nomessage)
 
   (load (expand-file-name "late/definitions.el" user-emacs-directory)
         nil 'nomessage)
@@ -111,4 +119,10 @@ The user is advised to place in private and local work-trees, code similar to th
 
   (load (expand-file-name "late/config.el" user-emacs-directory)
         nil 'nomessage)
+
+  (when pspmacs/load-custom-file
+    (load custom-file t))
 #+end_src
+
+* Sitemap
+- [[file:sitemap.org]]

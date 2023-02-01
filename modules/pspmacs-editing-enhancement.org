@@ -192,6 +192,15 @@ Spell-check on-the-fly
     "Sn" '(evil-next-flyspell-error :wk "next")
     "Sp" '(evil-prev-flyspell-error :wk "previous"))
 #+end_src
+* native emacs-settings
+- Display line numbers
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (setq-default display-line-numbers-type 'relative)
+    (global-display-line-numbers-mode 1))
+#+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

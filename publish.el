@@ -40,14 +40,16 @@
          :publishing-directory "docs/"
          :publishing-function org-html-publish-to-html
          :recursive t
-         :auto-sitemap t)
+         :auto-sitemap t
+         :auto-preamble t)
 
         ("org-static"
          :base-directory "./"
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :base-extension
+         "css\\|js\\|svg\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
          :publishing-directory "docs/"
-         :recursive t
-         :publishing-function org-publish-attachment)
+         :publishing-function org-publish-attachment
+         :recursive t)
 
         ("org" :components ("pspmacs" "org-static"))))
 

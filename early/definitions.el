@@ -1,12 +1,4 @@
-;;; early/definitions.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
-
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.6)
-
-(setq package-enable-at-startup nil
-      package-quickstart nil)
-
-(customize-set-variable 'load-prefer-newer t)
+;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 
 (defvar pvt-emacs-directory
   (file-name-as-directory

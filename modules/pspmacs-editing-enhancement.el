@@ -146,5 +146,10 @@
   "Sn" '(evil-next-flyspell-error :wk "next")
   "Sp" '(evil-prev-flyspell-error :wk "previous"))
 
+(use-package emacs
+  :config
+  (setq-default display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode 1))
+
 (pspmacs/load-inherit)
 ;;; pspmacs-editing-enhancement.el ends here

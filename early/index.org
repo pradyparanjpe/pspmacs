@@ -3,32 +3,59 @@
 #+OPTIONS: _:nil
 #+auto_tangle: t
 
-* Definitions
+* Prune
 - Define early variables, functions, etc.
-** headers
-#+begin_src emacs-lisp :tangle definitions.el
-  ;;; early/definitions.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+  - This file does not inherit private/local prune.el
+** Headers
+#+begin_src emacs-lisp :tangle prune.el
+  ;;; early/prune.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 #+end_src
 
 ** Grabage Collection
 - Increase the GC threshold for faster startup. The default is 800 kilobytes.
-#+begin_src emacs-lisp :tangle definitions.el
+#+begin_src emacs-lisp :tangle prune.el
   (setq gc-cons-threshold most-positive-fixnum
         gc-cons-percentage 0.6)
 #+end_src
 
 ** package management
 - We shall use straight.el. For that to work, emacs's internal ~package~ should never load.
-#+begin_src emacs-lisp :tangle definitions.el
+#+begin_src emacs-lisp :tangle prune.el
   (setq package-enable-at-startup nil
         package-quickstart nil)
 #+end_src
 
+** Unnecessary features.
+#+begin_src emacs-lisp :tangle prune.el
+  (setq inhibit-splash-screen nil)
+  (setq use-file-dialog nil)
+  (setq tab-bar-new-button-show nil)
+  (setq tab-bar-close-button-show nil)
+  (setq tab-line-close-button-show nil)
+  (setq native-comp-async-report-warnings-errors nil)
+  (setq byte-compile-warnings
+        '(not free-vars unresolved noruntime lexical make-local))
+#+end_src
+
+** UI configuration
+- Remove some unnecessary UI elements temporarily
+#+begin_src emacs-lisp :tangle prune.el
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (blink-cursor-mode -1)
+#+end_src
+
 ** Source compilation
-- We shall use straight.el. For that to work, emacs's internal ~package~ should never load.
 - Prefer loading newest compiled =.el= file
-#+begin_src emacs-lisp :tangle definitions.el
+#+begin_src emacs-lisp :tangle prune.el
   (customize-set-variable 'load-prefer-newer t)
+#+end_src
+
+* Definitions
+** Headers
+#+begin_src emacs-lisp :tangle definitions.el
+  ;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 #+end_src
 
 ** Inheritance / superceding order
@@ -85,7 +112,6 @@ If envrionment variables are not set, use:
 - The custom file is found in the =local-emacs-directory=. It contains
  customizations of variables and faces that are made by the user through the
  Customization UI, as well as any customizations made by packages.")
-
 #+begin_src emacs-lisp :tangle definitions.el
   (defvar pspmacs/load-custom-file t
     "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
@@ -190,6 +216,17 @@ Initialize configurations
       (expand-file-name "eln-cache/" local-emacs-directory)))
 #+end_src
 
+** Temporary blue theme
+- If anything till [[file:../modules/pspmacs-theme.org]] fails
+#+begin_src emacs-lisp :tangle init.el
+  (load-theme 'deeper-blue t)
+#+end_src
+
+** Single key-press response to yes-or-no
+#+begin_src emacs-lisp :tangle init.el
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
 ** Inherit
 #+begin_src emacs-lisp :tangle init.el
   (pspmacs/load-inherit)
@@ -199,36 +236,6 @@ Initialize configurations
 ** Headers
 #+begin_src emacs-lisp :tangle config.el
 ;;; early/config.el --- Early config for speedy launch -*- lexical-binding: t; no-byte-compile: t; -*-
-#+end_src
-
-** UI configuration
-*** Remove some unnecessary UI elements temporarily
-#+begin_src emacs-lisp :tangle config.el
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (global-display-line-numbers-mode 1)
-  (blink-cursor-mode -1)
-  (setq-default display-line-numbers 'relative)
-#+end_src
-
-** Temporary blue theme
-- If anything till [[file:../modules/pspmacs-theme.org]] fails
-#+begin_src emacs-lisp :tangle config.el
-  (load-theme 'deeper-blue t)
-#+end_src
-
-** Unnecessary features.
-#+begin_src emacs-lisp :tangle config.el
-  (defalias 'yes-or-no-p 'y-or-n-p)
-  (setq inhibit-splash-screen nil)
-  (setq use-file-dialog nil)
-  (setq tab-bar-new-button-show nil)
-  (setq tab-bar-close-button-show nil)
-  (setq tab-line-close-button-show nil)
-  (setq native-comp-async-report-warnings-errors nil)
-  (setq byte-compile-warnings
-        '(not free-vars unresolved noruntime lexical make-local))
 #+end_src
 
 ** Inherit

@@ -30,4 +30,8 @@
     'native-comp-eln-load-path
     (expand-file-name "eln-cache/" local-emacs-directory)))
 
+(load-theme 'deeper-blue t)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 (pspmacs/load-inherit)
