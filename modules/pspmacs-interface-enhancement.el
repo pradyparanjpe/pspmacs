@@ -264,7 +264,7 @@
     "wv" '(evil-window-vsplit :wk "split window vertically"))
   (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
   (general-define-key :keymaps 'evil-insert-state-map "C-k" nil)
-
+  :demand t
   :init
   (setq
    ;; allow scroll up with 'C-u'

@@ -23,6 +23,8 @@
 ;;; Code:
 
 (use-package python-mode
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode)
   :general
   (pspmacs/local-leader-keys
     :keymaps 'python-mode-map
@@ -31,24 +33,7 @@
           :wk "python"))
   (python-mode-map :states 'normal "gz" nil "C-j" nil)
   ;; (python-mode-map :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
-
   :init
-  ;; (defun pspmacs/py-indent-or-complete ()
-  ;;   (interactive "*")
-  ;;   (window-configuration-to-register py--windows-config-register)
-  ;;   (cond
-  ;;    ((use-region-p)
-  ;;     (py-indent-region (region-beginning) (region-end)))
-  ;;    ((or (bolp)
-  ;;         (member (char-before) (list 9 10 12 13 32 ?:  ;; ([{
-  ;;                                     ?\) ?\] ?\}))
-  ;;         ;; (not (looking-at "[ \t]*$"))
-  ;;         )
-  ;;     (py-indent-line))
-  ;;    ((comint-check-proc (current-buffer))
-  ;;     (ignore-errors (completion-at-point)))
-  ;;    (t (completion-at-point))))
-
   (defun pspmacs/prettify-python ()
     (pspmacs/mode-prettify '("code" "python")))
 
@@ -98,9 +83,11 @@
    (python-mode . pspmacs/prettify-python)))
 
 (use-package pyvenv-auto
+  :defer t
   :hook ((python-mode . pyvenv-auto-run)))
 
 (use-package importmagic
+  :defer t
   :general
   (pspmacs/local-leader-keys
     :states 'normal
@@ -112,17 +99,19 @@
   (python-mode . importmagic-mode))
 
 (use-package isortify
+  :defer t
   :hook (python-mode . isortify-mode))
 
 (use-package yapfify
+  :defer t
   :hook (python-mode . yapf-mode))
 
 (use-package lsp-pyright
+  :defer t
   :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
 
 (use-package py-snippets
-  :ensure t
-  :after yasnippet
+  :after '(yasnippet python-mode)
   :config
   (py-snippets-initialize))
 

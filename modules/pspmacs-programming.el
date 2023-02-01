@@ -85,9 +85,11 @@
     (corfu-doc-terminal-mode t)))
 
 (use-package gtags
+  :defer t
   :hook (prog-mode . gtags-mode))
 
 (use-package lsp-mode
+  :defer t
   :commands (lsp lsp-deferred)
   :general
   (pspmacs/local-leader-keys
@@ -116,9 +118,10 @@
   ;; (lsp-before-save-edits nil)
   ;; (lsp-headerline-breadcrumb-enable nil)
   ;; (lsp-diagnostics-provider :none)
-  :hook (python-mode . lsp-deferred))
+  :hook (prog-mode . lsp-deferred))
 
 (use-package lsp-ui
+  :defer t
   :general
   (lsp-ui-peek-mode-map
    :states 'normal
@@ -144,16 +147,18 @@
   :config
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-delay 1)
-  :hook (lsp-mode . lsp-ui-mode)
-  (lsp-ui-doc-frame-mode . pspmacs/lsp-ui-disable-modes))
+  :hook
+   (lsp-mode . lsp-ui-mode)
+   (lsp-ui-doc-frame-mode . pspmacs/lsp-ui-disable-modes))
 
 (use-package flycheck
+  :defer t
   :general
   (pspmacs/leader-keys
     "en" '(flycheck-next-error :wk "next error")
     "ep" '(flycheck-previous-error :wk "previous error"))
   :custom
-  (flycheck-indication-mode 'right-fringe) 
+  (flycheck-indication-mode 'right-fringe)
   (flycheck-check-syntax-automatically '(mode-enabled save))
   :hook
   ((lsp-mode . flycheck-mode)
@@ -164,7 +169,8 @@
            (setq flycheck-flake8rc ".flake8")))))
 
 (use-package eldoc
-  :hook (emacs-lisp-mode cider-mode))
+  :hook
+  (emacs-lisp-mode . cider-mode))
 
 (use-package display-fill-column-indicator
   :demand t
