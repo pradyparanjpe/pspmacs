@@ -2,18 +2,13 @@
 #+PROPERTY: header-args :tangle load-order.yml :mkdirp t :results no :eval no
 #+auto_tangle: t
 
-* Inheritance
-- Only for this file, the inheritance is overridden.
-  - If =local-emacs-directory/modules/load-order.yml= exists, it is loaded.
-    ELSE, if =pvt-emacs-directory/modules/load-order.yml= exists, it is loaded.
-    ELSE, =user-emacs-directory/modules/load-order.yml= is loaded.
-
 * Modules-order
 - Yaml association lists of modules in order
   - Lists are sorted by keys before loading the modules. Thus, a list identified by key =0= is loaded before that identified by key =1=.
-  - If one intend to extend the set of loaded modules, one should create a new list with additional modules.
-  - If one intends to replace a set of loaded modules, one should redefine a list identified by that key.
+  - If one intends to extend the set of loaded modules, one should create a new list with additional modules.
+  - If one intends to replace a set of modules to be loaded, one should redefine a list identified by that key.
     - To silence loading a list, it may be redefined as an empty list.
+
 ** 0: Interface
 - [[file:pspmacs-interface-enhancement.org][interface-enhancement]]
 - [[file:pspmacs-keys-cheat-sheet.org][keys-cheat-sheet]]
@@ -34,6 +29,8 @@
 - [[file:pspmacs-version-control.org][version-control]]
 - [[file:pspmacs-markup.org][markup]]
 - [[file:pspmacs-ess-R.org][ess-R]]
+
+* Yaml export
 #+begin_src yaml
   0:
   - interface-enhancement

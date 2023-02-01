@@ -488,8 +488,8 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 ** [[file:../modules/index.org][Load Modules]]
 #+begin_src emacs-lisp :tangle init.el
   (seq-doseq (autofile pspmacs/modules-order nil)
-    (dolist (work-tree pspmacs/worktrees nil)
-      (catch 'load-success
+    (catch 'load-success
+      (dolist (work-tree pspmacs/worktrees nil)
         (let* ((lit-module
                 (expand-file-name
                  (format "modules/pspmacs-%s.org" autofile) work-tree))

@@ -6,8 +6,8 @@
 (setq gc-cons-threshold (* 2 1000 1000))
 
 (seq-doseq (autofile pspmacs/modules-order nil)
-  (dolist (work-tree pspmacs/worktrees nil)
-    (catch 'load-success
+  (catch 'load-success
+    (dolist (work-tree pspmacs/worktrees nil)
       (let* ((lit-module
               (expand-file-name
                (format "modules/pspmacs-%s.org" autofile) work-tree))
