@@ -33,6 +33,7 @@
 - [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
 - [[file:pspmacs-version-control.org][version-control]]
 - [[file:pspmacs-markup.org][markup]]
+- [[file:pspmacs-ess-R.org][ess-R]]
 #+begin_src yaml
   0:
   - interface-enhancement
@@ -48,6 +49,7 @@
   - programming
   - python
   - emacs-lisp
+  - ess-R
   - version-control
   - markup
 #+end_src

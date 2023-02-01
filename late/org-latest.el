@@ -30,6 +30,9 @@
 (defun pspmacs/load-suitable (fname &optional nag)
   "Load emacs init file FNAME.
 
+Function defined in early/definitions.el is hereby redefined to enable
+`org-babel-load-file' method, now that the correct org-mode is loaded.
+
 If FNAME is found, load it and return.
 If org/el counterpart of FNAME is found, load it and return.
 To load,
@@ -51,21 +54,5 @@ If nothing is found and if NAG is `t', throw error. Default: return"
            (org-babel-load-file (file-name-with-extension fname "org")))))
    (nag (user-error (format "Neither %s.{el,org} found."
                             (file-name-sans-extension fname))))))
-
-(defun pspmacs/load-inherit (&optional fname)
-  "Inherit all equivalent files.
-
-Re-definition of early-loaded function after the correct orgmode is loaded.
-Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
-If FNAME is supplied, *that* corresponding file name is attempted, else,
-stem of `load-file-name' is attempted.
-Init files are loaded using the function `pspmacs/load-suitable'.
-Settings loaded from files located in `pvt-emacs-directory' are overwritten
-by settings loaded from files located in `local-emacs-directory'."
-  (let ((name-branch
-     (file-relative-name (or fname load-file-name) user-emacs-directory)))
-    (dolist (config-dir pspmacs/user-worktrees nil)
-  (let ((modular-init (expand-file-name name-branch config-dir)))
-    (pspmacs/load-suitable modular-init)))))
 
 (pspmacs/load-inherit)

@@ -397,35 +397,35 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 ** Order of pspmacs modules to load
 #+begin_src emacs-lisp :tangle init.el
-    (use-package yaml)
-    (use-package ht)
-    (use-package f)
+  (use-package yaml)
+  (use-package ht)
+  (use-package f)
 
-    (defcustom pspmacs/modules-order
-      (let
-          ((modules-dir
-            (mapcar
-             (lambda (x) (expand-file-name "modules" x)) pspmacs/worktrees)))
-        (apply
-         'vconcat (mapcar
-                   (lambda (x) (cdr x))
-                   (sort
-                    (ht->alist
-                    (apply
-                     'ht-merge
-                     (remq 'nil
-                           (mapcar
-                            (lambda (x)
-                              (let
-                                  ((order-file
-                                    (expand-file-name "load-order.yml" x)))
-                                (if (file-readable-p order-file)
-                                    (yaml-parse-string
-                                     (f-read-text order-file)))))
-                            modules-dir))))
-                   (lambda (a b) (< (car a) (car b)))))))
-      "Ordered list of pspmacs/modules to load"
-      :group 'pspmacs)
+  (defcustom pspmacs/modules-order
+    (let
+        ((modules-dir
+          (mapcar
+           (lambda (x) (expand-file-name "modules" x)) pspmacs/worktrees)))
+      (apply
+       'vconcat (mapcar
+                 (lambda (x) (cdr x))
+                 (sort
+                  (ht->alist
+                  (apply
+                   'ht-merge
+                   (remq 'nil
+                         (mapcar
+                          (lambda (x)
+                            (let
+                                ((order-file
+                                  (expand-file-name "load-order.yml" x)))
+                              (if (file-readable-p order-file)
+                                  (yaml-parse-string
+                                   (f-read-text order-file)))))
+                          modules-dir))))
+                 (lambda (a b) (< (car a) (car b)))))))
+    "Ordered list of pspmacs/modules to load"
+    :group 'pspmacs)
 #+end_src
 
 *** Org mode auto-load
@@ -433,6 +433,9 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
  #+begin_src emacs-lisp :tangle org-latest.el
    (defun pspmacs/load-suitable (fname &optional nag)
      "Load emacs init file FNAME.
+
+   Function defined in early/definitions.el is hereby redefined to enable
+   `org-babel-load-file' method, now that the correct org-mode is loaded.
 
    If FNAME is found, load it and return.
    If org/el counterpart of FNAME is found, load it and return.
@@ -455,22 +458,6 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
               (org-babel-load-file (file-name-with-extension fname "org")))))
       (nag (user-error (format "Neither %s.{el,org} found."
                                (file-name-sans-extension fname))))))
-
-   (defun pspmacs/load-inherit (&optional fname)
-     "Inherit all equivalent files.
-
-   Re-definition of early-loaded function after the correct orgmode is loaded.
-   Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
-   If FNAME is supplied, *that* corresponding file name is attempted, else,
-   stem of `load-file-name' is attempted.
-   Init files are loaded using the function `pspmacs/load-suitable'.
-   Settings loaded from files located in `pvt-emacs-directory' are overwritten
-   by settings loaded from files located in `local-emacs-directory'."
-     (let ((name-branch
-        (file-relative-name (or fname load-file-name) user-emacs-directory)))
-       (dolist (config-dir pspmacs/user-worktrees nil)
-     (let ((modular-init (expand-file-name name-branch config-dir)))
-       (pspmacs/load-suitable modular-init)))))
 #+end_src
 
 *** Inherit

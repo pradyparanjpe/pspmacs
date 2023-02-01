@@ -50,17 +50,37 @@ privately synchronized configuration directory")
   (expand-file-name "pspackaging" user-emacs-directory)
   "Packaging system (straight) to use.")
 
+(defun pspmacs/load-suitable (fname &optional nag)
+   "Load emacs init file FNAME.
+
+ If FNAME is found, load it and return.
+ If not found and if NAG is `t', throw error. Default: return.
+
+ This function is overwritten in late/definitions.el after the correct
+ org mode is loaded to include org-babel-load-file method"
+   (if (file-readable-p fname)
+       (load fname nil 'nomessage)
+     (if nag (user-error (format "%s not found." fname)))))
+
 (defun pspmacs/load-inherit (&optional fname)
   "Inherit all equivalent files.
 
-Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
-If FNAME is supplied, *that* corresponding file name is attempted, else,
-stem of `load-file-name' is attempted."
+ Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
+ Settings loaded from files located in `pvt-emacs-directory' are overwritten
+ by settings loaded from files located in `local-emacs-directory'.
+ If FNAME is supplied, *that* corresponding file name is attempted, else,
+ stem of `load-file-name' is attempted.
+
+ Init files are loaded using the function `pspmacs/load-suitable'."
   (let ((name-branch
-     (file-relative-name (or fname load-file-name) user-emacs-directory)))
+         (file-relative-name
+          (or fname load-file-name) user-emacs-directory)))
     (dolist (config-dir pspmacs/user-worktrees nil)
-      (let* ((modular-init (expand-file-name name-branch config-dir)))
-        (if (file-exists-p modular-init)
-        (load modular-init nil 'nomessage))))))
+      (let ((modular-init (expand-file-name
+                           name-branch config-dir)))
+        (condition-case err
+            (pspmacs/load-suitable modular-init)
+          (t (message
+              "Error while loading %s: %s" modular-init err)))))))
 
 (pspmacs/load-inherit)
