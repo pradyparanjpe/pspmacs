@@ -106,6 +106,11 @@
      (python-mode . pspmacs/prettify-python)))
 #+end_src
 
+* Automatic virtual environment
+#+begin_src emacs-lisp
+  (use-package pyvenv-auto
+    :hook ((python-mode . pyvenv-auto-run)))
+#+end_src
 * Automatic imports
 - Requirements:
   - importmagic
@@ -128,10 +133,8 @@
 1. sort
 2. yet another python formatter (yapf)
 #+begin_src emacs-lisp
-  (use-package pyimpsort
-    :ensure t
-    :config
-    (add-hook 'before-save-hook 'pyimpsort-buffer))
+  (use-package isortify
+    :hook (python-mode . isortify-mode))
 
   (use-package yapfify
     :hook (python-mode . yapf-mode))
@@ -168,6 +171,14 @@
     :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
 #+end_src
 
+* Python yasnippets
+#+begin_src emacs-lisp
+  (use-package py-snippets
+    :ensure t
+    :after yasnippet
+    :config
+    (py-snippets-initialize))
+#+end_src
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

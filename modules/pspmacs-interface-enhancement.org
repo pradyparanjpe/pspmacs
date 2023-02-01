@@ -573,8 +573,12 @@ Flash highlight hints on evil actions
 
     ;;; scroll
     (setq scroll-margin 5)
+
     ;; tabs
-    (setq-default indent-tabs-mode nil tab-width 4))
+    (setq-default indent-tabs-mode nil tab-width 4)
+
+    ;; Use dialog boxes
+    (setq use-dialog-box nil))
 #+end_src
 
 * Inherit from private and local

@@ -97,6 +97,9 @@
                            (executable-find "ipython")))))
    (python-mode . pspmacs/prettify-python)))
 
+(use-package pyvenv-auto
+  :hook ((python-mode . pyvenv-auto-run)))
+
 (use-package importmagic
   :general
   (pspmacs/local-leader-keys
@@ -108,16 +111,20 @@
   :hook
   (python-mode . importmagic-mode))
 
-(use-package pyimpsort
-  :ensure t
-  :config
-  (add-hook 'before-save-hook 'pyimpsort-buffer))
+(use-package isortify
+  :hook (python-mode . isortify-mode))
 
 (use-package yapfify
   :hook (python-mode . yapf-mode))
 
 (use-package lsp-pyright
   :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
+
+(use-package py-snippets
+  :ensure t
+  :after yasnippet
+  :config
+  (py-snippets-initialize))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-prog.el ends here

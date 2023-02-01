@@ -471,8 +471,12 @@
 
   ;;; scroll
   (setq scroll-margin 5)
+
   ;; tabs
-  (setq-default indent-tabs-mode nil tab-width 4))
+  (setq-default indent-tabs-mode nil tab-width 4)
+
+  ;; Use dialog boxes
+  (setq use-dialog-box nil))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here
