@@ -175,8 +175,6 @@
   :ensure t
   :defer t
   :init
-  (setq treemacs-persist-file
-        (expand-file-name "treemacs-persist" xdg/emacs-cache-directory))
   (add-to-list 'recentf-exclude ".*treemacs-persist\\'")
   :general
   (pspmacs/leader-keys
@@ -208,7 +206,7 @@
           treemacs-no-png-images                   t
           treemacs-no-delete-other-windows         t
           treemacs-project-follow-cleanup          nil
-          treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-persist-file                    (expand-file-name "treemacs-persist" xdg/emacs-cache-directory)
           treemacs-position                        'left
           treemacs-read-string-input               'from-child-frame
           treemacs-recenter-distance               0.1
@@ -240,8 +238,8 @@
     ;; using a Hi-DPI display, uncomment this to double the icon size.
     ;;(treemacs-resize-icons 44)
 
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t)
+    (treemacs-follow-mode)
+    (treemacs-filewatch-mode)
     (treemacs-fringe-indicator-mode 'always)
     (when treemacs-python-executable
       (treemacs-git-commit-diff-mode t))

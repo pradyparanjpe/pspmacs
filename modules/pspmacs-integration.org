@@ -112,35 +112,6 @@ Primary to bind restart key
     (autoload 'projectile-project-root "projectile")
     (setq consult-project-root-function #'projectile-project-root))
 #+end_src
-** Helm search (ag)
-- Deprecate with helm
-#+begin_src emacs-lisp :tangle no :export no
-  (use-package helm-ag
-    :general
-    (pspmacs/leader-keys
-      "/" '(lambda ()
-             (interactive)
-             (helm-do-ag (or projectile-project-root default-directory))
-             :kw "find in project")
-      "*" '(lambda ()
-             (interactive)
-             (helm-do-ag (or projectile-project-root default-directory) nil
-                         (thing-at-point 'symbol))
-             :kw "find in project"))
-    :init
-    (cond
-     ((executable-find "rg")
-      (custom-set-variables
-       '(helm-ag-base-command "rg --no-heading")
-       `(helm-ag-success-exit-status '(0 2))))
-     ((executable "pt")
-      (custom-set-variables
-       '(helm-ag-base-command "pt -e --nocolor --nogroup")))
-     ((executable "ack")
-      (custom-set-variables
-       '(helm-ag-base-command "ack --nocolor --nogroup")))))
-#+end_src
-
 * Systemd
 #+begin_src emacs-lisp
   (use-package systemd)

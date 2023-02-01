@@ -22,5 +22,5 @@ pspmacs-module-category.org
   - To load additional modules, add them with a *new* object key in superseding files.
 - Work-trees are scanned sequentially =user-emacs-directory=, =pvt-emacs-directory=, =local-emacs-directory=.
   - Only the earliest occurrence of module =<work-tree>/modules/pspmacs-<module-category>.org= is loaded.
-  - Modules in =user-emacs-directory= obviously load those from the other work-trees.
+  - Modules in =user-emacs-directory= obviously load those from the other work-trees using ~pspmacs/load-inherit~.
   - If not found, error is *NOT* thrown.

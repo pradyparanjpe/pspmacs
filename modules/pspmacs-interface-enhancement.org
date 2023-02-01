@@ -362,29 +362,6 @@ Flash highlight hints on evil actions
     (evil-goggles-use-diff-faces))
  #+end_src
 
-* emacs-helm/helm
-- Hide commands in M-x which don't work in the current mode
-- Deprecate. Use vertico, marginalia
-#+begin_src emacs-lisp :tangle no :export no
-  (use-package helm
-    :demand t
-    :bind (("M-x" . helm-M-x))
-    :general
-    (general-define-key
-     :keymaps 'helm-map
-     "TAB" #'helm-execute-persistent-action
-     "C-z" #'helm-select-action)
-    (pspmacs/leader-keys
-      "SPC" '(helm-M-x :wk "helm-M-x"))
-    (pspmacs/leader-keys
-      "ff" '(helm-find-files :wk "find files")
-      "bb" '(helm-buffers-list :wk "switch buffer"))
-    :config
-    (helm-mode 1)
-    (setq read-extended-command-predicate
-          #'command-completion-default-include-p))
-#+end_src
-
 * minad
 - We also use [[file:pspmacs-integration.org::*minad/consult][minad/consult]].
 ** minad/vertico
@@ -578,6 +555,10 @@ Flash highlight hints on evil actions
 
     ;; tabs
     (setq-default indent-tabs-mode nil tab-width 4)
+
+    ;; svg cache
+    (setq svg-lib-icons-dir
+          (expand-file-name "svg-lib" xdg/emacs-cache-directory))
 
     ;; Use dialog boxes
     (setq use-dialog-box nil))

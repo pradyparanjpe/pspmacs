@@ -26,9 +26,9 @@
 - [[file:pspmacs-programming.org][programming]]
 - [[file:pspmacs-python.org][python]]
 - [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
+- [[file:pspmacs-ess-R.org][ess-R]]
 - [[file:pspmacs-version-control.org][version-control]]
 - [[file:pspmacs-markup.org][markup]]
-- [[file:pspmacs-ess-R.org][ess-R]]
 
 * Yaml export
 #+begin_src yaml

@@ -478,6 +478,10 @@
   ;; tabs
   (setq-default indent-tabs-mode nil tab-width 4)
 
+  ;; svg cache
+  (setq svg-lib-icons-dir
+        (expand-file-name "svg-lib" xdg/emacs-cache-directory))
+
   ;; Use dialog boxes
   (setq use-dialog-box nil))
 
