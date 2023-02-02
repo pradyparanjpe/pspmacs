@@ -1,3 +1,10 @@
+;;; late/vars.el --- common pspmacs varstions -*- lexical-binding: t; -*-
+;;; Commentary:
+;;
+;; Custom variables for pspmacs config.
+;;
+;;; Code:
+
 (defcustom pspmacs/hl-tag-faces
   '(("FAIL"  .  "#ff3f3f")
     ("FIXME" .  "#ff6f3f")
@@ -18,7 +25,7 @@
     ("XXXX"  .  "#ff9f9f")
     ("DONT"  .  "#ff6fcf")
     ("CANT"  .  "#ff3fff"))
-  "Highlight colors for TODO tags"
+  "Highlight colors for TODO tags."
   :group 'pspmacs)
 
 (defcustom pspmacs/pretty-alist
@@ -48,7 +55,7 @@
     ("python" . (("and" . ?∩)
                  ("or" . ?∪)
                  ("->" . ?⇒))))
-  "pretty symbols"
+  "Pretty symbols."
   :group 'pspmacs)
 
 (use-package yaml)
@@ -78,7 +85,8 @@
                                  (f-read-text order-file)))))
                         modules-dir))))
                (lambda (a b) (< (car a) (car b)))))))
-  "Ordered list of pspmacs/modules to load"
+  "Ordered list of pspmacs/modules to load."
   :group 'pspmacs)
 
 (pspmacs/load-inherit)
+;;; vars.el ends here

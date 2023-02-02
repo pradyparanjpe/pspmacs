@@ -118,7 +118,8 @@
   ;; (lsp-before-save-edits nil)
   ;; (lsp-headerline-breadcrumb-enable nil)
   ;; (lsp-diagnostics-provider :none)
-  :hook (prog-mode . lsp-deferred))
+  :hook (prog-mode . (pspmacs/maj-cond-call
+                      lsp-deferred 'emacs-lisp-mode)))
 
 (use-package lsp-ui
   :defer t
@@ -170,7 +171,7 @@
 
 (use-package eldoc
   :hook
-  (emacs-lisp-mode . cider-mode))
+  (emacs-lisp-mode . eldoc-mode))
 
 (use-package display-fill-column-indicator
   :demand t

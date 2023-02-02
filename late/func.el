@@ -1,5 +1,12 @@
+;;; late/func.el --- common pspmacs functions -*- lexical-binding: t; -*-
+;;; Commentary:
+;;
+;; Functions used by pspmacs configuration
+;;
+;;; Code:
+
 (defun pspmacs/inferior-interpreter (executable)
-  "Open an inferior interpreter in split window
+  "Open an inferior interpreter in split window.
 
 Open EXECUTABLE interpreter in an inferior windows."
   (interactive)
@@ -8,7 +15,7 @@ Open EXECUTABLE interpreter in an inferior windows."
     (call-interactively executable)))
 
 (defun pspmacs/destroy-buffer-and-window (&optional target-buffer)
-  "Destroy window and buffer after some process is done
+  "Destroy window and buffer after some process is done.
 
 If TARGET-BUFFER is supplied, it and its window is destroyed.
 Else, current buffer and window is destroyed.
@@ -27,15 +34,19 @@ If window is the only window, it is spared"
 (defun pspmacs/extend-list (list-var elements)
   "Iterative form of ‘add-to-list’.
 
-Return value is the new value of LIST-VAR"
-  (unless (consp elements)
+Add each element from ELEMENTS to LIST-VAR.
+Return value is the new value of LIST-VAR."
+  (unless (listp elements)
     (error "ELEMENTS must be list"))
   (dolist (elem elements)
     (add-to-list list-var elem))
   (symbol-value list-var))
 
 (defun pspmacs/mode-prettify (sub-modes)
-  "Apply pretiffy mode alist according to active-mode"
+  "Apply pretiffy mode alist according to active-mode.
+
+Load prettify-symbols from Each of SUB-MODES"
+
   (progn
     (setq
      prettify-symbols-alist
@@ -49,7 +60,7 @@ Return value is the new value of LIST-VAR"
     (prettify-symbols-mode)))
 
 (defun pspmacs/load-suitable (fname &optional nag)
-  "Load emacs init file FNAME.
+  "Load Emacs init file FNAME.
 
 Function defined in early/definitions.el is hereby redefined to enable
 `org-babel-load-file' method, now that the correct org-mode is loaded.
@@ -76,4 +87,14 @@ If nothing is found and if NAG is `t', throw error. Default: return"
    (nag (user-error (format "Neither %s.{el,org} found."
                             (file-name-sans-extension fname))))))
 
+(defun pspmacs/maj-cond-call (callback maj-modes)
+  "Run CALLBACK unless major mode is any of MAJ-MODES.
+
+If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
+  (let ((maj-modes-list
+         (if (listp maj-modes) maj-modes `(,maj-modes))))
+    (unless (member major-mode maj-modes-list)
+      (eval callback))))
+
 (pspmacs/load-inherit)
+;;; func.el ends here
