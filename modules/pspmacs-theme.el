@@ -21,6 +21,7 @@
          `(org-document-title ((,c :foreground "#ffff9f")))
          `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
          `(font-lock-comment-face ((,c :foreground "#3f4f5f" :background "#0f0f0f")))
+         `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
          `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))
          `(font-lock-rpack-face ((,c :foreground "#9f7fff")))
          `(font-lock-relem-face ((,c :foreground "#bf8faf")))
@@ -69,13 +70,14 @@
      (keyword   "#00afff")
      (string    "#1faf5f")
      (variable  "#ffffaf")))
-
-  :config
   ;; Load the theme of your choice.
   ;; (load-theme 'modus-operandi :no-confirm)
-  (load-theme 'modus-vivendi :no-confirm)
   :hook
   (modus-themes-after-load-theme . pspmacs/modus-themes-custom-faces))
+
+(load-theme 'modus-vivendi :no-confirm)
+;; Somehow, the hook isn't getting evaluated automatically
+(eval modus-themes-after-load-theme-hook)
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

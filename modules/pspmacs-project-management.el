@@ -169,7 +169,10 @@
 (use-package dired
   :straight (:type built-in)
   :custom
-  (dired-listing-switches "-lah"))
+  (dired-listing-switches "-lah")
+  :general (pspmacs/leader-keys
+             "d" '(:ignore t :wk "dired")
+             "dd" '(dired :wk "open")))
 
 (use-package treemacs
   :ensure t
@@ -274,17 +277,17 @@
   :ensure t
   :config (treemacs-set-scope-type 'Tabs))
 
-(mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
-(setq backup-directory-alist
-      `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))
-
-(mkdir (expand-file-name "auto-saves" xdg/emacs-state-directory) t)
-(setq auto-save-file-name-transforms `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-                                        ,(expand-file-name
-                                          "auto-saves/\\2"
-                                          xdg/emacs-state-directory) t))
-      auto-save-list-file-prefix (expand-file-name
-                                  "auto-saves/sessions"
-                                  xdg/emacs-state-directory))
+(use-package emacs
+  :init
+  (mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
+  (setq backup-directory-alist
+        `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))
+  (mkdir (expand-file-name "auto-saves" xdg/emacs-state-directory) t)
+  (setq auto-save-file-name-transforms
+        `((".*" ,(file-name-directory
+                  (expand-file-name "auto-saves/" xdg/emacs-state-directory)) t)))
+  (setq auto-save-list-file-prefix (expand-file-name
+                                    "auto-saves/sessions"
+                                    xdg/emacs-state-directory)))
 
 (pspmacs/load-inherit)

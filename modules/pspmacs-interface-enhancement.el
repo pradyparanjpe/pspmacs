@@ -382,7 +382,7 @@
   (size-indication-mode t)
   :custom
   (doom-modeline-icon t)
-  (doom-modeline-modal-icon t)
+  (doom-modeline-modal-icon "")
   (doom-modeline-major-mode-icon t)
   (doom-modeline-major-mode-color-icon t)
   (doom-modeline-env-version t)
@@ -390,6 +390,7 @@
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-height 15)
   (doom-modeline-project-detection 'projectile)
+
   :config
   (doom-modeline-mode 1)
   (set-face-attribute 'mode-line nil
