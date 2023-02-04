@@ -175,7 +175,8 @@
   :ensure t
   :defer t
   :init
-  (add-to-list 'recentf-exclude ".*treemacs-persist\\'")
+  (pspmacs/extend-list 'recentf-exclude
+                       '(".*treemacs-persist\\'" ".*straight/build\\'"))
   :general
   (pspmacs/leader-keys
     "0" '(treemacs-select-window :wk "treemacs"))

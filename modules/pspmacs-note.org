@@ -150,7 +150,7 @@
 - Pretty heading bullets
 #+begin_src emacs-lisp
   (use-package org-bullets
-  :hook (org-mode . (lambda () (org-bullets-mode 1))))
+    :hook (org-mode . (lambda () (org-bullets-mode 1))))
 #+end_src
 * Auto-tangle
 #+begin_src emacs-lisp

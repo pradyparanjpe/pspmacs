@@ -1,48 +1,81 @@
-(use-package doom-themes
+(use-package modus-themes
+  :straight t
+  :demand t
+  :general (pspmacs/leader-keys
+             "T" '(:ignore t :wk "Theme")
+             "Tt" 'modus-themes-toggle)
+  :init
+  (setq display-time-24hr-format t)
+  (display-time-mode)
+  (setq display-time-default-load-average nil)
+  (line-number-mode t)
+  (column-number-mode t)
+  (size-indication-mode t)
+  (defun pspmacs/modus-themes-custom-faces ()
+    "Customize modus theme faces."
+    (modus-themes-with-colors
+      (progn
+        (custom-set-faces
+         ;; Add "padding" to the mode lines
+         `(hl-line ((,c :slant italic)))
+         `(org-document-title ((,c :foreground "#ffff9f")))
+         `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
+         `(font-lock-comment-face ((,c :foreground "#3f4f5f" :background "#0f0f0f")))
+         `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))
+         `(font-lock-rpack-face ((,c :foreground "#9f7fff")))
+         `(font-lock-relem-face ((,c :foreground "#bf8faf")))
+         `(font-lock-rsuper-face ((,c :foreground "#8fafbf")))
+  ;;        `(mode-line ((,c :underline ,border-mode-line-active
+  ;;                         :overline ,border-mode-line-active
+  ;;                         :box (:line-width 10 :color ,bg-mode-line-active))))
+  ;;        `(mode-line-inactive
+  ;;          ((,c :underline ,border-mode-line-inactive
+  ;;               :overline ,border-mode-line-inactive
+  ;;               :box (:line-width 10 :color ,bg-mode-line-inactive))))
+          ))))
+
+
+  ;; ESSENTIAL to make the underline move to the bottom of the box:
+  (setq x-underline-at-descent-line t)
   :custom
-  ;; Global settings (defaults)
-  ;; if nil, bold is universally disabled
-  (doom-themes-enable-bold t)
-  ; if nil, italics is universally disabled
-  (doom-themes-enable-italic t)
+  ;; Add all your customizations prior to loading the themes
+  (modus-themes-org-blocks 'gray-background)
+  (modus-themes-custom-auto-reload t)
+  (modus-themes-italic-constructs t)
+  (modus-themes-bold-constructs t)
+  (modus-themes-mixed-fonts t)
+  (modus-themes-variable-pitch-ui nil)
+
+  ;; Maybe define some palette overrides, such as by using our presets
+  (modus-vivendi-palette-overrides
+   '((bg-main   "#000307")
+     (fg-main   "#959a9f")
+     (fg-heading-1 "#5f6fbf")
+     (fg-heading-2 "#afaf5f")
+     (fg-heading-3 "#5faf5f")
+     (fg-heading-4 "#af5faf")
+     (fg-heading-5 "#5fbfbf")
+     (fg-heading-6 "#af5f5f")
+     (fg-heading-7 "#5f5f5f")
+     (fg-heading-8 "#afafaf")
+     ;; (bg-mode-line-active bg-main)
+     ;; (fg-mode-line-active fg-main)
+     (modus-themes-disable-other-themes t)
+     ;; (border-mode-line-active bg-mode-line-active)
+     ;; (border-mode-line-inactive bg-mode-line-inactive)
+     (constant  "#af1f1f")
+     (builtin   "#d76f10")
+     (docstring "#875f3f")
+     (keyword   "#00afff")
+     (string    "#1faf5f")
+     (variable  "#ffffaf")))
 
   :config
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config)
-  (load-theme 'doom-one t))
-
- (use-package space-theming
-   :straight (:type git :host github :repo "p3r7/space-theming")
-   :init
-   (setq-default
-    space-theming-modifications
-    '((doom-one
-       (font-lock-defaults :background "#000307" :foreground "#959a9f")
-       (default :background "#000307" :foreground "#959a9f")
-       (hl-line :slant italic)
-       (org-emph-face :slant italic)
-       (highlight :background "#3f3f5f" :underline t)
-       (font-lock-rpack-face :foreground "#9f7fff")
-       (font-lock-relem-face :foreground "#bf8faf")
-       (font-lock-rsuper-face :foreground "#8fafbf")
-       (font-lock-comment-face :foreground "#3f4f5f" :background "#0f0f0f")
-       (font-lock-constant-face :foreground "#af1f1f")
-       (font-lock-builtin-face :foreground "#d76f10")
-       (font-lock-doc-face :foreground "#875f3f")
-       (font-lock-string-face :forground "#1faf5f")
-       (font-lock-variable-name-face :foreground "#ffffaf")
-       (font-lock-function-name-face :foreground "#9f5f9f" :weight bold)
-       (font-lock-type-face :foreground "#ff3f5f" :weight bold))))
-   (setq custom--inhibit-theme-enable nil)
-
-   :config
-   (setq space-theming--current-theme 'doom-one)
-   (space-theming-init-theming)
-   (space-theming-update-current-theme))
+  ;; Load the theme of your choice.
+  ;; (load-theme 'modus-operandi :no-confirm)
+  (load-theme 'modus-vivendi :no-confirm)
+  :hook
+  (modus-themes-after-load-theme . pspmacs/modus-themes-custom-faces))
 
 (pspmacs/load-inherit)
-
 ;;; pspmacs-interface-enhancement.el ends here

@@ -129,7 +129,7 @@
    (org-mode . visual-line-mode)))
 
 (use-package org-bullets
-:hook (org-mode . (lambda () (org-bullets-mode 1))))
+  :hook (org-mode . (lambda () (org-bullets-mode 1))))
 
 (use-package org-auto-tangle
   :ensure t

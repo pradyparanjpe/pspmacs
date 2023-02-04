@@ -379,6 +379,7 @@
   (setq display-time-default-load-average nil)
   (line-number-mode t)
   (column-number-mode t)
+  (size-indication-mode t)
   :custom
   (doom-modeline-icon t)
   (doom-modeline-modal-icon t)
