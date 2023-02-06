@@ -220,29 +220,31 @@
     :diminish dashboard-mode
     :general
     (pspmacs/leader-keys
-      "bh" '(pspmacs/home-splash :which-key "home splash"))
+      "bh" '(pspmacs-dashboard :which-key "home splash"))
     :init
-    (defun pspmacs/home-splash ()
-      "Visit home screen"
+    (defun pspmacs-dashboard ()
       (interactive)
-      (progn
-        (switch-to-buffer (get-buffer-create "*dashboard*"))
-        (dashboard-refresh-buffer)))
+      (pspmacs/home-splash)
+      (switch-to-buffer
+       (get-buffer-create "*dashboard*")))
     :custom
     (dashboard-startup-banner
       (expand-file-name "data/Tux.svg" user-emacs-directory))
     (dashboard-set-heading-icons t)
     (dashboard-banner-logo-title
-      "Prady' Structured, Personalized Emacs")
+      "Prady's Structured, Personalized Emacs")
     (dashboard-items '((projects . 2)
                        (recents . 5)
                        (agenda . 5)))
     (dashboard-center-content t)
-    (initial-buffer-choice (lambda () (pspmacs/home-splash)))
     (dashboard-set-footer nil)
+    (initial-buffer-choice
+     (lambda ()
+       (switch-to-buffer
+        (get-buffer-create "*dashboard*"))))
     :config
-    (setq-default default-directory "~/")
-    (dashboard-setup-startup-hook))
+    (dashboard-setup-startup-hook)
+    :hook (dashboard-after-initialize-hook . pspmacs/home-splash))
 #+end_src
 
 * Wilfred/helpful

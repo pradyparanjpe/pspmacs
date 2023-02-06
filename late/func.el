@@ -26,6 +26,19 @@ If window is the only window, it is spared"
       (delete-window used-window))
     (kill-buffer used-buffer)))
 
+(defun pspmacs/home-splash-before ()
+  "run functions before switching to splash buffer."
+    (dashboard-refresh-buffer)
+    (run-hooks 'pspmacs/home-splash-before-hook))
+
+(defun pspmacs/home-splash ()
+  "Visit home screen."
+  (interactive)
+  (progn
+    (pspmacs/home-splash-before)
+    (setq-default default-directory "~/")
+    (run-hooks 'pspmacs/home-splash-hook)))
+
 (defun pspmacs/kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
@@ -63,7 +76,7 @@ Load prettify-symbols from Each of SUB-MODES"
   "Load Emacs init file FNAME.
 
 Function defined in early/definitions.el is hereby redefined to enable
-`org-babel-load-file' method, now that the correct org-mode is loaded.
+`org-babel-load-file' method, now that the correct `org-mode' is loaded.
 
 If FNAME is found, load it and return.
 If org/el counterpart of FNAME is found, load it and return.
@@ -72,7 +85,7 @@ To load,
 If extension `string='s 'org', use function `org-babel-load-file'.
 If extension `string='s 'el', use function `load'
 
-If nothing is found and if NAG is `t', throw error. Default: return"
+If nothing is found and if NAG is t, throw error. Default: return"
   (cond
    ((string= (file-name-extension fname) "org")
     (cond ((file-readable-p fname)
