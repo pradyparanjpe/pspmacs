@@ -49,7 +49,7 @@
         TeX-source-correlate-method 'synctex
         TeX-source-correlate-start-server nil
         TeX-electric-sub-and-superscript t
-        TeX-engine 'xetex ;; use lualatex by default
+        TeX-engine 'luatex ;; use lualatex by default
         TeX-save-query nil))
 
 (use-package latex
@@ -84,12 +84,6 @@
 
 (use-package evil-tex
   :hook (LaTeX-mode . evil-tex-mode))
-
-(use-package company-auctex
-  :after (company latex))
-
-(use-package company-math
-  :defer t)
 
 (use-package citar
   :no-require

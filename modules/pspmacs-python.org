@@ -84,7 +84,7 @@
     (sp-local-pair 'python-mode "__" "__")
 
     :hook
-    ((envrc-mode . (lambda ()
+    ((python-mode . (lambda ()
                      (when (executable-find "ipython")
                        (setq python-shell-interpreter
                              (executable-find "ipython")))))
@@ -127,7 +127,6 @@
   (use-package yapfify
     :defer t
     :hook (python-mode . yapf-mode))
-
 #+end_src
 
 ** Pytests
@@ -167,6 +166,7 @@
     :config
     (py-snippets-initialize))
 #+end_src
+
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

@@ -50,19 +50,19 @@
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
   (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
-  (add-to-list 'completion-at-point-functions #'cape-file t))
-  ;; (fset #'cape-path (cape-company-to-capf #'company-files))
-  ;; (add-to-list 'completion-at-point-functions #'cape-path t)
-  ;;(add-to-list 'completion-at-point-functions #'cape-history)
-  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-  ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
-  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-  ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (add-to-list 'completion-at-point-functions #'cape-file t)
+  (fset #'cape-path (cape-company-to-capf #'company-files))
+  (add-to-list 'completion-at-point-functions #'cape-path t)
+  (add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (add-to-list 'completion-at-point-functions #'cape-tex)
+  (add-to-list 'completion-at-point-functions #'cape-sgml)
+  (add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  (add-to-list 'completion-at-point-functions #'cape-dict)
+  (add-to-list 'completion-at-point-functions #'cape-symbol)
+  (add-to-list 'completion-at-point-functions #'cape-line))
 
 (use-package kind-icon
   :ensure t
@@ -91,6 +91,16 @@
 (use-package lsp-mode
   :defer t
   :commands (lsp lsp-deferred)
+  :init
+  ;; as directed by corfu wiki
+  (defun pspmacs/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+
+  (defun pspmacs/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless)))
+  (add-hook 'orderless-style-dispatchers
+            #'pspmacs/orderless-dispatch-flex-first nil 'local)
   :general
   (pspmacs/local-leader-keys
     :states 'normal
@@ -100,12 +110,8 @@
     "i o" '(lsp-organize-imports :wk "optimize")
     "l" '(:keymap lsp-command-map :wk "lsp")
     "a" '(lsp-execute-code-action :wk "code action"))
-  (pspmacs/leader-keys
-    :states 'normal
-    "e" '(:ignore t :wk "errors")
-    "el" '(lsp-treemacs-errors-list :wk "list"))
-
   :custom
+  (lsp-completion-provider :none)
   (lsp-restart 'ignore)
   (lsp-session-file (expand-file-name
                      ".lsp-session-v1" xdg/emacs-state-directory))
@@ -118,8 +124,9 @@
   ;; (lsp-before-save-edits nil)
   ;; (lsp-headerline-breadcrumb-enable nil)
   ;; (lsp-diagnostics-provider :none)
-  :hook (prog-mode . (pspmacs/maj-cond-call
-                      lsp-deferred 'emacs-lisp-mode)))
+  :hook
+  ((lsp-completion-mode . pspmacs/lsp-mode-setup-completion))
+  ((prog-mode . lsp-deferred)))
 
 (use-package lsp-ui
   :defer t
@@ -156,8 +163,11 @@
   :defer t
   :general
   (pspmacs/leader-keys
-    "en" '(flycheck-next-error :wk "next error")
-    "ep" '(flycheck-previous-error :wk "previous error"))
+    :states 'normal
+    "e" '(:ignore t :wk "errors")
+    "el" '(flycheck-list-errors :wk "list")
+    "en" '(flycheck-next-error :wk "next")
+    "ep" '(flycheck-previous-error :wk "previous"))
   :custom
   (flycheck-indication-mode 'right-fringe)
   (flycheck-check-syntax-automatically '(mode-enabled save))

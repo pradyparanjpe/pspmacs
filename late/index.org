@@ -380,7 +380,7 @@
       (let ((maj-modes-list
              (if (listp maj-modes) maj-modes `(,maj-modes))))
         (unless (member major-mode maj-modes-list)
-          (eval callback))))
+          (call-interactively callback))))
   #+end_src
 
 *** Inherit
@@ -453,8 +453,17 @@
       ("lisp" . (("lambda" . ?λ)))
       ("org" . (("#+setupfile" . ?🛒)
                 ("#+author" . ?🖋)
-                ("#+begin_src" . ?)
+                ("#+begin_note" . ?📋)
+                ("#+begin_example" . ?🥚)
+                ("#+end_example" . ?⏎)
+                ("#+begin_src" . ?🤖)
                 ("#+end_src" . ?⏎)
+                ("#+begin_tip" . ?💡)
+                ("#+end_tip" . ?👍)
+                ("#+begin_warn" . ?⚠)
+                ("#+end_warn" . ?⏎)
+                ("#+begin_warning" . ?⚠)
+                ("#+end_warning" . ?⏎)
                 ("#+email" . ?✉)
                 ("#+language" . ?🗣)
                 ("#+options" . ?🔘)

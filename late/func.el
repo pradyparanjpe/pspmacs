@@ -107,7 +107,7 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
   (let ((maj-modes-list
          (if (listp maj-modes) maj-modes `(,maj-modes))))
     (unless (member major-mode maj-modes-list)
-      (eval callback))))
+      (call-interactively callback))))
 
 (pspmacs/load-inherit)
 ;;; func.el ends here

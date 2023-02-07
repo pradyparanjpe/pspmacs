@@ -105,12 +105,6 @@
   (use-package evil-tex
     :hook (LaTeX-mode . evil-tex-mode))
 
-  (use-package company-auctex
-    :after (company latex))
-
-  (use-package company-math
-    :defer t)
-
   (use-package citar
     :no-require
     :general

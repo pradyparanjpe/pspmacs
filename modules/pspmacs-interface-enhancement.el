@@ -211,6 +211,7 @@
     (switch-to-buffer
      (get-buffer-create "*dashboard*")))
   :custom
+  (dashboard-image-banner-max-width 300)
   (dashboard-startup-banner
     (expand-file-name "data/Tux.svg" user-emacs-directory))
   (dashboard-set-heading-icons t)
@@ -353,9 +354,9 @@
   ;; Configure a custom style dispatcher (see the Consult wiki)
   ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
   ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-  (setq completion-styles '(orderless basic)
+  (setq completion-styles '(orderless partial-completion basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+        completion-category-overrides nil))
 
 (use-package embark
   :ensure t

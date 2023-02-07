@@ -76,7 +76,7 @@
   (sp-local-pair 'python-mode "__" "__")
 
   :hook
-  ((envrc-mode . (lambda ()
+  ((python-mode . (lambda ()
                    (when (executable-find "ipython")
                      (setq python-shell-interpreter
                            (executable-find "ipython")))))

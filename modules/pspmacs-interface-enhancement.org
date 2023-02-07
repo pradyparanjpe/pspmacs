@@ -214,6 +214,11 @@
 
 * emacs-dashboard/emacs-dashboard
 - Better splash home-screen
+  #+begin_tip
+  - Dashboard banner =maximum width= is restricted to =300= px.
+  - For control using =maximum height=, it *must* be set to =nil=.
+  #+end_tip
+
 #+begin_src emacs-lisp
   (use-package dashboard
     :demand t
@@ -228,6 +233,7 @@
       (switch-to-buffer
        (get-buffer-create "*dashboard*")))
     :custom
+    (dashboard-image-banner-max-width 300)
     (dashboard-startup-banner
       (expand-file-name "data/Tux.svg" user-emacs-directory))
     (dashboard-set-heading-icons t)
@@ -406,35 +412,35 @@ Flash highlight hints on evil actions
 
 ** minad/orderless
 - completion style
-  #+begin_src emacs-lisp
-    (use-package orderless
-      :after vertico
-      :init
-      ;; Configure a custom style dispatcher (see the Consult wiki)
-      ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-      ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-      (setq completion-styles '(orderless basic)
-            completion-category-defaults nil
-            completion-category-overrides '((file (styles partial-completion)))))
-  #+end_src
+#+begin_src emacs-lisp
+  (use-package orderless
+    :after vertico
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(orderless partial-completion basic)
+          completion-category-defaults nil
+          completion-category-overrides nil))
+#+end_src
 
 ** minad/embark
-    #+begin_src emacs-lisp
-      (use-package embark
-        :ensure t
-        :after vertico
-        :config
-        ;; Hide the mode line of the Embark live/completions buffers
-        (add-to-list 'display-buffer-alist
-                     '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                       nil
-                       (window-parameters (mode-line-format . none)))))
+#+begin_src emacs-lisp
+  (use-package embark
+    :ensure t
+    :after vertico
+    :config
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
 
-      ;; Consult users will also want the embark-consult package.
-      (use-package embark-consult
-        :ensure t;
-        :hook
-        (embark-collect-mode . consult-preview-at-point-mode))
+  ;; Consult users will also want the embark-consult package.
+  (use-package embark-consult
+    :ensure t;
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
   #+end_src
 * mode-line
 ** TODO replace seagle0128/doom-modeline
