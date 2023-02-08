@@ -136,66 +136,7 @@
     :hook (org-mode . reveal-mode))
 #+end_src
 
-* Org-publish alist
-- For bulk exporting org-files to html
-#+begin_src emacs-lisp
-  (defun pspmacs/project-to-publish-alist
-      (org-root html-root org-templates)
-    "Set root locations for source ORG-ROOT and target HTML-ROOT
-
-  to publish orgmode files to html."
-    (interactive
-     (let (org-root html-root org-templates)
-       (setq org-root (read-directory-name
-               "ORG Directory:\t"
-               nil default-directory
-               ".*" nil))
-       (setq html-root (read-directory-name
-            "HTML Directory:\t"
-            (expand-file-name "../html" org-root) nil
-            ".*" nil))
-       (setq org-templates (read-directory-name
-                "Templates Directory:\t"
-                (expand-file-name "templates"
-                          pspmacs/org-template-path)
-                nil ".*" nil))
-       (list org-root html-root org-templates)))
-
-    (catch 'pspmacs/mk-tag
-      (unless (file-directory-p html-root)
-    (if (yes-or-no-p (format "%s doesn't exist. Create? " html-root))
-        (make-directory html-root t)
-      (throw 'pspmacs/mk-tag nil)))
-      (setq org-publish-project-alist
-        (list
-         (list "org-notes"
-           :base-directory org-root
-           :base-extension "org"
-           :publishing-directory html-root
-           :recursive t
-           :publishing-function 'org-html-publish-to-html
-           :headline-levels 4
-           :auto-preamble t)
-         (list "org-static"
-           :base-directory org-root
-           :base-extension
-           "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-           :publishing-directory html-root
-           :recursive t
-           :publishing-function 'org-publish-attachment)
-         (list "org-templates"
-           :base-directory org-templates
-           :base-extension
-           "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-           :publishing-directory html-root
-           :recursive t
-           :publishing-function 'org-publish-attachment)
-         (list "org" :components
-           '("org-notes" "org-static" "org-templates"))))))
-           #+end_src
-
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  
 #+end_src

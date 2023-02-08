@@ -120,7 +120,7 @@ If envrionment variables are not set, use:
 ** Package management (straight)
 - User may overwrite the pspmacs/packaging-directory in private or local init-tree to customize packaging system.
 #+begin_src emacs-lisp :tangle definitions.el
-  (defvar pspmacs/packaging-directory
+  (defcustom pspmacs/packaging-directory
     (expand-file-name "pspackaging" user-emacs-directory)
     "Packaging system (straight) to use.")
 #+end_src

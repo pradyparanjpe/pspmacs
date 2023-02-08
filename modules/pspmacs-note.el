@@ -22,26 +22,7 @@
 
 ;;; Code:
 
-(defcustom pspmacs/org-path
-  (expand-file-name "org/" xdg/emacs-data-directory)
-  "Org mode base"
-  :group 'pspmacs)
-
-(defcustom pspmacs/org-template-path
-  (expand-file-name "templates" pspmacs/org-path)
-  "Org mode templates (setupfile)"
-  :group 'pspmacs)
-
-(defcustom pspmacs/org-journal-path
-  (expand-file-name "journal" pspmacs/org-path)
-  "Journal entries."
-  :group 'pspmacs)
-
 (use-package org
-  :init
-  (defun pspmacs/prettify-note ()
-    (pspmacs/mode-prettify '("lisp" "org")))
-
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map

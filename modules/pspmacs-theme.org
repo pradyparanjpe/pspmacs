@@ -68,30 +68,6 @@ We shall use latest modus themes, not the built-in ones.
     (line-number-mode t)
     (column-number-mode t)
     (size-indication-mode t)
-    (defun pspmacs/modus-themes-custom-faces ()
-      "Customize modus theme faces."
-      (modus-themes-with-colors
-        (progn
-          (custom-set-faces
-           ;; Add "padding" to the mode lines
-           `(hl-line ((,c :slant italic)))
-           `(org-document-title ((,c :foreground "#ffff9f")))
-           `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
-           `(font-lock-comment-face ((,c :foreground "#3f4f5f" :background "#0f0f0f")))
-           `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
-           `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))
-           `(font-lock-rpack-face ((,c :foreground "#9f7fff")))
-           `(font-lock-relem-face ((,c :foreground "#bf8faf")))
-           `(font-lock-rsuper-face ((,c :foreground "#8fafbf")))
-    ;;        `(mode-line ((,c :underline ,border-mode-line-active
-    ;;                         :overline ,border-mode-line-active
-    ;;                         :box (:line-width 10 :color ,bg-mode-line-active))))
-    ;;        `(mode-line-inactive
-    ;;          ((,c :underline ,border-mode-line-inactive
-    ;;               :overline ,border-mode-line-inactive
-    ;;               :box (:line-width 10 :color ,bg-mode-line-inactive))))
-            ))))
-
 
     ;; ESSENTIAL to make the underline move to the bottom of the box:
     (setq x-underline-at-descent-line t)

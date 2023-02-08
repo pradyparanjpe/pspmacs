@@ -1,0 +1,712 @@
+#+title: pspack
+#+property: header-args :tangle t :mkdirp t :results no :eval never
+#+OPTIONS: _:nil
+#+auto_tangle: t
+
+* XDG
+- Emacs must respect =XDG= system
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  ;;; xdg.el --- Personal xdg-definitions file -*- lexical-binding: t; -*-
+  ;;; Commentary:
+  ;;
+  ;; XDG file-system awareness for pspmacs
+  ;;
+  ;;; Code:
+  (defgroup xdg nil
+    "XDG awarebess for pspmacs."
+    :group 'pspmacs)
+#+end_src
+
+** Quick environment look-up to assign XDG locations
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  (defun xdg/assign-base (xdg-var default-path)
+    "Emacs's default xdg-specified locations.
+
+  If xdg's variable is defined by system, use it, else return default
+  If XDG-VAR is defined in the environment, use XDG-VAR/emacs,
+  else use DEFAULT-PATH/emacs"
+    (directory-file-name (expand-file-name "emacs" (or (getenv xdg-var)
+                                                       default-path))))
+#+end_src
+
+** XDG_CONFIG_HOME
+- This is *THE CONFIG DIRECTORY*
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  (defcustom xdg/emacs-config-directory
+    'user-emacs-directory
+    "Location of local machine-specific Emacs-configuration files
+
+  alias of USER_EMACS_DIRECTORY"
+    :group 'xdg
+    :type '(string :tag "the ~/.emacs.d/"))
+#+end_src
+
+** XDG_CACHE_HOME
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  ;; ${XDG_CACHE_HOME:-${HOME}/.cache}/emacs
+  (defcustom xdg/emacs-cache-directory
+    (xdg/assign-base "XDG_CACHE_HOME" "~/.cache/")
+    "Location of runtime cache files for Emacs.
+
+  ${XDG_CONFIG_HOME:-${HOME}/.cache}/emacs"
+    :group 'xdg
+    :type '(string :tag "Path to cache"))
+#+end_src
+
+** XDG_DATA_HOME
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  ;; ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs
+  (defcustom xdg/emacs-data-directory
+    (xdg/assign-base "XDG_DATA_HOME" "~/.local/share")
+    "Location of persistent data files for Emacs.
+
+  ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs"
+    :group 'xdg
+    :type '(string :tag "Path to persistent data"))
+#+end_src
+
+** XDG_STATE_HOME
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  ;; ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs
+  (defcustom xdg/emacs-state-directory
+    (xdg/assign-base "XDG_state_HOME" "~/.local/state")
+    "Location of volatile state files for Emacs.
+
+  ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
+    :group 'xdg
+    :type '(string :tag "Path for logging"))
+#+end_src
+
+** Ensure
+- Ensure that all emacs-xdg directories exist
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  (dolist (xdg-base '(xdg/emacs-data-directory
+                      xdg/emacs-cache-directory
+                      xdg/emacs-state-directory))
+    (make-directory (eval xdg-base) t))
+#+end_src
+
+** All cached files should be saved in XDG_CACHE_HOME
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  (defun locate-user-emacs-file (new-name &optional old-name)
+    "This function supersedes Emacs-native function.
+
+  Return an absolute per-user Emacs-specific file name.
+  If NEW-NAME exists in `xdg/emacs-cache-directory', return it.
+  Else if OLD-NAME is non-nil and ~/OLD-NAME exists, return ~/OLD-NAME.
+  Else return NEW-NAME in `xdg/emacs-cache-directory', creating the
+  directory if it does not exist."
+    (convert-standard-filename
+     (let* ((home (concat "~" (or init-file-user "")))
+            (at-home (and old-name (expand-file-name old-name home)))
+            (bestname (abbreviate-file-name
+                       (expand-file-name new-name xdg/emacs-cache-directory))))
+       (if (and at-home (not (file-readable-p bestname))
+                (file-readable-p at-home))
+           at-home
+         ;; Make sure `xdg/emacs-cache-directory' exists,
+         ;; unless we're in batch mode or dumping Emacs.
+         (or noninteractive
+             dump-mode
+             (let (errtype)
+               (if (file-directory-p xdg/emacs-cache-directory)
+                   (or (file-accessible-directory-p xdg/emacs-cache-directory)
+                       (setq errtype "access"))
+                 (with-file-modes ?\700
+                   (condition-case nil
+                       (make-directory xdg/emacs-cache-directory t)
+                     (error (setq errtype "create")))))
+               (when (and errtype
+                          xdg/emacs-cache-directory-warning
+                          (not (get 'xdg/emacs-cache-directory-warning 'this-session)))
+                 ;; Warn only once per Emacs session.
+                 (put 'xdg/emacs-cache-directory-warning 'this-session t)
+                 (display-warning 'initialization
+                                  (format "\
+  Unable to %s `xdg/emacs-cache-directory' (%s).
+  Any data that would normally be written there may be lost!
+  If you never want to see this message again,
+  customize the variable `xdg/emacs-cache-directory-warning'."
+                                          errtype xdg/emacs-cache-directory)))))
+         bestname))))
+#+end_src
+
+** Footer
+#+begin_src emacs-lisp :tangle pspmacs/xdg.el
+  (provide 'pspmacs/xdg)
+  ;;; xdg.el ends there
+#+end_src
+
+* Headers
+#+begin_src emacs-lisp :tangle pspack.el
+  ;;; pspack/pspack.el --- common pspmacs utils -*- lexical-binding: t; -*-
+  ;;; Commentary:
+  ;;
+  ;; Custom variables, functions, faces for pspmacs config.
+  ;;
+  ;;; Code:
+  (defgroup pspack nil
+    "Functions and variables used by pspmacs, bundled into a package."
+    :group 'pspack)
+#+end_src
+
+#+begin_src emacs-lisp :tangle vars.el
+  ;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
+  ;;; Commentary:
+  ;;
+  ;; Custom variables for pspmacs config.
+  ;;
+  ;;; Code:
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  ;;; pspack/func.el --- common pspmacs functions -*- lexical-binding: t; -*-
+  ;;; Commentary:
+  ;;
+  ;; Functions used by pspmacs configuration
+  ;;
+  ;;; Code:
+#+end_src
+
+* Home-splash
+- Home splash screen customizations
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/home-splash-before-hook nil
+    "Run before switching to pspmacs/home-splash."
+    :group 'pspack
+    :type '(hook :tag "Before home-splash"))
+
+  (defcustom pspmacs/home-splash-hook nil
+    "Run after switching to pspmacs/home-splash."
+    :group 'pspack
+    :type '(hook :tag "After home-splash"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/home-splash-before ()
+    "run functions before switching to splash buffer."
+      (dashboard-refresh-buffer)
+      (run-hooks 'pspmacs/home-splash-before-hook))
+
+  (defun pspmacs/home-splash ()
+    "Visit home screen."
+    (interactive)
+    (progn
+      (pspmacs/home-splash-before)
+      (setq-default default-directory "~/")
+      (run-hooks 'pspmacs/home-splash-hook)))
+
+#+end_src
+
+* Highlighted tags
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/hl-tag-faces
+    '(("FAIL"  . "#ff3f3f")
+      ("FIXME" . "#ff6f3f")
+      ("TEMP"  . "#ff9f3f")
+      ("HACK"  . "#ffcf3f")
+      ("TODO"  . "#ffff3f")
+      ("LAZY"  . "#e7ff3f")
+      ("WAIT"  . "#cfff3f")
+      ("NEXT"  . "#9fff3f")
+      ("ALGO"  . "#6fff3f")
+      ("PROG"  . "#3fff3f")
+      ("TEST"  . "#3fe757")
+      ("ACTS"  . "#3fcf6f")
+      ("SENT"  . "#3f9f9f")
+      ("OKAY"  . "#3f6fcf")
+      ("DONE"  . "#3f3fff")
+      ("NOTE"  . "#ffcf6f")
+      ("XXXX"  . "#ff9f9f")
+      ("DONT"  . "#ff6fcf")
+      ("CANT"  . "#ff3fff"))
+    "Highlight colors for TODO tags."
+    :group 'pspack
+    :type '(repeat (cons (string :tag "hl-tag") (string :tag "color"))))
+#+end_src
+
+* Prettify data
+- Prettify modes with emoji
+
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/pretty-alist
+    '(("code" . (("\\n" . ?⏎)
+                 ("\\t" . ?↹)
+                 (">=" . ?≥)
+                 ("<=" . ?≤)
+                 ("!=" . ?≠)
+                 ("==" . ?≅)))
+      ("lisp" . (("lambda" . ?λ)))
+      ("org" . (("#+setupfile" . ?🛒)
+                ("#+author" . ?🖋)
+                ("#+begin_note" . ?📋)
+                ("#+begin_example" . ?🥚)
+                ("#+end_example" . ?⏎)
+                ("#+begin_src" . ?🤖)
+                ("#+end_src" . ?⏎)
+                ("#+begin_tip" . ?💡)
+                ("#+end_tip" . ?👍)
+                ("#+begin_warn" . ?⚠)
+                ("#+end_warn" . ?⏎)
+                ("#+begin_warning" . ?⚠)
+                ("#+end_warning" . ?⏎)
+                ("#+email" . ?✉)
+                ("#+language" . ?🗣)
+                ("#+options" . ?🔘)
+                ("#+property" . ?⚙)
+                ("#+results" . ?📜)
+                ("#+startup" . ?)
+                ("#+html_head" . ?)
+                ("#+title" . ?§)
+                ("tangle" . ?🔗)
+                ("[x]" . ?✔)
+                ("[ ]" . ?❌)
+                ("[-]" . ?⏳)))
+      ("python" . (("and" . ?∩)
+                   ("or" . ?∪)
+                   ("->" . ?⇒))))
+    "Pretty symbols."
+    :group 'pspack
+    :type '(repeat (cons
+                    (string :tag "major-mode")
+                    (repeat (cons (string :tag "to prettify")
+                                  (integer :tag "Pretty symbol ORD"))))))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/mode-prettify (sub-modes)
+    "Apply pretiffy mode alist according to active-mode.
+
+  Load prettify-symbols from Each of SUB-MODES."
+    (progn
+      (setq
+       prettify-symbols-alist
+       (mapcan (lambda (x)
+                 (list x `(,(upcase (car x)) . ,(cdr x))))
+               (apply #'append
+                      (mapcar
+                       (lambda (y)
+                         (cdr (assoc y pspmacs/pretty-alist)))
+                       sub-modes))))
+      (prettify-symbols-mode)))
+#+end_src
+
+*** Prettify ESS/R
+#+begin_src emacs-lisp :tangle vars.el
+  (defface pspmacs/r-namespace '((t (:foreground "#9f7fff")))
+    "R package namespace."
+    :group 'pspack)
+
+  (defface pspmacs/r-name-obj '((t (:foreground "#8fa7bf")))
+    "Object referred from R package namespace."
+    :group 'pspack)
+
+  (defface pspmacs/r-list '((t (:foreground "#bf8faf")))
+    "R list."
+    :group 'pspack)
+
+  (defface pspmacs/r-list-obj '((t '(:foreground "#8fa7bf")))
+    "Object referred from R list"
+    :group 'pspack)
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/prettify-R ()
+    "Prettify ess-R"
+    pspmacs/mode-prettify '("code" "R"))
+
+  (defun pspmacs/rfaces ()
+    "R callable hook function"
+    (font-lock-add-keywords
+     'R-mode
+     '(("\\W\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)::"
+        1 pspmacs/r-namespace-face t)))
+    (font-lock-add-keywords
+     'R-mode
+     '(("\\w::\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+        1 pspmacs/r-name-obj-face t)))
+    (font-lock-add-keywords
+     'R-mode
+     '(("\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)\\$\\w"
+        1 pspmacs/r-list t)))
+    (font-lock-add-keywords
+     'R-mode
+     '(("\\w\\$\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+        1 pspmacs/r-list-obj t))))
+#+end_src
+
+*** Prettify Python
+#+begin_src emacs-lisp :tangle vars.el
+  (defface pspmacs/pyargs '((t (:foreground "#9f7fff")))
+    "Python arguments face identified as '*args' and '**kwargs'."
+    :group 'pspack)
+
+  (defface pspmacs/pydunder '((t (:foreground "#bf8fa7")))
+    "python dunder symbols identified as '__dunder__'."
+    :group 'pspack)
+
+  (defface pspmacs/rst-literal '((t (:box t)))
+    "Restructured text literals delimited by double backquotes `\`\`True\`\``."
+    :group 'pspack)
+
+  (defun pspmacs/prettify-python ()
+    "Prettify python"
+    (pspmacs/mode-prettify '("code" "python")))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/pyfaces ()
+    "Python keyword faces"
+    (font-lock-add-keywords
+     'python-mode '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+                     1 pspmacs/pyargs-face t)))
+    (font-lock-add-keywords
+     'python-mode '(("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+                     1 pspmacs/pydunder-face t)))
+    (font-lock-add-keywords
+     'python-mode '(("``\\(.*?\\)``"
+                     1 pspmacs/rst-literal-face t))))
+#+end_src
+
+*** Prettify Emacs-Lisp
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/prettify-emacs-lisp ()
+    "Prettify Emacs-Lisp"
+      (pspmacs/mode-prettify '("code" "emacs-lisp")))
+#+end_src
+
+*** Prettify Org
+#+begin_src emacs-lisp :tangle func.el
+    (defun pspmacs/prettify-note ()
+      (pspmacs/mode-prettify '("lisp" "org")))
+#+end_src
+
+* Order of pspmacs modules to load
+#+begin_src emacs-lisp :tangle vars.el
+  (use-package yaml)
+  (use-package ht)
+  (use-package f)
+
+  (defcustom pspmacs/modules-order
+    (let
+        ((modules-dir
+          (mapcar
+           (lambda (x) (expand-file-name "modules" x)) pspmacs/worktrees)))
+      (apply
+       'vconcat (mapcar
+                 (lambda (x) (cdr x))
+                 (sort
+                  (ht->alist
+                  (apply
+                   'ht-merge
+                   (remq 'nil
+                         (mapcar
+                          (lambda (x)
+                            (let
+                                ((order-file
+                                  (expand-file-name "load-order.yml" x)))
+                              (if (file-readable-p order-file)
+                                  (yaml-parse-string
+                                   (f-read-text order-file)))))
+                          modules-dir))))
+                 (lambda (a b) (< (car a) (car b)))))))
+    "Ordered list of pspmacs/modules to load."
+    :group 'pspack
+    :type '(repeat (string :tag "module-name")))
+    #+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/load-modules (&optional modules-order)
+    "Load modules in order.
+
+  Load modules as defined in MODULES-ORDER.
+  Defaults to the variable pspmacs/modules-order"
+    (let* ((modules-order (or modules-order pspmacs/modules-order)))
+      (seq-doseq (autofile modules-order nil)
+        (catch 'load-success
+          (dolist (work-tree pspmacs/worktrees nil)
+            (let* ((lit-module
+                    (expand-file-name
+                     (format "modules/pspmacs-%s.org" autofile) work-tree))
+                   (found (when (file-readable-p lit-module)
+                            (pspmacs/load-suitable lit-module)
+                            lit-module)))
+              (when found (throw 'load-success lit-module))))))))
+#+end_src
+
+* Byte compile worktrees
+Following function may be used to byte-compile any work-tree.
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/byte-worktree t
+    "Byte compile worktrees?"
+    :group 'pspack
+    :type 'boolean)
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/byte-compile-worktrees (&optional worktree)
+    "Byte-compile directory recursively.
+
+  Target: WORKTREE.
+  Default worktree is global (`user-emacs-directory)
+  This may be disabled by setting `pspmacs/byte-worktree' to nil"
+    (when pspmacs/byte-worktree
+      (let ((worktree (or worktree user-emacs-directory)))
+        (byte-recompile-directory worktree 0))))
+#+end_src
+
+* Inferior interpreter
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/inferior-interpreter (executable)
+    "Open an inferior interpreter in split window.
+
+  Open EXECUTABLE interpreter in an inferior windows."
+    (interactive)
+    (let ((interpreter-window (split-window-below)))
+      (select-window interpreter-window)
+      (call-interactively executable)))
+#+end_src
+
+* Destroy buffer and window when user application exits
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/destroy-buffer-and-window (&optional target-buffer)
+    "Destroy window and buffer after some process is done.
+
+  If TARGET-BUFFER is supplied, it and its window is destroyed.
+  Else, current buffer and window is destroyed.
+  If window is the only window, it is spared"
+    (let* ((used-buffer (or target-buffer (current-buffer)))
+           (used-window (get-buffer-window used-buffer)))
+      (when (not (one-window-p))
+        (delete-window used-window))
+      (kill-buffer used-buffer)))
+#+end_src
+
+* Kill all other buffers
+#+begin_src emacs-lisp :tangle func.el
+(defun pspmacs/kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+#+end_src
+
+* Extend list as in python
+- Extend a list with elements from an iterable.
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/extend-list (list-var elements)
+    "Iterative form of ‘add-to-list’.
+
+  Add each element from ELEMENTS to LIST-VAR.
+  Return value is the new value of LIST-VAR."
+    (unless (listp elements)
+      (error "ELEMENTS must be list"))
+    (dolist (elem elements)
+      (add-to-list list-var elem))
+    (symbol-value list-var))
+#+end_src
+
+* Conditional callback
+- Add to a hook unless major mode is other than listed.
+  #+begin_src emacs-lisp :tangle func.el
+    (defun pspmacs/maj-cond-call (callback maj-modes)
+      "Run CALLBACK unless major mode is any of MAJ-MODES.
+
+    If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
+      (let ((maj-modes-list
+             (if (listp maj-modes) maj-modes `(,maj-modes))))
+        (unless (member major-mode maj-modes-list)
+          (call-interactively callback))))
+  #+end_src
+
+* Theme customizations
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/modus-themes-custom-faces ()
+    "Customize modus theme faces."
+    (modus-themes-with-colors
+      (progn
+        (custom-set-faces
+         ;; Add "padding" to the mode lines
+         `(hl-line ((,c :slant italic)))
+         `(org-document-title ((,c :foreground "#ffff9f")))
+         `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
+         `(font-lock-comment-face ((,c :foreground "#3f4f5f" :background "#0f0f0f")))
+         `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
+         `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))
+         `(font-lock-rpack-face ((,c :foreground "#9f7fff")))
+         `(font-lock-relem-face ((,c :foreground "#bf8faf")))
+         `(font-lock-rsuper-face ((,c :foreground "#8fafbf")))
+  ;;        `(mode-line ((,c :underline ,border-mode-line-active
+  ;;                         :overline ,border-mode-line-active
+  ;;                         :box (:line-width 10 :color ,bg-mode-line-active))))
+  ;;        `(mode-line-inactive
+  ;;          ((,c :underline ,border-mode-line-inactive
+  ;;               :overline ,border-mode-line-inactive
+  ;;               :box (:line-width 10 :color ,bg-mode-line-inactive))))
+         ))))
+#+end_src
+
+* Find files in project
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/projectile-find-file-all ()
+    (interactive)
+    (let ((projectile-git-command "git ls-files -zco"))
+  (projectile-find-file)))
+#+end_src
+
+* Use corfu as completion
+- as directed by corfu wiki
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+
+  (defun pspmacs/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless)))
+#+end_src
+
+* Disable from lsp-io
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/lsp-ui-disable-modes ()
+    "Disable certian modes from lsp-ui"
+    (display-line-numbers-mode -1)
+    (whitespace-mode -1))
+#+end_src
+
+* python venv for pytest
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/pytest-use-venv (orig-fun &rest args)
+    (if-let ((python-pytest-executable (executable-find "pytest")))
+        (apply orig-fun args)
+      (apply orig-fun args)))
+#+end_src
+
+* Yank file name to clipboard
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/yank-file-name ()
+    "Yank file-name to clipboard
+
+  Also, display file name in echo area"
+    (interactive)
+    (kill-new buffer-file-name)
+    (message (format "Copied: %s"buffer-file-name)))
+#+end_src
+
+* wayland kill-ring
+#+begin_src emacs-lisp :tangle func.el
+  (defun wl-copy (text)
+    "Copy to wayland clipboard.
+
+  Copy TEXT to wayland wl-copy"
+    (setq wl-copy-process (make-process :name "wl-copy"
+                    :buffer nil
+                    :command '("wl-copy" "-f" "-n")
+                    :connection-type 'pipe))
+    (process-send-string wl-copy-process text)
+    (process-send-eof wl-copy-process))
+  
+  (defun wl-paste ()
+    "Paste from wayland clipboard."
+    (if (and wl-copy-process (process-live-p wl-copy-process))
+    nil ; should return nil if we're the current paste owner
+      (shell-command-to-string "wl-paste -n | tr -d \r")))
+#+end_src
+
+* Org-paths
+- pspmacs/org-path: base org path
+- pspmacs/org-template-path: path to org setupfile templates
+- pspmacs/org-journal-path: path to org journal
+#+begin_src emacs-lisp :tangle vars.el
+  (require 'pspmacs/xdg)
+  (defcustom pspmacs/org-path
+    (expand-file-name "org/" xdg/emacs-data-directory)
+    "Org mode base"
+    :group 'pspmacs
+    :type '(string :tag "Org files base"))
+
+  (defcustom pspmacs/org-template-path
+    (expand-file-name "templates" pspmacs/org-path)
+    "Org mode templates (setupfile)"
+    :group 'pspmacs
+    :type '(string :tag "Org templates"))
+
+  (defcustom pspmacs/org-journal-path
+    (expand-file-name "journal" pspmacs/org-path)
+    "Journal entries."
+    :group 'pspmacs
+    :type '(string :tag "Org Journal"))
+#+end_src
+
+* Org-publish alist
+- For bulk exporting org-files to html
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/project-to-publish-alist
+      (org-root html-root org-templates)
+    "Set root locations for source ORG-ROOT and target HTML-ROOT
+
+  to publish orgmode files to html."
+    (interactive
+     (let (org-root html-root org-templates)
+       (setq org-root (read-directory-name
+                       "ORG Directory:\t"
+                       nil default-directory
+                       ".*" nil))
+       (setq html-root (read-directory-name
+                        "HTML Directory:\t"
+                        (expand-file-name "../html" org-root) nil
+                        ".*" nil))
+       (setq org-templates (read-directory-name
+                            "Templates Directory:\t"
+                            (expand-file-name "templates"
+                                              pspmacs/org-template-path)
+                            nil ".*" nil))
+       (list org-root html-root org-templates)))
+
+    (catch 'pspmacs/mk-tag
+      (unless (file-directory-p html-root)
+        (if (yes-or-no-p (format "%s doesn't exist. Create? " html-root))
+            (make-directory html-root t)
+          (throw 'pspmacs/mk-tag nil)))
+      (setq org-publish-project-alist
+            (list
+             (list "org-notes"
+                   :base-directory org-root
+                   :base-extension "org"
+                   :publishing-directory html-root
+                   :recursive t
+                   :publishing-function 'org-html-publish-to-html
+                   :headline-levels 4
+                   :auto-preamble t)
+             (list "org-static"
+                   :base-directory org-root
+                   :base-extension
+                   "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+                   :publishing-directory html-root
+                   :recursive t
+                   :publishing-function 'org-publish-attachment)
+             (list "org-templates"
+                   :base-directory org-templates
+                   :base-extension
+                   "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+                   :publishing-directory html-root
+                   :recursive t
+                   :publishing-function 'org-publish-attachment)
+             (list "org" :components
+                   '("org-notes" "org-static" "org-templates"))))))
+           #+end_src
+           
+* Footers
+#+begin_src emacs-lisp :tangle vars.el
+  ;;; vars.el ends there
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  ;;; func.el ends there
+#+end_src
+
+#+begin_src emacs-lisp :tangle pspack.el
+  (load (expand-file-name "vars.el" (file-name-directory load-file-name))
+        nil 'nomessage)
+  (load (expand-file-name "func.el" (file-name-directory load-file-name))
+        nil 'nomessage)
+  (provide 'pspack)
+#+end_src

@@ -42,19 +42,6 @@
     (python-mode-map :states 'normal "gz" nil "C-j" nil)
     ;; (python-mode-map :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
     :init
-    (defun pspmacs/prettify-python ()
-      (pspmacs/mode-prettify '("code" "python")))
-
-    (font-lock-add-keywords
-     nil '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-            1 '(:foreground "#9f7fff") t)))
-
-    (font-lock-add-keywords
-     nil '(("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-            1 '(:foreground "#bf8fa7") t)))
-
-    (font-lock-add-keywords nil '(("``\\(.*?\\)``" 1 '(:box t) t)))
-
     (with-eval-after-load 'lsp-mode
       (when
           (string= major-mode "python-mode")
@@ -68,7 +55,6 @@
            "[/\\\\]\\.?venv\\'"
            "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
            "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
-    (pspmacs/mode-prettify '("code" "python"))
     :custom
     (python-indent-offset 0)
     (python-shell-interpreter-args "-i --simple-prompt --no-color-info")
@@ -88,7 +74,8 @@
                      (when (executable-find "ipython")
                        (setq python-shell-interpreter
                              (executable-find "ipython")))))
-     (python-mode . pspmacs/prettify-python)))
+     (python-mode . pspmacs/prettify-python)
+     (python-mode . pspmacs/pyfaces)))
 #+end_src
 
 * Automatic virtual environment
@@ -142,10 +129,6 @@
   ;;     "t t" '(python-pytest-function :wk "function"))
   ;;   :init
   ;;   (setq python-pytest-arguments '("--color" "--failed-first"))
-  ;;   (defun pspmacs/pytest-use-venv (orig-fun &rest args)
-  ;;     (if-let ((python-pytest-executable (executable-find "pytest")))
-  ;;         (apply orig-fun args)
-  ;;       (apply orig-fun args)))
   ;;   :config
   ;;   (advice-add 'python-pytest--run :around #'pspmacs/pytest-use-venv))
 #+end_src

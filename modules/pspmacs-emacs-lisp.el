@@ -22,8 +22,6 @@
 
 ;;; Code:
 
-(defun pspmacs/prettify-emacs-lisp ()
-    (pspmacs/mode-prettify '("code" "emacs-lisp")))
 (add-hook 'emacs-lisp-mode-hook 'pspmacs/prettify-emacs-lisp)
 ;;; pspmacs-emacs-lisp.el ends here
 

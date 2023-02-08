@@ -92,13 +92,6 @@
   :defer t
   :commands (lsp lsp-deferred)
   :init
-  ;; as directed by corfu wiki
-  (defun pspmacs/orderless-dispatch-flex-first (_pattern index _total)
-    (and (eq index 0) 'orderless-flex))
-
-  (defun pspmacs/lsp-mode-setup-completion ()
-    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-          '(orderless)))
   (add-hook 'orderless-style-dispatchers
             #'pspmacs/orderless-dispatch-flex-first nil 'local)
   :general
@@ -141,11 +134,6 @@
    "C-j" 'nil
    "C-k" 'nil)
 
-  :init
-  (defun pspmacs/lsp-ui-disable-modes ()
-    "Disable certian modes from lsp-ui"
-    (display-line-numbers-mode -1)
-    (whitespace-mode -1))
   :custom
   ;; (lsp-ui-doc-show-with-mouse nil)
   (lsp-ui-doc-show-with-cursor t)

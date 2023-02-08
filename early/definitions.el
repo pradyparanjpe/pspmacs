@@ -38,7 +38,7 @@ privately synchronized configuration directory")
 (defvar pspmacs/load-custom-file t
   "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
 
-(defvar pspmacs/packaging-directory
+(defcustom pspmacs/packaging-directory
   (expand-file-name "pspackaging" user-emacs-directory)
   "Packaging system (straight) to use.")
 

@@ -5,6 +5,9 @@ sitemap.org
 # local-emacs-config directory
 local.d/
 
+# byte-compilation files
+*.elc
+
 # known emacs cache
 .cache/
 recentf
@@ -20,3 +23,4 @@ undo-tree/
 lsp/
 projectile-bookmarks.tld
 transient/
+org-persist/

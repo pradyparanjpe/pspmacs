@@ -14,29 +14,9 @@
    '(lambda (_ _) (pspmacs/destroy-buffer-and-window))))
 
 (setq wl-copy-process nil)
-(defun wl-copy (text)
-  (setq wl-copy-process (make-process :name "wl-copy"
-                  :buffer nil
-                  :command '("wl-copy" "-f" "-n")
-                  :connection-type 'pipe))
-  (process-send-string wl-copy-process text)
-  (process-send-eof wl-copy-process))
-(defun wl-paste ()
-  (if (and wl-copy-process (process-live-p wl-copy-process))
-  nil ; should return nil if we're the current paste owner
-    (shell-command-to-string "wl-paste -n | tr -d \r")))
-
 (when (string-collate-equalp (getenv "XDG_SESSION_TYPE") "WAYLAND" nil t)
   (setq interprogram-cut-function 'wl-copy)
   (setq interprogram-paste-function 'wl-paste))
-
-(defun pspmacs/yank-file-name ()
-  "Yank file-name to clipboard
-
-Also, display file name in echo area"
-  (interactive)
-  (kill-new buffer-file-name)
-  (message (format "Copied: %s"buffer-file-name)))
 
 (use-package restart-emacs
   :general
@@ -91,5 +71,4 @@ Also, display file name in echo area"
   :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 
 (pspmacs/load-inherit)
-
 ;;; pspmacs-os.el ends here

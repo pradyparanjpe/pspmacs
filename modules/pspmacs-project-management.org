@@ -59,11 +59,6 @@
        (string-prefix-p
     (expand-file-name "straight/" user-emacs-directory) project-root)))
 
-    (defun pspmacs/projectile-find-file-all ()
-      (interactive)
-      (let ((projectile-git-command "git ls-files -zco"))
-    (projectile-find-file)))
-
     :config
     (defadvice projectile-project-root (around ignore-remote first activate)
       (unless (file-remote-p default-directory) ad-do-it))
