@@ -276,6 +276,7 @@
     (ace-popup-menu-show-pane-header t)
     (ace-popup-menu-mode 1))
 #+end_src
+
 * abo-abo/avy
 Jump by word hints
 #+begin_src emacs-lisp
@@ -556,7 +557,13 @@ Flash highlight hints on evil actions
     (set-default-coding-systems 'utf-8)
 
     ;;; Font
-    (set-face-attribute 'default nil :font "Fira Code" :height 150)
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame
+                      (pspmacs/set-font-faces))))
+      (pspmacs/set-font-faces))
+
     (global-set-key (kbd "C-=") 'text-scale-increase)
     (global-set-key (kbd "C--") 'text-scale-decrease)
 

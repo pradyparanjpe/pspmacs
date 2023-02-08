@@ -57,6 +57,22 @@ Load prettify-symbols from Each of SUB-MODES."
 (defun pspmacs/prettify-note ()
   (pspmacs/mode-prettify '("lisp" "org")))
 
+(defun pspmacs/set-font-faces ()
+  (set-face-attribute 'default nil
+                      :font "Fira Code"
+                      :height pspmacs/font-height)
+
+  ;; Set the fixed pitch face
+  (set-face-attribute 'fixed-pitch nil
+                      :font "Fira Code"
+                      :height pspmacs/font-height)
+
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil
+                      :font "Cantarell"
+                      :height pspmacs/font-height
+                      :weight 'regular))
+
 (defun pspmacs/load-modules (&optional modules-order)
   "Load modules in order.
 

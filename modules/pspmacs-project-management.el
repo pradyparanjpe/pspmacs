@@ -174,7 +174,9 @@
   :defer t
   :init
   (pspmacs/extend-list 'recentf-exclude
-                       '(".*treemacs-persist\\'" ".*straight/build\\'"))
+                       '(".*treemacs-persist\\'"
+                         ".*straight/build\\'"
+                         "/usr/share/emacs/.*\\'"))
   :general
   (pspmacs/leader-keys
     "0" '(treemacs-select-window :wk "treemacs"))

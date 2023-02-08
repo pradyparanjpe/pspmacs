@@ -391,6 +391,32 @@
       (pspmacs/mode-prettify '("lisp" "org")))
 #+end_src
 
+* Set face attribute for daemon mode
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/font-height 150
+    "10 x Font-height"
+    :group 'pspack
+    :type 'integer)
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/set-font-faces ()
+    (set-face-attribute 'default nil
+                        :font "Fira Code"
+                        :height pspmacs/font-height)
+
+    ;; Set the fixed pitch face
+    (set-face-attribute 'fixed-pitch nil
+                        :font "Fira Code"
+                        :height pspmacs/font-height)
+
+    ;; Set the variable pitch face
+    (set-face-attribute 'variable-pitch nil
+                        :font "Cantarell"
+                        :height pspmacs/font-height
+                        :weight 'regular))
+#+end_src
+
 * Order of pspmacs modules to load
 #+begin_src emacs-lisp :tangle vars.el
   (use-package yaml)

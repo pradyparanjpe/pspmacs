@@ -143,6 +143,11 @@
   :group 'pspack
   :type '(repeat (list :tag "Python highlight keywords")))
 
+(defcustom pspmacs/font-height 150
+  "10 x Font-height"
+  :group 'pspack
+  :type 'integer)
+
 (use-package yaml)
 (use-package ht)
 (use-package f)
