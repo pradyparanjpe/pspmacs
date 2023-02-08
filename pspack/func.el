@@ -40,34 +40,15 @@ Load prettify-symbols from Each of SUB-MODES."
 
 (defun pspmacs/rfaces ()
   "R callable hook function"
-  (font-lock-add-keywords
-   'R-mode
-   '(("\\W\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)::"
-      1 pspmacs/r-namespace-face t)))
-  (font-lock-add-keywords
-   'R-mode
-   '(("\\w::\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-      1 pspmacs/r-name-obj-face t)))
-  (font-lock-add-keywords
-   'R-mode
-   '(("\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)\\$\\w"
-      1 pspmacs/r-list t)))
-  (font-lock-add-keywords
-   'R-mode
-   '(("\\w\\$\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-      1 pspmacs/r-list-obj t))))
+  (font-lock-add-keywords 'R-mode pspmacs/r-keywords))
+
+(defun pspmacs/prettify-python ()
+  "Prettify python"
+  (pspmacs/mode-prettify '("code" "python")))
 
 (defun pspmacs/pyfaces ()
   "Python keyword faces"
-  (font-lock-add-keywords
-   'python-mode '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-                   1 pspmacs/pyargs-face t)))
-  (font-lock-add-keywords
-   'python-mode '(("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
-                   1 pspmacs/pydunder-face t)))
-  (font-lock-add-keywords
-   'python-mode '(("``\\(.*?\\)``"
-                   1 pspmacs/rst-literal-face t))))
+  (font-lock-add-keywords nil pspmacs/py-keywords))
 
 (defun pspmacs/prettify-emacs-lisp ()
   "Prettify Emacs-Lisp"
@@ -160,18 +141,7 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
        `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
        `(font-lock-comment-face ((,c :foreground "#3f4f5f" :background "#0f0f0f")))
        `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
-       `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))
-       `(font-lock-rpack-face ((,c :foreground "#9f7fff")))
-       `(font-lock-relem-face ((,c :foreground "#bf8faf")))
-       `(font-lock-rsuper-face ((,c :foreground "#8fafbf")))
-;;        `(mode-line ((,c :underline ,border-mode-line-active
-;;                         :overline ,border-mode-line-active
-;;                         :box (:line-width 10 :color ,bg-mode-line-active))))
-;;        `(mode-line-inactive
-;;          ((,c :underline ,border-mode-line-inactive
-;;               :overline ,border-mode-line-inactive
-;;               :box (:line-width 10 :color ,bg-mode-line-inactive))))
-       ))))
+       `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))))))
 
 (defun pspmacs/projectile-find-file-all ()
   (interactive)

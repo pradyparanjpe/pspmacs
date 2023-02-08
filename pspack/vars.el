@@ -82,37 +82,66 @@
                   (repeat (cons (string :tag "to prettify")
                                 (integer :tag "Pretty symbol ORD"))))))
 
-(defface pspmacs/r-namespace '((t (:foreground "#9f7fff")))
+(defface pspmacs/r-namespace-face '((t (:foreground "#9f7fff")))
   "R package namespace."
   :group 'pspack)
 
-(defface pspmacs/r-name-obj '((t (:foreground "#8fa7bf")))
+(defface pspmacs/r-name-obj-face '((t (:foreground "#7f97af")))
   "Object referred from R package namespace."
   :group 'pspack)
 
-(defface pspmacs/r-list '((t (:foreground "#bf8faf")))
+(defface pspmacs/r-list-face '((t (:foreground "#bf8faf")))
   "R list."
   :group 'pspack)
 
-(defface pspmacs/r-list-obj '((t '(:foreground "#8fa7bf")))
+(defface pspmacs/r-list-obj-face '((t '(:foreground "#9fb7cf")))
   "Object referred from R list"
   :group 'pspack)
 
-(defface pspmacs/pyargs '((t (:foreground "#9f7fff")))
+(defcustom pspmacs/r-keywords
+  '(("\\W\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)::"
+     1 'pspmacs/r-namespace-face prepend)
+    ("\\w::\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+     1 'pspmacs/r-name-obj-face prepend)
+    ("\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)\\$\\w"
+     1 'pspmacs/r-list-face prepend)
+    ("\\w\\$\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+       1 'pspmacs/r-list-obj-face prepend))
+  "Custom keywords to highlight in R mode"
+  :group 'pspack
+  :type '(repeat (list :tag "R highlight keywords")))
+
+(defface pspmacs/pyargs-face
+  '((t (:foreground "#9f7fff")))
   "Python arguments face identified as '*args' and '**kwargs'."
   :group 'pspack)
 
-(defface pspmacs/pydunder '((t (:foreground "#bf8fa7")))
+(defface pspmacs/pyprivate-face
+  '((t (:italic t :box t)))
+  "python private symbols identified as '_private'."
+  :group 'pspack)
+
+(defface pspmacs/pydunder-face
+  '((t (:italic t :foreground "#ff7f00")))
   "python dunder symbols identified as '__dunder__'."
   :group 'pspack)
 
-(defface pspmacs/rst-literal '((t (:box t)))
+(defface pspmacs/rst-literal-face
+  '((t (:box t)))
   "Restructured text literals delimited by double backquotes `\`\`True\`\``."
   :group 'pspack)
 
-(defun pspmacs/prettify-python ()
-  "Prettify python"
-  (pspmacs/mode-prettify '("code" "python")))
+(defcustom pspmacs/py-keywords
+  '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+     1 'pspmacs/pyargs-face t append)
+    ("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+_\\{0,2\\}\\)"
+     1 'pspmacs/pyprivate-face prepend)
+    ("\\W\\(__\\(\\s_\\|\\sw\\|\\.\\)+__\\)"
+     1 'pspmacs/pydunder-face t)
+    ("``\\(.*?\\)``" 1 'pspmacs/rst-literal-face prepend))
+  "Custom keywords to highlight in python mode"
+  :group 'pspack
+  :type '(repeat (list :tag "Python highlight keywords")))
 
 (use-package yaml)
 (use-package ht)
