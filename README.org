@@ -78,7 +78,6 @@ The user is advised to place in private and local work-trees, code similar to th
  #+begin_src emacs-lisp :tangle early-init.el
    ;;; early-init.el --- Early Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
    ;;; Early definitions init configs
-
    (load (expand-file-name "early/prune.el" user-emacs-directory)
          nil 'nomessage)
 
@@ -107,7 +106,6 @@ The user is advised to place in private and local work-trees, code similar to th
 #+begin_src emacs-lisp :tangle init.el
   ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
   ;;; late definitions init configs
-
   (load (expand-file-name "late/package-management.el" user-emacs-directory)
         nil 'nomessage)
 
@@ -124,5 +122,7 @@ The user is advised to place in private and local work-trees, code similar to th
     (load custom-file t))
 #+end_src
 
-* Sitemap
-- [[file:sitemap.org]]
+** [[file:pspack/pspack.org][pspack]]
+- Functions, variables, faces, keywords used by =pspmacs= are compiled in a package pspack.
+
+* [[file:sitemap.org][Sitemap]]
