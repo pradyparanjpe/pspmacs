@@ -15,9 +15,13 @@
 (setq byte-compile-warnings
       '(not free-vars unresolved noruntime lexical make-local))
 
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(blink-cursor-mode -1)
+(dolist
+    (prune-mode
+     '(menu-bar-mode
+       tool-bar-mode
+       scroll-bar-mode
+       blink-cursor-mode)
+     nil)
+  (if (fboundp prune-mode) (funcall prune-mode -1)))
 
 (customize-set-variable 'load-prefer-newer t)

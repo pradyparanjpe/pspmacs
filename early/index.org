@@ -40,10 +40,14 @@
 ** UI configuration
 - Remove some unnecessary UI elements temporarily
 #+begin_src emacs-lisp :tangle prune.el
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (blink-cursor-mode -1)
+    (dolist
+        (prune-mode
+         '(menu-bar-mode
+           tool-bar-mode
+           scroll-bar-mode
+           blink-cursor-mode)
+         nil)
+      (if (fboundp prune-mode) (funcall prune-mode -1)))
 #+end_src
 
 ** Source compilation
