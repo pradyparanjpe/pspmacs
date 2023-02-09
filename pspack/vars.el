@@ -99,13 +99,13 @@
   :group 'pspack)
 
 (defcustom pspmacs/r-keywords
-  '(("\\W\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)::"
+  '(("\\W\\(\\(\\s_\\|\\w\\|\\.\\)+\\)::"
      1 'pspmacs/r-namespace-face prepend)
-    ("\\w::\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+    ("\\w::\\(\\(\\s_\\|\\w\\|\\.\\)+\\)"
      1 'pspmacs/r-name-obj-face prepend)
-    ("\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)\\$\\w"
+    ("\\(\\(\\s_\\|\\w\\|\\.\\)+\\)\\$\\w"
      1 'pspmacs/r-list-face prepend)
-    ("\\w\\$\\(\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+    ("\\w\\$\\(\\(\\s_\\|\\w\\|\\.\\)+\\)"
        1 'pspmacs/r-list-obj-face prepend))
   "Custom keywords to highlight in R mode"
   :group 'pspack
@@ -122,7 +122,7 @@
   :group 'pspack)
 
 (defface pspmacs/pydunder-face
-  '((t (:italic t :foreground "#ff7f00")))
+  '((t (:italic t :foreground "#cfff40")))
   "python dunder symbols identified as '__dunder__'."
   :group 'pspack)
 
@@ -132,12 +132,17 @@
   :group 'pspack)
 
 (defcustom pspmacs/py-keywords
-  '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+\\)"
+  '(("\\W\\(\\*\\{1,2\\}\\(\\s_\\|\\w\\|\\.\\)+\\)"
      1 'pspmacs/pyargs-face t append)
-    ("\\W\\(_\\{1,2\\}\\(\\s_\\|\\sw\\|\\.\\)+_\\{0,2\\}\\)"
+    ("\\W\\(_\\{1,2\\}\\(\\s_\\|\\w\\|\\.\\)+_\\{0,2\\}\\)"
      1 'pspmacs/pyprivate-face prepend)
-    ("\\W\\(__\\(\\s_\\|\\sw\\|\\.\\)+__\\)"
+    ("\\W\\(__\\(\\s_\\|\\w\\|\\.\\)+__\\)"
      1 'pspmacs/pydunder-face t)
+    ("\\W\\(\\([0-9]*_?[0-9]+\\)+\\(\\.[0-9]*\\)?\\)"
+     1 'font-lock-constant-face nil)
+    ("\\W\\(\\([0-9]*_?[0-9]+\\)*\\(\\.[0-9]+\\)\\)"
+     1 'font-lock-constant-face nil)
+    (") ?\\(->\\) ?" 1 'font-lock-keyword-face nil)
     ("``\\(.*?\\)``" 1 'pspmacs/rst-literal-face prepend))
   "Custom keywords to highlight in python mode"
   :group 'pspack
