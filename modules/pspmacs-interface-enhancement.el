@@ -131,7 +131,9 @@
             :wk "local")
     "fwp" '((lambda ()
               (interactive)
-              (find-file pvt-emacs-directory))
+              (if pvt-emacs-directory
+                  (find-file pvt-emacs-directory)
+                (message "private work-tree is not declared.")))
             :wk "private")
     "fwg" '((lambda ()
               (interactive)

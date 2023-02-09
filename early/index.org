@@ -68,21 +68,28 @@
 If envrionment variables are not set, ignore
  #+begin_src emacs-lisp :tangle definitions.el
    (defvar pvt-emacs-directory
-     (file-name-as-directory
-      (cond
-       ((featurep 'chemacs)
-        (if (getenv "PVT_EMACS_HOME")
-            (expand-file-name (getenv "PVT_EMACS_HOME"))))
-       ((getenv "PVT_EMACS_HOME")
-        (expand-file-name (getenv "PVT_EMACS_HOME")))))
-     "Private version controlled
+     (condition-case err
+         (file-name-as-directory
+          (cond
+           ((featurep 'chemacs)
+            (if (getenv "PVT_EMACS_HOME")
+                (expand-file-name (getenv "PVT_EMACS_HOME"))))
+           ((getenv "PVT_EMACS_HOME")
+            (expand-file-name (getenv "PVT_EMACS_HOME")))))
+       ((error)
+        (progn
+          (if (string= (format "%s" err)
+                       "(wrong-type-argument stringp nil)")
+              nil
+            (throw 'uncaught err)))))
+     "Private version controlledd
 
    privately synchronized configuration directory")
 #+end_src
 
 *** Local, machine-specific
 If envrionment variables are not set, use:
-- ~<pvt-emacs-directory>/local.d~ or 
+- ~<pvt-emacs-directory>/local.d~ or
 - ~<user-emacs-directory>/local.d~
  #+begin_src emacs-lisp :tangle definitions.el
    (defvar local-emacs-directory
@@ -105,10 +112,17 @@ If envrionment variables are not set, use:
 *** Inheritance list
 #+begin_src emacs-lisp :tangle definitions.el
   (defvar pspmacs/user-worktrees
-    `(,pvt-emacs-directory ,local-emacs-directory)
+    (cond
+     (pvt-emacs-directory
+      `(,pvt-emacs-directory ,local-emacs-directory))
+     (t `(,local-emacs-directory)))
     "user's worktrees to load")
+
   (defvar pspmacs/worktrees
-    `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory)
+    (cond
+     (pvt-emacs-directory
+      `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory))
+     (t `(,user-emacs-directory ,local-emacs-directory)))
     "worktrees to load")
 #+end_src
 

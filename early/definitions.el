@@ -1,14 +1,21 @@
 ;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 
 (defvar pvt-emacs-directory
-  (file-name-as-directory
-   (cond
-    ((featurep 'chemacs)
-     (if (getenv "PVT_EMACS_HOME")
-         (expand-file-name (getenv "PVT_EMACS_HOME"))))
-    ((getenv "PVT_EMACS_HOME")
-     (expand-file-name (getenv "PVT_EMACS_HOME")))))
-  "Private version controlled
+  (condition-case err
+      (file-name-as-directory
+       (cond
+        ((featurep 'chemacs)
+         (if (getenv "PVT_EMACS_HOME")
+             (expand-file-name (getenv "PVT_EMACS_HOME"))))
+        ((getenv "PVT_EMACS_HOME")
+         (expand-file-name (getenv "PVT_EMACS_HOME")))))
+    ((error)
+     (progn
+       (if (string= (format "%s" err)
+                    "(wrong-type-argument stringp nil)")
+           nil
+         (throw 'uncaught err)))))
+  "Private version controlledd
 
 privately synchronized configuration directory")
 
@@ -29,10 +36,17 @@ privately synchronized configuration directory")
   "Local, machine-specific, un-synchronized configuration directory")
 
 (defvar pspmacs/user-worktrees
-  `(,pvt-emacs-directory ,local-emacs-directory)
+  (cond
+   (pvt-emacs-directory
+    `(,pvt-emacs-directory ,local-emacs-directory))
+   (t `(,local-emacs-directory)))
   "user's worktrees to load")
+
 (defvar pspmacs/worktrees
-  `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory)
+  (cond
+   (pvt-emacs-directory
+    `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory))
+   (t `(,user-emacs-directory ,local-emacs-directory)))
   "worktrees to load")
 
 (defvar pspmacs/load-custom-file t
