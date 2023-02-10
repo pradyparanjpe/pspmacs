@@ -1,5 +1,4 @@
 (use-package modus-themes
-  :straight t
   :demand t
   :general (pspmacs/leader-keys
              "T" '(:ignore t :wk "Theme")

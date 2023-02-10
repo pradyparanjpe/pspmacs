@@ -19,7 +19,7 @@
 #+end_src
 
 ** package management
-- We shall use straight.el. For that to work, emacs's internal ~package~ should never load.
+- We may decide to use =straight.el=. For that to work, Emacs's internal ~package~ shouldn't load early.
 #+begin_src emacs-lisp :tangle prune.el
   (setq package-enable-at-startup nil
         package-quickstart nil)
@@ -135,14 +135,6 @@ If envrionment variables are not set, use:
     "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
 #+end_src
 
-** Package management (straight)
-- User may overwrite the pspmacs/packaging-directory in private or local init-tree to customize packaging system.
-#+begin_src emacs-lisp :tangle definitions.el
-  (defcustom pspmacs/packaging-directory
-    (expand-file-name "pspackaging" user-emacs-directory)
-    "Packaging system (straight) to use.")
-#+end_src
-
 ** Inherence
 - Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
   - Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads org-mode files.
@@ -201,6 +193,12 @@ Initialize configurations
 (add-to-list 'load-path (expand-file-name local-emacs-directory))
 #+end_src
 
+** Temporary blue theme
+- If anything till [[file:../modules/pspmacs-theme.org]] fails
+#+begin_src emacs-lisp :tangle init.el
+  (load-theme 'deeper-blue t)
+#+end_src
+
 ** Ensure a =local-emacs-directory=
 - Make if absent
 #+begin_src emacs-lisp :tangle init.el
@@ -234,10 +232,17 @@ Initialize configurations
       (expand-file-name "eln-cache/" local-emacs-directory)))
 #+end_src
 
-** Temporary blue theme
-- If anything till [[file:../modules/pspmacs-theme.org]] fails
+** Package management
+- User may overwrite the =pspmacs/packaging-directory= in private or local init-tree to customize packaging system.
+- User may want to set =pspmacs/package-manager= to =straight= to clone and build packages locally.
+  - This allows for better grip because the user can decide to stick to different commits, branches, forks.
+- With /builtin/ (default), if optional git-controlled packages are desired, =pspmacs/install-git-clones= should be set to non-nil. (This feature is for future. Currently, only planned, not supported.) It is =t= by default when =straight= is the package manager.
+- These values are set in the =early-init=, but take effect as the /first step/ of =init.el=.
 #+begin_src emacs-lisp :tangle init.el
-  (load-theme 'deeper-blue t)
+  (setq pspmacs/packaging-directory
+        (expand-file-name "pspackaging" user-emacs-directory))
+  (setq pspmacs/package-manager 'builtin)
+  ;; (setq pspmacs/install-git-clones nil)
 #+end_src
 
 ** Single key-press response to yes-or-no

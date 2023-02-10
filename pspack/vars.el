@@ -153,9 +153,12 @@
   :group 'pspack
   :type 'integer)
 
-(use-package yaml)
-(use-package ht)
-(use-package f)
+(use-package yaml
+  :demand t)
+(use-package ht
+  :demand t)
+(use-package f
+  :demand t)
 
 (defcustom pspmacs/modules-order
   (let

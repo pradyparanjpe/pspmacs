@@ -57,7 +57,7 @@
      projectile-ignored-project-function
      (lambda (project-root)
        (string-prefix-p
-    (expand-file-name "straight/" user-emacs-directory) project-root)))
+        (expand-file-name "straight/" user-emacs-directory) project-root)))
 
     :config
     (defadvice projectile-project-root (around ignore-remote first activate)

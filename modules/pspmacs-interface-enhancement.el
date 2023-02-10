@@ -309,9 +309,11 @@
   (evil-collection-init))
 
 (use-package evil-surround
+  :demand t
   :after evil
-  :hook ((org-mode . (lambda () (push '(?~ . ("~" . "~")) evil-surround-pairs-alist)))
-     (org-mode . (lambda () (push '(?$ . ("\\(" . "\\)")) evil-surround-pairs-alist))))
+  :hook
+  ((org-mode . (lambda () (push '(?~ . ("~" . "~")) evil-surround-pairs-alist)))
+   (org-mode . (lambda () (push '(?$ . ("\\(" . "\\)")) evil-surround-pairs-alist))))
   :config
   (global-evil-surround-mode 1))
 
@@ -322,6 +324,7 @@
 
 ;; Enable vertico
 (use-package vertico
+  :demand t
   :general
   (:keymaps 'vertico-map
             "C-j" #'vertico-next
@@ -343,6 +346,7 @@
 (use-package marginalia
   ;; Either bind `marginalia-cycle' globally or only in the minibuffer
   :after vertico
+  :demand t
   :general
   (general-define-key
    :keymaps 'minibuffer-local-map
@@ -352,6 +356,7 @@
 
 (use-package orderless
   :after vertico
+  :demand t
   :init
   ;; Configure a custom style dispatcher (see the Consult wiki)
   ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
@@ -361,8 +366,8 @@
         completion-category-overrides nil))
 
 (use-package embark
-  :ensure t
   :after vertico
+  :demand t
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist

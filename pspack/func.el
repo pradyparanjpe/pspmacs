@@ -5,6 +5,45 @@
 ;;
 ;;; Code:
 
+(defun pspmacs/crooked-git-clone (melpa-style-recipe
+                                  &optional
+                                  no-clone
+                                  no-build
+                                  cause interactive)
+  "Try what `straight.el' does, but crookedly.
+
+This is a work-around to use git-cloned builds since the user does not
+want to use `straight.el'
+
+WIP: This function is for future, and currently does noting.
+Any use of `use-package' shall throw error.
+MELPA-STYLE-RECIPE is corrected to use :FETCHER instead of :HOST.
+NO-CLONE NO-BUILD CAUSE INTERACTIVE are ignored.
+Modified string is printed"
+  (print "Crooked cloning is not yet coded. Use `straight'.")
+  (print "Future: install %s somehow..." melpa-style-recipe))
+
+(defun pspmacs/install-git-clone (melpa-style-recipe
+                                  &optional
+                                  no-clone
+                                  no-build
+                                  cause interactive)
+  "Install packages by git-cloning its source code.
+
+If the variable `pspmacs/install-git-clones' is nil, do nothing.
+If package-manager is `straight', Simply use it, passing optional arguments
+NO-CLONE NO-BUILD CAUSE INTERACTIVE to `straight-use-package'.
+Else, clone the MELPA-STYLE-RECIPE, build it."
+  (if pspmacs/install-git-clones
+      (if (string= pspmacs/package-manager "straight")
+          (straight-use-package melpa-style-recipe
+                                no-clone
+                                no-build
+                                cause
+                                interactive)
+        (pspmacs/crooked-git-clone melpa-style-recipe no-clone no-build cause interactive))
+    (message "Not cloning %s because `pspmacs/install-clones' is nil" melpa-style-recipe)))
+
 (defun pspmacs/home-splash-before ()
   "run functions before switching to splash buffer."
     (dashboard-refresh-buffer)

@@ -357,9 +357,11 @@ Jump by word hints
 - auto complete paired symbols
 #+begin_src emacs-lisp
   (use-package evil-surround
+    :demand t
     :after evil
-    :hook ((org-mode . (lambda () (push '(?~ . ("~" . "~")) evil-surround-pairs-alist)))
-       (org-mode . (lambda () (push '(?$ . ("\\(" . "\\)")) evil-surround-pairs-alist))))
+    :hook
+    ((org-mode . (lambda () (push '(?~ . ("~" . "~")) evil-surround-pairs-alist)))
+     (org-mode . (lambda () (push '(?$ . ("\\(" . "\\)")) evil-surround-pairs-alist))))
     :config
     (global-evil-surround-mode 1))
  #+end_src
@@ -379,6 +381,7 @@ Flash highlight hints on evil actions
 #+begin_src emacs-lisp
   ;; Enable vertico
   (use-package vertico
+    :demand t
     :general
     (:keymaps 'vertico-map
               "C-j" #'vertico-next
@@ -405,6 +408,7 @@ Flash highlight hints on evil actions
   (use-package marginalia
     ;; Either bind `marginalia-cycle' globally or only in the minibuffer
     :after vertico
+    :demand t
     :general
     (general-define-key
      :keymaps 'minibuffer-local-map
@@ -418,6 +422,7 @@ Flash highlight hints on evil actions
 #+begin_src emacs-lisp
   (use-package orderless
     :after vertico
+    :demand t
     :init
     ;; Configure a custom style dispatcher (see the Consult wiki)
     ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
@@ -430,8 +435,8 @@ Flash highlight hints on evil actions
 ** minad/embark
 #+begin_src emacs-lisp
   (use-package embark
-    :ensure t
     :after vertico
+    :demand t
     :config
     ;; Hide the mode line of the Embark live/completions buffers
     (add-to-list 'display-buffer-alist
@@ -445,6 +450,7 @@ Flash highlight hints on evil actions
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
   #+end_src
+
 * mode-line
 ** TODO replace seagle0128/doom-modeline
 - [ ] replace with minimal

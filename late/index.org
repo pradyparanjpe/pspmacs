@@ -40,10 +40,16 @@
 #+end_src
 
 ** Package system
-- Load the package-system (=straight.el=). This file is maintained separately.
+- Load the package-system (=straight.el= or =package.el=).
+  This file is maintained separately.
 #+begin_src emacs-lisp :tangle  package-management.el
-(load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
-      nil 'nomessage)
+  (load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
+          nil 'nomessage)
+  (pspmacs/package-bootstrap)
+  (pspmacs/init-package-manager)
+  (load (expand-file-name "bootstrap-use-package.el" pspmacs/packaging-directory)
+          nil 'nomessage)
+  (pspmacs/init-use-package)
 #+end_src
 
 ** Load-path
@@ -67,7 +73,6 @@
   #+begin_src emacs-lisp :tangle package-management.el
     ;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
     (use-package org
-      ;; :straight (:type built-in)
       :ensure t)
   #+end_src
 

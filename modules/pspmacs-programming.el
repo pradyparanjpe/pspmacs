@@ -24,6 +24,7 @@
 
 (use-package corfu
   ;; Optional customizations
+  :demand t
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
@@ -47,6 +48,7 @@
   (global-corfu-mode))
 
 (use-package cape
+  :demand t
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
   (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
@@ -65,6 +67,7 @@
   (add-to-list 'completion-at-point-functions #'cape-line))
 
 (use-package kind-icon
+  :demand t
   :ensure t
   :after corfu
   :custom
@@ -72,17 +75,27 @@
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-(use-package corfu-terminal
-  :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
-  :config
-  (unless (display-graphic-p)
-    (corfu-terminal-mode t)))
+(when pspmacs/install-git-clones
+  (pspmacs/install-git-clone
+   '(corfu-terminal
+     :type git
+     :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
+  (use-package corfu-terminal
+    :demand t
+    :config
+    (unless (display-graphic-p))
+    (corfu-terminal-mode t))
 
-(use-package corfu-doc-terminal
-  :straight (:type git :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
-  :config
-  (unless (display-graphic-p)
-    (corfu-doc-terminal-mode t)))
+  (pspmacs/install-git-clone
+   '(corfu-doc-terminal
+     :type git
+     :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
+
+  (use-package corfu-doc-terminal
+    :demand t
+    :config
+    (unless (display-graphic-p)
+      (corfu-doc-terminal-mode t))))
 
 (use-package gtags
   :defer t

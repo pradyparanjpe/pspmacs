@@ -2,49 +2,121 @@
 #+PROPERTY: header-args :tangle pspmacs-browse.el :mkdirp t :results no :eval never
 #+auto_tangle: t
 
-* Bootstrap packaging system
-- We shall use straight.el
+* Bootstrap package manager
+- We shall use Emacs's built-in =package.el= by default.
 #+begin_src emacs-lisp :tangle bootstrap-package.el
-  ;;; bootstrap-package.el --- packaging system -*- lexical-binding: t; -*-
-  (load
-    (expand-file-name "bootstrap-straight.el" pspmacs/packaging-directory)
-    nil 'nomessage)
+  (defcustom pspmacs/package-manager
+    'builtin
+    "Packaging system to use"
+    :type '(string :tag "Emacs package manager to use")
+    :options '(builtin straight))
 
-  (eval-and-compile (setq use-package-expand-minimally t))
+  (defcustom pspmacs/packaging-directory
+    (expand-file-name "pspackaging" user-emacs-directory)
+    "Packaging recipes directory."
+    :type '(string :tag "Directory with recipes to bootstrap package manager."))
+
+  (defcustom pspmacs/install-git-clones
+    (if (string= pspmacs/package-manager "straight") t nil)
+    "Install packages which requires git cloning."
+    :type 'boolean)
+
+  (defun pspmacs/package-bootstrap (&optional manager)
+    "Bootstrap package manager to install and configure emacs packages.
+
+  If MANAGER is a member of builtin, package, minimal,
+  Emacs' builtin manager `package.el' is bootstrapped.
+  Else, it `pspmacs/package-manager', which defaults to `straight.el',
+  is bootstrapped.
+
+  This is the first function called by `init.el'."
+    (let* ((manager
+            (if (member manager '(builtin package minimal))
+                'builtin
+              pspmacs/package-manager))
+           (manager-file (expand-file-name
+                          (format "bootstrap-%s.el" manager)
+                          pspmacs/packaging-directory)))
+      (if (file-exists-p manager-file)
+          (load manager-file nil 'nomessage)
+        (error "Could not find recipe for %s." manager))))
 #+end_src
 
 * Straight.el
-- use =use-package=
-- use gnu-elpa mirror
 - =straight-base-dir= should be in local tree (=local-emacs-directory=)
+- use gnu-elpa mirror
 #+begin_src emacs-lisp :tangle bootstrap-straight.el
-  ;;; bootstrap-straight.el --- straight.el packaging system -*- lexical-binding: t; -*-
-
-  ;;; straight as packaging system
-  (setq straight-use-package-by-default t)
-  (setq straight-recipes-gnu-elpa-use-mirror t)
-  ;(setq use-package-always-defer t)
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name
-           "straight/repos/straight.el/bootstrap.el"
-           local-emacs-directory))
-        (bootstrap-version 6))
-    ;; moves the straight install directory to the local machine configuration
-    (setq straight-base-dir local-emacs-directory
-          straight-use-package-by-default t)
-    (unless (file-exists-p bootstrap-file)
-      (message "Bootstrap file not found. Downloading...")
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-  (straight-use-package 'use-package)
-
-  (setq use-package-compute-statistics t)
-  (provide 'pspmacs-package/straight)
+  ;;; bootstrap-straight.el --- straight.el package manager -*- lexical-binding: t; -*-
+  ;;; straight as package manager
+  (defun pspmacs/init-package-manager ()
+    "Initialize `package.el' as the package manager"
+    (setq straight-use-package-by-default t)
+    (setq straight-recipes-gnu-elpa-use-mirror t)
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+           (expand-file-name
+            "straight/repos/straight.el/bootstrap.el"
+            local-emacs-directory))
+          (bootstrap-version 6))
+      ;; moves the straight install directory to the local machine configuration
+      (setq straight-base-dir local-emacs-directory
+            straight-use-package-by-default t)
+      (unless (file-exists-p bootstrap-file)
+        (message "Bootstrap file not found. Downloading...")
+        (with-current-buffer
+            (url-retrieve-synchronously
+             "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+             'silent 'inhibit-cookies)
+          (goto-char (point-max))
+          (eval-print-last-sexp)))
+      (load bootstrap-file nil 'nomessage)))
   ;; bootstrap-straight.el ends here
+#+end_src
+
+* Bootstrap builtin package manager
+#+begin_src emacs-lisp :tangle bootstrap-builtin.el
+  ;;; bootstrap-builtin.el --- package.el package manager -*- lexical-binding: t; -*-
+
+  ;; package configuration
+  (defun pspmacs/init-package-manager ()
+    "Initialize `package.el' as the package manager"
+    (require 'package)
+
+    ;; Additional package archives
+    (add-to-list 'package-archives '("stable" . "https://stable.melpa.org/packages/"))
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+    (customize-set-variable 'package-archive-priorities
+                            '(("gnu"    . 99)
+                              ("nongnu" . 80)
+                              ("stable" . 70)
+                              ("melpa"  . 0)))
+    (package-initialize)
+
+    ;; package should store data locally.
+    (customize-set-variable 'package-user-dir
+                            (expand-file-name "elpa/" local-emacs-directory))
+    (unless (file-exists-p package-user-dir)
+      (mkdir package-user-dir t))
+
+    (package-refresh-contents))
+
+  ;;; bootstrap-builtin.el ends here
+#+end_src
+
+* Use-package
+- Configure use-package system
+- use =use-package=
+#+begin_src  emacs-lisp :tangle bootstrap-use-package.el
+  (defun pspmacs/init-use-package ()
+    "Initialize `use-package'"
+    (if (string= pspmacs/package-manager "straight")
+        (straight-use-package 'use-package)
+      (unless (package-installed-p 'use-package)
+        (package-install 'use-package)))
+    (eval-and-compile
+      (setq use-package-compute-statistics t)
+      (setq use-package-always-ensure t)
+      (setq use-package-always-defer t)
+      (setq use-package-expand-minimally t)))
 #+end_src

@@ -4,6 +4,8 @@
   (add-to-list 'load-path (expand-file-name pvt-emacs-directory)))
 (add-to-list 'load-path (expand-file-name local-emacs-directory))
 
+(load-theme 'deeper-blue t)
+
 (unless (file-exists-p local-emacs-directory)
   (mkdir local-emacs-directory t))
 
@@ -30,7 +32,10 @@
     'native-comp-eln-load-path
     (expand-file-name "eln-cache/" local-emacs-directory)))
 
-(load-theme 'deeper-blue t)
+(setq pspmacs/packaging-directory
+      (expand-file-name "pspackaging" user-emacs-directory))
+(setq pspmacs/package-manager 'builtin)
+;; (setq pspmacs/install-git-clones nil)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 

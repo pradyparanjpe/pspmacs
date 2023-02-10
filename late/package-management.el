@@ -26,7 +26,12 @@
                           (expand-file-name "elpa" local-emacs-directory)))
 
 (load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
-      nil 'nomessage)
+        nil 'nomessage)
+(pspmacs/package-bootstrap)
+(pspmacs/init-package-manager)
+(load (expand-file-name "bootstrap-use-package.el" pspmacs/packaging-directory)
+        nil 'nomessage)
+(pspmacs/init-use-package)
 
 (dolist (init-dir pspmacs/worktrees nil)
   (let ((modular-modules (expand-file-name "modules/" init-dir)))
@@ -42,7 +47,6 @@
 
 ;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
 (use-package org
-  ;; :straight (:type built-in)
   :ensure t)
 
 (pspmacs/load-inherit)

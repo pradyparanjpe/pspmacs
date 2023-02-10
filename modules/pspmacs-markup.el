@@ -33,11 +33,6 @@
   :mode ("README\\.md\\'" . gfm-mode)
   :custom (markdown-command "multimarkdown"))
 
-(use-package org-auctex
-  :straight (:type git :host github :repo
-                   "karthink/org-auctex")
-  :hook (org-mode . org-auctex-mode))
-
 (use-package auctex
   :no-require t
   :mode ("\\.tex\\'" . LaTeX-mode)
@@ -51,36 +46,6 @@
         TeX-electric-sub-and-superscript t
         TeX-engine 'luatex ;; use lualatex by default
         TeX-save-query nil))
-
-(use-package latex
-  :straight auctex
-  :general
-  (pspmacs/local-leader-keys
-   :keymaps 'LaTeX-mode-map
-   "=" '(reftex-toc :wk "reftex toc")
-   "(" '(reftex-latex :wk "reftex label")
-   ")" '(reftex-reference :wk "reftex ref")
-   "m" '(LaTeX-macro :wk "insert macro")
-   "s" '(LaTeX-section :wk "insert section header")
-   "e" '(LaTeX-environment :wk "insert environment")
-   "p" '(preview-at-point :wk "preview at point")
-   "f" '(TeX-font :wk "font")
-   "c" '(TeX-command-run-all :wk "compile"))
-  :init
-  (setq TeX-electric-math (cons "\\(" "\\)"))
-  ;; (setq preview-scale-function 1.5) ;; too big on vivacia
-  :config
-  ;; (add-hook 'TeX-mode-hook #'visual-line-mode)
-  (add-hook 'TeX-mode-hook #'reftex-mode)
-  (add-hook 'TeX-mode-hook #'olivetti-mode)
-  (add-hook 'TeX-mode-hook #'turn-on-auto-fill)
-  (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer)
-  (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
-  (add-hook 'TeX-mode-hook #'outline-minor-mode)
-  ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
-  (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura")))
 
 (use-package evil-tex
   :hook (LaTeX-mode . evil-tex-mode))
@@ -98,8 +63,51 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography))
 
-(use-package emacs-reveal
-  :straight (:type git :host gitlab :repo "oer/emacs-reveal")
+(when (string= pspmacs/package-manager "straight")
+  (use-package latex
+    :straight auctex
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'LaTeX-mode-map
+      "=" '(reftex-toc :wk "reftex toc")
+      "(" '(reftex-latex :wk "reftex label")
+      ")" '(reftex-reference :wk "reftex ref")
+      "m" '(LaTeX-macro :wk "insert macro")
+      "s" '(LaTeX-section :wk "insert section header")
+      "e" '(LaTeX-environment :wk "insert environment")
+      "p" '(preview-at-point :wk "preview at point")
+      "f" '(TeX-font :wk "font")
+      "c" '(TeX-command-run-all :wk "compile"))
+    :init
+    (setq TeX-electric-math (cons "\\(" "\\)"))
+    ;; (setq preview-scale-function 1.5) ;; too big on vivacia
+    :config
+    ;; (add-hook 'TeX-mode-hook #'visual-line-mode)
+    (add-hook 'TeX-mode-hook #'reftex-mode)
+    (add-hook 'TeX-mode-hook #'olivetti-mode)
+    (add-hook 'TeX-mode-hook #'turn-on-auto-fill)
+    (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+    (add-hook 'TeX-after-compilation-finished-functions
+              #'TeX-revert-document-buffer)
+    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+    (add-hook 'TeX-mode-hook #'outline-minor-mode)
+    ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
+    (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))))
+
+(when pspmacs/install-git-clones
+  (pspmacs/install-git-clone '(org-auctex
+                               :type git
+                               :host github
+                               :repo "karthink/org-auctex"))
+  (use-package org-auctex
+    :hook (org-mode . org-auctex-mode)))
+
+(when pspmacs/install-git-clones
+  (pspmacs/install-git-clone '(emacs-reveal
+                               :type git
+                               :host gitlab
+                               :repo "oer/emacs-reveal"))
+  (use-package emacs-reveal
   :ensure t
   :general
   (pspmacs/local-leader-keys
@@ -109,6 +117,6 @@
     "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
   :config
   (setq org-re-reveal-single-file t)
-  :hook (org-mode . reveal-mode))
+  :hook (org-mode . reveal-mode)))
 
 (pspmacs/load-inherit)
