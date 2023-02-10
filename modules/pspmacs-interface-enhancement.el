@@ -28,9 +28,8 @@
   :config
   (gcmh-mode 1))
 
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
 (use-package general
+  :demand t
   :config
   (general-evil-setup)
   ;; integrate general with evil
@@ -65,6 +64,8 @@
     "C-x C-z"   ;; unbind suspend frame
     "C-x C-d"   ;; unbind list directory
     "<mouse-2>") ;; pasting with mouse wheel click
+
+  (general-define-key "ESC" #'keyboard-escape-quit)
 
   ;; rebind C-c C-c to ,,
   (general-nmap ",," (general-simulate-key "C-c C-c"))
@@ -301,6 +302,7 @@
 
 (use-package evil-collection ;; evilifies a bunch of things
   :after evil
+  :demand t
   :custom
   ;; '<TAB>' cycles visibility in 'outline-minor-mode'
   (evil-collection-outline-bind-tab-p t)
@@ -318,6 +320,7 @@
   (global-evil-surround-mode 1))
 
 (use-package evil-goggles
+  :demand t
   :config
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
@@ -433,6 +436,7 @@
   (solaire-global-mode +1))
 
 (use-package hl-todo
+  :demand t
   :custom
   (hl-todo-keyword-faces pspmacs/hl-tag-faces)
   :config
