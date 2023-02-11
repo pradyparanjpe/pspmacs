@@ -169,27 +169,106 @@
 #+end_src
 
 * Package management
+** Crooked git clone
+- [X] Try if =:url= or =:repo= can be cloned to =pspmacs/crooked-dir=,
+  - [X] else, try to build a url using =:fetcher= or =:host= and =:repo=.
+    - [X] else, die.
+- [X] Recompile byte compile cloned repo else, ignore.
+- [X] Add to =load-path=.
 #+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/crooked-git-clone (melpa-style-recipe
-                                    &optional
-                                    no-clone
-                                    no-build
-                                    cause interactive)
+  (defcustom pspmacs/crooked-dir
+    (file-name-as-directory
+     (expand-file-name "crooked" local-emacs-directory))
+    "Location to store cloned repos as an option to `straight.el'"
+    :type '(string :tag "location to store cloned git repos"))
+
+  (defcustom pspmacs/git-fetcher-plist
+    '("github" "https://www.github.com"
+              "gitlab" "https://www.gitlab.com"
+              "sourcehut" "https://git.sr.ht"
+              "codeberg" "https://codeberg.org")
+    "plist of git fetcher and base url."
+    :type '(repeat (cons (string :tag "fetcher")
+                         (string :tag "url"))))
+
+  (defun pspmacs/git-clone-args (melpa-style-recipe)
+    "Try to create a repo url from melpa-style recipe.
+
+  MELPA-STYLE-RECIPE is parsed to create a repo url.
+  Default :FETCHER is github.
+  :HOST is interpreted as :FETCHER following `straight.el'.
+  :HOST supersedes :FETCHER.
+  :FILES, :COMMIT, :OLD-NAMES are ignored for now.
+  I don't know how to handle them..."
+    (let* ((clone-args nil)
+           (repo-parts (cdr melpa-style-recipe))
+           (url (plist-get repo-parts :url))
+           (repo (plist-get repo-parts :repo))
+           (host-kw (plist-get repo-parts :host))
+           (fetcher-kw (plist-get repo-parts :fetcher))
+           (fetcher
+            (lax-plist-get pspmacs/git-fetcher-plist
+                           (or (if (symbolp host-kw)
+                                   (symbol-name host-kw)
+                                 host-kw)
+                               (if (symbolp fetcher-kw)
+                                   (symbol-name fetcher-kw)
+                                 fetcher-kw)
+                               "github")))
+           ;; (commit (plist-get repo-parts :commit))
+           ;; (files (plist-get repo-parts :files))
+           ;; (old-names (plist-get repo-parts :old-names))
+           (branch (plist-get repo-parts :branch))
+           (url (cond
+                 ((and url (or (file-readable-p url)
+                               (url-https-file-readable-p url)))
+                  url)
+                 ((and repo (or (file-readable-p repo)
+                                    (condition-case nil
+                                        (url-https-file-readable-p repo)
+                                      (error nil))))
+                  repo)
+                 (t (format "%s/%s" fetcher repo)))))
+      (add-to-list 'clone-args url)
+      (when branch
+        (add-to-list 'clone-args branch)
+        (add-to-list 'clone-args "-b"))
+      clone-args))
+
+  (defun pspmacs/crooked-git-clone (melpa-style-recipe)
     "Try what `straight.el' does, but crookedly.
 
   This is a work-around to use git-cloned builds since the user does not
-  want to use `straight.el'
+  want to use `straight.el'.
 
-  WIP: This function is for future, and currently does noting.
-  Any use of `use-package' shall throw error.
-  MELPA-STYLE-RECIPE is corrected to use :FETCHER instead of :HOST.
+  Interpret MELPA-STYLE-RECIPE and clone repo.
+  Native-compile, add to `load-path'.
   NO-CLONE NO-BUILD CAUSE INTERACTIVE are ignored.
   Modified string is printed"
-    (print "Crooked cloning is not yet coded. Use `straight'.")
-    (print "Future: install %s somehow..." melpa-style-recipe))
+    (let* ((clone-args (pspmacs/git-clone-args melpa-style-recipe))
+           (target-name (symbol-name (car melpa-style-recipe)))
+           (target-path (expand-file-name target-name pspmacs/crooked-dir)))
+      (if (file-exists-p target-path)
+          (call-process "git" nil nil nil
+                        "-C" target-path "pull" "--recurse-submodules")
+        (progn
+          (unless (eq (apply 'call-process
+                             (append '("git" nil nil nil "clone"
+                                       "--recurse-submodules")
+                                     clone-args
+                                     `(,target-path)))
+                      0)
+          (user-error "Can't clone with %s to %s" clone-args target-path))))
+      (add-to-list 'load-path target-path)
+      (ignore-errors (unless no-native-compile
+                       (byte-recompile-directory target-path 0)))
+      target-path))
+#+end_src
 
+** Install git clone
+#+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/install-git-clone (melpa-style-recipe
-                                    &optional
+                                     &optional
                                     no-clone
                                     no-build
                                     cause interactive)
@@ -206,7 +285,7 @@
                                   no-build
                                   cause
                                   interactive)
-          (pspmacs/crooked-git-clone melpa-style-recipe no-clone no-build cause interactive))
+          (pspmacs/crooked-git-clone melpa-style-recipe))
       (message "Not cloning %s because `pspmacs/install-clones' is nil" melpa-style-recipe)))
 #+end_src
 
@@ -536,9 +615,10 @@ Following function may be used to byte-compile any work-tree.
   Target: WORKTREE.
   Default worktree is global (`user-emacs-directory)
   This may be disabled by setting `pspmacs/byte-worktree' to nil"
-    (when pspmacs/byte-worktree
-      (let ((worktree (or worktree user-emacs-directory)))
-        (byte-recompile-directory worktree 0))))
+    (unless no-native-compile
+      (when pspmacs/byte-worktree
+        (let ((worktree (or worktree user-emacs-directory)))
+          (byte-recompile-directory worktree 0)))))
 #+end_src
 
 * Inferior interpreter
@@ -585,7 +665,7 @@ Following function may be used to byte-compile any work-tree.
   Add each element from ELEMENTS to LIST-VAR.
   Return value is the new value of LIST-VAR."
     (unless (listp elements)
-      (error "ELEMENTS must be list"))
+      (user-error "ELEMENTS must be list"))
     (dolist (elem elements)
       (add-to-list list-var elem))
     (symbol-value list-var))
