@@ -53,7 +53,6 @@
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
   (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
   (add-to-list 'completion-at-point-functions #'cape-file t)
-  (fset #'cape-path (cape-company-to-capf #'company-files))
   (add-to-list 'completion-at-point-functions #'cape-path t)
   (add-to-list 'completion-at-point-functions #'cape-history)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
@@ -64,7 +63,9 @@
   (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  (add-to-list 'completion-at-point-functions #'cape-line))
+  (add-to-list 'completion-at-point-functions #'cape-line)
+  :config
+  (fset #'cape-path (cape-company-to-capf #'company-files)))
 
 (use-package kind-icon
   :demand t
@@ -79,9 +80,9 @@
   (pspmacs/install-git-clone
    '(corfu-terminal
      :type git
-     :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
+     :repo "https://codeberg.org/~akib/emacs-corfu-terminal.git"))
   (use-package corfu-terminal
-    :demand t
+    :after corfu
     :config
     (unless (display-graphic-p))
     (corfu-terminal-mode t))
@@ -89,10 +90,10 @@
   (pspmacs/install-git-clone
    '(corfu-doc-terminal
      :type git
-     :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
+     :repo "https://codeberg.org/~akib/emacs-corfu-doc-terminal.git"))
 
   (use-package corfu-doc-terminal
-    :demand t
+    :after corfu-terminal
     :config
     (unless (display-graphic-p)
       (corfu-doc-terminal-mode t))))

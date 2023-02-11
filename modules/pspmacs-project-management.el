@@ -161,14 +161,6 @@
   :hook
   (dired-mode . dired-git-mode))
 
-(use-package dired
-  :straight (:type built-in)
-  :custom
-  (dired-listing-switches "-lah")
-  :general (pspmacs/leader-keys
-             "d" '(:ignore t :wk "dired")
-             "dd" '(dired :wk "open")))
-
 (use-package treemacs
   :ensure t
   :defer t
@@ -285,6 +277,11 @@
                   (expand-file-name "auto-saves/" xdg/emacs-state-directory)) t)))
   (setq auto-save-list-file-prefix (expand-file-name
                                     "auto-saves/sessions"
-                                    xdg/emacs-state-directory)))
+                                    xdg/emacs-state-directory))
+  :custom
+  (dired-listing-switches "-lah")
+  :general (pspmacs/leader-keys
+             "d" '(:ignore t :wk "dired")
+             "dd" '(dired :wk "open")))
 
 (pspmacs/load-inherit)

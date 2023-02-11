@@ -5,7 +5,7 @@
 ;;
 ;;; Code:
 (defgroup xdg nil
-  "XDG awarebess for pspmacs."
+  "XDG awareness for pspmacs."
   :group 'pspmacs)
 
 (defun xdg/assign-base (xdg-var default-path)

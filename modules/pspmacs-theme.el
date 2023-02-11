@@ -1,3 +1,6 @@
+(pspmacs/install-git-clone
+ '(modus-themes :repo "protesilaos/modus-themes"))
+
 (use-package modus-themes
   :demand t
   :general (pspmacs/leader-keys

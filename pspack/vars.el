@@ -5,6 +5,10 @@
 ;;
 ;;; Code:
 
+(require 'pspmacs/xdg)
+(setq-default url-cookie-file
+              (expand-file-name "url/cookies" xdg/emacs-cache-directory))
+
 (defcustom pspmacs/home-splash-before-hook nil
   "Run before switching to pspmacs/home-splash."
   :group 'pspack

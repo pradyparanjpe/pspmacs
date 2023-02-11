@@ -63,36 +63,37 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography))
 
-(when (string= pspmacs/package-manager "straight")
+(when pspmacs/install-git-clones
+  (pspmacs/install-git-clone
+   '(auctex :host github :repo "emacsmirror/auctex"))
   (use-package latex
-    :straight auctex
-    :general
-    (pspmacs/local-leader-keys
-      :keymaps 'LaTeX-mode-map
-      "=" '(reftex-toc :wk "reftex toc")
-      "(" '(reftex-latex :wk "reftex label")
-      ")" '(reftex-reference :wk "reftex ref")
-      "m" '(LaTeX-macro :wk "insert macro")
-      "s" '(LaTeX-section :wk "insert section header")
-      "e" '(LaTeX-environment :wk "insert environment")
-      "p" '(preview-at-point :wk "preview at point")
-      "f" '(TeX-font :wk "font")
-      "c" '(TeX-command-run-all :wk "compile"))
-    :init
-    (setq TeX-electric-math (cons "\\(" "\\)"))
-    ;; (setq preview-scale-function 1.5) ;; too big on vivacia
-    :config
-    ;; (add-hook 'TeX-mode-hook #'visual-line-mode)
-    (add-hook 'TeX-mode-hook #'reftex-mode)
-    (add-hook 'TeX-mode-hook #'olivetti-mode)
-    (add-hook 'TeX-mode-hook #'turn-on-auto-fill)
-    (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
-    (add-hook 'TeX-after-compilation-finished-functions
-              #'TeX-revert-document-buffer)
-    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
-    (add-hook 'TeX-mode-hook #'outline-minor-mode)
-    ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
-    (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))))
+      :general
+      (pspmacs/local-leader-keys
+        :keymaps 'LaTeX-mode-map
+        "=" '(reftex-toc :wk "reftex toc")
+        "(" '(reftex-latex :wk "reftex label")
+        ")" '(reftex-reference :wk "reftex ref")
+        "m" '(LaTeX-macro :wk "insert macro")
+        "s" '(LaTeX-section :wk "insert section header")
+        "e" '(LaTeX-environment :wk "insert environment")
+        "p" '(preview-at-point :wk "preview at point")
+        "f" '(TeX-font :wk "font")
+        "c" '(TeX-command-run-all :wk "compile"))
+      :init
+      (setq TeX-electric-math (cons "\\(" "\\)"))
+      ;; (setq preview-scale-function 1.5) ;; too big on vivacia
+      :config
+      ;; (add-hook 'TeX-mode-hook #'visual-line-mode)
+      (add-hook 'TeX-mode-hook #'reftex-mode)
+      (add-hook 'TeX-mode-hook #'olivetti-mode)
+      (add-hook 'TeX-mode-hook #'turn-on-auto-fill)
+      (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+      (add-hook 'TeX-after-compilation-finished-functions
+                #'TeX-revert-document-buffer)
+      (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+      (add-hook 'TeX-mode-hook #'outline-minor-mode)
+      ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
+      (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))))
 
 (when pspmacs/install-git-clones
   (pspmacs/install-git-clone '(org-auctex

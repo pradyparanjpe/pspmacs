@@ -10,10 +10,10 @@
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
   (customize-set-variable 'package-archive-priorities
-                          '(("gnu"    . 99)
+                          '(("gnu"    . 90)
                             ("nongnu" . 80)
                             ("stable" . 70)
-                            ("melpa"  . 0)))
+                            ("melpa"  . 60)))
   (package-initialize)
 
   ;; package should store data locally.

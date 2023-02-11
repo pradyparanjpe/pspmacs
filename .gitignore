@@ -24,3 +24,7 @@ lsp/
 projectile-bookmarks.tld
 transient/
 org-persist/
+
+# package.el cache
+elpa/
+url/

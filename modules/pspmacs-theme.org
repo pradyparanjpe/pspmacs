@@ -6,7 +6,11 @@
 * Modus theme
 ** TODO mode-line
 We shall use latest modus themes, not the built-in ones.
+They (~21MB) aren't really heavy!
 #+begin_src emacs-lisp
+  (pspmacs/install-git-clone
+   '(modus-themes :repo "protesilaos/modus-themes"))
+
   (use-package modus-themes
     :demand t
     :general (pspmacs/leader-keys
