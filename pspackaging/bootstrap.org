@@ -119,6 +119,7 @@
       (mkdir package-user-dir t))
     (package-initialize)
     (unless (pspmacs/archives-refreshed-today-p)
+      (message "Refreshing package archives")
       (package-refresh-contents)))
 
   ;;; bootstrap-builtin.el ends here

@@ -258,20 +258,8 @@
       ;; The default width and height of the icons is 22 pixels. If you are
       ;; using a Hi-DPI display, uncomment this to double the icon size.
       ;;(treemacs-resize-icons 44)
-
       (treemacs-follow-mode)
-      (treemacs-filewatch-mode)
-      (treemacs-fringe-indicator-mode 'always)
-      (when treemacs-python-executable
-        (treemacs-git-commit-diff-mode t))
-
-      (pcase (cons (not (null (executable-find "git")))
-                   (not (null treemacs-python-executable)))
-        (`(t . t)
-         (treemacs-git-mode 'deferred))
-        (`(t . _)
-         (treemacs-git-mode 'simple)))
-      (treemacs-hide-gitignored-files-mode nil)))
+      (treemacs-filewatch-mode)))
 
   (use-package treemacs-evil
     :after (treemacs evil)
@@ -287,7 +275,19 @@
 
   (use-package treemacs-magit
     :after (treemacs magit)
-    :ensure t)
+    :ensure t
+    :config
+    (when treemacs-python-executable
+      (treemacs-git-commit-diff-mode t))
+    (treemacs-fringe-indicator-mode 'always)
+
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null treemacs-python-executable)))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple)))
+    (treemacs-hide-gitignored-files-mode nil))
 
   (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
     :after (treemacs)

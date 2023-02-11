@@ -42,6 +42,7 @@ t only if ARCHIVE's time-stamp is later than yesterday"
     (mkdir package-user-dir t))
   (package-initialize)
   (unless (pspmacs/archives-refreshed-today-p)
+    (message "Refreshing package archives")
     (package-refresh-contents)))
 
 ;;; bootstrap-builtin.el ends here
