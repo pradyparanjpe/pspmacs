@@ -23,7 +23,7 @@
 
 (when (featurep 'chemacs)
   (customize-set-variable 'package-user-dir
-                          (expand-file-name "elpa" local-emacs-directory)))
+                          (expand-file-name "packages" local-emacs-directory)))
 
 (load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
         nil 'nomessage)

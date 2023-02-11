@@ -114,8 +114,9 @@
 #+end_src
 
 * Gnu Global
-- Jump to symbol definitions
-#+begin_src emacs-lisp
+- Jump to symbol definitions.
+  - Not using temporarily.
+#+begin_src emacs-lisp :tangle no :export no
     (use-package gtags
       :defer t
       :hook (prog-mode . gtags-mode))

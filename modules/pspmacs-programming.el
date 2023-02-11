@@ -98,10 +98,6 @@
     (unless (display-graphic-p)
       (corfu-doc-terminal-mode t))))
 
-(use-package gtags
-  :defer t
-  :hook (prog-mode . gtags-mode))
-
 (use-package lsp-mode
   :defer t
   :commands (lsp lsp-deferred)
