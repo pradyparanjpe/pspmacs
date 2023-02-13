@@ -380,7 +380,6 @@
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :ensure t;
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
@@ -403,7 +402,6 @@
   (doom-modeline-buffer-encoding nil)
   (doom-modeline-height 15)
   (doom-modeline-project-detection 'projectile)
-
   :config
   (doom-modeline-mode 1)
   (set-face-attribute 'mode-line nil

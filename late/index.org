@@ -73,7 +73,8 @@
   #+begin_src emacs-lisp :tangle package-management.el
     ;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
     (use-package org
-      :ensure t)
+      :ensure t
+      :mode ("\\.org\\'" . org-mode))
   #+end_src
 
 ** Inherit

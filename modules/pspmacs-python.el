@@ -33,20 +33,19 @@
           :wk "python"))
   (python-mode-map :states 'normal "gz" nil "C-j" nil)
   ;; (python-mode-map :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
-  :init
-  (with-eval-after-load 'lsp-mode
-    (when
-        (string= major-mode "python-mode")
-      (pspmacs/extend-list
-       'lsp-file-watch-ignored-directories
-       '(
-         ;; python directories
-         "[/\\\\]docs\\'"
-         "[/\\\\]build\\'"
-         "[/\\\\]tests\\'"
-         "[/\\\\]\\.?venv\\'"
-         "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
-         "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
+  (with-eval-after-load 'lsp
+    (customize-set-variable
+     lsp-file-watch-ignored-directories
+     (append
+      lsp-file-watch-ignored-directories
+      '(
+        ;; python directories
+        "[/\\\\]docs\\'"
+        "[/\\\\]build\\'"
+        "[/\\\\]tests\\'"
+        "[/\\\\]\\.?venv\\'"
+        "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
+        "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
   :custom
   (python-indent-offset 0)
   (python-shell-interpreter-args "-i --simple-prompt --no-color-info")

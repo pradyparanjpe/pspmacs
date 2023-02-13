@@ -128,7 +128,6 @@
 * Auto-tangle
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
-    :ensure t
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
@@ -138,8 +137,13 @@
     :custom
     (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
  #+end_src
+* org-ref
+#+begin_src emacs-lisp
+  (use-package org-ref)
+#+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
-  
+
 #+end_src

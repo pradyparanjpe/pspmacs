@@ -100,7 +100,6 @@ Multi cursor edit mode
 #+begin_src emacs-lisp
   (use-package multiple-cursors
     :after evil
-    :ensure t
     :general
     (pspmacs/leader-keys
       "s" '(:ignore t :wk "multiple-substitute")
@@ -118,7 +117,6 @@ Multi cursor edit mode
 - Autocomplete pairs
 #+begin_src emacs-lisp
   (use-package smartparens
-    :ensure t
     :custom
     (sp-show-pair-from-inside nil)
     (show-paren-mode t)
@@ -137,30 +135,28 @@ Multi cursor edit mode
 * emacs/undo-tree
 - Undo history cache
 - set cache to xdg/emacs-cache-directory
-  #+begin_src emacs-lisp
-    (use-package undo-tree
-      :ensure t
-      :general
-      (general-define-key
-       :keymaps 'evil-normal-state-map
-       "u" #'undo-tree-undo
-       "C-r" #'undo-tree-redo)
-      :init
-      (global-undo-tree-mode)
-      :config
-      (mkdir (expand-file-name "undo-tree/" xdg/emacs-cache-directory) t)
-      :custom
-      (undo-tree-auto-save-history t)
-      (undo-tree-history-directory-alist
-       `((".*" . ,(expand-file-name "undo-tree/" xdg/emacs-cache-directory))))
-      (undo-tree-visualizer-diff t)
-      (undo-tree-visualizer-timestamps t))
- #+end_src
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :general
+    (general-define-key
+     :keymaps 'evil-normal-state-map
+     "u" #'undo-tree-undo
+     "C-r" #'undo-tree-redo)
+    :init
+    (global-undo-tree-mode)
+    :config
+    (mkdir (expand-file-name "undo-tree/" xdg/emacs-cache-directory) t)
+    :custom
+    (undo-tree-auto-save-history t)
+    (undo-tree-history-directory-alist
+     `((".*" . ,(expand-file-name "undo-tree/" xdg/emacs-cache-directory))))
+    (undo-tree-visualizer-diff t)
+    (undo-tree-visualizer-timestamps t))
+#+end_src
 * joaotavora/yasnippets
 Insert snippets of frequently used topics.
 #+begin_src emacs-lisp
   (use-package yasnippet
-    :ensure t
     :general
     (pspmacs/leader-keys
       "y" '(:ignore t "yas")

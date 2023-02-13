@@ -2,6 +2,10 @@
  '(modus-themes :repo "protesilaos/modus-themes"))
 
 (use-package modus-themes
+  :ensure nil
+  :load-path (lambda ()
+               (unless (string= pspmacs/package-manager "straight")
+                 (expand-file-name "modus-themes" pspmacs/crooked-dir)))
   :demand t
   :general (pspmacs/leader-keys
              "T" '(:ignore t :wk "Theme")

@@ -113,11 +113,12 @@
   :hook (org-mode . (lambda () (org-bullets-mode 1))))
 
 (use-package org-auto-tangle
-  :ensure t
   :hook (org-mode . org-auto-tangle-mode))
 
 (use-package org-roam
   :custom
   (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
+
+(use-package org-ref)
 
 (pspmacs/load-inherit)

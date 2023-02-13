@@ -53,20 +53,45 @@
 
 * LaTeX
 #+begin_src emacs-lisp
-  (use-package auctex
-    :no-require t
+  (use-package tex
     :mode ("\\.tex\\'" . LaTeX-mode)
     :init
-    (setq TeX-parse-self t ; parse on load
-          reftex-plug-into-AUCTeX t
-          TeX-auto-save t  ; parse on save
-          TeX-source-correlate-mode t
-          TeX-source-correlate-method 'synctex
-          TeX-source-correlate-start-server nil
-          TeX-electric-sub-and-superscript t
-          TeX-engine 'luatex ;; use lualatex by default
-          TeX-save-query nil))
+    (add-to-list 'TeX-electric-math (cons "\\(" "\\)"))
+    :ensure auctex
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'LaTeX-mode-map
+      "=" '(reftex-toc :wk "reftex toc")
+      "(" '(reftex-latex :wk "reftex label")
+      ")" '(reftex-reference :wk "reftex ref")
+      "m" '(LaTeX-macro :wk "insert macro")
+      "s" '(LaTeX-section :wk "insert section header")
+      "e" '(LaTeX-environment :wk "insert environment")
+      "p" '(preview-at-point :wk "preview at point")
+      "f" '(TeX-font :wk "font")
+      "c" '(TeX-command-run-all :wk "compile"))
+    :custom
+    (TeX-parse-self t); parse on load
+    (reftex-plug-into-AUCTeX t)
+    (TeX-auto-save t)  ; parse on save
+    (TeX-source-correlate-mode t)
+    (TeX-source-correlate-method 'synctex)
+    (TeX-source-correlate-start-server nil)
+    (TeX-electric-sub-and-superscript t)
+    (TeX-engine 'xetex) ;; use xetex by default
+    (TeX-save-query nil)
+    :config
+    (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+    (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))
+    (add-hook 'TeX-after-compilation-finished-functions
+              #'TeX-revert-document-buffer)
+    :hook
+    ((LaTeX-mode (reftex-mode olivetti-mode prettify-symbols-mode
+                              outline-minor-mode turn-on-auto-fill))))
+    ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package evil-tex
     :hook (LaTeX-mode . evil-tex-mode))
 
@@ -85,52 +110,6 @@
 #+end_src
 
 * Using git-cloned repository
-** auctex
-#+begin_src emacs-lisp
-  (when pspmacs/install-git-clones
-    (pspmacs/install-git-clone
-     '(auctex :host github :repo "emacsmirror/auctex"))
-    (use-package latex
-        :general
-        (pspmacs/local-leader-keys
-          :keymaps 'LaTeX-mode-map
-          "=" '(reftex-toc :wk "reftex toc")
-          "(" '(reftex-latex :wk "reftex label")
-          ")" '(reftex-reference :wk "reftex ref")
-          "m" '(LaTeX-macro :wk "insert macro")
-          "s" '(LaTeX-section :wk "insert section header")
-          "e" '(LaTeX-environment :wk "insert environment")
-          "p" '(preview-at-point :wk "preview at point")
-          "f" '(TeX-font :wk "font")
-          "c" '(TeX-command-run-all :wk "compile"))
-        :init
-        (setq TeX-electric-math (cons "\\(" "\\)"))
-        ;; (setq preview-scale-function 1.5) ;; too big on vivacia
-        :config
-        ;; (add-hook 'TeX-mode-hook #'visual-line-mode)
-        (add-hook 'TeX-mode-hook #'reftex-mode)
-        (add-hook 'TeX-mode-hook #'olivetti-mode)
-        (add-hook 'TeX-mode-hook #'turn-on-auto-fill)
-        (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
-        (add-hook 'TeX-after-compilation-finished-functions
-                  #'TeX-revert-document-buffer)
-        (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
-        (add-hook 'TeX-mode-hook #'outline-minor-mode)
-        ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
-        (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))))
-#+end_src
-
-** org-auctex
-#+begin_src emacs-lisp
-  (when pspmacs/install-git-clones
-    (pspmacs/install-git-clone '(org-auctex
-                                 :type git
-                                 :host github
-                                 :repo "karthink/org-auctex"))
-    (use-package org-auctex
-      :hook (org-mode . org-auctex-mode)))
-#+end_src
-
 ** Wrapper for oer/emacs-reveal
 #+begin_src emacs-lisp
   (when pspmacs/install-git-clones
@@ -139,16 +118,22 @@
                                  :host gitlab
                                  :repo "oer/emacs-reveal"))
     (use-package emacs-reveal
-    :ensure t
-    :general
-    (pspmacs/local-leader-keys
-      :keymaps 'org-mode-map
-      "v" '(:ignore t :wk "reveal")
-      "vv" '(org-pandoc-export-to-revealjs :wk "export")
-      "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
-    :config
-    (setq org-re-reveal-single-file t)
-    :hook (org-mode . reveal-mode)))
+      :ensure nil
+      :load-path (lambda ()
+                   (unless (string= pspmacs/package-manager "straight")
+                     (expand-file-name "org-auctex" pspmacs/crooked-dir)))
+      :general
+      (pspmacs/local-leader-keys
+        :keymaps 'org-mode-map
+        "v" '(:ignore t :wk "reveal")
+        "vv" '(org-pandoc-export-to-revealjs :wk "export")
+        "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
+      :custom
+      (oer-reveal-org-includes-dir (expand-file-name
+                                    "oer-reveal-org" local-emacs-directory))
+      :config
+      (setq org-re-reveal-single-file t)
+      :hook (org-mode . reveal-mode)))
 #+end_src
 
 * Inherit from private and local

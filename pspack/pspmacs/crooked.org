@@ -26,9 +26,9 @@ A dirty alternative to [[https://github.com/radian-software/straight.el][straigh
 - [X] Try if =:url= or =:repo= can be cloned to =pspmacs/crooked-dir=,
   - [X] else, try to build a url using =:fetcher= or =:host= and =:repo=.
     - [X] else, die.
-- [X] Recompile byte compile cloned repo else, ignore.
+- [ ] Recompile byte compile cloned repo else, ignore.
 - [X] Add to =load-path=.
-
+- [X] Autoloads
 * Variables
 #+begin_src emacs-lisp
   (defcustom pspmacs/crooked-dir
@@ -49,7 +49,7 @@ A dirty alternative to [[https://github.com/radian-software/straight.el][straigh
     :group 'crooked)
 #+end_src
 
-* Interpret recipe
+* Parse recipe
 Compile git clone url and args from input list.
 #+begin_src emacs-lisp
   (defun pspmacs/git-clone-args (melpa-style-recipe)
@@ -111,14 +111,17 @@ Compile git clone url and args from input list.
          (target-path (expand-file-name target-name pspmacs/crooked-dir))
          (process-args (append '("git" nil nil nil "clone")
                                clone-args `(,target-path))))
-      (unless (file-exists-p target-path)
+      (unless (file-directory-p target-path)
         (message (mapconcat 'identity (remq 'nil process-args) " "))
         (unless (eq (apply 'call-process process-args) 0)
-          (user-error "Can't clone with %s to %s" clone-args target-path)
-          ;; worktree must be dirty, delete it
-          (delete-directory target-path t))
-        (ignore-errors (unless no-native-compile
-                         (byte-recompile-directory target-path 0))))
+          ;; worktree must be dirty, delete it.
+          (delete-directory target-path t)
+          (user-error "Can't clone with %s to %s" clone-args target-path))
+        ;; Error wasn't thrown, cloning must have been successful.
+        (package-generate-autoloads target-name target-path)
+        ;; (ignore-errors (unless no-native-compile
+        ;;                  (byte-recompile-directory target-path 0)))
+        )
       (add-to-list 'load-path target-path)
       target-path))
 #+end_src

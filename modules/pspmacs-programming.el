@@ -69,7 +69,6 @@
 
 (use-package kind-icon
   :demand t
-  :ensure t
   :after corfu
   :custom
   (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
@@ -83,6 +82,10 @@
      :repo "https://codeberg.org/~akib/emacs-corfu-terminal.git"))
   (use-package corfu-terminal
     :after corfu
+    :ensure nil
+    :load-path (lambda ()
+                 (unless (string= pspmacs/package-manager "straight")
+                   (expand-file-name "corfu-terminal" pspmacs/crooked-dir)))
     :config
     (unless (display-graphic-p))
     (corfu-terminal-mode t))
@@ -94,6 +97,10 @@
 
   (use-package corfu-doc-terminal
     :after corfu-terminal
+    :ensure nil
+    :load-path (lambda ()
+                 (unless (string= pspmacs/package-manager "straight")
+                   (expand-file-name "corfu-doc-terminal" pspmacs/crooked-dir)))
     :config
     (unless (display-graphic-p)
       (corfu-doc-terminal-mode t))))

@@ -81,14 +81,17 @@ Native-compile, add to `load-path'."
        (target-path (expand-file-name target-name pspmacs/crooked-dir))
        (process-args (append '("git" nil nil nil "clone")
                              clone-args `(,target-path))))
-    (unless (file-exists-p target-path)
+    (unless (file-directory-p target-path)
       (message (mapconcat 'identity (remq 'nil process-args) " "))
       (unless (eq (apply 'call-process process-args) 0)
-        (user-error "Can't clone with %s to %s" clone-args target-path)
-        ;; worktree must be dirty, delete it
-        (delete-directory target-path t))
-      (ignore-errors (unless no-native-compile
-                       (byte-recompile-directory target-path 0))))
+        ;; worktree must be dirty, delete it.
+        (delete-directory target-path t)
+        (user-error "Can't clone with %s to %s" clone-args target-path))
+      ;; Error wasn't thrown, cloning must have been successful.
+      (package-generate-autoloads target-name target-path)
+      ;; (ignore-errors (unless no-native-compile
+      ;;                  (byte-recompile-directory target-path 0)))
+      )
     (add-to-list 'load-path target-path)
     target-path))
 

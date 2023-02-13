@@ -4,24 +4,29 @@
 ;; Code:
 (require 'time-date)
 (require 'package)
-(defun pspmacs/archive-refreshed-today-p (archive)
+(defcustom pspmacs/archives-stale-days 1
+  "Days after which archives become stale."
+  :type 'integer)
+
+(defun pspmacs/archive-refreshed-recently-p (archive)
   "If package ARCHIVE was initialized today.
 
-t only if ARCHIVE's time-stamp is later than yesterday"
+t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
   (let* ((today (decode-time nil nil t))
          (archive-path (expand-file-name
                         (format "archives/%s/archive-contents" archive)
                         package-user-dir))
          (last-update-time (decode-time (file-attribute-modification-time
                                          (file-attributes archive-path))))
-         (delta (make-decoded-time :day 1)))
-    (not (time-less-p (encode-time (decoded-time-add last-update-time delta))
-                      (encode-time today)))))
+         (delta (make-decoded-time :day pspmacs/archives-stale-days)))
+    (time-less-p (encode-time today)
+                 (encode-time (decoded-time-add last-update-time delta)))))
 
-(defun pspmacs/archives-refreshed-today-p ()
+(defun pspmacs/archives-refreshed-recently-p ()
   "All archives have been refreshed today."
   (interactive)
-  (cl-every #'pspmacs/archive-refreshed-today-p (mapcar #'car package-archives)))
+  (cl-every #'pspmacs/archive-refreshed-recently-p
+            (mapcar #'car package-archives)))
 
 (defun pspmacs/init-package-manager ()
   "Initialize `package.el' as the package manager"
@@ -41,7 +46,7 @@ t only if ARCHIVE's time-stamp is later than yesterday"
   (unless (file-exists-p package-user-dir)
     (mkdir package-user-dir t))
   (package-initialize)
-  (unless (pspmacs/archives-refreshed-today-p)
+  (unless (pspmacs/archives-refreshed-recently-p)
     (message "Refreshing package archives")
     (package-refresh-contents)))
 

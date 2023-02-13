@@ -70,7 +70,6 @@
 
 (use-package multiple-cursors
   :after evil
-  :ensure t
   :general
   (pspmacs/leader-keys
     "s" '(:ignore t :wk "multiple-substitute")
@@ -84,7 +83,6 @@
     "seb" '(mc/mark-all-symbols-like-this :wk "buffer")))
 
 (use-package smartparens
-  :ensure t
   :custom
   (sp-show-pair-from-inside nil)
   (show-paren-mode t)
@@ -100,7 +98,6 @@
     (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))))
 
 (use-package undo-tree
-  :ensure t
   :general
   (general-define-key
    :keymaps 'evil-normal-state-map
@@ -118,7 +115,6 @@
   (undo-tree-visualizer-timestamps t))
 
 (use-package yasnippet
-  :ensure t
   :general
   (pspmacs/leader-keys
     "y" '(:ignore t "yas")

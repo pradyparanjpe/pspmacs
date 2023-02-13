@@ -162,7 +162,6 @@
   (dired-mode . dired-git-mode))
 
 (use-package treemacs
-  :ensure t
   :defer t
   :init
   (pspmacs/extend-list 'recentf-exclude
@@ -234,20 +233,16 @@
     (treemacs-filewatch-mode)))
 
 (use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
+  :after (treemacs evil))
 
 (use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
+  :after (treemacs projectile))
 
 (use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
+  :hook (dired-mode . treemacs-icons-dired-enable-once))
 
 (use-package treemacs-magit
   :after (treemacs magit)
-  :ensure t
   :config
   (when treemacs-python-executable
     (treemacs-git-commit-diff-mode t))
@@ -263,7 +258,6 @@
 
 (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
   :after (treemacs)
-  :ensure t
   :config (treemacs-set-scope-type 'Tabs))
 
 (use-package emacs

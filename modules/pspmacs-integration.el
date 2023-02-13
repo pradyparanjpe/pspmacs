@@ -7,7 +7,6 @@
   :init
   (setq vterm-always-compile-module t
         vterm-ignore-blink-cursor t)
-  :ensure t
   :config
   (general-add-hook
    'vterm-exit-functions

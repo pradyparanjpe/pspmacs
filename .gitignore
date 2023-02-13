@@ -27,4 +27,6 @@ org-persist/
 
 # package.el cache
 elpa/
+packages/
 url/
+org-re-reveal/

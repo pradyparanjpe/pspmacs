@@ -47,6 +47,7 @@
 
 ;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
 (use-package org
-  :ensure t)
+  :ensure t
+  :mode ("\\.org\\'" . org-mode))
 
 (pspmacs/load-inherit)
