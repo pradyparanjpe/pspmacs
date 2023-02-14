@@ -71,9 +71,7 @@
 ** Initiate org mode with latest release
 - Emacs is shipped with a built-in org-mode. However, we shall use the latest release.
   #+begin_src emacs-lisp :tangle package-management.el
-    ;;;; org-latest.el --- org-mode -*- lexical-binding: t; -*-
     (use-package org
-      :ensure t
       :mode ("\\.org\\'" . org-mode))
   #+end_src
 

@@ -93,7 +93,7 @@
     (pspmacs/install-git-clone
      '(corfu-terminal
        :type git
-       :repo "https://codeberg.org/~akib/emacs-corfu-terminal.git"))
+       :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
     (use-package corfu-terminal
       :after corfu
       :ensure nil
@@ -107,7 +107,7 @@
     (pspmacs/install-git-clone
      '(corfu-doc-terminal
        :type git
-       :repo "https://codeberg.org/~akib/emacs-corfu-doc-terminal.git"))
+       :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
 
     (use-package corfu-doc-terminal
       :after corfu-terminal

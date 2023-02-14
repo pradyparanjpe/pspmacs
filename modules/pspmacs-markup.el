@@ -33,42 +33,64 @@
   :mode ("README\\.md\\'" . gfm-mode)
   :custom (markdown-command "multimarkdown"))
 
-(use-package tex
-  :mode ("\\.tex\\'" . LaTeX-mode)
-  :init
-  (add-to-list 'TeX-electric-math (cons "\\(" "\\)"))
-  :ensure auctex
-  :general
-  (pspmacs/local-leader-keys
-    :keymaps 'LaTeX-mode-map
-    "=" '(reftex-toc :wk "reftex toc")
-    "(" '(reftex-latex :wk "reftex label")
-    ")" '(reftex-reference :wk "reftex ref")
-    "m" '(LaTeX-macro :wk "insert macro")
-    "s" '(LaTeX-section :wk "insert section header")
-    "e" '(LaTeX-environment :wk "insert environment")
-    "p" '(preview-at-point :wk "preview at point")
-    "f" '(TeX-font :wk "font")
-    "c" '(TeX-command-run-all :wk "compile"))
-  :custom
-  (TeX-parse-self t); parse on load
-  (reftex-plug-into-AUCTeX t)
-  (TeX-auto-save t)  ; parse on save
-  (TeX-source-correlate-mode t)
-  (TeX-source-correlate-method 'synctex)
-  (TeX-source-correlate-start-server nil)
-  (TeX-electric-sub-and-superscript t)
-  (TeX-engine 'xetex) ;; use xetex by default
-  (TeX-save-query nil)
-  :config
-  (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
-  (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer)
-  :hook
-  ((LaTeX-mode (reftex-mode olivetti-mode prettify-symbols-mode
-                            outline-minor-mode turn-on-auto-fill))))
-  ;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
+(setq auctex-kw
+        (if (string= pspmacs/package-manager 'builtin)
+            '(:ensure auctex)
+            '(:straight auctex)))
+
+  (setq tex-kwargs
+        `(tex
+          ,@auctex-kw
+          :mode ("\\.tex\\'" . LaTeX-mode)
+          ;; :ensure auctex
+          ;; :straight auctex
+          :general
+          (pspmacs/local-leader-keys
+            :keymaps 'LaTeX-mode-map
+            "=" '(reftex-toc :wk "reftex toc")
+            "(" '(reftex-latex :wk "reftex label")
+            ")" '(reftex-reference :wk "reftex ref")
+            "m" '(LaTeX-macro :wk "insert macro")
+            "s" '(LaTeX-section :wk "insert section header")
+            "e" '(LaTeX-environment :wk "insert environment")
+            "p" '(preview-at-point :wk "preview at point")
+            "f" '(TeX-font :wk "font")
+            "c" '(TeX-command-run-all :wk "compile"))
+          :custom
+          (TeX-parse-self t); parse on load
+          (reftex-plug-into-AUCTeX t)
+          (TeX-auto-save t)  ; parse on save
+          (TeX-source-correlate-mode t)
+          (TeX-source-correlate-method 'synctex)
+          (TeX-source-correlate-start-server nil)
+          (TeX-electric-sub-and-superscript t)
+          (TeX-engine 'xetex) ;; use xetex by default
+          (TeX-save-query nil)
+          :config
+          (add-to-list 'TeX-view-program-selection '(output-pdf "PDF Tools"))
+          (add-to-list 'TeX-view-program-selection '(output-pdf "Zathura"))
+          (add-hook 'TeX-after-compilation-finished-functions
+                    #'TeX-revert-document-buffer)
+          (sp-with-modes
+              '(tex-mode plain-tex-mode latex-mode)
+
+            (sp-local-pair "\\(" "\\)"
+                           :unless '(sp-point-before-word-p
+                                     sp-point-before-same-p
+                                     sp-latex-point-after-backslash)
+                           :trigger-wrap "$"
+                           :trigger "$")
+
+            (sp-local-pair "\\[" "\\]"
+                           :unless '(sp-point-before-word-p
+                                     sp-point-before-same-p
+                                     sp-latex-point-after-backslash)))
+          :hook
+          ((LaTeX-mode . (reftex-mode olivetti-mode prettify-symbols-mode
+                                      outline-minor-mode turn-on-auto-fill)))))
+
+  (eval `(use-package ,@tex-kwargs))
+;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
 
 (use-package evil-tex
   :hook (LaTeX-mode . evil-tex-mode))

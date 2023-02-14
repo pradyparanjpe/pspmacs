@@ -302,6 +302,8 @@
 
 (use-package evil-collection ;; evilifies a bunch of things
   :after evil
+  :init
+  (setq evil-want-keybinding nil)
   :demand t
   :custom
   ;; '<TAB>' cycles visibility in 'outline-minor-mode'
