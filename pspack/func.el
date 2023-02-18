@@ -89,6 +89,13 @@ Load prettify-symbols from Each of SUB-MODES."
                       :font "Fira Code"
                       :height pspmacs/font-height)
 
+  ;; Set italic font face if available
+  (ignore-errors
+    (set-face-attribute 'italic nil
+                        :font "VictorMono"
+                        :slant 'italic
+                        :height pspmacs/font-height))
+
   ;; Set the variable pitch face
   (set-face-attribute 'variable-pitch nil
                       :font "Cantarell"
