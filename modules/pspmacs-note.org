@@ -138,6 +138,7 @@
     (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
  #+end_src
 * org-ref
+- Reference management for LaTeX.
 #+begin_src emacs-lisp
   (use-package org-ref)
 #+end_src

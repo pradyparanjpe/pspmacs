@@ -31,14 +31,15 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
 (defun pspmacs/init-package-manager ()
   "Initialize `package.el' as the package manager"
   ;; Additional package archives
-  (add-to-list 'package-archives '("stable" . "https://stable.melpa.org/packages/"))
+  ;; Paranoia
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
   (customize-set-variable 'package-archive-priorities
                           '(("gnu"    . 99)
                             ("nongnu" . 80)
-                            ("stable" . 70)
                             ("melpa"  . 0)))
+  ;; (add-to-list 'package-archives '("stable" . "https://stable.melpa.org/packages/"))
+  ;; ("stable" . 70)
 
   ;; package should store data locally.
   (customize-set-variable 'package-user-dir

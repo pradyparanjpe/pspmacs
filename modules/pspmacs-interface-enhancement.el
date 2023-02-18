@@ -115,7 +115,7 @@
     "cl" '(comment-line :wk "comment line")
     "cp" '(comment-region :wk "comment paragraph"))
 
-  ;; file
+  ;; worktrees
   (pspmacs/leader-keys
     "f" '(:ignore t :wk "file")
     "ff" '(find-file :wk "find")
@@ -127,8 +127,7 @@
     "fw" '(:ignote t :wk "worktree")
     "fwl" '((lambda ()
               (interactive)
-              (let ((default-directory local-emacs-directory))
-                (find-file "")))
+              (find-file local-emacs-directory))
             :wk "local")
     "fwp" '((lambda ()
               (interactive)
@@ -138,7 +137,8 @@
             :wk "private")
     "fwg" '((lambda ()
               (interactive)
-              (message "disabled")) :wk "global <disabled>")
+              (message "disabled"))
+            :wk "global <disabled>")
     "fD" '((lambda ()
          (interactive)
          (delete-file (buffer-file-name)))
@@ -302,8 +302,6 @@
 
 (use-package evil-collection ;; evilifies a bunch of things
   :after evil
-  :init
-  (setq evil-want-keybinding nil)
   :demand t
   :custom
   ;; '<TAB>' cycles visibility in 'outline-minor-mode'

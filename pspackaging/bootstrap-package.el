@@ -1,35 +1,35 @@
 (defcustom pspmacs/package-manager
   'builtin
-  "Packaging system to use"
+  "Packaging system to use."
   :type '(string :tag "Emacs package manager to use")
   :options '(builtin straight))
 
 (defcustom pspmacs/packaging-directory
   (expand-file-name "pspackaging" user-emacs-directory)
   "Packaging recipes directory."
-  :type '(string :tag "Directory with recipes to bootstrap package manager."))
+  :type '(string :tag "Directory with modules to bootstrap package manager"))
 
 (defcustom pspmacs/install-git-clones
   (if (string= pspmacs/package-manager "straight") t nil)
-  "Install packages which requires git cloning."
+  "Install packages, which require git cloning."
   :type 'boolean)
 
 (defun pspmacs/package-bootstrap (&optional manager)
   "Bootstrap package manager to install and configure emacs packages.
 
-If MANAGER is a member of builtin, package, minimal,
-Emacs' builtin manager `package.el' is bootstrapped.
-Else, it `pspmacs/package-manager', which defaults to `straight.el',
-is bootstrapped.
+If MANAGER is a member of straight, cloned, straight.el,
+`straight.el' package manager is bootstrapped.
+Else, `pspmacs/package-manager', which defaults to the builtin
+manager `package.el', is bootstrapped.
 
 This is the first function called by `init.el'."
   (let* ((manager
-          (if (member manager '(builtin package minimal))
-              'builtin
+          (if (member manager '(straight cloned straight.el))
+              'straight
             pspmacs/package-manager))
          (manager-file (expand-file-name
                         (format "bootstrap-%s.el" manager)
                         pspmacs/packaging-directory)))
     (if (file-exists-p manager-file)
         (load manager-file nil 'nomessage)
-      (error "Could not find recipe for %s." manager))))
+      (error "Could not find bootstrap instructions for %s." manager))))
