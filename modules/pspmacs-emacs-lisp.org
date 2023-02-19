@@ -33,7 +33,7 @@
 ** Pretty symbols
 - lambda, ...
 #+begin_src emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'pspmacs/prettify-emacs-lisp)
+  (add-hook 'emacs-lisp-mode-hook #'pspmacs/prettify-emacs-lisp)
   ;;; pspmacs-emacs-lisp.el ends here
 #+end_src
 

@@ -55,9 +55,11 @@
   (:keymaps 'org-agenda-mode-map
             "j" '(org-agenda-next-line)
             "h" '(org-agenda-previous-line))
-  (general-define-key
+  (general-def
    :states 'normal
-   "S-TAB" 'org-global-cycle)
+   "S-TAB" 'org-cycle-global
+   "<backtab>" 'org-cycle-global)
+  (general-def 'normal "<backtab>" #'org-cycle-global)
 
   :custom
   (org-cite-global-bibliography

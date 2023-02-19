@@ -126,15 +126,10 @@
 
 * Prettify data
 - Prettify modes with emoji
-
 #+begin_src emacs-lisp :tangle vars.el
   (defcustom pspmacs/pretty-alist
     '(("code" . (("\\n" . ?⏎)
-                 ("\\t" . ?↹)
-                 (">=" . ?≥)
-                 ("<=" . ?≤)
-                 ("!=" . ?≠)
-                 ("==" . ?≅)))
+                 ("\\t" . ?↹)))
       ("lisp" . (("lambda" . ?λ)))
       ("org" . (("#+setupfile" . ?🛒)
                 ("#+author" . ?🖋)
@@ -161,9 +156,7 @@
                 ("[x]" . ?✔)
                 ("[ ]" . ?❌)
                 ("[-]" . ?⏳)))
-      ("python" . (("and" . ?∩)
-                   ("or" . ?∪)
-                   ("->" . ?⇒))))
+      ("python" . (("->" . ?⇒))))
     "Pretty symbols."
     :group 'pspack
     :type '(repeat (cons
@@ -282,11 +275,26 @@
     (font-lock-add-keywords nil pspmacs/py-keywords))
 #+end_src
 
+
 *** Prettify Emacs-Lisp
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/elisp-keywords
+    '(("\\W\\(\\([0-9]*_?[0-9]+\\)*\\(\\.[0-9]+\\)\\)"
+       1 'font-lock-constant-face nil)
+      ("\\W\\(t\\|\\nil)\\W"
+       1 'font-lock-constant-face nil))
+    "Custom keywords to highlight in emacs-lisp mode"
+    :group 'pspack
+    :type '(repeat (list :tag "emacs-lisp highlight keywords")))
+
+#+end_src
+
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/prettify-emacs-lisp ()
     "Prettify Emacs-Lisp"
+    ;; (font-lock-add-keywords nil pspmacs/elisp-keywords)
       (pspmacs/mode-prettify '("code" "emacs-lisp")))
+
 #+end_src
 
 *** Prettify Org
@@ -433,6 +441,16 @@ Following function may be used to byte-compile any work-tree.
       (kill-buffer used-buffer)))
 #+end_src
 
+* Switch to minibuffer
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/switch-to-minibuffer ()
+    "Switch to minibuffer window."
+    (interactive)
+    (if (active-minibuffer-window)
+        (select-window (active-minibuffer-window))
+      (message "Minibuffer is not active")))
+#+end_src
+
 * Kill all other buffers
 #+begin_src emacs-lisp :tangle func.el
 (defun pspmacs/kill-other-buffers ()
@@ -515,7 +533,7 @@ Following function may be used to byte-compile any work-tree.
           '(orderless)))
 #+end_src
 
-* Disable from lsp-io
+* Disable from lsp-ui
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/lsp-ui-disable-modes ()
     "Disable certian modes from lsp-ui"
@@ -529,6 +547,25 @@ Following function may be used to byte-compile any work-tree.
     (if-let ((python-pytest-executable (executable-find "pytest")))
         (apply orig-fun args)
       (apply orig-fun args)))
+#+end_src
+
+* Use ipython as python interpreter
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/prefer-interpreter-ipython ()
+    "Use ipython as the python interpreter if available.
+
+  This requires us to reset various regular expressions."
+    (interactive)
+    (when (executable-find "ipython")
+      (setq python-shell-interpreter (executable-find "ipython")
+            python-shell-interpreter-args "-i --simple-prompt --no-color-info"
+            python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+            python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
+            python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+            python-shell-completion-setup-code
+            "from IPython.core.completerlib import module_completion"
+            python-shell-completion-string-code
+            "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")))
 #+end_src
 
 * Yank file name to clipboard

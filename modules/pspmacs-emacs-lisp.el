@@ -22,7 +22,7 @@
 
 ;;; Code:
 
-(add-hook 'emacs-lisp-mode-hook 'pspmacs/prettify-emacs-lisp)
+(add-hook 'emacs-lisp-mode-hook #'pspmacs/prettify-emacs-lisp)
 ;;; pspmacs-emacs-lisp.el ends here
 
 (pspmacs/local-leader-keys

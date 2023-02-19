@@ -39,8 +39,15 @@
       "'" '((lambda () (interactive)
               (pspmacs/inferior-interpreter 'run-python))
             :wk "python"))
-    (python-mode-map :states 'normal "gz" nil "C-j" nil)
-    ;; (python-mode-map :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
+    (general-def 'normal
+      python-mode-map
+      "gz" nil
+      "C-j" nil
+      "K" '(lambda ()
+           (interactive)
+           (lsp-describe-thing-at-point)
+           (switch-to-buffer-other-window "*lsp-help*")))
+    :custom
     (with-eval-after-load 'lsp
       (customize-set-variable
        lsp-file-watch-ignored-directories
@@ -54,27 +61,24 @@
           "[/\\\\]\\.?venv\\'"
           "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
           "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
-    :custom
     (python-indent-offset 0)
-    (python-shell-interpreter-args "-i --simple-prompt --no-color-info")
-    (python-shell-prompt-regexp "In \\[[0-9]+\\]: ")
-    (python-shell-prompt-block-regexp "\\.\\.\\.\\.: ")
-    (python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: ")
-    (python-shell-completion-setup-code
-     "from IPython.core.completerlib import module_completion")
-    (python-shell-completion-string-code
-     "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+    ;; ipython-specific code
     :config
     (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
     (sp-local-pair 'python-mode "__" "__")
 
     :hook
-    ((python-mode . (lambda ()
-                     (when (executable-find "ipython")
-                       (setq python-shell-interpreter
-                             (executable-find "ipython")))))
+    ((python-mode . pspmacs/prefer-interpreter-ipython)
      (python-mode . pspmacs/prettify-python)
      (python-mode . pspmacs/pyfaces)))
+#+end_src
+
+* Emacs Ipython Notebook
+#+begin_src emacs-lisp
+  (use-package ein
+    :demand t
+    :config
+    (add-to-list 'org-babel-load-languages '(ein . t)))
 #+end_src
 
 * Automatic virtual environment
@@ -115,22 +119,54 @@
     :hook (python-mode . yapf-mode))
 #+end_src
 
-** Pytests
+* Pytests
 - Disabled currently
 #+begin_src emacs-lisp :tangle no
-  ;; (use-package python-pytest
-  ;;   :general
-  ;;   (pspmacs/local-leader-keys
-  ;;     :keymaps 'python-mode-map
-  ;;     "t" '(:ignore t :wk "test")
-  ;;     "t d" '(python-pytest-dispatch :wk "dispatch")
-  ;;     "t f" '(python-pytest-file :wk "file")
-  ;;     "t t" '(python-pytest-function :wk "function"))
-  ;;   :init
-  ;;   (setq python-pytest-arguments '("--color" "--failed-first"))
-  ;;   :config
-  ;;   (advice-add 'python-pytest--run :around #'pspmacs/pytest-use-venv))
+  (use-package python-pytest
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'python-mode-map
+      "t" '(:ignore t :wk "test")
+      "t d" '(python-pytest-dispatch :wk "dispatch")
+      "t f" '(python-pytest-file :wk "file")
+      "t t" '(python-pytest-function :wk "function"))
+    :init
+    (setq python-pytest-arguments '("--color" "--failed-first"))
+    :config
+    (advice-add 'python-pytest--run :around #'pspmacs/pytest-use-venv))
 #+end_src
+** TODO Coverage
+- A /good programmer/ always writes tests.
+- A /better programmer/ writes tests before writing the runtime code.
+- I want to be a better- or at least a good programmer in the future.
+  #+begin_src emacs-lisp :tangle no :results none :export no
+    (flycheck-define-checker python-pycoverage
+      "A Python test coverage checker using the pycoverage tool.
+
+    See `https://github.com/mattharrison/pycoverage.el'.
+
+    Copied verbatim from
+    `https://www.emacswiki.org/emacs/PythonProgrammingInEmacs'.
+    and didn't even look at the code.
+
+    This works after pytest has run by marking lines missing
+    coverage (as reported by pytest) as flycheck issues.  If the code
+    was updated after pytest was run then nothing is reported.
+    "
+      :command
+      ("python" "-c"
+       (eval
+        (mapconcat 'identity
+                   (list
+                    "import sys"
+                    (format "sys.path.insert(0, '%scov2emacs')" (file-name-directory (locate-library "pycoverage")))
+                    "from cov2emacslib.__init__ import main"
+                    "main(sys.argv[1:])")
+                   ";"))
+       "--compile-mode" "--python-file" source-original)
+      :error-patterns ((warning line-start (file-name) ":" line ":" (message) line-end))
+      :modes (python-mode))
+  #+end_src
 
 * language server protocol
 1. Microsoft's pyright
@@ -138,7 +174,9 @@
 #+begin_src emacs-lisp
   (use-package lsp-pyright
     :defer t
-    :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-pyright)
+                           (lsp-deferred))))
 #+end_src
 
 * Python yasnippets

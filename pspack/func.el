@@ -74,6 +74,7 @@ Load prettify-symbols from Each of SUB-MODES."
 
 (defun pspmacs/prettify-emacs-lisp ()
   "Prettify Emacs-Lisp"
+  ;; (font-lock-add-keywords nil pspmacs/elisp-keywords)
     (pspmacs/mode-prettify '("code" "emacs-lisp")))
 
 (defun pspmacs/prettify-note ()
@@ -151,6 +152,13 @@ If window is the only window, it is spared"
       (delete-window used-window))
     (kill-buffer used-buffer)))
 
+(defun pspmacs/switch-to-minibuffer ()
+  "Switch to minibuffer window."
+  (interactive)
+  (if (active-minibuffer-window)
+      (select-window (active-minibuffer-window))
+    (message "Minibuffer is not active")))
+
 (defun pspmacs/kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
@@ -210,6 +218,22 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
   (if-let ((python-pytest-executable (executable-find "pytest")))
       (apply orig-fun args)
     (apply orig-fun args)))
+
+(defun pspmacs/prefer-interpreter-ipython ()
+  "Use ipython as the python interpreter if available.
+
+This requires us to reset various regular expressions."
+  (interactive)
+  (when (executable-find "ipython")
+    (setq python-shell-interpreter (executable-find "ipython")
+          python-shell-interpreter-args "-i --simple-prompt --no-color-info"
+          python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+          python-shell-prompt-block-regexp "\\.\\.\\.\\.: "
+          python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+          python-shell-completion-setup-code
+          "from IPython.core.completerlib import module_completion"
+          python-shell-completion-string-code
+          "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")))
 
 (defun pspmacs/yank-file-name ()
   "Yank file-name to clipboard

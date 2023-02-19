@@ -45,11 +45,7 @@
 
 (defcustom pspmacs/pretty-alist
   '(("code" . (("\\n" . ?⏎)
-               ("\\t" . ?↹)
-               (">=" . ?≥)
-               ("<=" . ?≤)
-               ("!=" . ?≠)
-               ("==" . ?≅)))
+               ("\\t" . ?↹)))
     ("lisp" . (("lambda" . ?λ)))
     ("org" . (("#+setupfile" . ?🛒)
               ("#+author" . ?🖋)
@@ -76,9 +72,7 @@
               ("[x]" . ?✔)
               ("[ ]" . ?❌)
               ("[-]" . ?⏳)))
-    ("python" . (("and" . ?∩)
-                 ("or" . ?∪)
-                 ("->" . ?⇒))))
+    ("python" . (("->" . ?⇒))))
   "Pretty symbols."
   :group 'pspack
   :type '(repeat (cons
@@ -151,6 +145,15 @@
   "Custom keywords to highlight in python mode"
   :group 'pspack
   :type '(repeat (list :tag "Python highlight keywords")))
+
+(defcustom pspmacs/elisp-keywords
+  '(("\\W\\(\\([0-9]*_?[0-9]+\\)*\\(\\.[0-9]+\\)\\)"
+     1 'font-lock-constant-face nil)
+    ("\\W\\(t\\|\\nil)\\W"
+     1 'font-lock-constant-face nil))
+  "Custom keywords to highlight in emacs-lisp mode"
+  :group 'pspack
+  :type '(repeat (list :tag "emacs-lisp highlight keywords")))
 
 (defcustom pspmacs/font-height 150
   "10 x Font-height"

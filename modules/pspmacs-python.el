@@ -31,8 +31,15 @@
     "'" '((lambda () (interactive)
             (pspmacs/inferior-interpreter 'run-python))
           :wk "python"))
-  (python-mode-map :states 'normal "gz" nil "C-j" nil)
-  ;; (python-mode-map :states 'insert "TAB" 'pspmacs/py-indent-or-complete)
+  (general-def 'normal
+    python-mode-map
+    "gz" nil
+    "C-j" nil
+    "K" '(lambda ()
+         (interactive)
+         (lsp-describe-thing-at-point)
+         (switch-to-buffer-other-window "*lsp-help*")))
+  :custom
   (with-eval-after-load 'lsp
     (customize-set-variable
      lsp-file-watch-ignored-directories
@@ -46,27 +53,21 @@
         "[/\\\\]\\.?venv\\'"
         "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
         "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
-  :custom
   (python-indent-offset 0)
-  (python-shell-interpreter-args "-i --simple-prompt --no-color-info")
-  (python-shell-prompt-regexp "In \\[[0-9]+\\]: ")
-  (python-shell-prompt-block-regexp "\\.\\.\\.\\.: ")
-  (python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: ")
-  (python-shell-completion-setup-code
-   "from IPython.core.completerlib import module_completion")
-  (python-shell-completion-string-code
-   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+  ;; ipython-specific code
   :config
   (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
   (sp-local-pair 'python-mode "__" "__")
 
   :hook
-  ((python-mode . (lambda ()
-                   (when (executable-find "ipython")
-                     (setq python-shell-interpreter
-                           (executable-find "ipython")))))
+  ((python-mode . pspmacs/prefer-interpreter-ipython)
    (python-mode . pspmacs/prettify-python)
    (python-mode . pspmacs/pyfaces)))
+
+(use-package ein
+  :demand t
+  :config
+  (add-to-list 'org-babel-load-languages '(ein . t)))
 
 (use-package pyvenv-auto
   :defer t
@@ -94,7 +95,9 @@
 
 (use-package lsp-pyright
   :defer t
-  :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred))))
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp-deferred))))
 
 (use-package py-snippets
   :after '(yasnippet python-mode)
