@@ -7,17 +7,19 @@
 
 (require 'pspmacs/crooked)
 (defun pspmacs/install-git-clone (melpa-style-recipe
-                                   &optional
+                                  &optional
                                   no-clone
                                   no-build
-                                  cause interactive)
+                                  cause interactive
+                                  &rest kwargs)
   "Install packages by git-cloning its source code.
 
 If the variable `pspmacs/install-git-clones' is nil, do nothing.
 If package-manager is `straight', Simply use it, passing optional arguments
-NO-CLONE NO-BUILD CAUSE INTERACTIVE to `straight-use-package'.
-Else, clone the MELPA-STYLE-RECIPE, build it."
-  (if pspmacs/install-git-clones
+NO-CLONE NO-BUILD CAUSE INTERACTIVE to `straight-use-package'. Else, clone
+the MELPA-STYLE-RECIPE, compile it. If kwargs :force is non nil,
+force installation despite the value of `pspmacs/install-git-clones'"
+  (if (or pspmacs/install-git-clones (plist-get kwargs :force))
       (if (string= pspmacs/package-manager "straight")
           (straight-use-package melpa-style-recipe
                                 no-clone
@@ -25,7 +27,8 @@ Else, clone the MELPA-STYLE-RECIPE, build it."
                                 cause
                                 interactive)
         (pspmacs/crooked-git-clone melpa-style-recipe))
-    (message "Not cloning %s because `pspmacs/install-clones' is nil" melpa-style-recipe)))
+    (message "Not cloning %s because `pspmacs/install-clones' is nil"
+             melpa-style-recipe)))
 
 (defun pspmacs/home-splash-before ()
   "run functions before switching to splash buffer."

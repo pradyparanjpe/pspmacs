@@ -1,5 +1,6 @@
 (pspmacs/install-git-clone
- '(modus-themes :repo "protesilaos/modus-themes"))
+ '(modus-themes :repo "protesilaos/modus-themes")
+ :force t)
 
 (use-package modus-themes
   :ensure nil

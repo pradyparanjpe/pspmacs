@@ -80,6 +80,7 @@
    '(corfu-terminal
      :type git
      :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
+
   (use-package corfu-terminal
     :after corfu
     :ensure nil

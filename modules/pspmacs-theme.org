@@ -2,14 +2,14 @@
 #+PROPERTY: header-args :tangle pspmacs-theme.el :mkdirp t :results no :eval no :eval no
 #+auto_tangle: t
 
-* Theme
 * Modus theme
 ** TODO mode-line
 We shall use latest modus themes, not the built-in ones.
 They (~21MB) aren't really heavy!
 #+begin_src emacs-lisp
   (pspmacs/install-git-clone
-   '(modus-themes :repo "protesilaos/modus-themes"))
+   '(modus-themes :repo "protesilaos/modus-themes")
+   :force t)
 
   (use-package modus-themes
     :ensure nil
