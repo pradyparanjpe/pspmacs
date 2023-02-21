@@ -297,6 +297,15 @@
              (setq flycheck-checker 'python-flake8)
              (setq flycheck-flake8rc ".flake8")))))
 #+end_src
+
+** alexmurray/flycheck-bashate
+- Bashate in flycheck
+  #+begin_src emacs-lisp
+    (use-package flycheck-bashate
+      :after flycheck
+      :config (flycheck-bashate-setup))
+  #+end_src
+
 * emacs/eldoc
 - Function argument hints in message area
 #+begin_src emacs-lisp

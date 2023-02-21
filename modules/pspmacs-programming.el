@@ -261,6 +261,10 @@
            (setq flycheck-checker 'python-flake8)
            (setq flycheck-flake8rc ".flake8")))))
 
+(use-package flycheck-bashate
+  :after flycheck
+  :config (flycheck-bashate-setup))
+
 (use-package eldoc
   :hook
   (emacs-lisp-mode . eldoc-mode))
