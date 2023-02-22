@@ -60,6 +60,8 @@
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root))
 
+(use-package wgrep)
+
 (use-package systemd)
 
 (use-package pass

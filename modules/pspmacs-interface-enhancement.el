@@ -370,6 +370,10 @@
 
 (use-package embark
   :after vertico
+  :general
+  (general-def
+    "C-`" 'embark-act
+    "C-~" 'embark-export)
   :demand t
   :config
   ;; Hide the mode line of the Embark live/completions buffers

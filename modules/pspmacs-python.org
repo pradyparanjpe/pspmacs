@@ -121,6 +121,7 @@
     :config
     (advice-add 'python-pytest--run :around #'pspmacs/pytest-use-venv))
 #+end_src
+
 ** TODO Coverage
 - A /good programmer/ always writes tests.
 - A /better programmer/ writes tests before writing the runtime code.

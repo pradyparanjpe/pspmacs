@@ -48,7 +48,7 @@ Primary to bind restart key
   3. ack search (~ack~)
   4. silver-search (~ag~)
   5. fallback grep (~grep~)
-
+ 
 ** minad/consult
 #+begin_src emacs-lisp
   ;; Example configuration for Consult
@@ -89,6 +89,11 @@ Primary to bind restart key
     (autoload 'projectile-project-root "projectile")
     (setq consult-project-root-function #'projectile-project-root))
 #+end_src
+** mhayashi1120/Emacs-wgrep
+#+begin_src emacs-lisp
+  (use-package wgrep)
+#+end_src
+
 * Systemd
 #+begin_src emacs-lisp
   (use-package systemd)

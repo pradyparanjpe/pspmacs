@@ -435,10 +435,14 @@ Flash highlight hints on evil actions
     (add-to-list 'completion-category-overrides '(eglot orderless)))
 #+end_src
 
-** minad/embark
+** oantolin/embark
 #+begin_src emacs-lisp
   (use-package embark
     :after vertico
+    :general
+    (general-def
+      "C-`" 'embark-act
+      "C-~" 'embark-export)
     :demand t
     :config
     ;; Hide the mode line of the Embark live/completions buffers
