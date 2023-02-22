@@ -274,11 +274,11 @@
     (pspmacs/local-leader-keys
       :state 'normal
       :keymaps 'prog-mode-map
-      "e" '(:ignore t :wk "eldoc")
-      "eh" '((lambda ()
+      "d" '(:ignore t :wk "eldoc")
+      "dh" '((lambda ()
                (interactive)
                (progn
-                 (eldoc-doc-buffer)
+                 (display-local-help)
                  (switch-to-buffer-other-window "*eldoc*")))
              :wk "describe")))
 #+end_src

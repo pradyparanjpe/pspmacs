@@ -45,6 +45,8 @@
 * Straight.el
 - =straight-base-dir= should be in local tree (=local-emacs-directory=)
 - use gnu-elpa mirror
+- NEXT *DEPRECATION* in version 29, =package-vc-install= does exactly *this*.
+  So, this may be dropped in favour of [[https://github.com/slotThe/vc-use-package][vc-use-package]].
 #+begin_src emacs-lisp :tangle bootstrap-straight.el
   ;;; bootstrap-straight.el --- straight.el package manager -*- lexical-binding: t; -*-
   ;;; straight as package manager
@@ -134,6 +136,7 @@
 * Use-package
 - Configure use-package system
 - use =use-package=
+- NEXT in version 29, =use-package= is a part of standard Emacs release.
 #+begin_src  emacs-lisp :tangle bootstrap-use-package.el
   (defun pspmacs/init-use-package ()
     "Initialize `use-package'"
