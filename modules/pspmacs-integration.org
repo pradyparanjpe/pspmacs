@@ -59,10 +59,10 @@ Primary to bind restart key
     (pspmacs/leader-keys
       "b b" '(consult-buffer :wk "buffer")
       "/" '(consult-ripgrep :wk "find in project")
-      "*" '(lambda ()
-             (interactive)
-             (consult-ripgrep nil (thing-at-point 'symbol))
-             :kw "find in project")
+      "*" '((lambda ()
+              (interactive)
+              (consult-ripgrep nil (thing-at-point 'symbol)))
+            :wk "find this in project")
       "el" '(consult-flymake :wk "list"))
 
     (pspmacs/local-leader-keys

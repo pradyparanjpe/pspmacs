@@ -1,5 +1,6 @@
 #+title: pspmacs-python
 #+PROPERTY: header-args :tangle pspmacs-python.el :mkdirp t :results no :eval no
+#+auto_tangle: t
 
 * Header Copyright
 #+begin_src emacs-lisp

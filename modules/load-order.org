@@ -27,6 +27,7 @@
 - [[file:pspmacs-python.org][python]]
 - [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
 - [[file:pspmacs-ess-R.org][ess-R]]
+- [[file:pspmacs-lua.org][lua]]
 - [[file:pspmacs-version-control.org][version-control]]
 - [[file:pspmacs-markup.org][markup]]
 
@@ -47,6 +48,7 @@
   - python
   - emacs-lisp
   - ess-R
+  - lua
   - version-control
   - markup
 #+end_src

@@ -23,7 +23,7 @@ Dependence on either of them makes one rely on /another set of commits/ being fl
 Further, opinionated configuration imposes restrictions. Downstream modification of template opinions break (as they *did* for me) when the upstream code gets some incompatible commits.
 
 * My Attempt
-This is my /hitherto successful/ attempt to configure Emacs from scratch to use it as a /text editor/ (🤣).
+This is my /hitherto successful/ attempt at configuring Emacs (v28 and v29) from scratch to use it as a /text editor/ (🤣).
 
 * Inheritance principle
 - The configuration is made with three *inherited work-trees*.
@@ -35,15 +35,16 @@ This is my /hitherto successful/ attempt to configure Emacs from scratch to use 
 - This is the default emacs directory =~/.emacs.d=. However, *this* configuration is meant to occupy that location.
   Since this configuration is git-version-controlled, any changes in =~/.emacs.d= may cause commit-conflicts. Hence,
   We try to put *nothing* more in this location than what it already contains.
-  
+- Since Emacs version 29, this directory may be specified from the command-line with the flag =--init-directory=.
+
 *** Private: =pvt-emacs-directory=
 - A user may want to make over-writing (supersede) changes and need to synchronize them across a private repository.
   Such changes should be placed in 'exactly the same location' as that of the file to be superseded,
   but relative to a separate location, =pvt-emacs-directory=.
-- They may include settings such as full-name, email, etc. 
+- They may include settings such as full-name, email, etc.
 - The value of this variable is learnt from the environment variable =PVT_EMACS_HOME=.
 - When version-controlling =pvt-emacs-directory=, add =local.d= to =.gitignore=.
-  
+
 *** Local: =local-emacs-directory=
 - Local changes, cache, etc. cannot be synchronized even across private repositories.
   Such changes should be placed in 'exactly the same location' as that of the file to be superseded,

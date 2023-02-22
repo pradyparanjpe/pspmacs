@@ -117,7 +117,7 @@
 (use-package yasnippet
   :general
   (pspmacs/leader-keys
-    "y" '(:ignore t "yas")
+    "y" '(:ignore t :wk "yas")
     "yn" '(yas-new-snippet :wk "new")
     "yi" '(yas-insert-snippet :wk "insert"))
   (yas-minor-mode-map
