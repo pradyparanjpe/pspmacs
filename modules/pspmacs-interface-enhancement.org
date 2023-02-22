@@ -238,7 +238,7 @@
     :custom
     (dashboard-image-banner-max-width 300)
     (dashboard-startup-banner
-      (expand-file-name "data/Tux.svg" user-emacs-directory))
+      (expand-file-name "data/Tux.png" user-emacs-directory))
     (dashboard-set-heading-icons t)
     (dashboard-banner-logo-title
       "Prady's Structured, Personalized Emacs")

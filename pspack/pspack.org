@@ -413,7 +413,7 @@ Following function may be used to byte-compile any work-tree.
   Target: WORKTREE.
   Default worktree is global (`user-emacs-directory)
   This may be disabled by setting `pspmacs/byte-worktree' to nil"
-    (unless no-native-compile
+    (unless (and (boundp 'no-native-compile) no-native-compile)
       (when pspmacs/byte-worktree
         (let ((worktree (or worktree user-emacs-directory)))
           (byte-recompile-directory worktree 0)))))
