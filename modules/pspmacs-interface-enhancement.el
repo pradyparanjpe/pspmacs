@@ -365,8 +365,8 @@
   ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
   ;;       orderless-component-separator #'orderless-escapable-split-on-space)
   (setq completion-styles '(orderless partial-completion basic)
-        completion-category-defaults nil
-        completion-category-overrides nil))
+        completion-category-defaults nil)
+  (add-to-list 'completion-category-overrides '(eglot orderless)))
 
 (use-package embark
   :after vertico

@@ -33,7 +33,8 @@
     "*" '(lambda ()
            (interactive)
            (consult-ripgrep nil (thing-at-point 'symbol))
-           :kw "find in project"))
+           :kw "find in project")
+    "el" '(consult-flymake :wk "list"))
 
   (pspmacs/local-leader-keys
     "M-x" '(consult-mode-command))

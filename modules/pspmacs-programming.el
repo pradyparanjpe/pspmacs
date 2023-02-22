@@ -182,92 +182,69 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(use-package lsp-mode
-  :defer t
-  :commands (lsp lsp-deferred)
-  :init
-  (add-hook 'orderless-style-dispatchers
-            #'pspmacs/orderless-dispatch-flex-first nil 'local)
-  :general
-  (pspmacs/local-leader-keys
-    :states 'normal
-    :keymaps
-    'lsp-mode-map
-    "i" '(:ignore t :which-key "import")
-    "i o" '(lsp-organize-imports :wk "optimize")
-    "l" '(:keymap lsp-command-map :wk "lsp")
-    "a" '(lsp-execute-code-action :wk "code action"))
-  :custom
-  (lsp-completion-provider :none)
-  (lsp-restart 'ignore)
-  (lsp-session-file (expand-file-name
-                     ".lsp-session-v1" xdg/emacs-state-directory))
-  ;; (lsp-eldoc-enable-hover nil)
-  ;; (lsp-enable-file-watchers nil)
-  ;; (lsp-signature-auto-activate nil)
-  ;; (lsp-modeline-diagnostics-enable nil)
-  ;; (lsp-keep-workspace-alive nil)
-  ;; (lsp-auto-execute-action nil)
-  ;; (lsp-before-save-edits nil)
-  ;; (lsp-headerline-breadcrumb-enable nil)
-  ;; (lsp-diagnostics-provider :none)
-  :hook
-  ((lsp-completion-mode . pspmacs/lsp-mode-setup-completion))
-  ((prog-mode . lsp-deferred)))
+(use-package eglot
+    :init
+    (add-hook 'orderless-style-dispatchers
+              #'pspmacs/orderless-dispatch-flex-first nil 'local)
+    :general
+    (pspmacs/leader-keys
+      :states 'normal
+      :keymaps 'prog-mode-map
+      "l" '(:ignore t :wk "language-server")
+      "ls" '(:ignore t :wk "server (eglot)")
+      "lss" '(eglot :wk "start")
+)
+    (pspmacs/local-leader-keys
+      :states 'normal
+      :keymaps 'eglot-mode-map
+      "g" '(:ignore t :wk "go to")
+      "gg" '(xref-find-definitions :wk "symbol definition")
+      "l" '(:ignore t :wk "language-server (eglot)")
+      "lr" 'eglot-rename
+      "ls" '(:ignore t :wk "server")
+      "lsr" 'eglot-reconnect
+      "lss" 'eglot-shutdown
+      "lss" 'eglot-shutdown-all)
+    :custom
+    (eglot-extend-to-xref t)
+    :hook
+    (prog-mode . eglot-ensure)
+    (eglot-managed-mode . pspmacs/eglot-capf))
 
-(use-package lsp-ui
-  :defer t
-  :general
-  (lsp-ui-peek-mode-map
-   :states 'normal
-   "C-j" 'lsp-ui-peek--select-next
-   "C-k" 'lsp-ui-peek--select-prev)
-
-  (outline-mode-map
-   :states 'normal
-   "C-j" 'nil
-   "C-k" 'nil)
-
-  :custom
-  ;; (lsp-ui-doc-show-with-mouse nil)
-  (lsp-ui-doc-show-with-cursor t)
-  (lsp-ui-peek-always-show t)
-  (lsp-ui-peek-fontify 'always)
-
-  :config
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-delay 1)
-  :hook
-   (lsp-mode . lsp-ui-mode)
-   (lsp-ui-doc-frame-mode . pspmacs/lsp-ui-disable-modes))
-
-(use-package flycheck
+(use-package flymake
   :defer t
   :general
   (pspmacs/leader-keys
     :states 'normal
+    :keymaps 'flymake-mode-map
     "e" '(:ignore t :wk "errors")
-    "el" '(flycheck-list-errors :wk "list")
-    "en" '(flycheck-next-error :wk "next")
-    "ep" '(flycheck-previous-error :wk "previous"))
+    "en" '(flymake-goto-next-error :wk "next")
+    "ep" '(flymake-goto-previous-error :wk "previous"))
   :custom
-  (flycheck-indication-mode 'right-fringe)
-  (flycheck-check-syntax-automatically '(mode-enabled save))
+  (flymake-number-of-errors-to-display nil)
+  (python-flymake-command '("flake8" "-"))
   :hook
-  ((lsp-mode . flycheck-mode)
-   (envrc-mode . (lambda ()
-           (setq flycheck-python-flake8-executable
-             (executable-find "python"))
-           (setq flycheck-checker 'python-flake8)
-           (setq flycheck-flake8rc ".flake8")))))
+  ((eglot-managed-mode . flymake-mode)))
 
-(use-package flycheck-bashate
-  :after flycheck
-  :config (flycheck-bashate-setup))
+(use-package flymake-shellcheck
+  :commands flymake-shellcheck-load
+  :custom
+  (flymake-shellcheck-allow-external-files t)
+  :hook
+  (sh-mode . flymake-shellcheck-load))
 
 (use-package eldoc
-  :hook
-  (emacs-lisp-mode . eldoc-mode))
+  :general
+  (pspmacs/local-leader-keys
+    :state 'normal
+    :keymaps 'prog-mode-map
+    "e" '(:ignore t :wk "eldoc")
+    "eh" '((lambda ()
+             (interactive)
+             (progn
+               (eldoc-doc-buffer)
+               (switch-to-buffer-other-window "*eldoc*")))
+           :wk "describe")))
 
 (use-package display-fill-column-indicator
   :demand t

@@ -34,31 +34,16 @@
   (general-def 'normal
     python-mode-map
     "gz" nil
-    "C-j" nil
-    "K" '(lambda ()
-         (interactive)
-         (lsp-describe-thing-at-point)
-         (switch-to-buffer-other-window "*lsp-help*")))
+    "C-j" nil)
+  :init
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(python-mode . ("pyright-langserver" "--stdio"))))
   :custom
-  (with-eval-after-load 'lsp
-    (customize-set-variable
-     lsp-file-watch-ignored-directories
-     (append
-      lsp-file-watch-ignored-directories
-      '(
-        ;; python directories
-        "[/\\\\]docs\\'"
-        "[/\\\\]build\\'"
-        "[/\\\\]tests\\'"
-        "[/\\\\]\\.?venv\\'"
-        "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*\\.egg-info\\'"
-        "[/\\\\]\\.?\\(\\([a-zA-Z0-9]\\)*_?\\)*cache\\(__\\)?\\'"))))
   (python-indent-offset 0)
-  ;; ipython-specific code
   :config
   (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
   (sp-local-pair 'python-mode "__" "__")
-
   :hook
   ((python-mode . pspmacs/prefer-interpreter-ipython)
    (python-mode . pspmacs/prettify-python)
@@ -92,12 +77,6 @@
 (use-package yapfify
   :defer t
   :hook (python-mode . yapf-mode))
-
-(use-package lsp-pyright
-  :defer t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp-deferred))))
 
 (use-package py-snippets
   :after '(yasnippet python-mode)

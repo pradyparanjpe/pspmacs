@@ -208,14 +208,26 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
 (defun pspmacs/orderless-dispatch-flex-first (_pattern index _total)
   (and (eq index 0) 'orderless-flex))
 
-(defun pspmacs/lsp-mode-setup-completion ()
-  (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-        '(orderless)))
+(defun pspmacs/eglot-capf ()
+  (setq-local completion-at-point-functions
+              (list (cape-super-capf
+                     #'eglot-completion-at-point
+                     #'tempel-expand
+                     #'cape-file))))
 
-(defun pspmacs/lsp-ui-disable-modes ()
-  "Disable certian modes from lsp-ui"
-  (display-line-numbers-mode -1)
-  (whitespace-mode -1))
+(defun pspmacs/ignore-elisp-keywords (cand)
+  (or (not (keywordp cand))
+      (eq (char-after (car completion-in-region--data)) ?:)))
+
+(defun pspmacs/setup-elisp ()
+  (setq-local completion-at-point-functions
+              `(,(cape-super-capf
+                  (cape-capf-predicate
+                   #'elisp-completion-at-point
+                   #'pspmacs/ignore-elisp-keywords)
+                  #'cape-dabbrev)
+                cape-file)
+              cape-dabbrev-min-length 5))
 
 (defun pspmacs/pytest-use-venv (orig-fun &rest args)
   (if-let ((python-pytest-executable (executable-find "pytest")))
