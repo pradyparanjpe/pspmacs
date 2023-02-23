@@ -33,6 +33,26 @@
 #+begin_src emacs-lisp
   (use-package org
     :general
+    ;; ORG AGENDA
+    (pspmacs/leader-keys
+      :keymaps 'org-mode-map
+      "a"   '(:ignore t :wk "agenda")
+      "ao"  '(:ignore t :wk "org-agenda")
+      "ao#" '(org-agenda-list-stuck-projects :wk "stuck")
+      "ao/" '(org-occur-in-agenda-files :wk "occur in agenda")
+      "aoa" '(org-agenda-list :wk "list")
+      "aoc" '(org-agenda-capture :wk "capture")
+      "aoo" '(org-agenda :wk "capture")
+      "aot" '(org-todo-list :wk "todo")
+
+      "t"   '(:ignore t :wk "time")
+      "tc"  '(:ignore t :wk "clock")
+      "tcc" '(org-clock-cancel :wk "cancel")
+      "tci" '(org-clock-in :wk "in")
+      "tco" '(org-clock-out :wk "out")
+      "tcj" '(org-clock-goto :wk "goto"))
+
+    ;; ORG TABLE
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map
       "TAB"    '(:ignore t :wk "table")
@@ -78,10 +98,18 @@
       ">"   '(org-demote-subtree :wk "demote subtree")
       "<"   '(org-promote-subtree :wk "demote subtree")
 
+      "S"   '(:ignore :wk "special")
+      "Sx"  '(org-cut-special :wk "org cut special")
+      "Se"  '(org-edit-special :wk "edit")
+
       "b"   '(:keymap org-babel-map :wk "babel")
-      "d"   '(org-cut-special :wk "org cut special")
-      "e"   '(org-edit-special :wk "edit")
       "f"   '(org-footnote-action :wk "footnote action")
+
+      "d"   '(:ignore t :wk "date-time")
+      "dd"  '(org-deadline :wk "date-time")
+      "dT"  '(org-time-stamp-inactive :wk "inactive time stamp")
+      "ds"  '(org-schedule :wk "schedule")
+      "dt"  '(org-time-stamp :wk "time-stamp")
 
       "l"   '(:ignore t :wk "link")
       "ll"  '(org-insert-link t :wk "put")
@@ -101,8 +129,7 @@
       "xh"  '(org-html-export-to-html :wk "html")
       "xp"  '(org-pandoc-export-to-latex-pdf :wk "pdf")
       "xw"  '(org-pandoc-export-to-docs :wk "windows docx")
-      "y"   '(org-copy-special :wk "org copy special")
-      )
+      "y"   '(org-copy-special :wk "org copy special"))
 
     (:keymaps 'org-agenda-mode-map
               "j" '(org-agenda-next-line)
@@ -182,6 +209,50 @@
     :custom
     (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
  #+end_src
+
+* marcinkoziej/org-pomodoro
+#+begin_src emacs-lisp
+  (use-package org-pomodoro
+    :general
+    (pspmacs/leader-keys
+      :keymaps 'org-mode-map
+      "t"   '(:ignore t :wk "time")
+      "tp"  '(:ignore t :wk "pomodoro")
+      "tpp" '(org-pomodoro :wk "pomodoro")
+      "tpe" '(org-pomodoro-extend-last-clock :wk "extend last")
+      "tp?" '((lambda ()
+                (interactive)
+                (message
+                 (format-seconds
+                  "%m:%s left"
+                  (round (org-pomodoro-remaining-seconds)))))
+              :wk "remaining")
+      "tpk" '((lambda ()
+                (interactive)
+                (org-pomodoro-kill))
+              :wk "kill")
+      "tpx" '((lambda ()
+                (interactive)
+                (cond
+                 ((eq org-pomodoro-state :pomodoro)
+                  (org-pomodoro-finished))
+                 ((eq org-pomodoro-state :short-break)
+                  (org-pomodoro-short-break-finished))
+                 ((eq org-pomodoro-state :long-break)
+                  (org-pomodoro-long-break-finished))))))
+    :custom
+    (org-pomodoro-clock-break t)
+    (org-pomodoro-manual-break t)
+    (org-pomodoro-format "⏰ %s")
+    (org-pomodoro-overtime-format "🏃 %s")
+    (org-pomodoro-long-break-format "💤 %s")
+    (org-pomodoro-short-break-format "⏸ %s")
+    (org-pomodoro-long-break-frequency 5)
+    (org-pomodoro-short-break-length 5)
+    (org-pomodoro-long-break-length 30)
+    (org-pomodoro-length 25))
+#+end_src
+
 * org-ref
 - Reference management for LaTeX.
 #+begin_src emacs-lisp

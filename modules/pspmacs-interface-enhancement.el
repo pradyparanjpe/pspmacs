@@ -168,9 +168,9 @@
   ;; notes
   ;; see 'citar' and 'org-roam'
   (pspmacs/leader-keys
-    "n" '(:ignore t :wk "notes")
-    ;; see org-roam and citar sections
-    "na" '(org-todo-list :wk "agenda todos")) ;; agenda
+    "n" '(:ignore t :wk "notes"))
+
+  ;; see org-roam and citar sections
 
   ;; code
   ;; see 'flymake'
@@ -180,7 +180,7 @@
   ;; open
   (pspmacs/leader-keys
     "o" '(:ignore t :wk "open")
-    "os" '(speedbar t :wk "speedbar")) ;; TODO this needs some love
+    "os" '(speedbar t :wk "speedbar"))
 
   (pspmacs/leader-keys
     "q" '(:ignore t :wk "quit")
