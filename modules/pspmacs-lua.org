@@ -4,7 +4,7 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;; prog.el --- lua ide -*- lexical-binding: t; -*-
+;;; lua.el --- lua ide -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -38,5 +38,5 @@
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)
-   ;;; pspmacs-prog.el ends here
+   ;;; pspmacs-lua.el ends here
 #+end_src

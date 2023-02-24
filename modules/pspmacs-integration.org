@@ -106,6 +106,17 @@ Primary to bind restart key
     (pspmacs/leader-keys
       "P" 'pass))
 #+end_src
+
+* native Emacs settings
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (epg-pinentry-mode 'loopback)
+    (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-directory))
+    :config
+    (epa-file-enable))
+#+end_src
+
 * Nginx mode
 #+begin_src emacs-lisp
   (use-package nginx-mode

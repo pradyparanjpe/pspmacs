@@ -220,4 +220,9 @@
   :group 'pspmacs
   :type '(string :tag "Org Journal"))
 
+(defcustom pspmacs/set-mailbox nil
+  "Set Emacs Mailbox (Mu4e, mbsync)"
+  :group 'pspmacs
+  :type 'boolean)
+
 ;;; vars.el ends there

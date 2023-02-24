@@ -6,23 +6,24 @@
 - Yaml association lists of modules in order
   - Lists are sorted by keys before loading the modules. Thus, a list identified by key =0= is loaded before that identified by key =1=.
   - If one intends to extend the set of loaded modules, one should create a new list with additional modules.
+    - Keys have been intentionally spaced out as multiples of 10.
   - If one intends to replace a set of modules to be loaded, one should redefine a list identified by that key.
     - To silence loading a list, it may be redefined as an empty list.
 
-** 0: Interface
+** 10: Interface
 - [[file:pspmacs-interface-enhancement.org][interface-enhancement]]
 - [[file:pspmacs-keys-cheat-sheet.org][keys-cheat-sheet]]
 - [[file:pspmacs-theme.org][theme]]
 
-** 1: Editing
+** 20: Editing
 - [[file:pspmacs-editing-enhancement.org][editing-enhancement]]
 - [[file:pspmacs-note.org][note]]
 
-** 2: project / file-system / Operating system
+** 30: project / file-system / Operating system
 - [[file:pspmacs-project-management.org][project-management]]
 - [[file:pspmacs-integration.org][integration]]
 
-** 3: Programming
+** 40: Programming
 - [[file:pspmacs-programming.org][programming]]
 - [[file:pspmacs-python.org][python]]
 - [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
@@ -31,19 +32,22 @@
 - [[file:pspmacs-version-control.org][version-control]]
 - [[file:pspmacs-markup.org][markup]]
 
+** 50: Networking / Internet / outreach
+- [[file:pspmacs-internet.org][internet]]
+
 * Yaml export
 #+begin_src yaml
-  0:
+  10:
   - interface-enhancement
   - keys-cheat-sheet
   - theme
-  1:
+  20:
   - editing-enhancement
   - note
-  2:
+  30:
   - project-management
   - integration
-  3:
+  40:
   - programming
   - python
   - emacs-lisp
@@ -51,4 +55,6 @@
   - lua
   - version-control
   - markup
+  50:
+  - internet
 #+end_src

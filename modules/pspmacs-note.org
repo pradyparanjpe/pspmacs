@@ -224,7 +224,7 @@
                 (interactive)
                 (message
                  (format-seconds
-                  "%m:%s left"
+                  "%0.2m:%0.2s left"
                   (round (org-pomodoro-remaining-seconds)))))
               :wk "remaining")
       "tpk" '((lambda ()

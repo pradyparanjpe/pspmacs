@@ -69,6 +69,13 @@
   (pspmacs/leader-keys
     "P" 'pass))
 
+(use-package emacs
+  :custom
+  (epg-pinentry-mode 'loopback)
+  (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-directory))
+  :config
+  (epa-file-enable))
+
 (use-package nginx-mode
   :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 

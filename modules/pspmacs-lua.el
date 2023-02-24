@@ -1,4 +1,4 @@
-;;; prog.el --- lua ide -*- lexical-binding: t; -*-
+;;; lua.el --- lua ide -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -26,4 +26,4 @@
   :mode ("\\.lua\\'" . lua-mode))
 
 (pspmacs/load-inherit)
-;;; pspmacs-prog.el ends here
+;;; pspmacs-lua.el ends here

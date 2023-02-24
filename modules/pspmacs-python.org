@@ -4,7 +4,7 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;; prog.el --- python ide -*- lexical-binding: t; -*-
+;;; python.el --- python ide -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -166,5 +166,5 @@
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)
-   ;;; pspmacs-prog.el ends here
+   ;;; pspmacs-python.el ends here
 #+end_src

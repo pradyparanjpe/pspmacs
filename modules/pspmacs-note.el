@@ -201,10 +201,10 @@
     "tpe" '(org-pomodoro-extend-last-clock :wk "extend last")
     "tp?" '((lambda ()
               (interactive)
-              (message (format-seconds
-                        "%m:%s"
-                        (round (org-pomodoro-remaining-seconds)))))
-
+              (message
+               (format-seconds
+                "%0.2m:%0.2s left"
+                (round (org-pomodoro-remaining-seconds)))))
             :wk "remaining")
     "tpk" '((lambda ()
               (interactive)

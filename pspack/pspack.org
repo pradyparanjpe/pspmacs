@@ -696,6 +696,17 @@ Following function may be used to byte-compile any work-tree.
                    '("org-notes" "org-static" "org-templates"))))))
            #+end_src
            
+* Use Emacs for mail
+- Caution: this requires many dependencies:
+  - Mu and its dependencies
+  - mbsync (isync) and its dependencies
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/set-mailbox nil
+    "Set Emacs Mailbox (Mu4e, mbsync)"
+    :group 'pspmacs
+    :type 'boolean)
+#+end_src
+
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there

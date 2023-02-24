@@ -1,4 +1,4 @@
-;;; prog.el --- python ide -*- lexical-binding: t; -*-
+;;; python.el --- python ide -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Pradyumna Swanand Paranjape
 
@@ -84,4 +84,4 @@
   (py-snippets-initialize))
 
 (pspmacs/load-inherit)
-;;; pspmacs-prog.el ends here
+;;; pspmacs-python.el ends here
