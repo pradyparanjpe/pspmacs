@@ -108,6 +108,9 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography))
 
+(use-package mermaid-mode)
+(use-package ob-mermaid)
+
 (when pspmacs/install-git-clones
   (pspmacs/install-git-clone '(emacs-reveal
                                :type git

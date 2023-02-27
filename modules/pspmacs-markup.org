@@ -131,6 +131,12 @@
     (citar-bibliography org-cite-global-bibliography))
 #+end_src
 
+* Mermaid
+#+begin_src emacs-lisp
+  (use-package mermaid-mode)
+  (use-package ob-mermaid)
+
+#+end_src
 * Using git-cloned repository
 ** Wrapper for oer/emacs-reveal
 #+begin_src emacs-lisp
