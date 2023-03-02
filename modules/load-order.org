@@ -35,6 +35,7 @@
 ** 50: Networking / Internet / outreach
 - [[file:pspmacs-internet.org][internet]]
 
+** 60: GNU Emacs
 * Yaml export
 #+begin_src yaml
   10:
@@ -57,4 +58,6 @@
   - markup
   50:
   - internet
+  60:
+  - emacs-ci-cd
 #+end_src

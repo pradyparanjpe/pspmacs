@@ -122,6 +122,7 @@ Primary to bind restart key
   (use-package nginx-mode
     :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 #+end_src
+
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

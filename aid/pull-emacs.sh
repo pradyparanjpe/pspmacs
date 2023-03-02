@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 # pull emacs branch, configure, make, make-install
+# Copyright (c) 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 
 # check if dependencies are met.
 check_dependencies() {
@@ -292,26 +293,29 @@ build_emacs () {
 # Check out a different branch if $branch is provided.
 git_checkout_branch () {
     if [ -n "${branch}" ]; then
+        current_branch="$(git -C "${clone_dir}" branch --show-current)"
+        if [ ! "${current_branch}" = "${branch}" ]; then
+            printf "Checking out branch %s.\n" "${branch}"
 
-        printf "Checking out branch %s.\n" "${branch}"
-
-        # List of remote branches. (Throws if git fails on ${clone_dir})
-        avail_branches="$(git -C "${clone_dir}" branch -r --list | \
+            # List of remote branches. (Throws if git fails on ${clone_dir})
+            avail_branches="$(git -C "${clone_dir}" branch -r --list | \
 sed 's,origin/,,')" || clean_exit 65 "Failed: check ${clone_dir}."
 
-        if [ "${avail_branches#*"${branch}"}" = "${avail_branches}" ]; then
-            clean_exit 65 "Requested branch is not in remote."
-        fi
+            if [ "${avail_branches#*"${branch}"}" = "${avail_branches}" ]; then
+                clean_exit 65 "Requested branch is not in remote."
+            fi
 
-        git -C "${clone_dir}" checkout "${branch}"
+            git -C "${clone_dir}" checkout "${branch}"
 
-        if ! git -C "${clone_dir}" rev-parse \
-             --abbrev-ref "${branch}@{u}" >/dev/null 2>&1; then
+            if ! git -C "${clone_dir}" rev-parse \
+                 --abbrev-ref "${branch}@{u}" >/dev/null 2>&1; then
 
-            printf "Setting upstream for %s as origin/%s.\n" \
-                   "${branch}" "${branch}"
+                printf "Setting upstream for %s as origin/%s.\n" \
+                       "${branch}" "${branch}"
 
-            git -C "${clone_dir}" --set-upstream-to="origin/${branch}"
+                git -C "${clone_dir}" --set-upstream-to="origin/${branch}"
+            fi
+            repo_changes=true
         fi
     fi
     unset avail_branches

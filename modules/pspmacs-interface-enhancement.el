@@ -71,6 +71,13 @@
   (general-nmap ",," (general-simulate-key "C-c C-c"))
 
   (pspmacs/leader-keys
+    :states 'normal
+    "+" '(:ignore t :wk "Emacs-Repo Update")
+    "+m" '(emacs-repo :wk "Transient menu")
+    "++" '(emacs-repo/repo-install :wk "Upgrade with defaults"))
+
+
+  (pspmacs/leader-keys
     "1" '(:ignore t :wk "line-numbers")
     "1d" '((lambda () (interactive) (setq display-line-numbers nil))
       :wk "disable")
@@ -80,6 +87,9 @@
       :wk "relative")
     "1v" '((lambda () (interactive) (setq display-line-numbers 'visual))
       :wk "visual"))
+
+  (pspmacs/leader-keys
+    "8" '(insert-char :wk "UTF-8 character"))
 
   (pspmacs/leader-keys
     "TAB" '(:keymap tab-prefix-map :wk "tab")) ;; remap tab bindings
@@ -262,10 +272,10 @@
     "wd" '(evil-window-delete :wk "delete window")
     "wj" '(evil-window-down :wk "down window")
     "wk" '(evil-window-up :wk "up window")
-    "wh" '(evil-window-left :wk "left window")
+    "wl" '(evil-window-left :wk "left window")
     "wn" '(evil-window-next :wk "next window")
     "wp" '(evil-window-prev :wk "previous window")
-    "wl" '(evil-window-right :wk "right window")
+    "wr" '(evil-window-right :wk "right window")
     "ws" '(evil-window-split :wk "split window horizontally")
     "wv" '(evil-window-vsplit :wk "split window vertically"))
   (general-define-key :keymaps 'evil-motion-state-map "RET" nil)

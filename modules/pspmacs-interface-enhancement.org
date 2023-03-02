@@ -84,6 +84,13 @@
     (general-nmap ",," (general-simulate-key "C-c C-c"))
 
     (pspmacs/leader-keys
+      :states 'normal
+      "+" '(:ignore t :wk "Emacs-Repo Update")
+      "+m" '(emacs-repo :wk "Transient menu")
+      "++" '(emacs-repo/repo-install :wk "Upgrade with defaults"))
+
+
+    (pspmacs/leader-keys
       "1" '(:ignore t :wk "line-numbers")
       "1d" '((lambda () (interactive) (setq display-line-numbers nil))
         :wk "disable")
@@ -93,6 +100,9 @@
         :wk "relative")
       "1v" '((lambda () (interactive) (setq display-line-numbers 'visual))
         :wk "visual"))
+
+    (pspmacs/leader-keys
+      "8" '(insert-char :wk "UTF-8 character"))
 
     (pspmacs/leader-keys
       "TAB" '(:keymap tab-prefix-map :wk "tab")) ;; remap tab bindings
