@@ -237,13 +237,13 @@ When called interactively, a human message is displayed.
 When called from function, t is returned if this number is greater than
 the kwyword `stale-at' in the list `emacs-repo/build-args-list'"
   (interactive)
-  (emacs-repo/call-shell "git" '("fetch" "origin"))
   (let* ((default-directory emacs-repo/clone-dir)
+         (_ (emacs-repo/call-shell "git" '("fetch" "origin")))
          (behind-by
           (string-to-number
            (emacs-repo/call-shell
-            "git"
-            '("rev-list" "--count" "--right-only" "HEAD...@{upstream}")))))
+            "git" '("rev-list" "--count" "--right-only"
+                    "HEAD...@{upstream}")))))
     (if (called-interactively-p 'interactive)
         (message "Behind by %s commits." behind-by)
       (< emacs-repo/stale-at behind-by))))
