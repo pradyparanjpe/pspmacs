@@ -25,5 +25,8 @@
 (use-package lua-mode
   :mode ("\\.lua\\'" . lua-mode))
 
+(use-package vimrc-mode
+  :mode ("\\.vim\\(rc\\)?\\'" . vimrc-mode))
+
 (pspmacs/load-inherit)
 ;;; pspmacs-lua.el ends here

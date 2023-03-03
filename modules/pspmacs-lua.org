@@ -35,6 +35,13 @@
     :mode ("\\.lua\\'" . lua-mode))
 #+end_src
 
+* We would also maintain vimrc mode with this
+Vim uses vimscript (vimrc) for scripting.
+neovim, its ideological successor, uses lua for scripting.
+#+begin_src emacs-lisp
+  (use-package vimrc-mode
+    :mode ("\\.vim\\(rc\\)?\\'" . vimrc-mode))
+#+end_src
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

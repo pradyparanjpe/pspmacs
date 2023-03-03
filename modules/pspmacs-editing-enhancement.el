@@ -26,7 +26,7 @@
   :hook (((prog-mode org mode) . rainbow-mode)))
 
 (use-package rainbow-delimiters
-  :hook ((prog-mode . rainbow-delimiters-mode)))
+  :hook (((prog-mode org-mode) . rainbow-delimiters-mode)))
 
 (use-package whitespace
   ;; gratefully borrowed from
@@ -83,6 +83,49 @@
     "seb" '(mc/mark-all-symbols-like-this :wk "buffer")))
 
 (use-package smartparens
+  :general
+  (pspmacs/leader-keys
+    "(" '(:ignore t :wk "smart-wrap")
+    "( <backspace>" '(sp-unwrap-sexp :wk "wrap unwrap")
+    "((" '(sp-wrap-round :wk "()")
+    "()" '(sp-wrap-round :wk "()")
+    "([" '(sp-wrap-square :wk "[]")
+    "(]" '(sp-wrap-square :wk "[]")
+    "({" '(sp-wrap-curly :wk "{}")
+    "(}" '(sp-wrap-curly :wk "{}")
+    "(<" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "<"))
+           :wk "<>")
+    "(>" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "<"))
+           :wk "<>")
+    "(\"" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "\""))
+           :wk "\"\"")
+    "('" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "'"))
+           :wk "''")
+    "(/" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "/"))
+           :wk "//")
+    "(_" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "_"))
+           :wk "__")
+    "(+" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "+"))
+           :wk "++")
+    "(=" '((lambda (&optional arg)
+             (interactive "P")
+             (sp-wrap-with-pair "="))
+           :wk "=="))
+
   :custom
   (sp-show-pair-from-inside nil)
   (show-paren-mode t)

@@ -76,6 +76,11 @@
     "+m" '(emacs-repo :wk "Transient menu")
     "++" '(emacs-repo/repo-install :wk "Upgrade with defaults"))
 
+  (pspmacs/leader-keys
+    "TAB" '((lambda ()
+                (interactive)
+                (switch-to-buffer (other-buffer (current-buffer) 1)))
+              :which-key "toggle buffer"))
 
   (pspmacs/leader-keys
     "1" '(:ignore t :wk "line-numbers")
@@ -90,9 +95,6 @@
 
   (pspmacs/leader-keys
     "8" '(insert-char :wk "UTF-8 character"))
-
-  (pspmacs/leader-keys
-    "TAB" '(:keymap tab-prefix-map :wk "tab")) ;; remap tab bindings
 
   ;; buffer
   ;; see 'bufler' and 'popper'
@@ -442,6 +444,17 @@
           :foreground "yellow")
   (set-face-attribute 'doom-modeline-evil-visual-state nil
           :foreground "cyan"))
+
+(use-package yascroll
+  :custom
+  (global-yascroll-bar-mode t)
+  (yascroll-delay-to-hide 2.0)
+  :config
+  (set-face-attribute 'yascroll:thumb-fringe nil
+                      :background "#7f7f99"
+                      :foreground "#7f7f99")
+  (set-face-attribute 'yascroll:thumb-text-area nil
+                      :background "#7f7f99"))
 
 (use-package solaire-mode
   :config
