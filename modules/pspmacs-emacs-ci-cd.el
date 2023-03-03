@@ -52,7 +52,7 @@ If cloning for the first time and nil, \"master\""
   :type '(number :tag "Parallel make"))
 
 (defcustom emacs-repo/stale-at
-  10
+  100
   "Local repo is considered stale if it is so many commits behind remote."
   :group 'emacs-repo
   :type '(number :tag "Tip: for 'always', set to -1"))

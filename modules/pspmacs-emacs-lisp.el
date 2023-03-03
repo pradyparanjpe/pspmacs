@@ -28,6 +28,7 @@
 
 (pspmacs/local-leader-keys
   :keymaps 'emacs-lisp-mode-map
+  "TAB" '(indent-sexp)
   "e" '(:ignore t :wk "eval")
   "ee" '(eval-last-sexp :wk "sexp")
   "ex" '(eval-expression :wk "expression")
