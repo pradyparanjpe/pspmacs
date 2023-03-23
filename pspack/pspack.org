@@ -155,7 +155,10 @@
                 ("#+results" . ?📜)
                 ("#+startup" . ?)
                 ("#+html_head" . ?)
+                ("#+attr_latex:" . ?🖺)
                 ("#+title" . ?§)
+                (":properties:" . ?)
+                (":end:" . ?⏎)
                 ("tangle" . ?🔗)
                 ("shebang" . ?⌘)
                 ("[x]" . ?✔)
@@ -639,6 +642,16 @@ Following function may be used to byte-compile any work-tree.
     "Journal entries."
     :group 'pspmacs
     :type '(string :tag "Org Journal"))
+#+end_src
+
+* Reference paths
+- pspmacs/ref-paths: paths to bibliography
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/ref-paths
+    `(,(expand-file-name "references/" xdg/emacs-data-directory))
+    "Reference base paths"
+    :group 'pspmacs
+    :type '(list (string :tag "Base to references")))
 #+end_src
 
 * Org-publish alist

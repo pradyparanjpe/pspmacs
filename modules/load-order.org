@@ -31,6 +31,7 @@
 - [[file:pspmacs-lua.org][lua]]
 - [[file:pspmacs-version-control.org][version-control]]
 - [[file:pspmacs-markup.org][markup]]
+- [[file:pspmacs-latex.org][latex]]
 
 ** 50: Networking / Internet / outreach
 - [[file:pspmacs-internet.org][internet]]
@@ -56,6 +57,7 @@
   - lua
   - version-control
   - markup
+  - latex
   50:
   - internet
   60:

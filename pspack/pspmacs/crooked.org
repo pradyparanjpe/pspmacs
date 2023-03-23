@@ -89,6 +89,7 @@ Compile git clone url and args from input list.
                                             (error nil))))
                             repo)
                            (t (format "%s/%s" fetcher repo))))))
+      (push "--recurse-submodules" clone-args)
       (when branch
         (push branch clone-args)
         (push "-b" clone-args))

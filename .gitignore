@@ -2,6 +2,9 @@
 docs/
 sitemap.org
 
+# TeX preview images
+ltximg/
+
 # local-emacs-config directory
 local.d/
 

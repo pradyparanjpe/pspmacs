@@ -1,4 +1,4 @@
-;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
+﻿;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; Custom variables for pspmacs config.
@@ -69,6 +69,8 @@
               ("#+startup" . ?)
               ("#+html_head" . ?)
               ("#+title" . ?§)
+              (":properties:" . ?)
+              (":end:" . ?⏎)
               ("tangle" . ?🔗)
               ("shebang" . ?⌘)
               ("[x]" . ?✔)

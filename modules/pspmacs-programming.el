@@ -183,33 +183,32 @@
   (global-ligature-mode t))
 
 (use-package eglot
-    :init
-    (add-hook 'orderless-style-dispatchers
-              #'pspmacs/orderless-dispatch-flex-first nil 'local)
-    :general
-    (pspmacs/leader-keys
-      :states 'normal
-      :keymaps 'prog-mode-map
-      "l" '(:ignore t :wk "language-server")
-      "ls" '(:ignore t :wk "server (eglot)")
-      "lss" '(eglot :wk "start")
-)
-    (pspmacs/local-leader-keys
-      :states 'normal
-      :keymaps 'eglot-mode-map
-      "g" '(:ignore t :wk "go to")
-      "gg" '(xref-find-definitions :wk "symbol definition")
-      "l" '(:ignore t :wk "language-server (eglot)")
-      "lr" 'eglot-rename
-      "ls" '(:ignore t :wk "server")
-      "lsr" 'eglot-reconnect
-      "lss" 'eglot-shutdown
-      "lss" 'eglot-shutdown-all)
-    :custom
-    (eglot-extend-to-xref t)
-    :hook
-    (prog-mode . eglot-ensure)
-    (eglot-managed-mode . pspmacs/eglot-capf))
+  :init
+  (add-hook 'orderless-style-dispatchers
+            #'pspmacs/orderless-dispatch-flex-first nil 'local)
+  :general
+  (pspmacs/leader-keys
+    :states 'normal
+    :keymaps 'prog-mode-map
+    "l" '(:ignore t :wk "language-server")
+    "ls" '(:ignore t :wk "server (eglot)")
+    "lss" '(eglot :wk "start"))
+  (pspmacs/local-leader-keys
+    :states 'normal
+    :keymaps 'eglot-mode-map
+    "g" '(:ignore t :wk "go to")
+    "gg" '(xref-find-definitions :wk "symbol definition")
+    "l" '(:ignore t :wk "language-server (eglot)")
+    "lr" 'eglot-rename
+    "ls" '(:ignore t :wk "server")
+    "lsr" 'eglot-reconnect
+    "lss" 'eglot-shutdown
+    "lss" 'eglot-shutdown-all)
+  :custom
+  (eglot-extend-to-xref t)
+  :hook
+  (prog-mode . eglot-ensure)
+  (eglot-managed-mode . pspmacs/eglot-capf))
 
 (use-package flymake
   :defer t
