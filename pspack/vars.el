@@ -117,12 +117,12 @@
   :group 'pspack)
 
 (defface pspmacs/pyprivate-face
-  '((t (:italic t :box t)))
+  '((t (:slant italic :box t)))
   "python private symbols identified as '_private'."
   :group 'pspack)
 
 (defface pspmacs/pydunder-face
-  '((t (:italic t :foreground "#cfff40")))
+  '((t (:slant italic :foreground "#cfff40")))
   "python dunder symbols identified as '__dunder__'."
   :group 'pspack)
 

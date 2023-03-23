@@ -26,7 +26,7 @@
   :hook (((prog-mode org mode) . rainbow-mode)))
 
 (use-package rainbow-delimiters
-  :hook (((prog-mode org-mode) . rainbow-delimiters-mode)))
+  :hook ((prog-mode . rainbow-delimiters-mode)))
 
 (use-package whitespace
   ;; gratefully borrowed from
@@ -81,6 +81,57 @@
     :states 'normal
     "sef" '(mc/mark-all-symbols-like-this-in-defun :wk "function")
     "seb" '(mc/mark-all-symbols-like-this :wk "buffer")))
+
+(use-package undo-tree
+  :general
+  (general-define-key
+   :keymaps 'evil-normal-state-map
+   "u" #'undo-tree-undo
+   "C-r" #'undo-tree-redo)
+  :init
+  (global-undo-tree-mode)
+  :config
+  (mkdir (expand-file-name "undo-tree/" xdg/emacs-cache-directory) t)
+  :custom
+  (undo-tree-auto-save-history t)
+  (undo-tree-history-directory-alist
+   `((".*" . ,(expand-file-name "undo-tree/" xdg/emacs-cache-directory))))
+  (undo-tree-visualizer-diff t)
+  (undo-tree-visualizer-timestamps t))
+
+(use-package yasnippet
+  :general
+  (pspmacs/leader-keys
+    "y" '(:ignore t :wk "yas")
+    "yn" '(yas-new-snippet :wk "new")
+    "yi" '(yas-insert-snippet :wk "insert"))
+  (yas-minor-mode-map
+   :states 'insert
+   "TAB" 'nil
+   "C-TAB" 'yas-expand)
+  :config
+  (pspmacs/extend-list
+   'yas-snippet-dirs
+   (mapcar
+    (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
+  (dolist (snippets-wt yas-snippet-dirs nil)
+    (mkdir snippets-wt t))
+  (yas-reload-all)
+  :hook
+  (((prog-mode org-mode) . yas-minor-mode)))
+
+(general-add-hook 'org-mode-hook 'flyspell-mode)
+(pspmacs/leader-keys
+  "S" '(:ignore t :wk "flyspell")
+  "Sb" '(flyspell-buffer :wk "next")
+  "Sn" '(evil-next-flyspell-error :wk "next")
+  "Sp" '(evil-prev-flyspell-error :wk "previous")
+  "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
+
+(use-package emacs
+  :config
+  (setq-default display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode 1))
 
 (use-package smartparens
   :general
@@ -139,56 +190,6 @@
     ;; also only use the pseudo-quote inside strings where it
     ;; serves as hyperlink.
     (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))))
-
-(use-package undo-tree
-  :general
-  (general-define-key
-   :keymaps 'evil-normal-state-map
-   "u" #'undo-tree-undo
-   "C-r" #'undo-tree-redo)
-  :init
-  (global-undo-tree-mode)
-  :config
-  (mkdir (expand-file-name "undo-tree/" xdg/emacs-cache-directory) t)
-  :custom
-  (undo-tree-auto-save-history t)
-  (undo-tree-history-directory-alist
-   `((".*" . ,(expand-file-name "undo-tree/" xdg/emacs-cache-directory))))
-  (undo-tree-visualizer-diff t)
-  (undo-tree-visualizer-timestamps t))
-
-(use-package yasnippet
-  :general
-  (pspmacs/leader-keys
-    "y" '(:ignore t :wk "yas")
-    "yn" '(yas-new-snippet :wk "new")
-    "yi" '(yas-insert-snippet :wk "insert"))
-  (yas-minor-mode-map
-   :states 'insert
-   "TAB" 'nil
-   "C-TAB" 'yas-expand)
-  :config
-  (pspmacs/extend-list
-   'yas-snippet-dirs
-   (mapcar
-    (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
-  (dolist (snippets-wt yas-snippet-dirs nil)
-    (mkdir snippets-wt t))
-  (yas-reload-all)
-  :hook
-  (((prog-mode org-mode) . yas-minor-mode)))
-
-(general-add-hook 'org-mode-hook 'flyspell-mode)
-(pspmacs/leader-keys
-  "S" '(:ignore t :wk "flyspell")
-  "Sb" '(flyspell-buffer :wk "next")
-  "Sn" '(evil-next-flyspell-error :wk "next")
-  "Sp" '(evil-prev-flyspell-error :wk "previous"))
-
-(use-package emacs
-  :config
-  (setq-default display-line-numbers-type 'relative)
-  (global-display-line-numbers-mode 1))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-editing-enhancement.el ends here

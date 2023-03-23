@@ -523,7 +523,8 @@
   (setq scroll-margin 5)
 
   ;; tabs
-  (setq-default indent-tabs-mode nil tab-width 4)
+  (setq-default indent-tabs-mode nil
+                tab-width 4)
 
   ;; svg cache
   (setq svg-lib-icons-dir

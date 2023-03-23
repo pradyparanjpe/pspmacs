@@ -127,9 +127,10 @@
             "h" '(org-agenda-previous-line))
 
   (general-def
-   :states 'normal
-   "S-TAB" 'org-cycle-global
-   "<backtab>" 'org-cycle-global)
+    :keymaps 'org-mode-map
+    :states 'normal
+    "S-TAB" 'org-cycle-global
+    "<backtab>" 'org-cycle-global)
 
   :custom
   (org-cite-global-bibliography
@@ -232,5 +233,11 @@
   (org-pomodoro-length 25))
 
 (use-package org-ref)
+
+(use-package org-wc
+  :general
+(pspmacs/local-leader-keys
+  :keymaps 'org-mode-map
+  "=wt" '(org-wc-display :wk "org word-count tree")))
 
 (pspmacs/load-inherit)

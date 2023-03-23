@@ -42,11 +42,11 @@
      (fg-heading-6 "#af5f5f")
      (fg-heading-7 "#5f5f5f")
      (fg-heading-8 "#afafaf")
-     ;; (bg-mode-line-active bg-main)
-     ;; (fg-mode-line-active fg-main)
+     (bg-mode-line-active bg-main)
+     (fg-mode-line-active fg-main)
      (modus-themes-disable-other-themes t)
-     ;; (border-mode-line-active bg-mode-line-active)
-     ;; (border-mode-line-inactive bg-mode-line-inactive)
+     (border-mode-line-active bg-mode-line-active)
+     (border-mode-line-inactive bg-mode-line-inactive)
      (constant  "#af1f1f")
      (builtin   "#d76f10")
      (docstring "#875f3f")
@@ -57,10 +57,6 @@
   ;; (load-theme 'modus-operandi :no-confirm)
   :hook
   (modus-themes-after-load-theme . pspmacs/modus-themes-custom-faces))
-
-(load-theme 'modus-vivendi :no-confirm)
-;; Somehow, the hook isn't getting evaluated automatically
-(eval modus-themes-after-load-theme-hook)
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

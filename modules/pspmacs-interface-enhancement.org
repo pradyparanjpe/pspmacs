@@ -554,7 +554,6 @@ Auto-hiding text-based scroll bar
 #+end_src
 
 * native emacs-settings
-- Set font to Fira Code
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -612,7 +611,8 @@ Auto-hiding text-based scroll bar
     (setq scroll-margin 5)
 
     ;; tabs
-    (setq-default indent-tabs-mode nil tab-width 4)
+    (setq-default indent-tabs-mode nil
+                  tab-width 4)
 
     ;; svg cache
     (setq svg-lib-icons-dir

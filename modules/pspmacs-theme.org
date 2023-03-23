@@ -1,11 +1,11 @@
 #+title: pspmacs-theme
-#+PROPERTY: header-args :tangle pspmacs-theme.el :mkdirp t :results no :eval no :eval no
+#+PROPERTY: header-args :tangle pspmacs-theme.el :mkdirp t :results no :eval no
 #+auto_tangle: t
 
 * Modus theme
 ** TODO mode-line
-We shall use latest modus themes, not the built-in ones.
-They (~21MB) aren't really heavy!
+We shall use latest modus themes (they (~21MB) aren't really heavy!), not the
+built-in ones.
 #+begin_src emacs-lisp
   (pspmacs/install-git-clone
    '(modus-themes :repo "protesilaos/modus-themes")
@@ -51,11 +51,11 @@ They (~21MB) aren't really heavy!
        (fg-heading-6 "#af5f5f")
        (fg-heading-7 "#5f5f5f")
        (fg-heading-8 "#afafaf")
-       ;; (bg-mode-line-active bg-main)
-       ;; (fg-mode-line-active fg-main)
+       (bg-mode-line-active bg-main)
+       (fg-mode-line-active fg-main)
        (modus-themes-disable-other-themes t)
-       ;; (border-mode-line-active bg-mode-line-active)
-       ;; (border-mode-line-inactive bg-mode-line-inactive)
+       (border-mode-line-active bg-mode-line-active)
+       (border-mode-line-inactive bg-mode-line-inactive)
        (constant  "#af1f1f")
        (builtin   "#d76f10")
        (docstring "#875f3f")
@@ -66,10 +66,6 @@ They (~21MB) aren't really heavy!
     ;; (load-theme 'modus-operandi :no-confirm)
     :hook
     (modus-themes-after-load-theme . pspmacs/modus-themes-custom-faces))
-
-  (load-theme 'modus-vivendi :no-confirm)
-  ;; Somehow, the hook isn't getting evaluated automatically
-  (eval modus-themes-after-load-theme-hook)
 #+end_src
 
 * Inherit from private and local

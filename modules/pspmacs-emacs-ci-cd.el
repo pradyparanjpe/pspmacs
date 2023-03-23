@@ -268,8 +268,9 @@ Arguments are read from custom-group `emacs-repo'"
 
 (defconst emacs-repo/config-flag-options
   '("all" "cairo" "dbus" "gconf" "gif" "gnutls" "gsettings" "imagemagick" "jpeg"
-    "mailutils" "modules" "pgtk" "png" "pop" "rsvg" "sound" "tiff"
-    "toolkit-scroll-bars" "webp" "wide-int" "x" "x-toolkit" "xim" "xinput2" "xpm")
+    "mailutils" "modules" "native-compilation" "pgtk" "png" "pop" "rsvg" "sound"
+    "tiff" "toolkit-scroll-bars" "webp" "wide-int" "x" "x-toolkit" "xim"
+    "xinput2" "xpm")
   "Known emacs configuration flags")
 
 (defvar with-switches

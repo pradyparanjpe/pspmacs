@@ -238,12 +238,12 @@
     :group 'pspack)
 
   (defface pspmacs/pyprivate-face
-    '((t (:italic t :box t)))
+    '((t (:slant italic :box t)))
     "python private symbols identified as '_private'."
     :group 'pspack)
 
   (defface pspmacs/pydunder-face
-    '((t (:italic t :foreground "#cfff40")))
+    '((t (:slant italic :foreground "#cfff40")))
     "python dunder symbols identified as '__dunder__'."
     :group 'pspack)
 
@@ -503,7 +503,10 @@ Following function may be used to byte-compile any work-tree.
          `(hl-line ((,c :slant italic)))
          `(org-document-title ((,c :foreground "#ffff9f")))
          `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
-         `(font-lock-comment-face ((,c :foreground "#3f4f5f" :background "#0f0f0f")))
+         `(font-lock-comment-face ((,c :foreground "#bfdfff"
+                                       :font "VictorMono"
+                                       :background "#003050"
+                                       :slant italic)))
          `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
          `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))))))
 #+end_src

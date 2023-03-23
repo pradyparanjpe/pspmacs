@@ -2,7 +2,8 @@
 #+PROPERTY: header-args :tangle pspmacs-emacs-ci-cd.el :mkdirp t :results no :eval no
 #+auto_tangle: t
 
-Continuous Develop/ Continuous Integration of Emacs by installing latest changes made in GNU Emacs git repository.
+Continuous Develop/ Continuous Integration of Emacs by installing latest changes
+made in GNU Emacs git repository.
 
 * Emacs Repo Installation Scripts
 ** Header
@@ -290,8 +291,9 @@ Continuous Develop/ Continuous Integration of Emacs by installing latest changes
 
   (defconst emacs-repo/config-flag-options
     '("all" "cairo" "dbus" "gconf" "gif" "gnutls" "gsettings" "imagemagick" "jpeg"
-      "mailutils" "modules" "pgtk" "png" "pop" "rsvg" "sound" "tiff"
-      "toolkit-scroll-bars" "webp" "wide-int" "x" "x-toolkit" "xim" "xinput2" "xpm")
+      "mailutils" "modules" "native-compilation" "pgtk" "png" "pop" "rsvg" "sound"
+      "tiff" "toolkit-scroll-bars" "webp" "wide-int" "x" "x-toolkit" "xim"
+      "xinput2" "xpm")
     "Known emacs configuration flags")
 
   (defvar with-switches
