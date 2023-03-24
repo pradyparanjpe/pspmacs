@@ -31,6 +31,15 @@
 
 * Late org customizations
 #+begin_src emacs-lisp
+  (defun org-cdlatex-pbb (&rest _arg)
+    "Execute `cdlatex-pbb' in LaTeX fragments.
+  Revert to the normal definition outside of these fragments."
+    (interactive "P")
+    (if (org-inside-LaTeX-fragment-p)
+        (call-interactively 'cdlatex-pbb)
+      (let (org-cdlatex-mode)
+        (call-interactively (key-binding (vector last-input-event))))))
+
   (use-package org
     :general
     ;; ORG AGENDA
@@ -90,6 +99,8 @@
 
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map
+      "@"   '(:ignore t :wk "reference")
+
       "="   '(:ignore t :wk "count")
       "=w"  '(:ignore t :wk "words")
       "=ww" '(count-words t :wk "all")
@@ -141,9 +152,21 @@
       "S-TAB" 'org-cycle-global
       "<backtab>" 'org-cycle-global)
 
+    (general-def 'normal org-cdlatex-mode-map
+      "(" #'org-cdlatex-pbb
+      "[" #'org-cdlatex-pbb
+      "{" #'org-cdlatex-pbb)
+
     :custom
     (org-cite-global-bibliography
-     `(,(expand-file-name "references.bib" pspmacs/org-path)))
+     (remq 'nil
+           (mapcar
+            (lambda (x)
+              (let
+                  ((bibfile
+                    (expand-file-name "biblio.bib" x)))
+                (if (file-exists-p bibfile) bibfile)))
+            pspmacs/ref-paths)))
     ;; edit settings
     (org-special-ctrl-a/e t)
     (org-ellipsis " ↷")
@@ -232,7 +255,7 @@
  #+end_src
 
 * Org exports
-Reference: Borrowed and modified from [[ https://github.com/karthink/.emacs.d/blob/5c9bb4102e53a60a7f6df2d3fb1cad5086114d1b/lisp/setup-org.el][Karthink's Emacs configuration]].
+Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blob/master/lisp/setup-org.el][Karthink's Emacs configuration]].
 #+begin_src emacs-lisp
   (defun karthink/add-latex-in-org-mode-expansions ()
     ;; Make Emacs recognize \ as an escape character in org
@@ -249,15 +272,6 @@ Reference: Borrowed and modified from [[ https://github.com/karthink/.emacs.d/bl
                      karthink/mark-latex-inside-delimiters
                      karthink/mark-latex-outside-delimiters
                      karthink/mark-LaTeX-math)))))
-
-  ;; (defun org-cdlatex-pbb (&rest _arg)
-  ;;   "Execute `cdlatex-pbb' in LaTeX fragments.
-  ;; Revert to the normal definition outside of these fragments."
-  ;;   (interactive "P")
-  ;;   (if (org-inside-LaTeX-fragment-p)
-  ;;       (call-interactively 'cdlatex-pbb)
-  ;;     (let (org-cdlatex-mode)
-  ;;       (call-interactively (key-binding (vector last-input-event))))))
 
   (defun karthink/org-export-ignore-headlines (data backend info)
     "Remove headlines tagged \"ignore\" retaining contents and promoting children.
@@ -297,11 +311,6 @@ Reference: Borrowed and modified from [[ https://github.com/karthink/.emacs.d/bl
           ,@ox-kw
           :after org
           :commands org-export-dispatch
-          ;; :general
-          ;; (general-def 'normal org-cdlatex-mode-map
-          ;;   "(" #'org-cdlatex-pbb
-          ;;   "[" #'org-cdlatex-pbb
-          ;;   "{" #'org-cdlatex-pbb)
           :custom
           (org-html-htmlize-output-type 'css)
           :config

@@ -116,36 +116,34 @@
 (use-package evil-tex
   :hook (LaTeX-mode . evil-tex-mode))
 
-(use-package citar
-  :no-require
-  :general
-  (pspmacs/local-leader-keys
-    :keymaps 'org-mode-map
-    "@" '(:ignore :wk "cite")
-    "@i" '(org-cite-insert :wk "insert"))
-  :custom
-  (org-cite-insert-processor 'citar)
-  (org-cite-follow-processor 'citar)
-  (org-cite-activate-processor 'citar)
-  (citar-bibliography org-cite-global-bibliography))
-
 (use-package reftex
   :after latex
   :commands turn-on-reftex
   :hook ((latex-mode LaTeX-mode) . turn-on-reftex)
   :custom
-  (reftex-default-bibliography (lambda ()
-                                 (remq 'nil
-                                       (mapcar
-                                        (lambda (x)
-                                          (let
-                                              ((bibfile
-                                                (expand-file-name "biblio.bib" x)))
-                                 (if (file-exists-p bibfile) bibfile)))
-                   pspmacs/ref-paths))))
+  (reftex-default-bibliography org-cite-global-bibliography)
   (reftex-insert-label-flags '("sf" "sfte"))
   (reftex-plug-into-AUCTeX t)
   (reftex-use-multiple-selection-buffers t))
+
+(use-package citar
+  :after latex
+  :demand t
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'latex-mode-map
+    "@i" '(citar-insert-citation :wk "insert"))
+  (pspmacs/local-leader-keys
+    :keymaps 'org-mode-map
+    "@i" '(org-cite-insert :wk "insert")
+    "@c" '(citar-copy-citation :wk "insert"))
+  :custom
+  (citar-bibliography org-cite-global-bibliography)
+  (citar-at-point-function 'embark-act)
+  (citar-file-open-function #'consult-file-externally)
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar))
 
 (use-package cdlatex
   :after latex

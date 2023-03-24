@@ -68,6 +68,7 @@
               ("#+results" . ?📜)
               ("#+startup" . ?)
               ("#+html_head" . ?)
+              ("#+attr_latex:" . ?🖺)
               ("#+title" . ?§)
               (":properties:" . ?)
               (":end:" . ?⏎)
@@ -221,6 +222,12 @@
   "Journal entries."
   :group 'pspmacs
   :type '(string :tag "Org Journal"))
+
+(defcustom pspmacs/ref-paths
+  `(,(expand-file-name "references/" xdg/emacs-data-directory))
+  "Reference base paths"
+  :group 'pspmacs
+  :type '(list (string :tag "Base to references")))
 
 (defcustom pspmacs/set-mailbox nil
   "Set Emacs Mailbox (Mu4e, mbsync)"
