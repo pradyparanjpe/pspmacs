@@ -1,3 +1,4 @@
+
 #+title: Module load-order
 #+PROPERTY: header-args :tangle load-order.yml :mkdirp t :results no :eval no
 #+auto_tangle: t
@@ -54,6 +55,7 @@
   - python
   - emacs-lisp
   - ess-R
+  - rust
   - lua
   - version-control
   - markup

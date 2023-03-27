@@ -72,9 +72,7 @@
     (add-to-list 'completion-at-point-functions #'cape-ispell)
     (add-to-list 'completion-at-point-functions #'cape-dict)
     (add-to-list 'completion-at-point-functions #'cape-symbol)
-    (add-to-list 'completion-at-point-functions #'cape-line)
-    :config
-    (fset #'cape-path (cape-company-to-capf #'company-files)))
+    (add-to-list 'completion-at-point-functions #'cape-line))
 
   (use-package kind-icon
     :demand t
@@ -208,7 +206,7 @@
 #+end_src
 * joaotavora/eglot
 - Programming languages (language server)
-- Starting from Emacs 29, eglot will be part of shipped standard library. It may gain more attention and support.
+- Starting from Emacs-29, eglot will be part of shipped standard library. It may gain more attention and support.
 #+begin_src emacs-lisp
   (use-package eglot
     :init
@@ -265,7 +263,7 @@
     (sh-mode . flymake-shellcheck-load))
 #+end_src
 
-* emacs/eldoc
+* Emacs/eldoc
 - Function argument hints in message area
 #+begin_src emacs-lisp
   (use-package eldoc
@@ -294,7 +292,7 @@
     (customize-set-variable 'fill-column 80))
 #+end_src
 
-* native emacs-settings
+* native Emacs-settings
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -307,7 +305,12 @@
           #'command-completion-default-include-p)
     ;; Enable indentation+completion using the TAB key.
     ;; `completion-at-point' is often bound to M-TAB.
-    (setq tab-always-indent 'complete))
+    (setq tab-always-indent 'complete)
+    :general
+    (pspmacs/leader-keys
+      :states 'normal
+      :keymaps 'prog-mode-map
+      "C" '(:ignore t :wk "compiler")))
 #+end_src
 
 * Inherit from private and local
@@ -315,5 +318,3 @@
    (pspmacs/load-inherit)
    ;;; pspmacs-programming.el ends here
 #+end_src
-
-

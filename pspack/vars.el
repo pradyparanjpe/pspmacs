@@ -1,4 +1,4 @@
-﻿;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
+;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; Custom variables for pspmacs config.
@@ -77,7 +77,8 @@
               ("[x]" . ?✔)
               ("[ ]" . ?❌)
               ("[-]" . ?⏳)))
-    ("python" . (("->" . ?⇒))))
+    ("python" . (("->" . ?⇒)))
+    ("rust" . ()))
   "Pretty symbols."
   :group 'pspack
   :type '(repeat (cons

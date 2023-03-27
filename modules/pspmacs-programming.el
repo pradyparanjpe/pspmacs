@@ -63,9 +63,7 @@
   (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  (add-to-list 'completion-at-point-functions #'cape-line)
-  :config
-  (fset #'cape-path (cape-company-to-capf #'company-files)))
+  (add-to-list 'completion-at-point-functions #'cape-line))
 
 (use-package kind-icon
   :demand t
@@ -264,7 +262,12 @@
         #'command-completion-default-include-p)
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
-  (setq tab-always-indent 'complete))
+  (setq tab-always-indent 'complete)
+  :general
+  (pspmacs/leader-keys
+    :states 'normal
+    :keymaps 'prog-mode-map
+    "C" '(:ignore t :wk "compiler")))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-programming.el ends here

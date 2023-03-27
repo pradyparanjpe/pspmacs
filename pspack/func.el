@@ -83,6 +83,9 @@ Load prettify-symbols from Each of SUB-MODES."
 (defun pspmacs/prettify-note ()
   (pspmacs/mode-prettify '("lisp" "org")))
 
+(defun pspmacs/prettify-rust ()
+  (pspmacs/mode-prettify '("code" "rust")))
+
 (defun pspmacs/set-font-faces ()
   (set-face-attribute 'default nil
                       :font "Fira Code"

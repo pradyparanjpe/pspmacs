@@ -164,7 +164,8 @@
                 ("[x]" . ?✔)
                 ("[ ]" . ?❌)
                 ("[-]" . ?⏳)))
-      ("python" . (("->" . ?⇒))))
+      ("python" . (("->" . ?⇒)))
+      ("rust" . ()))
     "Pretty symbols."
     :group 'pspack
     :type '(repeat (cons
@@ -283,7 +284,6 @@
     (font-lock-add-keywords nil pspmacs/py-keywords))
 #+end_src
 
-
 *** Prettify Emacs-Lisp
 #+begin_src emacs-lisp :tangle vars.el
   (defcustom pspmacs/elisp-keywords
@@ -294,7 +294,6 @@
     "Custom keywords to highlight in emacs-lisp mode"
     :group 'pspack
     :type '(repeat (list :tag "emacs-lisp highlight keywords")))
-
 #+end_src
 
 #+begin_src emacs-lisp :tangle func.el
@@ -302,13 +301,18 @@
     "Prettify Emacs-Lisp"
     ;; (font-lock-add-keywords nil pspmacs/elisp-keywords)
       (pspmacs/mode-prettify '("code" "emacs-lisp")))
-
 #+end_src
 
 *** Prettify Org
 #+begin_src emacs-lisp :tangle func.el
-    (defun pspmacs/prettify-note ()
-      (pspmacs/mode-prettify '("lisp" "org")))
+  (defun pspmacs/prettify-note ()
+    (pspmacs/mode-prettify '("lisp" "org")))
+#+end_src
+
+*** Prettify Rust
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/prettify-rust ()
+    (pspmacs/mode-prettify '("code" "rust")))
 #+end_src
 
 * Set face attribute for daemon mode
