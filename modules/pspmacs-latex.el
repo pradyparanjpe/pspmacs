@@ -187,3 +187,5 @@
                   cdlatex-position-cursor nil t nil)))
     (push cmd cdlatex-command-alist))
   (cdlatex-reset-mode))
+
+(pspmacs/load-inherit)

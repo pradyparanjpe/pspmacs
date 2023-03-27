@@ -219,3 +219,8 @@ $$BIBTex$$ references
       (push cmd cdlatex-command-alist))
     (cdlatex-reset-mode))
 #+end_src
+
+* Inherit from private and local
+#+begin_src emacs-lisp
+  (pspmacs/load-inherit)
+#+end_src
