@@ -200,7 +200,6 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
        `(org-document-title ((,c :foreground "#ffff9f")))
        `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
        `(font-lock-comment-face ((,c :foreground "#bfdfff"
-                                     :font "VictorMono"
                                      :background "#003050"
                                      :slant italic)))
        `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
