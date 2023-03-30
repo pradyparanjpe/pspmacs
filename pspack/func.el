@@ -202,6 +202,9 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
        `(font-lock-comment-face ((,c :foreground "#bfdfff"
                                      :background "#003050"
                                      :slant italic)))
+       `(font-lock-doc-face ((,c :foreground "#ffdfbf"
+                                 :background "#503000"
+                                 :slant italic)))
        `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
        `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))))))
 

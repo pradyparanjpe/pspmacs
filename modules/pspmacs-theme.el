@@ -34,6 +34,11 @@
   (modus-vivendi-palette-overrides
    '((bg-main   "#000307")
      (fg-main   "#959a9f")
+     (builtin   "#d76f10")
+     (constant  "#af1f1f")
+     (variable  "#ffffaf")
+     (keyword   "#00afff")
+     (string    "#1faf5f")
      (fg-heading-1 "#5f6fbf")
      (fg-heading-2 "#afaf5f")
      (fg-heading-3 "#5faf5f")
@@ -46,13 +51,7 @@
      (fg-mode-line-active fg-main)
      (modus-themes-disable-other-themes t)
      (border-mode-line-active bg-mode-line-active)
-     (border-mode-line-inactive bg-mode-line-inactive)
-     (constant  "#af1f1f")
-     (builtin   "#d76f10")
-     (docstring "#875f3f")
-     (keyword   "#00afff")
-     (string    "#1faf5f")
-     (variable  "#ffffaf")))
+     (border-mode-line-inactive bg-mode-line-inactive)))
   ;; Load the theme of your choice.
   ;; (load-theme 'modus-operandi :no-confirm)
   :hook

@@ -126,6 +126,11 @@ Revert to the normal definition outside of these fragments."
     "s"   '(org-insert-structure-template :wk "template")
     "t"   '(org-todo :wk "todo")
 
+    "T"   '(:ignore t :wk "Toggle")
+    "Ti"   '(org-toggle-inline-images :wk "inline images")
+    "Tl"   '(org-toggle-link-display :wk "link display")
+    "Tt"   '(org-toggle-timestamp-type :wk "time-stamp")
+
     "x"   '(:ignore t :wk "export")
     "xm"  '(org-export-dispatch :wk "dispatch menu")
     "xh"  '(org-html-export-to-html :wk "html")

@@ -159,6 +159,11 @@ Insert snippets of frequently used topics.
     (((prog-mode org-mode) . yas-minor-mode)))
 #+end_src
 
+* AndreaCrotti/yasnippet-snippets
+#+begin_src emacs-lisp
+  (use-package yasnippet-snippets)
+#+end_src
+
 * FlySpell
 Spell-check on-the-fly
 #+begin_src emacs-lisp
