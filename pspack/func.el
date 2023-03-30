@@ -61,7 +61,7 @@ Load prettify-symbols from Each of SUB-MODES."
 
 (defun pspmacs/prettify-R ()
   "Prettify ess-R"
-  pspmacs/mode-prettify '("code" "R"))
+  (pspmacs/mode-prettify '("code" "R")))
 
 (defun pspmacs/rfaces ()
   "R callable hook function"

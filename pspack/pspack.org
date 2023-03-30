@@ -227,7 +227,7 @@
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/prettify-R ()
     "Prettify ess-R"
-    pspmacs/mode-prettify '("code" "R"))
+    (pspmacs/mode-prettify '("code" "R")))
 
   (defun pspmacs/rfaces ()
     "R callable hook function"
