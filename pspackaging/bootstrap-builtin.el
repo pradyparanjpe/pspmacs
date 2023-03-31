@@ -19,8 +19,13 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
          (last-update-time (decode-time (file-attribute-modification-time
                                          (file-attributes archive-path))))
          (delta (make-decoded-time :day pspmacs/archives-stale-days)))
-    (time-less-p (encode-time today)
-                 (encode-time (decoded-time-add last-update-time delta)))))
+    (cond ((not (file-readable-p archive-path))
+           nil)
+          ((time-less-p (encode-time
+                         (decoded-time-add last-update-time delta))
+                        (encode-time today))
+           nil)
+          (t t))))
 
 (defun pspmacs/archives-refreshed-recently-p ()
   "All archives have been refreshed today."

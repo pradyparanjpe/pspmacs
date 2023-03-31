@@ -31,12 +31,12 @@
   ;; Code:
 #+end_src
 
-** Chemacs correction
-[[https://github.com/plexus/chemacs2][Chemacs]] moves the =package-user-dir= to the profile's definition of the =user-emacs-directory= then loads this file. We need to reset that configuration here when using =chemacs=.
+** Package installation directory
+We want packages to be cloned/downloaded locally.
 #+begin_src emacs-lisp :tangle package-management.el
-  (when (featurep 'chemacs)
-    (customize-set-variable 'package-user-dir
-                            (expand-file-name "packages" local-emacs-directory)))
+  (customize-set-variable
+   'package-user-dir
+   (expand-file-name "packages" local-emacs-directory))
 #+end_src
 
 ** Package system

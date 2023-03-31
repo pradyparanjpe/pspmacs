@@ -167,6 +167,7 @@
   :type 'integer)
 
 (use-package yaml
+  :ensure t
   :demand t)
 (use-package ht
   :demand t)
