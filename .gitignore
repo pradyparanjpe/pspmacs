@@ -5,6 +5,10 @@ sitemap.org
 # TeX preview images
 ltximg/
 
+# site-specific start and defaults
+site-start.el
+default.el
+
 # local-emacs-config directory
 local.d/
 
