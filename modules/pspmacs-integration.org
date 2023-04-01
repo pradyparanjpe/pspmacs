@@ -118,7 +118,8 @@ Primary to bind restart key
 #+end_src
 
 * Nginx mode
-#+begin_src emacs-lisp
+Some incompatibility of Nginx with Emacs-29
+#+begin_src emacs-lisp :tangle no :eval no
   (use-package nginx-mode
     :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 #+end_src

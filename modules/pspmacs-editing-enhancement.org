@@ -134,6 +134,13 @@ Multi cursor edit mode
     (undo-tree-visualizer-diff t)
     (undo-tree-visualizer-timestamps t))
 #+end_src
+* FAIL AndreaCrotti/yasnippet-snippets
+This requires =yasnippet v0.8.0=, which is unavailable.
+Yasnippet is already at 0.14.0.
+#+begin_src emacs-lisp :tangle no :eval no
+  (use-package yasnippet-snippets)
+#+end_src
+
 * joaotavora/yasnippets
 Insert snippets of frequently used topics.
 #+begin_src emacs-lisp
@@ -157,11 +164,6 @@ Insert snippets of frequently used topics.
     (yas-reload-all)
     :hook
     (((prog-mode org-mode) . yas-minor-mode)))
-#+end_src
-
-* AndreaCrotti/yasnippet-snippets
-#+begin_src emacs-lisp
-  (use-package yasnippet-snippets)
 #+end_src
 
 * FlySpell

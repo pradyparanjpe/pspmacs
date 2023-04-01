@@ -76,8 +76,5 @@
   :config
   (epa-file-enable))
 
-(use-package nginx-mode
-  :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
-
 (pspmacs/load-inherit)
 ;;; pspmacs-os.el ends here

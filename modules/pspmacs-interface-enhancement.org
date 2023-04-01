@@ -536,6 +536,14 @@ Flash highlight hints on evil actions
     (doom-modeline-height 15)
     (doom-modeline-project-detection 'projectile)
     :config
+    ;; with emacs-29 on doom-modeline release, following issue *still* persists
+    ;; https://github.com/seagle0128/doom-modeline/issues/505
+    ;; workaround:
+    (unless (version< emacs-version "29")
+      (setq doom-modeline-fn-alist
+            (--map
+             (cons (remove-pos-from-symbol (car it)) (cdr it))
+             doom-modeline-fn-alist)))
     (doom-modeline-mode 1)
     (set-face-attribute 'mode-line nil
                         :background "#050614"

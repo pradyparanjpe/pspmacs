@@ -120,8 +120,6 @@
   :hook
   (((prog-mode org-mode) . yas-minor-mode)))
 
-(use-package yasnippet-snippets)
-
 (general-add-hook 'org-mode-hook 'flyspell-mode)
 (pspmacs/leader-keys
   "S" '(:ignore t :wk "flyspell")
