@@ -73,36 +73,14 @@
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-(when pspmacs/install-git-clones
-  (pspmacs/install-git-clone
-   '(corfu-terminal
-     :type git
-     :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
-
+(unless (version< emacs-version "29")
   (use-package corfu-terminal
     :after corfu
     :ensure nil
-    :load-path (lambda ()
-                 (unless (string= pspmacs/package-manager "straight")
-                   (expand-file-name "corfu-terminal" pspmacs/crooked-dir)))
+    :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
     :config
     (unless (display-graphic-p))
-    (corfu-terminal-mode t))
-
-  (pspmacs/install-git-clone
-   '(corfu-doc-terminal
-     :type git
-     :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
-
-  (use-package corfu-doc-terminal
-    :after corfu-terminal
-    :ensure nil
-    :load-path (lambda ()
-                 (unless (string= pspmacs/package-manager "straight")
-                   (expand-file-name "corfu-doc-terminal" pspmacs/crooked-dir)))
-    :config
-    (unless (display-graphic-p)
-      (corfu-doc-terminal-mode t))))
+    (corfu-terminal-mode t)))
 
 (use-package ligature
   :config

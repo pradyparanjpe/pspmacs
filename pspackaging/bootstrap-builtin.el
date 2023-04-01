@@ -33,6 +33,13 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
   (cl-every #'pspmacs/archive-refreshed-recently-p
             (mapcar #'car package-archives)))
 
+(defun pspmacs/init-vc-use-package ()
+  "Emacs v29 can install packages from version control."
+  (unless (version< emacs-version "29")
+    (unless (package-installed-p 'vc-use-package)
+      (package-vc-install "https://github.com/slotThe/vc-use-package"))
+    (require 'vc-use-package)))
+
 (defun pspmacs/init-package-manager ()
   "Initialize `package.el' as the package manager"
   ;; Additional package archives
@@ -54,6 +61,7 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
   (package-initialize)
   (unless (pspmacs/archives-refreshed-recently-p)
     (message "Refreshing package archives")
-    (package-refresh-contents)))
+    (package-refresh-contents))
+  (pspmacs/init-vc-use-package))
 
 ;;; bootstrap-builtin.el ends here

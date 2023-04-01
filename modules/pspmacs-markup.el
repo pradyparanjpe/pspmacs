@@ -36,16 +36,11 @@
 (use-package mermaid-mode)
 (use-package ob-mermaid)
 
-(when pspmacs/install-git-clones
-  (pspmacs/install-git-clone '(emacs-reveal
-                               :type git
-                               :host gitlab
-                               :repo "oer/emacs-reveal"))
+(unless (version< emacs-version "29")
+  (customize-set-variable 'oer-reveal-org-includes-dir local-emacs-directory)
   (use-package emacs-reveal
     :ensure nil
-    :load-path (lambda ()
-                 (unless (string= pspmacs/package-manager "straight")
-                   (expand-file-name "emacs-reveal" pspmacs/crooked-dir)))
+    :vc (:fetcher "gitlab" :repo "oer/emacs-reveal")
     :general
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map

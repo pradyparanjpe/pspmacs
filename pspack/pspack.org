@@ -43,6 +43,8 @@
 #+end_src
 
 ** Install git clone
+In Emacs-29, this is obviated.
+
 #+begin_src emacs-lisp :tangle func.el
   (require 'pspmacs/crooked)
   (defun pspmacs/install-git-clone (melpa-style-recipe

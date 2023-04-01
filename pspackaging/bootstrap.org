@@ -45,7 +45,7 @@
 * Straight.el
 - =straight-base-dir= should be in local tree (=local-emacs-directory=)
 - use gnu-elpa mirror
-- NEXT *DEPRECATION* in version 29, =package-vc-install= does exactly *this*.
+- NEXT *DEPRECATION* in version 29, =vc-package-install= does exactly *this*.
   So, this may be dropped in favour of [[https://github.com/slotThe/vc-use-package][vc-use-package]].
 #+begin_src emacs-lisp :tangle bootstrap-straight.el
   ;;; bootstrap-straight.el --- straight.el package manager -*- lexical-binding: t; -*-
@@ -76,6 +76,7 @@
 #+end_src
 
 * Bootstrap builtin package manager
+** Check archive freshness
 #+begin_src emacs-lisp :tangle bootstrap-builtin.el
   ;;; bootstrap-builtin.el --- package.el package manager -*- lexical-binding: t; -*-
 
@@ -111,7 +112,20 @@
     (interactive)
     (cl-every #'pspmacs/archive-refreshed-recently-p
               (mapcar #'car package-archives)))
+#+end_src
 
+** Emacs-29
+#+begin_src emacs-lisp :tangle bootstrap-builtin.el
+  (defun pspmacs/init-vc-use-package ()
+    "Emacs v29 can install packages from version control."
+    (unless (version< emacs-version "29")
+      (unless (package-installed-p 'vc-use-package)
+        (package-vc-install "https://github.com/slotThe/vc-use-package"))
+      (require 'vc-use-package)))
+#+end_src
+
+** Call
+#+begin_src emacs-lisp :tangle bootstrap-builtin.el
   (defun pspmacs/init-package-manager ()
     "Initialize `package.el' as the package manager"
     ;; Additional package archives
@@ -133,7 +147,8 @@
     (package-initialize)
     (unless (pspmacs/archives-refreshed-recently-p)
       (message "Refreshing package archives")
-      (package-refresh-contents)))
+      (package-refresh-contents))
+    (pspmacs/init-vc-use-package))
 
   ;;; bootstrap-builtin.el ends here
 #+end_src

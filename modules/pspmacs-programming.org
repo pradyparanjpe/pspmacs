@@ -84,38 +84,26 @@
 #+end_src
 
 ** Using git-cloned repository
-- Don't if low storage resources.
-#+begin_src emacs-lisp
-  (when pspmacs/install-git-clones
-    (pspmacs/install-git-clone
-     '(corfu-terminal
-       :type git
-       :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
+- Only after Emacs 29
+#+begin_example emacs-lisp
+(use-package corfu-doc-terminal
+:after corfu-terminal
+:ensure nil
+:vc (:fetcher "codeberg" :repo "akib/emacs-corfu-doc-terminal")
+:config
+(unless (display-graphic-p)
+(corfu-doc-terminal-mode t)))
+#+end_example
 
+#+begin_src emacs-lisp
+  (unless (version< emacs-version "29")
     (use-package corfu-terminal
       :after corfu
       :ensure nil
-      :load-path (lambda ()
-                   (unless (string= pspmacs/package-manager "straight")
-                     (expand-file-name "corfu-terminal" pspmacs/crooked-dir)))
+      :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
       :config
       (unless (display-graphic-p))
-      (corfu-terminal-mode t))
-
-    (pspmacs/install-git-clone
-     '(corfu-doc-terminal
-       :type git
-       :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git"))
-
-    (use-package corfu-doc-terminal
-      :after corfu-terminal
-      :ensure nil
-      :load-path (lambda ()
-                   (unless (string= pspmacs/package-manager "straight")
-                     (expand-file-name "corfu-doc-terminal" pspmacs/crooked-dir)))
-      :config
-      (unless (display-graphic-p)
-        (corfu-doc-terminal-mode t))))
+      (corfu-terminal-mode t)))
 #+end_src
 
 * Fira Code ligatures
