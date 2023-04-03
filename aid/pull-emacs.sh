@@ -350,6 +350,13 @@ git_clone () {
     repo_changes=true
 }
 
+# GPG2 KEY
+clone_key () {
+    mkdir -p "${LOCAL_EMACS_HOME}/packages/gnupg"
+    gpg --homedir "${LOCAL_EMACS_HOME}/packages/gnupg" \
+        --receive-keys "066DAFCB81E42C40"
+}
+
 # main call routine
 main () {
     check_dependencies "git" "autoconf" "makeinfo"

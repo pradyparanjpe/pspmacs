@@ -30,6 +30,7 @@
   (use-package mu4e
     :init
     (setq message-send-mail-function 'smtpmail-send-it)
+    :ensure nil
     :custom
     (mu4e-account-alist t)
     (mu4e-enable-notifications t)
