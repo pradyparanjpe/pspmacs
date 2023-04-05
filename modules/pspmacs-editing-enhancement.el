@@ -191,5 +191,23 @@
     ;; serves as hyperlink.
     (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p))))
 
+(use-package smog
+  :init
+  (defun pspmacs/readability (&optional buffer)
+    (interactive)
+    (progn
+      (if buffer
+          (smog-check-buffer)
+        (smog-check))
+      (switch-to-buffer-other-window "*Readability*")))
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps '(text-mode-map org-mode-map)
+    :states 'normal
+    "=r" '(:ignore t :wk "readibility")
+    "=rr" '(pspmacs/readability :wk "check region")
+    "=rb" '((lambda () (interactive) (pspmacs/readability t))
+            :wk "check buffer")))
+
 (pspmacs/load-inherit)
 ;;; pspmacs-editing-enhancement.el ends here

@@ -264,23 +264,23 @@ This requires us to reset various regular expressions."
 Also, display file name in echo area"
   (interactive)
   (kill-new buffer-file-name)
-  (message (format "Copied: %s"buffer-file-name)))
+  (message (format "Copied: %s" buffer-file-name)))
 
 (defun wl-copy (text)
   "Copy to wayland clipboard.
 
 Copy TEXT to wayland wl-copy"
   (setq wl-copy-process (make-process :name "wl-copy"
-                  :buffer nil
-                  :command '("wl-copy" "-f" "-n")
-                  :connection-type 'pipe))
+                                      :buffer nil
+                                      :command '("wl-copy" "-f" "-n")
+                                      :connection-type 'pipe))
   (process-send-string wl-copy-process text)
   (process-send-eof wl-copy-process))
 
 (defun wl-paste ()
   "Paste from wayland clipboard."
   (if (and wl-copy-process (process-live-p wl-copy-process))
-  nil ; should return nil if we're the current paste owner
+      nil ; should return nil if we're the current paste owner
     (shell-command-to-string "wl-paste -n | tr -d \r")))
 
 (defun pspmacs/project-to-publish-alist
@@ -336,5 +336,23 @@ to publish orgmode files to html."
                  :publishing-function 'org-publish-attachment)
            (list "org" :components
                  '("org-notes" "org-static" "org-templates"))))))
+
+(defun pspmacs/org-paste-as-link ()
+  "Paste contents of clipboard as link."
+  (interactive)
+  (let* ((link-loc (current-kill 0))
+         (desc (read-string "Description:\t" link-loc)))
+    (org-insert-link nil link-loc desc)))
+
+(defun pspmacs/org-copy-link-at-point ()
+  "Copy link if thing at point as link"
+  (interactive)
+  (let* ((context (org-element-context))
+         (type (org-element-type context))
+         )
+    (when (eq type 'link)
+      (kill-new (format "%s:%s"
+                        (org-element-property :type context)
+                        (org-element-property :path context))))))
 
 ;;; func.el ends there

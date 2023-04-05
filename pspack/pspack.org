@@ -608,26 +608,27 @@ Following function may be used to byte-compile any work-tree.
   Also, display file name in echo area"
     (interactive)
     (kill-new buffer-file-name)
-    (message (format "Copied: %s"buffer-file-name)))
+    (message (format "Copied: %s" buffer-file-name)))
 #+end_src
 
 * wayland kill-ring
+- [[https://www.emacswiki.org/emacs/CopyAndPaste][Wayland copy/paste]]
 #+begin_src emacs-lisp :tangle func.el
   (defun wl-copy (text)
     "Copy to wayland clipboard.
 
   Copy TEXT to wayland wl-copy"
     (setq wl-copy-process (make-process :name "wl-copy"
-                    :buffer nil
-                    :command '("wl-copy" "-f" "-n")
-                    :connection-type 'pipe))
+                                        :buffer nil
+                                        :command '("wl-copy" "-f" "-n")
+                                        :connection-type 'pipe))
     (process-send-string wl-copy-process text)
     (process-send-eof wl-copy-process))
-  
+
   (defun wl-paste ()
     "Paste from wayland clipboard."
     (if (and wl-copy-process (process-live-p wl-copy-process))
-    nil ; should return nil if we're the current paste owner
+        nil ; should return nil if we're the current paste owner
       (shell-command-to-string "wl-paste -n | tr -d \r")))
 #+end_src
 
@@ -724,6 +725,31 @@ Following function may be used to byte-compile any work-tree.
                    '("org-notes" "org-static" "org-templates"))))))
            #+end_src
            
+* Org-Links
+** Insert clipboard contents as link
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/org-paste-as-link ()
+    "Paste contents of clipboard as link."
+    (interactive)
+    (let* ((link-loc (current-kill 0))
+           (desc (read-string "Description:\t" link-loc)))
+      (org-insert-link nil link-loc desc)))
+#+end_src
+
+** Copy link at point
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/org-copy-link-at-point ()
+    "Copy link if thing at point as link"
+    (interactive)
+    (let* ((context (org-element-context))
+           (type (org-element-type context))
+           )
+      (when (eq type 'link)
+        (kill-new (format "%s:%s"
+                          (org-element-property :type context)
+                          (org-element-property :path context))))))
+#+end_src
+
 * Use Emacs for mail
 - Caution: this requires many dependencies:
   - Mu and its dependencies
