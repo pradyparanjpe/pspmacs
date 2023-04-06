@@ -32,6 +32,7 @@ Revert to the normal definition outside of these fragments."
       (call-interactively (key-binding (vector last-input-event))))))
 
 (use-package org
+  :mode ("\\.org\\'" . org-mode)
   :general
   ;; ORG AGENDA
   (pspmacs/leader-keys

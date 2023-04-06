@@ -33,6 +33,9 @@
         nil 'nomessage)
 (pspmacs/init-use-package)
 
+(use-package org
+  :demand t)
+
 (dolist (init-dir pspmacs/worktrees nil)
   (let ((modular-modules (expand-file-name "modules/" init-dir)))
     (when (file-directory-p modular-modules)
@@ -44,8 +47,5 @@
                       (normal-top-level-add-subdirs-to-load-path)
                       load-path)
                     load-path)))))
-
-(use-package org
-  :mode ("\\.org\\'" . org-mode))
 
 (pspmacs/load-inherit)
