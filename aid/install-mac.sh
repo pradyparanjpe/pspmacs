@@ -3,6 +3,21 @@
 
 # untested script, I feel it should work though...
 
+# set script-variables
+set_vars () {
+    # directory locations used by Emacs to fetch init files.
+    emacs_init_dirs="${XDG_CONFIG_HOME:-${HOME}/.config}/emacs \
+                    ${HOME}/.emacs \
+                    ${HOME}/.emacs.d/init.el"
+    # File locaitions used by Emacs as init files.
+    emacs_init_files="${HOME}/.emacs.el"
+}
+
+# unset script-variables
+unset_vars () {
+    unset emacs_init_dirs emacs_init_files
+}
+
 # Confirm current platform to be MacOS
 confirm_mac () {
     ostype="$(uname -s)"
@@ -62,29 +77,34 @@ install_fonts () {
 install_dependencies () {
     printf "\n\n"
     printf "trying to install Gnu/Linux system-dependencies using homebrew.\n"
-    brew install git gcc coreutils make autoconf node ripgrep stow gnupg
+    brew install git gcc coreutils make autoconf \
+         node ripgrep stow gnupg diction
 }
 
 # Back up existing Emacs from standard locations. with a .bak extension
 backup_std_emacs () {
     printf "\n\n"
-    printf "backing up standard Emacs locations to '<filename>.bak'."
-    if [ -f "${HOME}/.emacs.el" ]; then
-        mv "${HOME}/.emacs.el" "${HOME}/.emacs.el.bak"
-    fi
-    for el_loc in "${XDG_CONFIG_HOME:-${HOME}/.config}/emacs" \
-                      "${HOME}/.emacs" \
-                      "${HOME}/.emacs.d/init.el"; do
+    printf "backing up standard Emacs locations to '<location>.bak'."
+    for el_loc in ${emacs_init_dirs}; do
         if [ -d "${el_loc}" ]; then
+            mv "${el_loc}" "${el_loc}.bak"
+        fi
+    done
+
+    for el_loc in ${emacs_init_files}; do
+        if [ -f "${el_loc}" ]; then
             mv "${el_loc}" "${el_loc}.bak"
         fi
     done
 
     ln -sf "${XDG_DATA_HOME:-${HOME}/.local/share}/emacs/pspmacs" \
        "${XDG_CONFIG_HOME:-${HOME}/.config}/emacs"
+
     ln -sf "${XDG_DATA_HOME:-${HOME}/.local/share}/emacs/pspmacs" \
        "${HOME}/.emacs.d"
 }
+
+
 
 # Clone pspmacs installation
 clone_pspmacs () {
@@ -153,6 +173,7 @@ printf_byelogue () {
 
 # initialize pspmacs
 main () {
+    set_vars
     confirm_mac || exit 65
     install_homebrew || exit 65
     install_fonts || exit 65
@@ -160,6 +181,7 @@ main () {
     install_emacs || exit 65
     clone_pspmacs || exit 65
     backup_std_emacs
+    unset_vars
     printf_byelogue
 }
 

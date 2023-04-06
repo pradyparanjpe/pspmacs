@@ -38,3 +38,6 @@ packages/
 url/
 org-re-reveal/
 oer-reveal-org/
+
+# Evil-Tutor cache
+.tutor/

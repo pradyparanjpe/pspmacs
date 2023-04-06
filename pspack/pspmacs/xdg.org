@@ -1,5 +1,5 @@
 #+title: PSPMacs/XDG
-#+property: header-args :tangle t :mkdirp t :results no :eval never
+#+property: header-args :tangle xdg.el :mkdirp t :results no :eval never
 #+OPTIONS: _:nil
 #+auto_tangle: t
 
@@ -31,7 +31,7 @@
                                                        default-path))))
 #+end_src
 
-* XDG_CONFIG_HOME
+* =XDG_CONFIG_HOME=
 - This is *THE CONFIG DIRECTORY*
 #+begin_src emacs-lisp
   (defcustom xdg/emacs-config-directory
@@ -43,7 +43,7 @@
     :type '(string :tag "the ~/.emacs.d/"))
 #+end_src
 
-* XDG_CACHE_HOME
+* =XDG_CACHE_HOME=
 #+begin_src emacs-lisp
   ;; ${XDG_CACHE_HOME:-${HOME}/.cache}/emacs
   (defcustom xdg/emacs-cache-directory
@@ -55,7 +55,7 @@
     :type '(string :tag "Path to cache"))
 #+end_src
 
-* XDG_DATA_HOME
+* =XDG_DATA_HOME=
 #+begin_src emacs-lisp
   ;; ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs
   (defcustom xdg/emacs-data-directory
@@ -67,11 +67,11 @@
     :type '(string :tag "Path to persistent data"))
 #+end_src
 
-* XDG_STATE_HOME
+* =XDG_STATE_HOME=
 #+begin_src emacs-lisp
   ;; ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs
   (defcustom xdg/emacs-state-directory
-    (xdg/assign-base "XDG_state_HOME" "~/.local/state")
+    (xdg/assign-base "XDG_STATE_HOME" "~/.local/state")
     "Location of volatile state files for Emacs.
 
   ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
@@ -88,7 +88,7 @@
     (make-directory (eval xdg-base) t))
 #+end_src
 
-* All cached files should be saved in XDG_CACHE_HOME
+* All cached files should be saved in =XDG_CACHE_HOME=
 #+begin_src emacs-lisp
   (defun locate-user-emacs-file (new-name &optional old-name)
     "This function supersedes Emacs-native function.

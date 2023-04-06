@@ -45,7 +45,7 @@ ${XDG_DATA_HOME:-${HOME}/.local/share}/emacs"
 
 ;; ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs
 (defcustom xdg/emacs-state-directory
-  (xdg/assign-base "XDG_state_HOME" "~/.local/state")
+  (xdg/assign-base "XDG_STATE_HOME" "~/.local/state")
   "Location of volatile state files for Emacs.
 
 ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
