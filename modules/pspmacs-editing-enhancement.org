@@ -89,9 +89,9 @@
   (use-package all-the-icons-dired
     :if (display-graphic-p)
     :hook
-    (dired-mode-map . (lambda () (interactive)
-                        (unless (file-remote-p default-directory)
-                          (all-the-icons-dired-mode)))))
+    (dired-mode . (lambda () (interactive)
+                    (unless (file-remote-p default-directory)
+                      (all-the-icons-dired-mode)))))
 #+end_src
 
 * magnars/multiple-cursors
@@ -275,7 +275,7 @@ Dependencies: [[https://www.gnu.org/software/diction/][Gnu style and diction]]
 #+begin_src emacs-lisp
   (use-package flymake-proselint
     :hook
-    (((markdown-mode text-mode org-mode) . flymake-proselint-setup))
+    (((markdown-mode text-mode org-mode) . flymake-proselint-setup)
      ((markdown-mode text-mode org-mode) . flymake-mode)))
 #+end_src
 

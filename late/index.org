@@ -1,4 +1,3 @@
-
 #+title: late/index
 #+property: header-args :tangle t :mkdirp t :results no :eval never
 #+OPTIONS: _:nil

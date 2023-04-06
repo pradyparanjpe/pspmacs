@@ -31,6 +31,7 @@ lsp/
 projectile-bookmarks.tld
 transient/
 org-persist/
+auto-save-list/
 
 # package.el cache
 elpa/
