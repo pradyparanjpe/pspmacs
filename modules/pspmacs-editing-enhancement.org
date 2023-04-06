@@ -33,7 +33,7 @@
 - color codes (rgb[a], hex, names)
 #+begin_src emacs-lisp
   (use-package rainbow-mode
-    :hook (((prog-mode org mode) . rainbow-mode)))
+    :hook (((prog-mode org-mode) . rainbow-mode)))
 #+end_src
 
 * Fanael/rainbow-delimiters
@@ -269,6 +269,14 @@ Dependencies: [[https://www.gnu.org/software/diction/][Gnu style and diction]]
       "=rr" '(pspmacs/readability :wk "check region")
       "=rb" '((lambda () (interactive) (pspmacs/readability t))
               :wk "check buffer")))
+#+end_src
+
+* ~manuel-uberti/flycheck-proselint
+#+begin_src emacs-lisp
+  (use-package flymake-proselint
+    :hook
+    (((markdown-mode text-mode org-mode) . flymake-proselint-setup))
+     ((markdown-mode text-mode org-mode) . flymake-mode)))
 #+end_src
 
 * Inherit from private and local

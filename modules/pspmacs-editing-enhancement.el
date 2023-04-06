@@ -23,7 +23,7 @@
 ;;; Code:
 
 (use-package rainbow-mode
-  :hook (((prog-mode org mode) . rainbow-mode)))
+  :hook (((prog-mode org-mode) . rainbow-mode)))
 
 (use-package rainbow-delimiters
   :hook ((prog-mode . rainbow-delimiters-mode)))
@@ -208,6 +208,12 @@
     "=rr" '(pspmacs/readability :wk "check region")
     "=rb" '((lambda () (interactive) (pspmacs/readability t))
             :wk "check buffer")))
+
+(use-package flymake-proselint
+  :hook
+  (((markdown-mode text-mode org-mode) . flymake-proselint-setup)
+   ((markdown-mode text-mode org-mode) . flymake-proselint-setup)))
+
 
 (pspmacs/load-inherit)
 ;;; pspmacs-editing-enhancement.el ends here
