@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # pull emacs branch, configure, make, make-install
-# Copyright (c) 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+# Copyright © 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 
 # check if dependencies are met.
 check_dependencies() {

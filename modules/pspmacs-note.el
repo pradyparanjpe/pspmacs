@@ -1,6 +1,6 @@
 ;;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+;; Copyright © 2023  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: help, languages
@@ -213,7 +213,7 @@ Revert to the normal definition outside of these fragments."
       "|"
       "DONE(d)"
       "DONT(!)"
-      "CANT(c)")))
+      "CANT©")))
 
   :config
   (org-babel-do-load-languages

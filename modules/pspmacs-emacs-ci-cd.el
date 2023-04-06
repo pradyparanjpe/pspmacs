@@ -1,6 +1,6 @@
 ;;; pdpmacs-emacs-ci-cd.el --- Install Emacs from GNU repository -*- lexical-binding: t; -*-
 ;;
-;; Copyright (c) 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+;; Copyright © 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;;
 ;;; Commentary:
 ;; Clone [OR pull changes in] GNU Emacs, build it locally from repo and install.

@@ -1,6 +1,6 @@
 ;;; profiles.el --- template for chemacs             -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+;; Copyright © 2023  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: convenience

@@ -1,6 +1,6 @@
 ;;; late/package-management.el --- initiate package manager -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+;; Copyright © 2023  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: help, languages

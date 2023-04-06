@@ -1,6 +1,6 @@
 ;;; pspmacs-editing-enhancement.el --- writing aid -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Pradyumna Swanand Paranjape
+;; Copyright © 2023  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: help, languages
@@ -185,7 +185,7 @@
   (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
   (sp-local-pair 'python-mode "__" "__")
   (sp-with-modes 'emacs-lisp-mode-map
-    ;; disable ', it's the quote character!
+    ;; disable ', it's the quote character.
     (sp-local-pair "'" nil :actions nil)
     ;; also only use the pseudo-quote inside strings where it
     ;; serves as hyperlink.
