@@ -6,7 +6,7 @@
 We shall use latest modus themes (they (~21MB) aren't really heavy!), not the
 built-in ones.
 
-In Emacs-29, [[file:~/.local/share/pspman/src/pspmacs/pspack/pspack.org::*Install git clone][pspmacs/install-git-clone]] is obviated.
+In Emacs-29, ~pspmacs/install-git-clone~ is obviated.
 #+begin_src emacs-lisp
   (when (version< emacs-version "29")
     (pspmacs/install-git-clone
