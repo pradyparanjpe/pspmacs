@@ -280,6 +280,11 @@
     (customize-set-variable 'fill-column 80))
 #+end_src
 
+* gregsexton/origami
+#+begin_src emacs-lisp
+  (use-package origami
+    :hook ((prog-mode . origami-mode)))
+#+end_src
 * native Emacs-settings
 #+begin_src emacs-lisp
   (use-package emacs

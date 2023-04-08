@@ -229,6 +229,9 @@
   :init
   (customize-set-variable 'fill-column 80))
 
+(use-package origami
+  :hook ((prog-mode . origami-mode)))
+
 (use-package emacs
   :init
   ;; corfu suggestions
