@@ -1,7 +1,15 @@
 image: iquiw/alpine-emacs
 
 stages:
+- build
 - publish
+
+build:
+  stage: build
+  script:
+  - aid/install-pspmacs.sh
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 pages:
   stage: publish
