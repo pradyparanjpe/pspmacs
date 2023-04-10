@@ -71,17 +71,19 @@ linux_install_fonts () {
 
 
 package_apk_initialize () {
+    # generally in a container with root
     apk update || clean_exit 65 "[APK]  Couldn't update."
+    # sudo apk update || clean_exit 65 "[APK]  Couldn't update."
 }
 
 
 package_apt_initialize () {
-    apt update || clean_exit 65 "[APT]  Couldn't update."
+    sudo apt update || clean_exit 65 "[APT]  Couldn't update."
 }
 
 
 package_dnf_initialize () {
-    dnf -y update || clean_exit 65 "[DNF]  Couldn't update."
+    sudo dnf -y update || clean_exit 65 "[DNF]  Couldn't update."
 }
 
 
@@ -91,33 +93,34 @@ package_pacman_initialize () {
 
 
 package_zypper_initialize () {
-    zypper ref || clean_exit 65 "[ZYPR]  Couldn't update."
+    sudo zypper ref || clean_exit 65 "[ZYPR]  Couldn't update."
 }
 
 
 package_apk_install () {
     apk add "$@" || clean_exit 65 "[APK]  Couldn't install $*."
+    # sudo apk update || clean_exit 65 "[APK]  Couldn't update."
 }
 
 
 package_apt_install () {
-    apt install -y "$@" || clean_exit 65 "[APT]  Couldn't install $*."
+    sudo apt install -y "$@" || clean_exit 65 "[APT]  Couldn't install $*."
 }
 
 
 package_dnf_install () {
-    dnf -y install "$@" || clean_exit 65 "[DNF]  Couldn't install $*."
+    sudo dnf -y install "$@" || clean_exit 65 "[DNF]  Couldn't install $*."
 }
 
 
 package_pacman_install () {
-    pacman --noconfirm -Syu "$@" \
+    sudo pacman --noconfirm -Syu "$@" \
         || clean_exit 65 "[ARCH]  Couldn't install $*."
 }
 
 
 package_zypper_install () {
-    zypper -n install "$@" || clean_exit 65 "[ZYPR]  Couldn't install $*."
+    sudo zypper -n install "$@" || clean_exit 65 "[ZYPR]  Couldn't install $*."
 }
 
 

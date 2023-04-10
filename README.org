@@ -23,6 +23,50 @@ Downstream modification of template opinions break (as they *did* for me) when t
 * My Attempt
 This is my *hitherto successful* attempt at configuring Emacs (v28 and v29) from scratch to use it as a /text editor/ (🤣).
 
+** Copy Configuration
+To copy PSPMacs configuration (=POSIX=),
+- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/install-pspmacs.sh?inline=false][install-pspmacs.sh]]
+- Run it using a =POSIX= shell
+#+begin_src bash :tangle no
+  sh install-pspmacs.sh
+#+end_src
+
+#+begin_tip
+If =curl= is already installed (generally =TRUE=), this may be automated by the terminal command:
+#+begin_src bash :tangle no
+  curl -fsSL "https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/install-pspmacs.sh" | sh
+#+end_src
+#+end_tip
+
+#+begin_warning
+- The script has been tested only in Alpine Linux.
+#+end_warning
+
+#+begin_danger
+Do *NOT* run install-script with =sudo= privileges.
+The *script* will invoke =sudo= privileges whenever necessary.
+#+end_danger
+** Copy manually
+- Read and understand this README.
+- Ensure [[*Requirements][Requirements]] are installed.
+- Define =LOCAL_EMACS_HOME=, =PVT_EMACS_HOME= in suitable =.rc= profile.
+  - If you also use [[https://pradyparanjpe.github.io/runcom][my runcom]], define it in =~/.config/local.d/.emacsrc=
+- Back up =~/.emacs.d= somewhere.
+- Clone *this* [[https://gitlab.com/pradyparanjpe/pspmacs.git][repository]] at =~/.emacs.d= or link it.
+- Understand and follow the code below
+  #+begin_src emacs-lisp :tangle no
+    (while t
+      (troubleshoot))
+  #+end_src
+
+** Requirements
+Bare Minimal Dependencies: (the installation script tries to install them.)
+- git (version control)
+- curl (downloads)
+- npm (language servers)
+- ripgrep (Better, faster, broader grep)
+- Emacs (Well, obviously.)
+
 * Inheritance principle
 - The configuration is made with three *inherited work-trees*.
 - Each file in this configuration (other than some obvious documented exceptions) calls a function [[file:late/index.org::*Org mode auto-load][pspmacs/load-inherit]] at the end.
