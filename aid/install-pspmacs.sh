@@ -380,8 +380,13 @@ set_local_home () {
 \n\n# ADDED BY PSPMACS\n\
 LOCAL_EMACS_HOME=\"${LOCAL_EMACS_HOME}\"\n\
 export LOCAL_EMACS_HOME\n"
-            printf "%s\n" "${rc_export}" > "${HOME}/.bashrc"
-            printf "%s\n" "${rc_export}" > "${HOME}/.zshrc"
+            if [ -n "${RUNCOMDIR}" ]; then
+                printf "%s\n" "${rc_export}" \
+                       >> "${XDG_CONFIG_HOME:-${HOME}/.config}/local.d/.emacsrc"
+            else
+                printf "%s\n" "${rc_export}" >> "${HOME}/.bashrc"
+                printf "%s\n" "${rc_export}" >> "${HOME}/.zshrc"
+            fi
             ;;
         *)
             LOCAL_EMACS_HOME="${PVT_EMACS_HOME:-${emacs_data}/pspmacs}/local.d"
