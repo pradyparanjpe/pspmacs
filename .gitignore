@@ -15,6 +15,11 @@ local.d/
 # byte-compilation files
 *.elc
 
+# gnu gtags
+GPATH
+GRTAGS
+GTAGS
+
 # known emacs cache
 .cache/
 recentf

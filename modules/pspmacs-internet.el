@@ -37,8 +37,8 @@
   (pspmacs/leader-keys
     :states 'normal
     :keymaps 'eww-mode-map
-    "iu" '(:ignore t :wk "url")
-    "iuy" '(eww-copy-page-url t :wk "copy"))
+    "iu"  '(:ignore t :wk "url")
+    "iuy" '(eww-copy-page-url :wk "copy"))
 
   :init
   (defun karthink/reader-center-images ()

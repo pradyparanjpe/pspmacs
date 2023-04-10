@@ -321,7 +321,7 @@ install_dependencies () {
 }
 
 
-# Back up existing Emacs from standard locations. with a .bak extension
+# Back up existing Emacs from standard locations with a .bak extension
 # This function is common to all POSIX
 backup_std_emacs () {
     printf "\n\n"

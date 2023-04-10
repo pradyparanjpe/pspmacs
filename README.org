@@ -16,7 +16,7 @@ It was high time I became independent of opinionated Emacs configurations, espec
 
 ** /BAD/ Opinionated
 I didn't like doom-emacs for a similar reason.
-Dependence on either of them forces one to rely on /another later commits/ being flawless in addition to Gnu Emacs' production commits.
+Dependence on either of them forces one to rely on /another layer of commits/ being flawless in addition to Gnu Emacs' production commits and installed Emacs-lisp packages.
 Further, opinionated configuration imposes restrictions.
 Downstream modification of template opinions break (as they *did* for me) when the upstream code gets some incompatible commits.
 
@@ -46,15 +46,17 @@ If =curl= is already installed (generally =TRUE=), this may be automated by the 
 Do *NOT* run install-script with =sudo= privileges.
 The *script* will invoke =sudo= privileges whenever necessary.
 #+end_danger
+
 ** Copy manually
 - Read and understand this README.
-- Ensure [[*Requirements][Requirements]] are installed.
+- Ensure that [[*Requirements][requirements]] are installed.
 - Define =LOCAL_EMACS_HOME=, =PVT_EMACS_HOME= in suitable =.rc= profile.
   - If you also use [[https://pradyparanjpe.github.io/runcom][my runcom]], define it in =~/.config/local.d/.emacsrc=
 - Back up =~/.emacs.d= somewhere.
 - Clone *this* [[https://gitlab.com/pradyparanjpe/pspmacs.git][repository]] at =~/.emacs.d= or link it.
-- Understand and follow the code below
+- Understand and follow the =elisp= code below.
   #+begin_src emacs-lisp :tangle no
+    (require 'perseverance)
     (while t
       (troubleshoot))
   #+end_src
@@ -75,7 +77,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 ** Inherited work-trees
 *** Global: =user-emacs-directory=
 - This is the default Emacs directory [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Find-Init.html][conventionally located]] at =~/.emacs.d=.
-  However, *this* configuration is meant to occupy that location.
+  However, *this very* configuration is meant to occupy that location.
   Since this configuration is git-version-controlled, any changes in =~/.emacs.d= may cause commit-conflicts.
   Hence, we try to put *nothing* more in this location than what it already contains.
 - For Emacs 28, [[https://github.com/plexus/chemacs2][chemacs2]] may occupy =~/.emacs.d= and redirect to /this/ configuration.
@@ -159,7 +161,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 #+end_warning
 
 - Code
-  - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modlues=.
+  - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modules=.
   - The customization file =<local-emacs-directory>/custom.el= will only be loaded after `config.el' only if the value of `pspmacs/load-custom-file' is set to a non-nil.
 #+begin_src emacs-lisp :tangle init.el
   ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-

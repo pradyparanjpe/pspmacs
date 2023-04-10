@@ -115,11 +115,10 @@ Revert to the normal definition outside of these fragments."
     "dt"  '(org-time-stamp :wk "time-stamp")
 
     "L"   '(:ignore t :wk "link")
+    "Lp"  '(pspmacs/org-paste-as-link :wk "paste")
     "LL"  '(org-store-link t :wk "grab")
-    "Lc"  '(pspmacs/org-paste-as-link :wk "clipboard")
     "Ll"  '(org-insert-link t :wk "put")
-    "Ly"  '(pspmacs/org-copy-link-at-point :wk "clipboard")
-
+    "Ly"  '(pspmacs/org-copy-link-at-point :wk "yank")
 
     "i"   '(:ignore t :wk "insert")
     "ih"  '(org-insert-heading :wk "insert heading")
@@ -130,9 +129,9 @@ Revert to the normal definition outside of these fragments."
     "t"   '(org-todo :wk "todo")
 
     "T"   '(:ignore t :wk "Toggle")
-    "Ti"   '(org-toggle-inline-images :wk "inline images")
-    "Tl"   '(org-toggle-link-display :wk "link display")
-    "Tt"   '(org-toggle-timestamp-type :wk "time-stamp")
+    "Ti"  '(org-toggle-inline-images :wk "inline images")
+    "Tl"  '(org-toggle-link-display :wk "link display")
+    "Tt"  '(org-toggle-timestamp-type :wk "time-stamp")
     "Tp"  '(org-latex-preview t :wk "preview latex")
 
     "x"   '(:ignore t :wk "export")

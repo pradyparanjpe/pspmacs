@@ -188,9 +188,9 @@
 - Jump to symbol definitions.
   - Not using temporarily.
 #+begin_src emacs-lisp :tangle no :export no
-  (use-package gtags
+  (use-package ggtags
     :defer t
-    :hook (prog-mode . gtags-mode))
+    :hook (prog-mode . ggtags-mode))
 #+end_src
 * joaotavora/eglot
 - Programming languages (language server)
