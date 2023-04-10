@@ -194,7 +194,7 @@
     :keymaps 'flymake-mode-map
     "e" '(:ignore t :wk "errors")
     "en" '(flymake-goto-next-error :wk "next")
-    "ep" '(flymake-goto-previous-error :wk "previous"))
+    "ep" '(flymake-goto-prev-error :wk "previous"))
   :custom
   (flymake-number-of-errors-to-display nil)
   (python-flymake-command '("flake8" "-"))

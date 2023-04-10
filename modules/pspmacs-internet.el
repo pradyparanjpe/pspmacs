@@ -22,6 +22,55 @@
 
 ;;; Code:
 
+;; (declare-function bookmark-make-record-default "bookmark" (&optional no-file no-context posn))
+;; (declare-function bookmark-prop-get "bookmark" (bookmark prop))
+;; (declare-function bookmark-default-handler "bookmark" (bmk))
+;; (declare-function bookmark-get-bookmark-record "bookmark" (bmk))
+
+(use-package eww
+  :general
+  (pspmacs/leader-keys
+    :states 'normal
+    "io" '(eww t :wk "open")
+    "is" '(:ignore t :wk "search")
+    "isw" '(eww-search-words :wk "words"))
+  (pspmacs/leader-keys
+    :states 'normal
+    :keymaps 'eww-mode-map
+    "iu" '(:ignore t :wk "url")
+    "iuy" '(eww-copy-page-url t :wk "copy"))
+
+  :init
+  (defun karthink/reader-center-images ()
+    "Center images in document. Meant to be added to a post-render
+ hook."
+    (let* ((inhibit-read-only t)
+           (pixel-buffer-width (shr-pixel-buffer-width))
+           match)
+      (save-excursion
+        (goto-char (point-min))
+        (while (setq match (text-property-search-forward
+                            'display nil
+                            (lambda (_ p) (eq (car-safe p) 'image))))
+          (when-let ((size (car (image-size
+                                 (prop-match-value match) 'pixels)))
+                     ((> size 150))
+                     (center-pixel (floor (- pixel-buffer-width size) 2))
+                     (center-pos (floor center-pixel (frame-char-width))))
+            (beginning-of-line)
+            (delete-horizontal-space)
+            (indent-to center-pos)
+            (end-of-line))))))
+
+  :custom
+  (eww-search-prefix "https://duckduckgo.com/html/?q=")
+  (eww-browse-url-new-window-is-tab nil)
+  (shr-width fill-column)
+
+  :hook
+  ((eww-after-render . (lambda () (setq line-spacing 0.1)))
+   (eww-after-render . karthink/reader-center-images)))
+
 (use-package org-mime
   :custom
   (org-mime-library 'mml))
@@ -58,6 +107,14 @@
                          (format
                           "color: %s; background-color: %s; padding: 0.5em;"
                           "#959a9f" "#000307")))))))
+
+(use-package emacs
+  :custom
+  (browse-url-generic-program (or (executable-find "qutebrowser")
+                                  (executable-find "firefox")
+                                  (executable-find "chromium-freeworld")
+                                  (executable-find "google-chrome")))
+  (browse-url-browser-function 'browse-url-generic))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-internet.el ends here

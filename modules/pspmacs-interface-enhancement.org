@@ -176,6 +176,9 @@
     ;; help
     (pspmacs/leader-keys "h" (general-simulate-key "C-h"))
 
+    ;; internet
+    (pspmacs/leader-keys "i" '(:ignore t :wk "internet"))
+
     ;; major mode
     (pspmacs/leader-keys
       "M" '(:ignore t :wk "Major Mode")
