@@ -7,7 +7,7 @@ stages:
 build:
   stage: build
   script:
-  - aid/install-pspmacs.sh
+  - aid/setup-pspmacs.sh
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 

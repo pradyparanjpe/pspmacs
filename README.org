@@ -25,16 +25,16 @@ This is my *hitherto successful* attempt at configuring Emacs (v28 and v29) from
 
 ** Copy Configuration
 To copy PSPMacs configuration (=POSIX=),
-- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/install-pspmacs.sh?inline=false][install-pspmacs.sh]]
+- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh?inline=false][setup-pspmacs.sh]]
 - Run it using a =POSIX= shell
 #+begin_src bash :tangle no
-  sh install-pspmacs.sh
+  sh setup-pspmacs.sh
 #+end_src
 
 #+begin_tip
 If =curl= is already installed (generally =TRUE=), this may be automated by the terminal command:
 #+begin_src bash :tangle no
-  curl -fsSL "https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/install-pspmacs.sh" | sh
+  curl -fsSL "https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh" | sh
 #+end_src
 #+end_tip
 
@@ -43,7 +43,7 @@ If =curl= is already installed (generally =TRUE=), this may be automated by the 
 #+end_warning
 
 #+begin_danger
-Do *NOT* run install-script with =sudo= privileges.
+Do *NOT* run setup-script with =sudo= privileges.
 The *script* will invoke =sudo= privileges whenever necessary.
 #+end_danger
 
