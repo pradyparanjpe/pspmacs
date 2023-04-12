@@ -316,12 +316,16 @@ Jump by word hints
     (pspmacs/leader-keys
       "w" '(:ignore t :keymap evil-window-map :wk "window") ;; window bindings
       "wd" '(evil-window-delete :wk "delete window")
+      "wH" '(evil-window-move-far-right :wk "move right")
+      "wh" '(evil-window-right :wk "right window")
+      "wJ" '(evil-window-move-very-bottom :wk "move down")
       "wj" '(evil-window-down :wk "down window")
+      "wK" '(evil-window-move-very-top :wk "move up")
       "wk" '(evil-window-up :wk "up window")
+      "wL" '(evil-window-move-far-left :wk "move left")
       "wl" '(evil-window-left :wk "left window")
       "wn" '(evil-window-next :wk "next window")
       "wp" '(evil-window-prev :wk "previous window")
-      "wr" '(evil-window-right :wk "right window")
       "ws" '(evil-window-split :wk "split window horizontally")
       "wv" '(evil-window-vsplit :wk "split window vertically"))
     (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
