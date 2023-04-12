@@ -449,6 +449,12 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
       :keymaps 'org-mode-map
       "=wt" '(org-wc-display :wk "org word-count tree")))
 #+end_src
+* native Emacs settings
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))
+#+end_src
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

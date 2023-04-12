@@ -298,16 +298,17 @@
    evil-want-keybinding nil
    ;; hopefully this will fix weird tab behaviour
    evil-want-C-i-jump nil)
-  :config
-  (setq evil-search-module 'isearch
-        evil-split-window-below t
-        evil-vsplit-window-right t
-        evil-undo-system 'undo-tree
-        evil-normal-state-cursor '(box "orange")
-        evil-insert-state-cursor '((bar . 3) "green")
-        evil-visual-state-cursor '(box "light blue")
-        evil-replace-state-cursor '(box "yellow"))
+  :custom
+  (evil-search-module 'isearch)
+  (evil-split-window-below t)
+  (evil-vsplit-window-right t)
+  (evil-undo-system 'undo-tree)
 
+  :config
+  (setq evil-normal-state-cursor '(box "orange"))
+  (setq evil-insert-state-cursor '((bar . 3) "green"))
+  (setq evil-visual-state-cursor '(box "light blue"))
+  (setq evil-replace-state-cursor '(box "yellow"))
   (evil-mode t) ;; globally enable evil mode
   ;; default mode: normal
   (evil-set-initial-state 'messages-buffer-mode 'normal)
@@ -530,35 +531,6 @@
                    crm-separator)
                   (car args))
           (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  ;; Vertico suggestions
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  ;; Vertico suggestions
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  (setq read-extended-command-predicate
-        #'command-completion-default-include-p)
-
-  ;; Vertico suggestions
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t)
-
-  ;;; locale
-  (setq locale-coding-system 'utf-8)
-  (setq coding-system-for-read 'utf-8)
-  (setq coding-system-for-write 'utf-8)
-  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-
   ;;; Font
   (if (daemonp)
       (add-hook 'after-make-frame-functions
@@ -570,19 +542,41 @@
   (global-set-key (kbd "C-=") 'text-scale-increase)
   (global-set-key (kbd "C--") 'text-scale-decrease)
 
-  ;;; scroll
-  (setq scroll-margin 5)
+  :custom
+  ;; Vertico suggestions
+  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+  ;; Vertico commands are hidden in normal buffers.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  (locale-coding-system 'utf-8)
+  (coding-system-for-read 'utf-8)
+  (coding-system-for-write 'utf-8)
+  (default-process-coding-system '(utf-8-unix . utf-8-unix))
+  (scroll-margin 5)
+  (indent-tabs-mode nil)
+  (tab-width 4)
+  (svg-lib-icons-dir
+   (expand-file-name "svg-lib" xdg/emacs-cache-directory))
+  (use-dialog-box nil)
+  ;; Vertico suggestions
+  ;; Do not allow the cursor in the minibuffer prompt
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt))
+  ;; Vertico suggestions
+  ;; Enable recursive minibuffers
+  (enable-recursive-minibuffers t)
+  (abbrev-file-name (expand-file-name "abbrev_defs"
+                                      xdg/emacs-state-directory))
+  :hook
+  (minibuffer-setup . cursor-intangible-mode)
 
-  ;; tabs
-  (setq-default indent-tabs-mode nil
-                tab-width 4)
-
-  ;; svg cache
-  (setq svg-lib-icons-dir
-        (expand-file-name "svg-lib" xdg/emacs-cache-directory))
-
-  ;; Use dialog boxes
-  (setq use-dialog-box nil))
+  :config
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+  ;;; locale
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

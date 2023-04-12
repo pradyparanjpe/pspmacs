@@ -31,12 +31,13 @@
   :general
   (pspmacs/leader-keys
     :states 'normal
+    "ib" '(eww-switch-to-buffer :wk "buffers")
     "io" '(eww t :wk "open")
     "is" '(:ignore t :wk "search")
     "isw" '(eww-search-words :wk "words"))
   (pspmacs/leader-keys
     :states 'normal
-    :keymaps 'eww-mode-map
+    ;; FIXME :keymaps 'eww-mode-map
     "iu"  '(:ignore t :wk "url")
     "iuy" '(eww-copy-page-url :wk "copy"))
 
@@ -63,9 +64,15 @@
             (end-of-line))))))
 
   :custom
+  (eww-auto-rename-buffer t)
   (eww-search-prefix "https://duckduckgo.com/html/?q=")
+  (eww-bookmarks-directory xdg/emacs-cache-directory)
   (eww-browse-url-new-window-is-tab nil)
   (shr-width fill-column)
+  (url-configuration-directory
+   (file-name-as-directory
+    (expand-file-name "url" xdg/emacs-cache-directory)))
+  (url-cookie-file (expand-file-name "cookies" url-configuration-directory))
 
   :hook
   ((eww-after-render . (lambda () (setq line-spacing 0.1)))

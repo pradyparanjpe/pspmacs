@@ -21,6 +21,7 @@ GRTAGS
 GTAGS
 
 # known emacs cache
+eln-cache/
 .cache/
 recentf
 projects
@@ -47,3 +48,6 @@ oer-reveal-org/
 
 # Evil-Tutor cache
 .tutor/
+
+# eww bookmarks
+eww-bookmarks

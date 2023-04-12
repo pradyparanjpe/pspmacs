@@ -414,4 +414,8 @@ parent."
     :keymaps 'org-mode-map
     "=wt" '(org-wc-display :wk "org word-count tree")))
 
+(use-package emacs
+  :custom
+  (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))
+
 (pspmacs/load-inherit)

@@ -48,7 +48,6 @@
       "TAB" #'magit-section-toggle
       "<escape>" #'transient-quit-one)
     :init
-    (setq git-commit-fill-column 50)
     (setq transient-history-file
           (expand-file-name "transient/history.el" xdg/emacs-cache-directory))
     (setq transient-values-file

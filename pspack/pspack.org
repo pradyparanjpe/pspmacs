@@ -38,8 +38,6 @@
 ** Move url cookies to =XDG=
 #+begin_src emacs-lisp :tangle vars.el
   (require 'pspmacs/xdg)
-  (setq-default url-cookie-file
-                (expand-file-name "url/cookies" xdg/emacs-cache-directory))
 #+end_src
 
 ** Install git clone

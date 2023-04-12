@@ -186,7 +186,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - Functions, variables, faces, keywords used by =pspmacs= are compiled in a package pspack.
 
 * .gitignore
-- Remember to add =.local.d/= to =pvt-emacs-directory/.gitignore=, since it may be used as =local-emacs-directory=.
+- Remember to add =local.d/= to =pvt-emacs-directory/.gitignore=, since it may be used as =local-emacs-directory=.
 - As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in =late/xdg.el= to point at =xdg/emacs-cache-directory=.
   - However, if they store them at the hard-coded location =user-emacs-home/NEW-NAME=, =NEW-NAME= needs to be added to =pspmacs/.gitignore=.
     I shall do so whenever I notice such incidences either myself or through an issue.

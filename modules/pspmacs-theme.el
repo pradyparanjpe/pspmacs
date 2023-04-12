@@ -68,5 +68,9 @@
 
 (eval `(use-package ,@modus-kwargs))
 
+(use-package emacs
+  :custom
+  (custom-theme-directory xdg/emacs-cache-directory))
+
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

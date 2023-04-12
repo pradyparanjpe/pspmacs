@@ -81,6 +81,13 @@ In Emacs-29, ~pspmacs/install-git-clone~ is obviated.
 ** NEXT Drop pspmacs/install-git-clone
 ** TODO mode-line
 
+* native Emacs settings
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (custom-theme-directory xdg/emacs-cache-directory))
+#+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)
