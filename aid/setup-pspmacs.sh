@@ -1,257 +1,26 @@
 #!/usr/bin/env sh
-# -*- coding: urf-8; mode: shell-script -*-
+# -*- coding: utf-8; mode: shell-script; -*-
+#
 # Copyright © 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+#
+# Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+# Keywords: help, languages
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 # Clone and initialize PSPMacs (POSIX)
 # tested to complete on alpine Linux in gitlab-ci runner
-
-# Coming from python, I would have written this as separate modules, imported suitably
-# and executed the necessary. But that would either require the user to select the correct
-# script with correct flags or me to bundle the scripts together.
-# So, this single file is composed of modular sections
-
-###############################################################################
-
-#########################
-#                       #
-#  GNU/LINUX FUNCTIONS  #
-#                       #
-#########################
-
-
-# install fonts locally
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-linux_install_fonts () {
-    # local fonts directory
-    printf "[INFO] installing fonts locally.\n"
-
-    if ! command -v fc-cache >/dev/null 2>&1; then
-        package_install fontconfig
-    fi
-
-    fonts_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/fonts"
-
-    if [ ! -d "${fonts_dir}" ]; then
-        mkdir -p "${fonts_dir}"
-    fi
-
-    for entry in ${fonts}; do
-        font_name="$(echo "${entry}" | cut -d= -f1)"
-        url="$(echo "${entry}" | cut -d= -f2)"
-        curl --fail --location --show-error "${url}" \
-             --output "${font_name}.zip" \
-            || clean_exit 65 "couldn't download %s.\n" "${url}"
-        unzip -o -q -d "${fonts_dir}" "${font_name}.zip"
-        rm "${font_name}.zip"
-    done
-
-    echo "fc-cache -f"
-    fc-cache -f || clean_exit 65 "couldn't initialize fonts.\n"
-    unset fonts_dir fira_url viktor_url
-}
-
-
-# Wrapper around apk initialization (Alpine Linux and derivatives)
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_apk_initialize () {
-    # generally in a container with root
-    apk update || clean_exit 65 "[APK]  Couldn't update."
-    # sudo apk update || clean_exit 65 "[APK]  Couldn't update."
-}
-
-
-# Wrapper around apt initialization (Debian Linux and derivatives)
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_apt_initialize () {
-    sudo apt update || clean_exit 65 "[APT]  Couldn't update."
-}
-
-
-# Wrapper around dnf initialization (RedHat Linux and derivatives)
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_dnf_initialize () {
-    sudo dnf -y update || clean_exit 65 "[DNF]  Couldn't update."
-}
-
-
-# Dummy weight
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_pacman_initialize () {
-    true
-}
-
-
-# Wrapper around zypper initialization (Suse Linux and derivatives)
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_zypper_initialize () {
-    sudo zypper ref || clean_exit 65 "[ZYPR]  Couldn't update."
-}
-
-
-# Wrapper around apk installation (Alpine Linux and derivatives)
-#
-# Args:
-#     $@: items to install
-# Returns:
-#     NULL
-package_apk_install () {
-    apk add "$@" || clean_exit 65 "[APK]  Couldn't install $*."
-    # sudo apk update || clean_exit 65 "[APK]  Couldn't update."
-}
-
-
-# Wrapper around apt installation (Debian Linux and derivatives)
-#
-# Args:
-#     $@: items to install
-# Returns:
-#     NULL
-package_apt_install () {
-    sudo apt install -y "$@" || clean_exit 65 "[APT]  Couldn't install $*."
-}
-
-
-# Wrapper around dnf installation (RedHat Linux and derivatives)
-#
-# Args:
-#     $@: items to install
-# Returns:
-#     NULL
-package_dnf_install () {
-    sudo dnf -y install "$@" || clean_exit 65 "[DNF]  Couldn't install $*."
-}
-
-
-# Wrapper around pacman installation (Arch Linux and derivatives)
-#
-# Args:
-#     $@: items to install
-# Returns:
-#     NULL
-package_pacman_install () {
-    sudo pacman --noconfirm -Syu "$@" \
-        || clean_exit 65 "[ARCH]  Couldn't install $*."
-}
-
-
-# Wrapper around zypper installation (Suse Linux and derivatives)
-#
-# Args:
-#     $@: items to install
-# Returns:
-#     NULL
-package_zypper_install () {
-    sudo zypper -n install "$@" || clean_exit 65 "[ZYPR]  Couldn't install $*."
-}
-
-
-###############################################################################
-
-#######################
-#                     #
-#   MacOS FUNCTIONS   #
-#                     #
-#######################
-
-
-# Install fonts using brew cask
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-macos_install_fonts () {
-    printf "[INFO] installing fonts using homebrew.\n"
-    mac_fonts=""
-    for entry in ${fonts}; do
-        font_name="$(echo "${entry}" | cut -d= -f1)"
-        if [ -z "${mac_fonts}" ]; then
-            mac_fonts="font-${font_name}"
-        else
-            mac_fonts="${mac_fonts} font-${font_name}"
-        fi
-    done
-
-    # shellcheck disable=SC2086
-    brew install --cask $mac_fonts
-    unset mac_fonts
-}
-
-
-# Initialize package manager for MacOS: homebrew
-# install homebrew, the missing package manager
-# as prescribed here: https://brew.sh/
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_homebrew_initialize () {
-    printf "\n\n"
-    printf "[PART] Homebrew\n"
-    if command -v "brew"; then
-        printf "[INFO] found that 'brew' is already installed.\n"
-    else
-        printf "[INFO] installing Homebrew, the missing package manager.\n"
-        printf "[ACT]  You may be asked questions by 'Homebrew'.\n"
-        /bin/bash -c "$(curl -fsSL \
-https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-    brew tap homebrew/cask-fonts
-}
-
-
-# Installation wrapper around default package manager
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-package_homebrew_install () {
-    deps="$*"
-    if [ "${deps}" = "npm" ]; then
-        # npm is the only dependency - argument passed
-        deps="node"
-    elif [ "${deps}" = "${deps#*npm}" ]; then
-        # npm is not in deps
-        true
-    elif [ "${deps}" = "${deps#npm}" ]; then
-        # npm is not the first dep
-        deps="${deps%% npm*} node${deps#* npm}"
-    else
-        # npm is the first dep
-        deps="node ${deps#npm }"
-    fi
-    # shellcheck disable=SC2086
-    brew install $deps
-
-    # What about --cask?
-    unset deps
-}
-
 
 ###############################################################################
 
@@ -260,7 +29,6 @@ package_homebrew_install () {
 #  SCRIPT ENVIRONMENT   #
 #                       #
 #########################
-
 
 # set script-variables
 #
@@ -379,7 +147,6 @@ viktor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
 
 }
 
-
 # unset script-variables
 #
 # Args:
@@ -390,7 +157,6 @@ unset_vars () {
     # shellcheck disable=SC2086
     unset ${global_vars}
 }
-
 
 # Clean environment and exit optionally with an error message
 #
@@ -421,7 +187,6 @@ clean_exit() {
     unset_vars
     exit 0
 }
-
 
 # command line arguments
 #
@@ -483,6 +248,245 @@ ${fonts}
     done
 }
 
+###############################################################################
+
+#########################
+#                       #
+#  GNU/LINUX FUNCTIONS  #
+#                       #
+#########################
+
+# Install fonts locally
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+linux_install_fonts () {
+    # local fonts directory
+    printf "[INFO] installing fonts locally.\n"
+
+    if ! command -v fc-cache >/dev/null 2>&1; then
+        package_install fontconfig
+    fi
+
+    fonts_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/fonts"
+
+    if [ ! -d "${fonts_dir}" ]; then
+        mkdir -p "${fonts_dir}"
+    fi
+
+    for entry in ${fonts}; do
+        font_name="$(echo "${entry}" | cut -d= -f1)"
+        url="$(echo "${entry}" | cut -d= -f2)"
+        curl --fail --location --show-error "${url}" \
+             --output "${font_name}.zip" \
+            || clean_exit 65 "couldn't download %s.\n" "${url}"
+        unzip -o -q -d "${fonts_dir}" "${font_name}.zip"
+        rm "${font_name}.zip"
+    done
+
+    echo "[INFO] Rebuilding local fonts cache."
+    fc-cache -f || clean_exit 65 "Couldn't initialize fonts.\n"
+    unset fonts_dir fira_url viktor_url
+}
+
+# Wrapper around apk initialization (Alpine Linux and derivatives)
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+package_apk_initialize () {
+    # generally in a container with root
+    # shellcheck disable=SC2317
+    apk update || clean_exit 65 "[APK]  Couldn't update."
+    # sudo apk update || clean_exit 65 "[APK]  Couldn't update."
+}
+
+# Wrapper around apt initialization (Debian Linux and derivatives)
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+package_apt_initialize () {
+    # shellcheck disable=SC2317
+    sudo apt update || clean_exit 65 "[APT]  Couldn't update."
+}
+
+# Wrapper around dnf initialization (RedHat Linux and derivatives)
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+package_dnf_initialize () {
+    # shellcheck disable=SC2317
+    sudo dnf -y update || clean_exit 65 "[DNF]  Couldn't update."
+}
+
+# Dummy weight
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+package_pacman_initialize () {
+    # shellcheck disable=SC2317
+    true
+}
+
+# Wrapper around zypper initialization (Suse Linux and derivatives)
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+package_zypper_initialize () {
+    # shellcheck disable=SC2317
+    sudo zypper ref || clean_exit 65 "[ZYPR]  Couldn't update."
+}
+
+# Wrapper around apk installation (Alpine Linux and derivatives)
+#
+# Args:
+#     $@: items to install
+# Returns:
+#     NULL
+package_apk_install () {
+    # shellcheck disable=SC2317
+    apk add "$@" || clean_exit 65 "[APK]  Couldn't install $*."
+    # sudo apk update || clean_exit 65 "[APK]  Couldn't update."
+}
+
+# Wrapper around apt installation (Debian Linux and derivatives)
+#
+# Args:
+#     $@: items to install
+# Returns:
+#     NULL
+package_apt_install () {
+    # shellcheck disable=SC2317
+    sudo apt install -y "$@" || clean_exit 65 "[APT]  Couldn't install $*."
+}
+
+# Wrapper around dnf installation (RedHat Linux and derivatives)
+#
+# Args:
+#     $@: items to install
+# Returns:
+#     NULL
+package_dnf_install () {
+    # shellcheck disable=SC2317
+    sudo dnf -y install "$@" || clean_exit 65 "[DNF]  Couldn't install $*."
+}
+
+# Wrapper around pacman installation (Arch Linux and derivatives)
+#
+# Args:
+#     $@: items to install
+# Returns:
+#     NULL
+package_pacman_install () {
+    # shellcheck disable=SC2317
+    sudo pacman --noconfirm -Syu "$@" \
+        || clean_exit 65 "[ARCH]  Couldn't install $*."
+}
+
+# Wrapper around zypper installation (Suse Linux and derivatives)
+#
+# Args:
+#     $@: items to install
+# Returns:
+#     NULL
+package_zypper_install () {
+    # shellcheck disable=SC2317
+    sudo zypper -n install "$@" || clean_exit 65 "[ZYPR]  Couldn't install $*."
+}
+
+###############################################################################
+
+#######################
+#                     #
+#   MacOS FUNCTIONS   #
+#                     #
+#######################
+
+# Install fonts using brew cask
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+macos_install_fonts () {
+    printf "[INFO] installing fonts using homebrew.\n"
+    mac_fonts=""
+    for entry in ${fonts}; do
+        font_name="$(echo "${entry}" | cut -d= -f1)"
+        if [ -z "${mac_fonts}" ]; then
+            mac_fonts="font-${font_name}"
+        else
+            mac_fonts="${mac_fonts} font-${font_name}"
+        fi
+    done
+
+    # shellcheck disable=SC2086
+    brew install --cask $mac_fonts
+    unset mac_fonts
+}
+
+# Initialize package manager for MacOS: homebrew
+# install homebrew, the missing package manager
+# as prescribed here: https://brew.sh/
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+# shellcheck disable=SC2317
+package_homebrew_initialize () {
+    printf "\n\n"
+    printf "[PART] Homebrew\n"
+    if command -v "brew"; then
+        printf "[INFO] found that 'brew' is already installed.\n"
+    else
+        printf "[INFO] installing Homebrew, the missing package manager.\n"
+        printf "[ACT]  You may be asked questions by 'Homebrew'.\n"
+        /bin/bash -c "$(curl -fsSL \
+https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    brew tap homebrew/cask-fonts
+}
+
+# Installation wrapper around default package manager
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+# shellcheck disable=SC2317
+package_homebrew_install () {
+    deps="$*"
+    if [ "${deps}" = "npm" ]; then
+        # npm is the only dependency - argument passed
+        deps="node"
+    elif [ "${deps}" = "${deps#*npm}" ]; then
+        # npm is not in deps
+        true
+    elif [ "${deps}" = "${deps#npm}" ]; then
+        # npm is not the first dep
+        deps="${deps%% npm*} node${deps#* npm}"
+    else
+        # npm is the first dep
+        deps="node ${deps#npm }"
+    fi
+    # shellcheck disable=SC2086
+    brew install $deps
+
+    # What about --cask?
+    unset deps
+}
 
 ###############################################################################
 
@@ -491,7 +495,6 @@ ${fonts}
 #    SCRIPT SEGMENTS    #
 #                       #
 #########################
-
 
 # Initialize package manager for the platform (distribution/MacOS)
 #
@@ -524,7 +527,6 @@ init_package_manager () {
     clean_exit 1 "Supported package managers: ${package_managers}."
 }
 
-
 # dependencies
 #
 # Args:
@@ -545,7 +547,6 @@ install_dependencies () {
         fi
     done
 }
-
 
 # Back up existing Emacs from standard locations with a .bak extension
 #
@@ -570,30 +571,31 @@ backup_std_emacs () {
     done
 }
 
-
-# Clone pspmacs installation
+# reset backups to original
 #
 # Args:
 #     NULL
 # Returns:
 #     NULL
-clone_pspmacs () {
+revert_backup () {
     printf "\n\n"
-    printf "[PART] Download PSPMacs\n"
+    printf "[FAIL] Failed linking configuration files.\n"
+    printf "[INFO] Reverting from Back-up:\n"
+    for el_loc in ${emacs_init_dirs}; do
+        if [ -d "${el_loc}.bak" ]; then
+            mv "${el_loc}.bak" "${el_loc}" >/dev/null 2>&1 || true
+        fi
+    done
 
-    # set environment
-    printf "[INFO] Preparing environment.\n"
-
-    mkdir -p "${emacs_data}/src/"
-    mkdir -p "${emacs_data}/pspmacs/"
-    mkdir -p "${emacs_state}/"
-
-    printf "[INFO] cloning PSPMacs.\n"
-    git clone --recurse-submodules \
-        "https://www.gitlab.com/pradyparanjpe/pspmacs.git" \
-        "${emacs_data}/pspmacs"
+    for el_loc in ${emacs_init_files}; do
+        if [ -f "${el_loc}.bak" ]; then
+            mv "${el_loc}.bak" "${el_loc}" >/dev/null 2>&1 || true
+        fi
+    done
+    printf "[FAIL] Automated set-up failed.\n"
+    unset_vars
+    clean_exit 66
 }
-
 
 # Location for $LOCAL_EMACS_HOME
 #
@@ -638,6 +640,28 @@ export LOCAL_EMACS_HOME\n"
         --receive-keys "066DAFCB81E42C40"
 }
 
+# Clone pspmacs installation
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+clone_pspmacs () {
+    printf "\n\n"
+    printf "[PART] Download PSPMacs\n"
+
+    # set environment
+    printf "[INFO] Preparing environment.\n"
+
+    mkdir -p "${emacs_data}/src/"
+    mkdir -p "${emacs_data}/pspmacs/"
+    mkdir -p "${emacs_state}/"
+
+    printf "[INFO] cloning PSPMacs.\n"
+    git clone --recurse-submodules \
+        "https://www.gitlab.com/pradyparanjpe/pspmacs.git" \
+        "${emacs_data}/pspmacs"
+}
 
 # softlink ~/.config/emacs and ~/.emacs.d to ~/.local/share/emacs/pspmacs
 #
@@ -651,34 +675,6 @@ set_emacs_config () {
     ln -sf "${emacs_config}" "${HOME}/.emacs.d" || revert_backup
     ln -sf "${emacs_data}/pspmacs" "${emacs_config}" || revert_backup
 }
-
-
-# reset backups to original
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-revert_backup () {
-    printf "\n\n"
-    printf "[FAIL] Failed linking configuration files.\n"
-    printf "[INFO] Reverting from Back-up:\n"
-    for el_loc in ${emacs_init_dirs}; do
-        if [ -d "${el_loc}.bak" ]; then
-            mv "${el_loc}.bak" "${el_loc}" >/dev/null 2>&1 || true
-        fi
-    done
-
-    for el_loc in ${emacs_init_files}; do
-        if [ -f "${el_loc}.bak" ]; then
-            mv "${el_loc}.bak" "${el_loc}" >/dev/null 2>&1 || true
-        fi
-    done
-    printf "[FAIL] Automated set-up failed.\n"
-    unset_vars
-    clean_exit 66
-}
-
 
 # Print some exit information and instructions
 #
@@ -713,7 +709,6 @@ printf_byelogue () {
     printf "%s\n" "${bye_message}"
     unset bye_message
 }
-
 
 # initialize pspmacs
 #
@@ -754,6 +749,5 @@ main () {
     printf_byelogue
     clean_exit
 }
-
 
 main "$@"
