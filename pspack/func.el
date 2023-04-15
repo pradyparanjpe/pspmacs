@@ -355,4 +355,29 @@ to publish orgmode files to html."
                         (org-element-property :type context)
                         (org-element-property :path context))))))
 
+(defun pspmacs/mode-scratch (&optional buffer-mode)
+  "Create a scratch buffer with arbitrary major mode in BUFFER-MODE"
+  (interactive)
+  (let* ((buffer-mode (or buffer-mode 'lisp-interaction-mode))
+         (buffer-string-prefix (string-trim-right
+                                (if (symbolp buffer-mode)
+                                    (symbol-name buffer-mode)
+                                  buffer-mode)
+                                "-mode"))
+         (scratch-name (format "*%s scratch*" buffer-string-prefix))
+         (scratch-notice
+          (format
+           "%s%s\n%s mode.\n\n"
+           "This buffer is for text that is not saved, and for "
+           buffer-string-prefix
+           "To create a file, visit it with C-x C-f and enter text in its buffer.")))
+    (switch-to-buffer scratch-name)
+    (with-current-buffer scratch-name
+      (funcall-interactively buffer-mode)
+      (when (= (buffer-size) 0)
+        (insert scratch-notice)
+        (beginning-of-buffer)
+        (comment-line 2)
+        (end-of-buffer)))))
+
 ;;; func.el ends there
