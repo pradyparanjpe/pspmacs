@@ -449,6 +449,22 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
       :keymaps 'org-mode-map
       "=wt" '(org-wc-display :wk "org word-count tree")))
 #+end_src
+* rksm/org-ai
+- OpenAI
+  - ChatGPT
+  - Whisper
+  - DALL-E
+#+begin_src emacs-lisp
+  (use-package org-ai
+    :commands (org-ai-mode)
+    :hook
+    (org-mode . org-ai-mode)
+    :config
+    ;; if you are on the gpt-4 beta:
+    ;; (setq org-ai-default-chat-model "gpt-4")
+    ;; if you are using yasnippet and want `ai` snippets
+    (org-ai-install-yasnippets))
+#+end_src
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs

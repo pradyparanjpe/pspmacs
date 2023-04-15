@@ -414,6 +414,16 @@ parent."
     :keymaps 'org-mode-map
     "=wt" '(org-wc-display :wk "org word-count tree")))
 
+(use-package org-ai
+  :commands (org-ai-mode)
+  :hook
+  (org-mode . org-ai-mode)
+  :config
+  ;; if you are on the gpt-4 beta:
+  ;; (setq org-ai-default-chat-model "gpt-4")
+  ;; if you are using yasnippet and want `ai` snippets
+  (org-ai-install-yasnippets))
+
 (use-package emacs
   :custom
   (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))
