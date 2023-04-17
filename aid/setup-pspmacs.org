@@ -5,14 +5,14 @@
 
 * Introduction
 ** Disclaimer
-PSPMacs is distributed with an idea that it may aid others, under terms of GNU LGPLv3.
+/PSPMacs/ is distributed with an idea that it may aid others, under terms of =GNU LGPLv3=.
 However, I am neither selling, nor endorsing its use as the reader's personal configuration.
-PSPMacs MAY and often WILL break due to my clumsy commits.
+/PSPMacs/ MAY and often WILL break due to my clumsy commits.
 The reader is expected to be able to fix their configuration.
-As is mentioned in the project's =README=, I have paid a price for using someone's configuration, hence, I suggest that the reader shouldn't.
-This is NOT Spacemacs, nor DOOM-Emacs, not Crafted Emacs.
-It reader should use this as
-- A repository of =elisp= code snippets for their configuration, which they understand completely.
+As is mentioned in the project's =README=, I have paid a price for using someone's configuration; I suggest that the reader shouldn't.
+This is NOT /Spacemacs/, nor /DOOM-Emacs/, nor /Crafted Emacs/.
+The reader should use this as:
+- A repository of =elisp= code snippets for their own configuration, which when they understand completely.
 - An idea to structure their own configuration.
 - A framework to start configuring Emacs on their own.
 #+begin_src sh :shebang #!/usr/bin/env sh
@@ -40,11 +40,9 @@ It reader should use this as
   # tested to complete on alpine Linux in gitlab-ci runner
 #+end_src
 
-** Modularity
-Coming from python, I would ordinarily have written this as separate modules,
-imported them suitably and executed the necessary parts.
-That would either require the user to select the correct script,
-or supply correct flags and require me to bundle the scripts together.
+** Modular
+Coming from python, I would ordinarily have written this as separate modules, imported them suitably and executed the necessary parts.
+That would either require the user to select the correct script, or supply correct flags and require me to bundle the scripts together.
 So, instead, this single file is composed of modular sections.
 
 * Script Environment
@@ -293,7 +291,7 @@ So, instead, this single file is composed of modular sections.
 #+end_src
 
 ** Local Fonts
-Install fonts required by PSPMacs locally on GNU/Linux at =XDG_DATA_HOME/fonts=.
+Install fonts required by /PSPMacs/ locally on GNU/Linux at =XDG_DATA_HOME/fonts=.
 #+begin_src sh
 # Install fonts locally
 #
@@ -461,7 +459,6 @@ Update repository index.
 
 * MacOS functions
 Completely untested
-
 #+begin_src sh
   ###############################################################################
 
@@ -679,12 +676,11 @@ Reset them later if installation fails.
       unset_vars
       clean_exit 66
   }
-
 #+end_src
 
 ** =LOCAL_EMACS_HOME=
 As explained in the project's =README=, =LOCAL_EMACS_HOME= holds machine-specific cache.
-We set it prior to loading PSPMacs the first time, so that the same location is used always.
+We set it prior to loading /PSPMacs/ the first time, so that the same location is used always.
 #+begin_src sh
   # Location for $LOCAL_EMACS_HOME
   #
@@ -728,11 +724,10 @@ We set it prior to loading PSPMacs the first time, so that the same location is 
       gpg --homedir "${LOCAL_EMACS_HOME}/packages/gnupg" \
           --receive-keys "066DAFCB81E42C40"
   }
-
 #+end_src
 
 ** Infect
-Link =~/.emacs.d= and =${XDG_CONFIG_HOME}/emacs= to PSPMacs.
+Link =~/.emacs.d= and =${XDG_CONFIG_HOME}/emacs= to /PSPMacs/.
 If this fails, restore the backed up files.
 #+begin_src sh
   # Clone pspmacs installation
@@ -770,7 +765,6 @@ If this fails, restore the backed up files.
       ln -sf "${emacs_config}" "${HOME}/.emacs.d" || revert_backup
       ln -sf "${emacs_data}/pspmacs" "${emacs_config}" || revert_backup
   }
-
 #+end_src
 
 * PR GOODBYE
@@ -810,6 +804,7 @@ God by ye.
       unset bye_message
   }
 #+end_src
+
 * Main guard
 Python equivalent ~if __name__ == __main__~
 #+begin_src sh

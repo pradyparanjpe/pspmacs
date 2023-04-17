@@ -24,8 +24,8 @@ Downstream modification of template opinions break (as they *did* for me) when t
 This is my *hitherto successful* attempt at configuring Emacs (v28 and v29) from scratch to use it as a /text editor/ (🤣).
 
 ** Copy Configuration
-To copy PSPMacs configuration (=POSIX=),
-- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh?inline=false][setup-pspmacs.sh]]
+To copy /PSPMacs/ configuration (=POSIX=),
+- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh?inline=false][setup-pspmacs.sh]], which is exported from [[file:org/setup-pspmacs.org]].
 - Run it using a =POSIX= shell
 #+begin_src bash :tangle no
   sh setup-pspmacs.sh
@@ -183,7 +183,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 #+end_src
 
 ** [[file:pspack/pspack.org][pspack]]
-- Functions, variables, faces, keywords used by =pspmacs= are compiled in a package pspack.
+- Functions, variables, faces, keywords used by /PSPMacs/ are compiled in a package pspack.
 
 * .gitignore
 - Remember to add =local.d/= to =pvt-emacs-directory/.gitignore=, since it may be used as =local-emacs-directory=.
