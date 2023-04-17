@@ -46,7 +46,6 @@
     ;; ORG AGENDA
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
-      "a"   '(:ignore t :wk "agenda")
       "ao"  '(:ignore t :wk "org-agenda")
       "ao#" '(org-agenda-list-stuck-projects :wk "stuck")
       "ao/" '(org-occur-in-agenda-files :wk "occur in agenda")
@@ -109,6 +108,18 @@
 
       ">"   '(org-demote-subtree :wk "demote subtree")
       "<"   '(org-promote-subtree :wk "demote subtree")
+
+      "["   '(:ignore t :wk "checkboxes")
+      "[]"  '(pspmacs/org-put-checkboxes :wk "here")
+      "[*"  '(pspmacs/org-put-checkboxes-recursively
+              :wk "recursively")
+      "[!"  '(:ignore t :wk "remove")
+      "[!]" '((lambda () (interactive)
+                (pspmacs/org-put-checkboxes t))
+              :wk "insert here")
+      "[!*" '((lambda () (interactive)
+                (pspmacs/org-put-checkboxes-recursively t))
+              :wk "insert here")
 
       "S"   '(:ignore :wk "special")
       "Sx"  '(org-cut-special :wk "org cut special")
@@ -457,6 +468,14 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
 #+begin_src emacs-lisp
   (use-package org-ai
     :commands (org-ai-mode)
+    :general
+    (pspmacs/leader-keys
+      "Ap"  '(:ignore t :wk "prompt")
+      "App" '(org-ai-prompt :wk "prompt")
+      "Apm" '(org-ai-mark-last-region :wk "mark")
+      "Apr" '(org-ai-on-region :wk "region")
+
+      "As"  '(org-ai-summarize :wk "summarize"))
     :hook
     (org-mode . org-ai-mode)
     :config
@@ -471,6 +490,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     :custom
     (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))
 #+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

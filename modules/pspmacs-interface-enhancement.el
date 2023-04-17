@@ -96,6 +96,15 @@
   (pspmacs/leader-keys
     "8" '(insert-char :wk "UTF-8 character"))
 
+  ;; see pspmacs-notes.org
+  (pspmacs/leader-keys
+    :keymaps 'org-mode-map
+    "a"   '(:ignore t :wk "agenda"))
+
+  (pspmacs/leader-keys
+    :keymaps 'org-mode-map
+    "A"   '(:ignore t :wk "AI"))
+
   ;; buffer
   ;; see 'bufler' and 'popper'
   (pspmacs/leader-keys
@@ -119,6 +128,9 @@
               (pspmacs/mode-scratch 'org-mode))
             :wk "org-mode")
     "bsp" '(:ignore t :wk "prog")
+    "bspe" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'emacs-lisp-mode))
+             :wk "elisp")
     "bspp" '((lambda () (interactive)
                (pspmacs/mode-scratch 'python-mode))
              :wk "python")

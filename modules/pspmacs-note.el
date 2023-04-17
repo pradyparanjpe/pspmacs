@@ -37,7 +37,6 @@ Revert to the normal definition outside of these fragments."
   ;; ORG AGENDA
   (pspmacs/leader-keys
     :keymaps 'org-mode-map
-    "a"   '(:ignore t :wk "agenda")
     "ao"  '(:ignore t :wk "org-agenda")
     "ao#" '(org-agenda-list-stuck-projects :wk "stuck")
     "ao/" '(org-occur-in-agenda-files :wk "occur in agenda")
@@ -100,6 +99,18 @@ Revert to the normal definition outside of these fragments."
 
     ">"   '(org-demote-subtree :wk "demote subtree")
     "<"   '(org-promote-subtree :wk "demote subtree")
+
+    "["   '(:ignore t :wk "checkboxes")
+    "[]"  '(pspmacs/org-put-checkboxes :wk "here")
+    "[*"  '(pspmacs/org-put-checkboxes-recursively
+            :wk "recursively")
+    "[!"  '(:ignore t :wk "remove")
+    "[!]" '((lambda () (interactive)
+              (pspmacs/org-put-checkboxes t))
+            :wk "insert here")
+    "[!*" '((lambda () (interactive)
+              (pspmacs/org-put-checkboxes-recursively t))
+            :wk "insert here")
 
     "S"   '(:ignore :wk "special")
     "Sx"  '(org-cut-special :wk "org cut special")
@@ -416,6 +427,14 @@ parent."
 
 (use-package org-ai
   :commands (org-ai-mode)
+  :general
+  (pspmacs/leader-keys
+    "Ap"  '(:ignore t :wk "prompt")
+    "App" '(org-ai-prompt :wk "prompt")
+    "Apm" '(org-ai-mark-last-region :wk "mark")
+    "Apr" '(org-ai-on-region :wk "region")
+
+    "As"  '(org-ai-summarize :wk "summarize"))
   :hook
   (org-mode . org-ai-mode)
   :config

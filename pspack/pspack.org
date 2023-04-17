@@ -787,6 +787,94 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
             (comment-line 2)
             (end-of-buffer)))))
 #+end_src
+* Org insert check-boxes and cookies
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs--org-pop-cookie (heading-cookie-re)
+    "PRIVATE: used by `pspmacs/org-put-checkboxes'.
+
+  HEADING-COOKIE-RE: regular expression that recognises cookies"
+    (replace-regexp heading-cookie-re
+                    ""
+                    nil
+                    (line-beginning-position)
+                    (line-end-position)
+                    t)
+    (if (string= (org-get-todo-state) "TODO")
+        (org-todo "")))
+
+  (defun pspmacs--org-push-cookie ()
+    "PRIVATE: used by `pspmacs/org-put-checkboxes'."
+    (end-of-line)
+    (insert " [/]")
+    (unless (org-get-todo-state)
+      (org-todo "TODO")))
+
+  (defun pspmacs/org-map-plain-list (func)
+    "Walk down the current heading to locate plain lists and map.
+
+  Allpy FUNC to all lines which qualify to be list items `org-at-item-p'"
+    (save-excursion
+      (forward-line 1)
+      (while (and (not (eobp))
+                  (not (org-at-heading-p)))
+        (when (org-at-item-p)
+          (funcall func))
+        (forward-line 1))))
+
+  (defun pspmacs/org-put-checkboxes (&optional negate called-recursively)
+    "Mark current line with incomplete tags.
+
+  If current line is a heading, add a cookie '[/]' at the end.
+  If current is a list, add a checkbox '[ ]' at the beginning.
+  Pass otherwise or if already present.
+
+  If NEGATE is t, perform the opposite action, removing checkboxes and cookes
+  If CALLED-RECURSIVELY, don't update cookie statistics, that should be done
+  only at the end of recursion by the caller function.
+  "
+    (interactive)
+    (save-excursion
+      (let
+          ((line-text (buffer-substring-no-properties
+                       (line-beginning-position)
+                       (line-end-position)))
+           (heading-cookie-re ".+\\(\\[[0-9]*/[0-9]*\\]\\)$"))
+        (cond ((org-at-heading-p)
+               ;; Handle Headings
+               (if (string-match-p heading-cookie-re line-text)
+                   (if negate
+                       (pspmacs--org-pop-cookie heading-cookie-re))
+                 (pspmacs--org-push-cookie))
+               (unless called-recursively
+                 (org-update-statistics-cookies t)))
+              ((org-at-item-p)
+               ;; Handle Lists
+               (when (or (null (or (org-at-item-checkbox-p)
+                                   negate))
+                         (and (org-at-item-checkbox-p)
+                              negate))
+                 (org-toggle-checkbox '(4))))))))
+
+  (defun pspmacs/org-put-checkboxes-recursively (&optional negate)
+    "Mark current line with incomplete tags, iterating over org-subtree.
+
+    Apply `pspmacs/org-put-checkboxes' recursively down the subtree;
+    passing the optional argument NEGATE.
+    "
+    (interactive)
+    (save-excursion
+      (org-map-tree
+       (lambda ()
+         (pspmacs/org-put-checkboxes negate t)
+         (org-map-entries
+          (pspmacs/org-map-plain-list
+           (lambda ()
+             (pspmacs/org-put-checkboxes negate t)))
+          nil
+          'tree)))
+      (org-update-statistics-cookies nil)))
+#+end_src
+
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there
