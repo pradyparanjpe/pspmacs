@@ -70,6 +70,34 @@ In Emacs-29, this is obviated.
                melpa-style-recipe)))
 #+end_src
 
+* Update PSPmacs
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs--call-shell (program args &optional on-fail)
+      "Call shell command from function.
+
+  Exceute PROGRAM in shell with ARGS.
+  On failure execute ON-FAIL if given.
+  Return STDOUT as a string
+  Copied and maybe modufied form module pspmacs-ci-cd."
+      (message "Executing: %s args: %s" program args)
+      (with-temp-buffer
+        (let ((exit-code (apply 'call-process
+                                `(,program nil ,(current-buffer) nil ,@args))))
+          (unless (eq 0 exit-code)
+            (when on-fail
+              (switch-to-buffer (current-buffer))
+              (eval on-fail)))
+          (replace-regexp-in-string "\n$" "" (buffer-string)))))
+
+  (defun pspmacs/git-rebase ()
+    "Synchronize by rebasing locally cloned worktree/git on remote git."
+    (interactive)
+    (let ((default-directory user-emacs-directory))
+      (pspmacs--call-shell "git" '("fetch" "origin"))
+      (pspmacs--call-shell "git" '("rebase")))
+    (message "done."))
+#+end_src
+
 * Home-splash
 - Home splash screen customizations
 #+begin_src emacs-lisp :tangle vars.el

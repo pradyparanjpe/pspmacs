@@ -72,9 +72,11 @@
 
   (pspmacs/leader-keys
     :states 'normal
-    "+" '(:ignore t :wk "Emacs-Repo Update")
-    "+m" '(emacs-repo :wk "Transient menu")
-    "++" '(emacs-repo/repo-install :wk "Upgrade with defaults"))
+    "+" '(:ignore t :wk "Update")
+    "+e" '(:ignore t :wk "Emacs (Build)")
+    "+em" '(emacs-repo :wk "Transient menu")
+    "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
+    "++" '(pspmacs/git-rebase :wk "Configuration"))
 
   (pspmacs/leader-keys
     "TAB" '((lambda ()
