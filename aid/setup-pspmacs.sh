@@ -611,22 +611,24 @@ set_local_home () {
         return
     fi
 
-    LOCAL_EMACS_HOME="${emacs_cache}/.local.d"
+    LOCAL_EMACS_HOME="${emacs_cache}/local.d"
     printf "Do you want to set local cache in %s? [y/N]\t" "${LOCAL_EMACS_HOME}"
     read -r yn
 
     case "${yn}" in
         [Yy]*)
-            rc_export="\
-\n\n# ADDED BY PSPMACS\n\
-LOCAL_EMACS_HOME=\"${LOCAL_EMACS_HOME}\"\n\
-export LOCAL_EMACS_HOME\n"
+            rc_export="
+
+# ADDED BY PSPMACS
+LOCAL_EMACS_HOME=\"${LOCAL_EMACS_HOME}\"
+export LOCAL_EMACS_HOME"
             if [ -n "${RUNCOMDIR}" ]; then
                 printf "%s\n" "${rc_export}" \
                        >> "${XDG_CONFIG_HOME:-${HOME}/.config}/local.d/.emacsrc"
             else
                 printf "%s\n" "${rc_export}" >> "${HOME}/.bashrc"
                 printf "%s\n" "${rc_export}" >> "${HOME}/.zshrc"
+                printf "%s\n" "${rc_export}" >> "${HOME}/.profile"
             fi
             ;;
         *)
