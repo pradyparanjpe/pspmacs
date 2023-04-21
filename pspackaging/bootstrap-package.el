@@ -1,5 +1,7 @@
-(defcustom pspmacs/package-manager
-  'builtin
+﻿(defcustom pspmacs/package-manager
+  (if (version< emacs-version "29")
+      'straight
+    'builtin)
   "Packaging system to use."
   :type '(string :tag "Emacs package manager to use")
   :options '(builtin straight))

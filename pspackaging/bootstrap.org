@@ -6,7 +6,9 @@
 - We shall use Emacs's built-in =package.el= by default.
 #+begin_src emacs-lisp :tangle bootstrap-package.el
   (defcustom pspmacs/package-manager
-    'builtin
+    (if (version< emacs-version "29")
+        'straight
+      'builtin)
     "Packaging system to use."
     :type '(string :tag "Emacs package manager to use")
     :options '(builtin straight))
