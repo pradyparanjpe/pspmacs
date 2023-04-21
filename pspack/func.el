@@ -101,13 +101,13 @@ Load prettify-symbols from Each of SUB-MODES."
     (set-face-attribute 'italic nil
                         :font "VictorMono"
                         :slant 'italic
-                        :height pspmacs/font-height))
+                        :height pspmacs/font-height)
 
-  ;; Set the variable pitch face
-  (set-face-attribute 'variable-pitch nil
-                      :font "Cantarell"
-                      :height pspmacs/font-height
-                      :weight 'regular))
+    ;; Set the variable pitch face
+    (set-face-attribute 'variable-pitch nil
+                        :font "Cantarell"
+                        :height pspmacs/font-height
+                        :weight 'regular)))
 
 (defun pspmacs/load-modules (&optional modules-order)
   "Load modules in order.

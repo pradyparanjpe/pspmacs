@@ -687,7 +687,7 @@ printf_byelogue () {
 
 
 
-    [INFO] Emacs is installed and PSPMacs cloned.
+    [INFO] Unless you see errors above, Emacs is installed and PSPMacs cloned.
 
     [ACT]  Launch Emacs to (auto) install necessary Emacs packages.
 
