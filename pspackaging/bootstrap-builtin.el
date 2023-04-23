@@ -55,7 +55,7 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
 
   ;; package should store data locally.
   (customize-set-variable 'package-user-dir
-                          (expand-file-name "packages" local-emacs-directory))
+                          (expand-file-name "packages" local-emacs-dir))
   (unless (file-exists-p package-user-dir)
     (mkdir package-user-dir t))
   (package-initialize)

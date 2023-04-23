@@ -1,13 +1,13 @@
 ;;; early/init.el --- early init -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(if (file-exists-p pvt-emacs-directory)
-  (add-to-list 'load-path (expand-file-name pvt-emacs-directory)))
-(add-to-list 'load-path (expand-file-name local-emacs-directory))
+(if (file-exists-p pvt-emacs-dir)
+  (add-to-list 'load-path (expand-file-name pvt-emacs-dir)))
+(add-to-list 'load-path (expand-file-name local-emacs-dir))
 
 (load-theme 'deeper-blue t)
 
-(unless (file-exists-p local-emacs-directory)
-  (mkdir local-emacs-directory t))
+(unless (file-exists-p local-emacs-dir)
+  (mkdir local-emacs-dir t))
 
 (when (featurep 'native-compile)
   ;; Silence compiler warnings as they can be pretty disruptive
@@ -24,13 +24,13 @@
         (add-to-list
           'native-comp-eln-load-path
           (convert-standard-filename
-            (expand-file-name "var/eln-cache/" local-emacs-directory)))
+            (expand-file-name "var/eln-cache/" local-emacs-dir)))
         (startup-redirect-eln-cache
           (convert-standard-filename
-            (expand-file-name "var/eln-cache/" local-emacs-directory)))))
+            (expand-file-name "var/eln-cache/" local-emacs-dir)))))
   (add-to-list
     'native-comp-eln-load-path
-    (expand-file-name "eln-cache/" local-emacs-directory)))
+    (expand-file-name "eln-cache/" local-emacs-dir)))
 
 (setq pspmacs/packaging-directory
       (expand-file-name "pspackaging" user-emacs-directory))

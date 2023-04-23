@@ -83,19 +83,19 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - For Emacs 28, [[https://github.com/plexus/chemacs2][chemacs2]] may occupy =~/.emacs.d= and redirect to /this/ configuration.
   - Since Emacs 29, /this/ directory may be specified from the command-line with the flag =--init-directory=.
 
-*** Private: =pvt-emacs-directory=
+*** Private: =pvt-emacs-dir=
 - A user may want to make some over-writing changes (supersede) and need to synchronize them across a private /ecosystem/ using a private version-control repository.
-  Such changes should be placed in 'exactly the same location' as that of the file to be superseded, but relative to a separate location, =pvt-emacs-directory=.
+  Such changes should be placed in 'exactly the same location' as that of the file to be superseded, but relative to a separate location, =pvt-emacs-dir=.
 - They may include settings such as full-name, email, etc.
 - The value of this variable is learnt from the environment variable =PVT_EMACS_HOME=.
   #+begin_warning
-  - When version-controlling =pvt-emacs-directory=, add =local.d= to its =.gitignore=.
+  - When version-controlling =pvt-emacs-dir=, add =local.d= to its =.gitignore=.
   - Don't make such repository public.
   #+end_warning
 
-*** Local: =local-emacs-directory=
+*** Local: =local-emacs-dir=
 - Local changes, cache, etc. cannot be synchronized even across a private ecosystem.
-  Such changes should be placed in 'exactly the same location' as that of the file to be superseded, but relative to a separate location, =local-emacs-directory=.
+  Such changes should be placed in 'exactly the same location' as that of the file to be superseded, but relative to a separate location, =local-emacs-dir=.
 - They may include settings based on screen-size, local caches, etc.
 - The value of this variable is learnt from the environment variable =LOCAL_EMACS_HOME=.
   - If =LOCAL_EMACS_HOME= is not set, =PVT_EMACS_HOME/local.d= is used when =PVT_EMACS_HOME= is defined, else =USER_EMACS_HOME/local.d= is used.
@@ -109,12 +109,12 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
   We shall not synchronize it across machines.
 - Emacs loads configuration in =<user-emacs-directory>/early-init.el= before launching the GUI, and =<user-emacs-directory>/init.el= after.
   This configuration redirects it to load various files located in the =user-emacs-directory= work-tree.
-  Each file performs its configuration settings and looks for a file located at the same location relative to =pvt-emacs-directory= and then, =local-emacs-directory=.
+  Each file performs its configuration settings and looks for a file located at the same location relative to =pvt-emacs-dir= and then, =local-emacs-dir=.
   If such a file exists, it is loaded.
-- Example, the file =<user-emacs-directory>/late/definitions.el= attempts to load files =<pvt-emacs-directory>/late/definitions.el= and =<local-emacs-directory>/late/definitions.el=.
+- Example, the file =<user-emacs-directory>/late/definitions.el= attempts to load files =<pvt-emacs-dir>/late/definitions.el= and =<local-emacs-dir>/late/definitions.el=.
   If they exist, they can overwrite configuration applied by the =<user-emacs-directory>/late/definitions.el=.
 #+begin_tip
-- =pvt-emacs-directory>/<filename>.{el,org}= and =local-emacs-directory>/<filename>.{el,org}= may be thought as if they were sequential /after-config-hooks/ of =<user-emacs-directory>/<filename>.{el,org}=
+- =pvt-emacs-dir>/<filename>.{el,org}= and =local-emacs-dir>/<filename>.{el,org}= may be thought as if they were sequential /after-config-hooks/ of =<user-emacs-directory>/<filename>.{el,org}=
 - The user is advised to place in private and local work-trees, code cognate to the corresponding file in the global work-tree.
 #+end_tip
 
@@ -162,7 +162,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 
 - Code
   - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modules=.
-  - The customization file =<local-emacs-directory>/custom.el= will only be loaded after `config.el' only if the value of `pspmacs/load-custom-file' is set to a non-nil.
+  - The customization file =<local-emacs-dir>/custom.el= will only be loaded after `config.el' only if the value of `pspmacs/load-custom-file' is set to a non-nil.
 #+begin_src emacs-lisp :tangle init.el
   ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
   ;;; late definitions init configs
@@ -186,7 +186,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - Functions, variables, faces, keywords used by /PSPMacs/ are compiled in a package pspack.
 
 * .gitignore
-- Remember to add =local.d/= to =pvt-emacs-directory/.gitignore=, since it may be used as =local-emacs-directory=.
+- Remember to add =local.d/= to =pvt-emacs-dir/.gitignore=, since it may be used as =local-emacs-dir=.
 - As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in =late/xdg.el= to point at =xdg/emacs-cache-directory=.
   - However, if they store them at the hard-coded location =user-emacs-home/NEW-NAME=, =NEW-NAME= needs to be added to =pspmacs/.gitignore=.
     I shall do so whenever I notice such incidences either myself or through an issue.

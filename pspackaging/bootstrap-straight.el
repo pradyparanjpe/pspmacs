@@ -8,10 +8,10 @@
   (let ((bootstrap-file
          (expand-file-name
           "straight/repos/straight.el/bootstrap.el"
-          local-emacs-directory))
+          local-emacs-dir))
         (bootstrap-version 6))
     ;; moves the straight install directory to the local machine configuration
-    (setq straight-base-dir local-emacs-directory
+    (setq straight-base-dir local-emacs-dir
           straight-use-package-by-default t)
     (unless (file-exists-p bootstrap-file)
       (message "Bootstrap file not found. Downloading...")

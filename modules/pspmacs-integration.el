@@ -97,7 +97,7 @@
 (use-package emacs
   :custom
   (epg-pinentry-mode 'loopback)
-  (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-directory))
+  (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
   :config
   (epa-file-enable))
 

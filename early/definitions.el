@@ -1,6 +1,6 @@
 ;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(defvar pvt-emacs-directory
+(defvar pvt-emacs-dir
   (condition-case err
       (file-name-as-directory
        (cond
@@ -19,7 +19,7 @@
 
 privately synchronized configuration directory")
 
-(defvar local-emacs-directory
+(defvar local-emacs-dir
   (file-name-as-directory
    (cond
     ((featurep 'chemacs)
@@ -29,24 +29,24 @@ privately synchronized configuration directory")
     ((getenv "LOCAL_EMACS_HOME")
      (expand-file-name (getenv "LOCAL_EMACS_HOME")))
     (t (cond
-        (pvt-emacs-directory
-         (expand-file-name "local.d" pvt-emacs-directory))
+        (pvt-emacs-dir
+         (expand-file-name "local.d" pvt-emacs-dir))
         (t
          (expand-file-name "local.d" user-emacs-directory))))))
   "Local, machine-specific, un-synchronized configuration directory")
 
 (defvar pspmacs/user-worktrees
   (cond
-   (pvt-emacs-directory
-    `(,pvt-emacs-directory ,local-emacs-directory))
-   (t `(,local-emacs-directory)))
+   (pvt-emacs-dir
+    `(,pvt-emacs-dir ,local-emacs-dir))
+   (t `(,local-emacs-dir)))
   "user's worktrees to load")
 
 (defvar pspmacs/worktrees
   (cond
-   (pvt-emacs-directory
-    `(,user-emacs-directory ,pvt-emacs-directory ,local-emacs-directory))
-   (t `(,user-emacs-directory ,local-emacs-directory)))
+   (pvt-emacs-dir
+    `(,user-emacs-directory ,pvt-emacs-dir ,local-emacs-dir))
+   (t `(,user-emacs-directory ,local-emacs-dir)))
   "worktrees to load")
 
 (defvar pspmacs/load-custom-file t
@@ -67,9 +67,9 @@ privately synchronized configuration directory")
 (defun pspmacs/load-inherit (&optional fname)
   "Inherit all equivalent files.
 
- Files may be placed in `pvt-emacs-directory' and/or `local-emacs-directory'.
- Settings loaded from files located in `pvt-emacs-directory' are overwritten
- by settings loaded from files located in `local-emacs-directory'.
+ Files may be placed in `pvt-emacs-dir' and/or `local-emacs-dir'.
+ Settings loaded from files located in `pvt-emacs-dir' are overwritten
+ by settings loaded from files located in `local-emacs-dir'.
  If FNAME is supplied, *that* corresponding file name is attempted, else,
  stem of `load-file-name' is attempted.
 

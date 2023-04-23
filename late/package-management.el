@@ -23,7 +23,7 @@
 
 (customize-set-variable
  'package-user-dir
- (expand-file-name "packages" local-emacs-directory))
+ (expand-file-name "packages" local-emacs-dir))
 
 (load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
         nil 'nomessage)

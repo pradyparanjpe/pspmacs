@@ -45,7 +45,7 @@
 #+end_src
 
 * Straight.el
-- =straight-base-dir= should be in local tree (=local-emacs-directory=)
+- =straight-base-dir= should be in local tree (=local-emacs-dir=)
 - use gnu-elpa mirror
 - NEXT *DEPRECATION* in version 29, =vc-package-install= does exactly *this*.
   So, this may be dropped in favour of [[https://github.com/slotThe/vc-use-package][vc-use-package]].
@@ -60,10 +60,10 @@
     (let ((bootstrap-file
            (expand-file-name
             "straight/repos/straight.el/bootstrap.el"
-            local-emacs-directory))
+            local-emacs-dir))
           (bootstrap-version 6))
       ;; moves the straight install directory to the local machine configuration
-      (setq straight-base-dir local-emacs-directory
+      (setq straight-base-dir local-emacs-dir
             straight-use-package-by-default t)
       (unless (file-exists-p bootstrap-file)
         (message "Bootstrap file not found. Downloading...")
@@ -143,7 +143,7 @@
 
     ;; package should store data locally.
     (customize-set-variable 'package-user-dir
-                            (expand-file-name "packages" local-emacs-directory))
+                            (expand-file-name "packages" local-emacs-dir))
     (unless (file-exists-p package-user-dir)
       (mkdir package-user-dir t))
     (package-initialize)

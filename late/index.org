@@ -35,7 +35,7 @@ We want packages to be cloned/downloaded locally.
 #+begin_src emacs-lisp :tangle package-management.el
   (customize-set-variable
    'package-user-dir
-   (expand-file-name "packages" local-emacs-directory))
+   (expand-file-name "packages" local-emacs-dir))
 #+end_src
 
 ** Package system
@@ -172,7 +172,7 @@ Pack of functions, variables, faces for pspmacs
 - The file ~custom-file~ is used by the Customization UI to store value-setting forms in a customization file, rather than at the end of the =~/.emacs.d/init.el= file. It defaults to =~/.emacs.d/custom.el=. The file is loaded after =late/config.el= file. Any variable values set till that point (=late/config.el=) will be overridden with the values set with the Customization UI and saved in the custom file.
 #+begin_src emacs-lisp :tangle init.el
   (customize-set-variable 'custom-file
-    (expand-file-name "custom.el" local-emacs-directory))
+    (expand-file-name "custom.el" local-emacs-dir))
 #+end_src
 ** Reset gc-cons
 - To hasten early-init, gc-cons was set to highest possible value in =early/definitions.el=

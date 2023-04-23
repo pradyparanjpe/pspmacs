@@ -10,7 +10,7 @@
 
 (defcustom pspmacs/crooked-dir
   (file-name-as-directory
-   (expand-file-name "crooked" local-emacs-directory))
+   (expand-file-name "crooked" local-emacs-dir))
   "Location to store cloned repos as an option to `straight.el'"
   :type '(string :tag "location to store cloned git repos")
   :group 'crooked)

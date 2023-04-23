@@ -182,12 +182,12 @@
       "fw" '(:ignote t :wk "worktree")
       "fwl" '((lambda ()
                 (interactive)
-                (find-file local-emacs-directory))
+                (find-file local-emacs-dir))
               :wk "local")
       "fwp" '((lambda ()
                 (interactive)
-                (if pvt-emacs-directory
-                    (find-file pvt-emacs-directory)
+                (if pvt-emacs-dir
+                    (find-file pvt-emacs-dir)
                   (message "private work-tree is not declared.")))
               :wk "private")
       "fwg" '((lambda ()
