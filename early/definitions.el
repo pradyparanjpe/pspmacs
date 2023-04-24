@@ -3,12 +3,8 @@
 (defvar pvt-emacs-dir
   (condition-case err
       (file-name-as-directory
-       (cond
-        ((featurep 'chemacs)
-         (if (getenv "PVT_EMACS_HOME")
-             (expand-file-name (getenv "PVT_EMACS_HOME"))))
-        ((getenv "PVT_EMACS_HOME")
-         (expand-file-name (getenv "PVT_EMACS_HOME")))))
+       (if (getenv "PVT_EMACS_HOME")
+           (expand-file-name (getenv "PVT_EMACS_HOME"))))
     ((error)
      (progn
        (if (string= (format "%s" err)
@@ -21,32 +17,23 @@ privately synchronized configuration directory")
 
 (defvar local-emacs-dir
   (file-name-as-directory
-   (cond
-    ((featurep 'chemacs)
-     (if
-         (getenv "LOCAL_EMACS_HOME")
-         (expand-file-name (getenv "LOCAL_EMACS_HOME"))))
-    ((getenv "LOCAL_EMACS_HOME")
-     (expand-file-name (getenv "LOCAL_EMACS_HOME")))
-    (t (cond
-        (pvt-emacs-dir
-         (expand-file-name "local.d" pvt-emacs-dir))
-        (t
-         (expand-file-name "local.d" user-emacs-directory))))))
+   (if (getenv "LOCAL_EMACS_HOME")
+       (expand-file-name (getenv "LOCAL_EMACS_HOME"))
+     (if pvt-emacs-dir
+         (expand-file-name "local.d" pvt-emacs-dir)
+       (expand-file-name "local.d" user-emacs-directory))))
   "Local, machine-specific, un-synchronized configuration directory")
 
 (defvar pspmacs/user-worktrees
-  (cond
-   (pvt-emacs-dir
-    `(,pvt-emacs-dir ,local-emacs-dir))
-   (t `(,local-emacs-dir)))
+  (if pvt-emacs-dir
+      `(,pvt-emacs-dir ,local-emacs-dir)
+    `(,local-emacs-dir))
   "user's worktrees to load")
 
 (defvar pspmacs/worktrees
-  (cond
-   (pvt-emacs-dir
-    `(,user-emacs-directory ,pvt-emacs-dir ,local-emacs-dir))
-   (t `(,user-emacs-directory ,local-emacs-dir)))
+  (if pvt-emacs-dir
+      `(,user-emacs-directory ,pvt-emacs-dir ,local-emacs-dir)
+    `(,user-emacs-directory ,local-emacs-dir))
   "worktrees to load")
 
 (defvar pspmacs/load-custom-file t
