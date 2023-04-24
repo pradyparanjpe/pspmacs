@@ -4,21 +4,21 @@
   (condition-case err
       (file-name-as-directory
        (if (getenv "PVT_EMACS_HOME")
-           (expand-file-name (getenv "PVT_EMACS_HOME"))))
+           (file-name-directory (getenv "PVT_EMACS_HOME"))))
     ((error)
      (progn
        (if (string= (format "%s" err)
                     "(wrong-type-argument stringp nil)")
            nil
          (throw 'uncaught err)))))
-  "Private version controlledd
+  "Private version controlled
 
 privately synchronized configuration directory")
 
 (defvar local-emacs-dir
   (file-name-as-directory
    (if (getenv "LOCAL_EMACS_HOME")
-       (expand-file-name (getenv "LOCAL_EMACS_HOME"))
+       (file-name-directory (getenv "LOCAL_EMACS_HOME"))
      (if pvt-emacs-dir
          (expand-file-name "local.d" pvt-emacs-dir)
        (expand-file-name "local.d" user-emacs-directory))))
