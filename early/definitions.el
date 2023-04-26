@@ -4,7 +4,7 @@
   (condition-case err
       (file-name-as-directory
        (if (getenv "PVT_EMACS_HOME")
-           (file-name-directory (getenv "PVT_EMACS_HOME"))))
+           (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
     ((error)
      (progn
        (if (string= (format "%s" err)
@@ -18,7 +18,7 @@ privately synchronized configuration directory")
 (defvar local-emacs-dir
   (file-name-as-directory
    (if (getenv "LOCAL_EMACS_HOME")
-       (file-name-directory (getenv "LOCAL_EMACS_HOME"))
+       (file-name-as-directory (getenv "LOCAL_EMACS_HOME"))
      (if pvt-emacs-dir
          (expand-file-name "local.d" pvt-emacs-dir)
        (expand-file-name "local.d" user-emacs-directory))))
@@ -40,27 +40,27 @@ privately synchronized configuration directory")
   "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
 
 (defun pspmacs/load-suitable (fname &optional nag)
-   "Load emacs init file FNAME.
+  "Load emacs init file FNAME.
 
- If FNAME is found, load it and return.
- If not found and if NAG is `t', throw error. Default: return.
+If FNAME is found, load it and return.
+If not found and if NAG is `t', throw error. Default: return.
 
- This function is overwritten in late/definitions.el after the correct
- org mode is loaded to include org-babel-load-file method"
-   (if (file-readable-p fname)
-       (load fname nil 'nomessage)
-     (if nag (user-error (format "%s not found." fname)))))
+This function is overwritten in late/definitions.el after the correct
+org mode is loaded to include org-babel-load-file method"
+  (if (file-readable-p fname)
+      (load fname nil 'nomessage)
+    (if nag (user-error (format "%s not found." fname)))))
 
 (defun pspmacs/load-inherit (&optional fname)
   "Inherit all equivalent files.
 
- Files may be placed in `pvt-emacs-dir' and/or `local-emacs-dir'.
- Settings loaded from files located in `pvt-emacs-dir' are overwritten
- by settings loaded from files located in `local-emacs-dir'.
- If FNAME is supplied, *that* corresponding file name is attempted, else,
- stem of `load-file-name' is attempted.
+Files may be placed in `pvt-emacs-dir' and/or `local-emacs-dir'.
+Settings loaded from files located in `pvt-emacs-dir' are overwritten
+by settings loaded from files located in `local-emacs-dir'.
+If FNAME is supplied, *that* corresponding file name is attempted, else,
+stem of `load-file-name' is attempted.
 
- Init files are loaded using the function `pspmacs/load-suitable'."
+Init files are loaded using the function `pspmacs/load-suitable'."
   (let ((name-branch
          (file-relative-name
           (or fname load-file-name) user-emacs-directory)))

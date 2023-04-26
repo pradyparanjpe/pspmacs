@@ -22,15 +22,15 @@
   (when (fboundp 'startup-redirect-eln-cache)
     (if (version< emacs-version "29")
         (add-to-list
-          'native-comp-eln-load-path
-          (convert-standard-filename
-            (expand-file-name "var/eln-cache/" local-emacs-dir)))
-        (startup-redirect-eln-cache
-          (convert-standard-filename
-            (expand-file-name "var/eln-cache/" local-emacs-dir)))))
+         'native-comp-eln-load-path
+         (convert-standard-filename
+          (expand-file-name "var/eln-cache/" local-emacs-dir)))
+      (startup-redirect-eln-cache
+       (convert-standard-filename
+        (expand-file-name "var/eln-cache/" local-emacs-dir)))))
   (add-to-list
-    'native-comp-eln-load-path
-    (expand-file-name "eln-cache/" local-emacs-dir)))
+   'native-comp-eln-load-path
+   (expand-file-name "eln-cache/" local-emacs-dir)))
 
 (setq pspmacs/packaging-directory
       (expand-file-name "pspackaging" user-emacs-directory))

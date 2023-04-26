@@ -40,14 +40,14 @@
 ** UI configuration
 - Remove some unnecessary UI elements temporarily
 #+begin_src emacs-lisp :tangle prune.el
-    (dolist
-        (prune-mode
-         '(menu-bar-mode
-           tool-bar-mode
-           scroll-bar-mode
-           blink-cursor-mode)
-         nil)
-      (if (fboundp prune-mode) (funcall prune-mode -1)))
+  (dolist
+      (prune-mode
+       '(menu-bar-mode
+         tool-bar-mode
+         scroll-bar-mode
+         blink-cursor-mode)
+       nil)
+    (if (fboundp prune-mode) (funcall prune-mode -1)))
 #+end_src
 
 ** Source compilation
@@ -71,7 +71,7 @@ If envrionment variables are not set, ignore
     (condition-case err
         (file-name-as-directory
          (if (getenv "PVT_EMACS_HOME")
-             (file-name-directory (getenv "PVT_EMACS_HOME"))))
+             (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
       ((error)
        (progn
          (if (string= (format "%s" err)
@@ -91,12 +91,12 @@ If environment variables are not set, use:
     (defvar local-emacs-dir
       (file-name-as-directory
        (if (getenv "LOCAL_EMACS_HOME")
-           (file-name-directory (getenv "LOCAL_EMACS_HOME"))
+           (file-name-as-directory (getenv "LOCAL_EMACS_HOME"))
          (if pvt-emacs-dir
              (expand-file-name "local.d" pvt-emacs-dir)
            (expand-file-name "local.d" user-emacs-directory))))
       "Local, machine-specific, un-synchronized configuration directory")
-#+end_src
+  #+end_src
 
 *** Inheritance list
 #+begin_src emacs-lisp :tangle definitions.el
@@ -127,27 +127,27 @@ If environment variables are not set, use:
   - Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads org-mode files.
 #+begin_src emacs-lisp :tangle definitions.el
   (defun pspmacs/load-suitable (fname &optional nag)
-     "Load emacs init file FNAME.
+    "Load emacs init file FNAME.
 
-   If FNAME is found, load it and return.
-   If not found and if NAG is `t', throw error. Default: return.
+  If FNAME is found, load it and return.
+  If not found and if NAG is `t', throw error. Default: return.
 
-   This function is overwritten in late/definitions.el after the correct
-   org mode is loaded to include org-babel-load-file method"
-     (if (file-readable-p fname)
-         (load fname nil 'nomessage)
-       (if nag (user-error (format "%s not found." fname)))))
+  This function is overwritten in late/definitions.el after the correct
+  org mode is loaded to include org-babel-load-file method"
+    (if (file-readable-p fname)
+        (load fname nil 'nomessage)
+      (if nag (user-error (format "%s not found." fname)))))
 
   (defun pspmacs/load-inherit (&optional fname)
     "Inherit all equivalent files.
 
-   Files may be placed in `pvt-emacs-dir' and/or `local-emacs-dir'.
-   Settings loaded from files located in `pvt-emacs-dir' are overwritten
-   by settings loaded from files located in `local-emacs-dir'.
-   If FNAME is supplied, *that* corresponding file name is attempted, else,
-   stem of `load-file-name' is attempted.
+  Files may be placed in `pvt-emacs-dir' and/or `local-emacs-dir'.
+  Settings loaded from files located in `pvt-emacs-dir' are overwritten
+  by settings loaded from files located in `local-emacs-dir'.
+  If FNAME is supplied, *that* corresponding file name is attempted, else,
+  stem of `load-file-name' is attempted.
 
-   Init files are loaded using the function `pspmacs/load-suitable'."
+  Init files are loaded using the function `pspmacs/load-suitable'."
     (let ((name-branch
            (file-relative-name
             (or fname load-file-name) user-emacs-directory)))
@@ -189,8 +189,8 @@ Initialize configurations
 ** Ensure a =local-emacs-dir=
 - Make if absent
 #+begin_src emacs-lisp :tangle init.el
-(unless (file-exists-p local-emacs-dir)
-  (mkdir local-emacs-dir t))
+  (unless (file-exists-p local-emacs-dir)
+    (mkdir local-emacs-dir t))
 #+end_src
 
 ** Native compilation settings
@@ -208,15 +208,15 @@ Initialize configurations
     (when (fboundp 'startup-redirect-eln-cache)
       (if (version< emacs-version "29")
           (add-to-list
-            'native-comp-eln-load-path
-            (convert-standard-filename
-              (expand-file-name "var/eln-cache/" local-emacs-dir)))
-          (startup-redirect-eln-cache
-            (convert-standard-filename
-              (expand-file-name "var/eln-cache/" local-emacs-dir)))))
+           'native-comp-eln-load-path
+           (convert-standard-filename
+            (expand-file-name "var/eln-cache/" local-emacs-dir)))
+        (startup-redirect-eln-cache
+         (convert-standard-filename
+          (expand-file-name "var/eln-cache/" local-emacs-dir)))))
     (add-to-list
-      'native-comp-eln-load-path
-      (expand-file-name "eln-cache/" local-emacs-dir)))
+     'native-comp-eln-load-path
+     (expand-file-name "eln-cache/" local-emacs-dir)))
 #+end_src
 
 ** Package management
@@ -234,7 +234,7 @@ Initialize configurations
 
 ** Single key-press response to yes-or-no
 #+begin_src emacs-lisp :tangle init.el
-(defalias 'yes-or-no-p 'y-or-n-p)
+  (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
 ** Inherit
