@@ -99,7 +99,7 @@ set_vars () {
     # font-release should correctly unzip to necessary format in ~/.local/share/fonts
     fonts="fira-code=https://github.com/tonsky/FiraCode/releases\
 /download/5.2/Fira_Code_v5.2.zip
-viktor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
+victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
 
     # variables to unset
     global_vars="help_msg usage manager include_deps include_fonts emacs_cache\
