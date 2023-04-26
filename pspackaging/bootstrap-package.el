@@ -1,4 +1,4 @@
-﻿(defcustom pspmacs/package-manager
+(defcustom pspmacs/package-manager
   (if (version< emacs-version "29")
       'straight
     'builtin)

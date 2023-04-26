@@ -316,15 +316,15 @@ Arguments are read from custom-group `emacs-repo'"
           (add-to-list
            'without-switches
            `(,(format "%s-" shortflag) ,flag-without ,flag-val
-             :always-read t
-             :init-value
-             (lambda (obj)
-               (oset obj value
-                     (if (or (member ,flag-without
-                                     emacs-repo/config-flags)
-                             (member (intern ,flag-without)
-                                     emacs-repo/config-flags))
-                         ,flag-val))))
+              :always-read t
+              :init-value
+              (lambda (obj)
+                (oset obj value
+                      (if (or (member ,flag-without
+                                       emacs-repo/config-flags)
+                              (member (intern ,flag-without)
+                                      emacs-repo/config-flags))
+                          ,flag-val))))
            t))))
     without-switches)
   "Create compilation flag switches \"without\" (OFF)")

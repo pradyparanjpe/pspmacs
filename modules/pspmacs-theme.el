@@ -5,10 +5,13 @@
 
 (setq modus-kw
       (if (version< emacs-version "29")
-          '(:load-path (lambda ()
-                         (unless (string= pspmacs/package-manager "straight")
-                           (expand-file-name
-                            "modus-themes" pspmacs/crooked-dir))))
+          (if (string= pspmacs/package-manager "straight")
+                                        ; use straight.
+              '(:straight t)
+                                        ; use crooked.
+            '(:load-path (expand-file-name
+                          "modus-themes" pspmacs/crooked-dir)))
+                                        ; use builtin use-vc-package.
         '(:vc (modus-themes
                . (:url "https://www.github.com/protesilaos/modus-themes")))))
 
