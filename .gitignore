@@ -88,6 +88,7 @@ packages/
 url/
 org-re-reveal/
 oer-reveal-org/
+emacs-reveal-submodules/
 
 # Evil-Tutor cache
 .tutor/
