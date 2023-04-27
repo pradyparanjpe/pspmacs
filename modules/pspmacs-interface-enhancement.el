@@ -246,6 +246,9 @@
     "wD" 'kill-buffer-and-window
     "w C-d" '(delete-other-windows :wk "delete other")))
 
+(use-package hydra
+  :demand t)
+
 (use-package dashboard
   :demand t
   :diminish dashboard-mode
@@ -611,6 +614,11 @@
   (set-selection-coding-system 'utf-8)
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8))
+
+(defhydra hydra-zoom (global-map "<f8>")
+  "zoom"
+  ("g" text-scale-increase "in")
+  ("l" text-scale-decrease "out"))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

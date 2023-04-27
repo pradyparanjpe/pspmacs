@@ -260,6 +260,13 @@
       "w C-d" '(delete-other-windows :wk "delete other")))
 #+end_src
 
+* abo-abo/hydra
+Hydra Keybindings
+#+begin_src emacs-lisp
+  (use-package hydra
+    :demand t)
+#+end_src
+
 * emacs-dashboard/emacs-dashboard
 - Better splash home-screen
   #+begin_tip
@@ -334,7 +341,6 @@ Jump by word hints
     (pspmacs/leader-keys
       "j" '(:ignore t :wk "jump")
       "jj" '(avy-goto-char-timer :wk "search")))
-
  #+end_src
 
 * emacs-evil/evil
@@ -702,6 +708,14 @@ Auto-hiding text-based scroll bar
     (set-selection-coding-system 'utf-8)
     (prefer-coding-system 'utf-8)
     (set-default-coding-systems 'utf-8))
+#+end_src
+
+* hydras
+#+begin_src emacs-lisp
+  (defhydra hydra-zoom (global-map "<f8>")
+    "zoom"
+    ("g" text-scale-increase "in")
+    ("l" text-scale-decrease "out"))
 #+end_src
 
 * Inherit from private and local

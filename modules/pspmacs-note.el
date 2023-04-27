@@ -443,6 +443,18 @@ parent."
   ;; if you are using yasnippet and want `ai` snippets
   (org-ai-install-yasnippets))
 
+(use-package powerthesaurus
+  :after org
+  :general
+  (pspmacs/leader-keys
+    "D" '(:ignore t :wk "Dictionary")
+    "D=" '(powerthesaurus-lookup-synonyms-dwim :wk "synonym")
+    "D+" '(powerthesaurus-lookup-related-dwim :wk "related")
+    "D?" '(powerthesaurus-lookup-definitions-dwim :wk "related")
+    "D!" '(powerthesaurus-lookup-antonyms-dwim :wk "antonym")
+    "DD" '(powerthesaurus-transient :wk "Explore")
+    "Dl" '(powerthesaurus-lookup-dwim :wk "lookup")))
+
 (use-package emacs
   :custom
   (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))

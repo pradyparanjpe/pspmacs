@@ -484,6 +484,20 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     ;; if you are using yasnippet and want `ai` snippets
     (org-ai-install-yasnippets))
 #+end_src
+* SavchenkoValeriy/emacs-powerthesaurus
+#+begin_src emacs-lisp
+  (use-package powerthesaurus
+    :after org
+    :general
+    (pspmacs/leader-keys
+      "D" '(:ignore t :wk "Dictionary")
+      "D=" '(powerthesaurus-lookup-synonyms-dwim :wk "synonym")
+      "D+" '(powerthesaurus-lookup-related-dwim :wk "related")
+      "D?" '(powerthesaurus-lookup-definitions-dwim :wk "related")
+      "D!" '(powerthesaurus-lookup-antonyms-dwim :wk "antonym")
+      "DD" '(powerthesaurus-transient :wk "Explore")
+      "Dl" '(powerthesaurus-lookup-dwim :wk "lookup")))
+#+end_src
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs
