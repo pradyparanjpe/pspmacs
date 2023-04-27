@@ -159,7 +159,7 @@
 
   ;; powerthesaurus
   (pspmacs/leader-keys
-    "D" '(:ignore t :wk "Dictionary")
+    "D" '(:ignore t :wk "Dictionary"))
 
   ;; worktrees
   (pspmacs/leader-keys
