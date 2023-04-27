@@ -112,7 +112,7 @@ Revert to the normal definition outside of these fragments."
               (pspmacs/org-put-checkboxes-recursively t))
             :wk "insert here")
 
-    "S"   '(:ignore :wk "special")
+    "S"   '(:ignore t :wk "special")
     "Sx"  '(org-cut-special :wk "org cut special")
     "Se"  '(org-edit-special :wk "edit")
 

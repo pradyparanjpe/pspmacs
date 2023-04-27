@@ -25,7 +25,7 @@
 (use-package magit
   :general
   (pspmacs/leader-keys
-   "g" '(:ignore t :kw "git")
+   "g" '(:ignore t :wk "git")
    "g b" 'magit-blame
    "g s" 'magit-status
    "g S" 'magit-status-here
