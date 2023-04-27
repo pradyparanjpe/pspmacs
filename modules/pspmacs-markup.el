@@ -23,11 +23,13 @@
 ;;; Code:
 
 (use-package yaml-mode
+  :mode ("\\.yml\\'" . toml-mode)
   :general
   (:keymaps 'yaml-mode-map
-        "\C-m" '(newline-and-indent)))
+            "\C-m" 'newline-and-indent))
 
-(use-package toml-mode)
+(use-package toml-mode
+  :mode ("\\.toml\\'" . toml-mode))
 
 (use-package markdown-mode
   :mode ("README\\.md\\'" . gfm-mode)

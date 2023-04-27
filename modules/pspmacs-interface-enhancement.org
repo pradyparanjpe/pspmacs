@@ -134,6 +134,7 @@
              :which-key "messages")
       "bn" '(next-buffer :wk "previous buffer")
       "bp" '(previous-buffer :wk "previous buffer")
+
       "bs" '(:ignore t :wk "scratch")
       "bsc" '((lambda () (interactive)
                 (pspmacs/mode-scratch 'conf-mode))
@@ -142,6 +143,21 @@
       "bso" '((lambda () (interactive)
                 (pspmacs/mode-scratch 'org-mode))
               :wk "org-mode")
+
+      "bsm" '(:ignore t :wk "markup")
+      "bsmd" '((lambda () (interactive)
+                 (pspmacs/mode-scratch 'markdown-mode))
+               :wk "markdown")
+      "bsmt" '((lambda () (interactive)
+                 (pspmacs/mode-scratch 'toml-mode))
+               :wk "toml")
+      "bsmx" '((lambda () (interactive)
+                 (pspmacs/mode-scratch 'xml-mode))
+               :wk "xml")
+      "bsmy" '((lambda () (interactive)
+                 (pspmacs/mode-scratch 'yaml-mode))
+               :wk "yaml")
+
       "bsp" '(:ignore t :wk "prog")
       "bspe" '((lambda () (interactive)
                  (pspmacs/mode-scratch 'emacs-lisp-mode))
@@ -152,9 +168,7 @@
       "bsps" '((lambda () (interactive)
                  (pspmacs/mode-scratch 'shell-script-mode))
                :wk "shell script")
-      "bsy" '((lambda () (interactive)
-                (pspmacs/mode-scratch 'yaml-mode))
-              :wk "yaml")
+
       "br" '(revert-buffer :wk "reload buffer")
       "bw" '(read-only-mode :wk "read-only")
       "b C-d" '(pspmacs/kill-other-buffers :wk "delete other"))
@@ -246,7 +260,6 @@
 
     (pspmacs/leader-keys
       "q" '(:ignore t :wk "quit")
-      ;; see org-roam and citar sections
       "qQ" '(kill-emacs :wk "daemon")
       "q C-f" '(delete-other-frames :wk "other frames")
       "qq" '(delete-frame :wk "client"))
