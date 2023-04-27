@@ -299,15 +299,20 @@ Hydra Keybindings
     (pspmacs/leader-keys
       "bh" '(pspmacs-dashboard :which-key "home splash"))
     :init
+    (customize-set-variable 'dashboard-banners-directory
+     (file-name-as-directory
+      (expand-file-name "data/banners" user-emacs-directory)))
     (defun pspmacs-dashboard ()
       (interactive)
       (pspmacs/home-splash)
       (switch-to-buffer
        (get-buffer-create "*dashboard*")))
     :custom
+
+    (dashboard-banner-ascii "PSPMACS")
     (dashboard-image-banner-max-width 300)
     (dashboard-startup-banner
-      (expand-file-name "data/Tux.png" user-emacs-directory))
+      (expand-file-name "Tux.png" dashboard-banners-directory))
     (dashboard-set-heading-icons t)
     (dashboard-banner-logo-title
       "Prady's Structured, Personalized Emacs")
