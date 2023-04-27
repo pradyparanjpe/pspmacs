@@ -170,6 +170,10 @@
       "cl" '(comment-line :wk "comment line")
       "cp" '(comment-region :wk "comment paragraph"))
 
+    ;; powerthesaurus
+    (pspmacs/leader-keys
+      "D" '(:ignore t :wk "Dictionary")
+
     ;; worktrees
     (pspmacs/leader-keys
       "f" '(:ignore t :wk "file")

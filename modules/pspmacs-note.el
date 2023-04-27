@@ -447,12 +447,11 @@ parent."
   :after org
   :general
   (pspmacs/leader-keys
-    "D" '(:ignore t :wk "Dictionary")
-    "D=" '(powerthesaurus-lookup-synonyms-dwim :wk "synonym")
-    "D+" '(powerthesaurus-lookup-related-dwim :wk "related")
-    "D?" '(powerthesaurus-lookup-definitions-dwim :wk "related")
     "D!" '(powerthesaurus-lookup-antonyms-dwim :wk "antonym")
-    "DD" '(powerthesaurus-transient :wk "Explore")
+    "D+" '(powerthesaurus-lookup-related-dwim :wk "related")
+    "D=" '(powerthesaurus-lookup-synonyms-dwim :wk "synonym")
+    "D?" '(powerthesaurus-lookup-definitions-dwim :wk "define")
+    "DL" '(powerthesaurus-transient :wk "explore")
     "Dl" '(powerthesaurus-lookup-dwim :wk "lookup")))
 
 (use-package emacs
