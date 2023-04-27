@@ -223,7 +223,7 @@ Revert to the normal definition outside of these fragments."
       "|"
       "DONE(d)"
       "DONT(!)"
-      "CANT©")))
+      "CANT(c)")))
 
   :config
   (org-babel-do-load-languages

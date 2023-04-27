@@ -232,7 +232,7 @@
         "|"
         "DONE(d)"
         "DONT(!)"
-        "CANT©")))
+        "CANT(c)")))
 
     :config
     (org-babel-do-load-languages
