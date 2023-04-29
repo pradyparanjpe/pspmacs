@@ -50,10 +50,22 @@ Copied and maybe modufied form module pspmacs-ci-cd."
 (defun pspmacs/git-rebase ()
   "Synchronize by rebasing locally cloned worktree/git on remote git."
   (interactive)
-  (let ((default-directory user-emacs-directory))
-    (pspmacs--call-shell "git" '("fetch" "origin"))
-    (pspmacs--call-shell "git" '("rebase")))
-  (message "done."))
+  (let ((default-directory user-emacs-directory)
+        (_ (pspmacs--call-shell "git" '("fetch" "origin")))
+        (behind-by
+         (string-to-number
+          (pspmacs--call-shell
+           "git" '("rev-list" "--count" "--right-only"
+                   "HEAD...@{upstream}")))))
+    (pspmacs--call-shell "git" '("rebase"))
+    (if (> behind-by 0)
+        (progn
+          (when (string= "Restart" (completing-read
+                                    "Restart for settings to take effect."
+                                    '("Restart" "I'll do it myself")))
+            (restart-emacs))
+          (message "Remember to restart!"))
+      (message "👍"))))
 
 (defun pspmacs/home-splash-before ()
   "run functions before switching to splash buffer."

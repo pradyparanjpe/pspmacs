@@ -76,7 +76,7 @@
     "+e" '(:ignore t :wk "Emacs (Build)")
     "+em" '(emacs-repo :wk "Transient menu")
     "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
-    "++" '(pspmacs/git-rebase :wk "Configuration"))
+    "++" '(pspmacs/git-rebase :wk "PSPMacs Config"))
 
   (pspmacs/leader-keys
     "TAB" '((lambda ()
