@@ -12,7 +12,7 @@ file:ACKNOWLEDGEMENTS.org
 #+end_seealso
 
 I was a SpaceMacs user for more than 2 years before [[https://github.com/syl20bnr/spacemacs/issues/15667][this]] issue landed.
-It was high time I became independent of opinionated Emacs configurations, especially because it seriously affected by python programming workflow.
+It was high time I became independent of opinionated Emacs configurations, especially because it seriously affected my python programming workflow.
 
 ** /BAD/ Opinionated
 I didn't like doom-emacs for a similar reason.
@@ -23,7 +23,7 @@ Downstream modification of template opinions break (as they *did* for me) when t
 * My Attempt
 This is my *hitherto successful* attempt at configuring Emacs (v28 and v29) from scratch to use it as a /text editor/ (🤣).
 
-** Copy Configuration
+** OPTION 1: Copy Configuration
 To copy /PSPMacs/ configuration (=POSIX=),
 - Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh?inline=false][setup-pspmacs.sh]], which is exported from [[file:aid/setup-pspmacs.org]].
 - Run it using a =POSIX= shell
@@ -39,7 +39,9 @@ If =curl= is already installed (generally =TRUE=), this may be automated by the 
 #+end_tip
 
 #+begin_warning
-- The script has been tested only in Alpine Linux.
+- The script has been tested only with
+  1. =Alpine Linux= (/This damn CI-CD pipeline/)
+  2. =MacOS Ventura= (dependencies were pre-installed.)
 #+end_warning
 
 #+begin_danger
@@ -47,7 +49,7 @@ Do *NOT* run setup-script with =sudo= privileges.
 The *script* will invoke =sudo= privileges whenever necessary.
 #+end_danger
 
-** Copy manually
+** OPTION 2: Copy manually
 - Read and understand this README.
 - Ensure that [[*Requirements][requirements]] are installed.
 - Define =LOCAL_EMACS_HOME=, =PVT_EMACS_HOME= in suitable =.rc= profile.
@@ -77,7 +79,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 ** Inherited work-trees
 *** Global: =user-emacs-directory=
 - This is the default Emacs directory [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Find-Init.html][conventionally located]] at =~/.emacs.d=.
-  However, *this very* configuration is meant to occupy that location.
+  However, *this damn* configuration is meant to occupy that location.
   Since this configuration is git-version-controlled, any changes in =~/.emacs.d= may cause commit-conflicts.
   Hence, we try to put *nothing* more in this location than what it already contains.
 - For Emacs 28, [[https://github.com/plexus/chemacs2][chemacs2]] may occupy =~/.emacs.d= and redirect to /this/ configuration.
@@ -127,7 +129,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - Since we won't use built-in org-mode, we shall refrain from using the function ~org-babel-load-file~
 #+begin_tip
 - This section only establishes a platform for configuration and doesn't in fact affect the final configuration outcome.
-  - Many settings in =early-init= may be over-written by *this very config* during /late/ init.
+  - Many settings in =early-init= may be over-written by *this damn config* during /late/ init.
 #+end_tip
 
 #+begin_warning
