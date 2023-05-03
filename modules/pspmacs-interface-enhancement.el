@@ -481,7 +481,8 @@
 
 ;; Optional: Add tempel-collection.
 ;; The package is young and doesn't have comprehensive coverage.
-(use-package tempel-collection)
+(use-package tempel-collection
+  :after tempel)
 
 (use-package embark
   :after vertico

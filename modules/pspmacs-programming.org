@@ -284,6 +284,16 @@
   (use-package origami
     :hook ((prog-mode . origami-mode)))
 #+end_src
+* Semantics
+#+begin_src emacs-lisp
+  (use-package stickyfunc-enhance
+    :demand t
+    :init
+    (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+    :hook
+    (prog-mode . semantic-mode))
+#+end_src
+
 * native Emacs-settings
 #+begin_src emacs-lisp
   (use-package emacs

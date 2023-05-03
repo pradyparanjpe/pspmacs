@@ -230,6 +230,7 @@ Revert to the normal definition outside of these fragments."
    'org-babel-load-languages
    '((python . t)
      (shell . t)
+     (ditaa . t)
      (sed . t)
      (emacs-lisp . t)
      (R . t)

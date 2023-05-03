@@ -230,6 +230,13 @@
 (use-package origami
   :hook ((prog-mode . origami-mode)))
 
+(use-package stickyfunc-enhance
+  :demand t
+  :init
+  (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+  :hook
+  (prog-mode . semantic-mode))
+
 (use-package emacs
   :init
   ;; corfu suggestions
