@@ -43,6 +43,7 @@
   (python-indent-offset 0)
   :config
   (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
+  (sp-local-pair 'python-mode "'''" "'''")
   (sp-local-pair 'python-mode "__" "__")
   :hook
   ((python-mode . pspmacs/prefer-interpreter-ipython)
@@ -52,7 +53,6 @@
 (defun pyrightconfig-write (virtualenv)
   "Taken from https://robbmann.io/posts/emacs-eglot-pyrightconfig/"
   (interactive "DEnv: ")
-
   (let* (;; file-truename and tramp-file-local-name ensure that neither `~'
          ;; nor the Tramp prefix (e.g. "/ssh:my-host:") wind up in the final
          ;; absolute directory path.
@@ -76,7 +76,7 @@
          (out-file (expand-file-name "pyrightconfig.json" base-dir))
 
          ;; Finally, get a string with the JSON payload.
-         (out-contents (json-encode (list :venvPath venvPath :venv venv))))
+         (out-contents (json-encode `(:venvPath ,venvPath :venv ,venv))))
 
     ;; Emacs uses buffers for everything.  This creates a temp buffer,
     ;; inserts the JSON payload, then flushes that content to final
