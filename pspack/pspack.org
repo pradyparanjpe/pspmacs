@@ -137,7 +137,6 @@ In Emacs-29, this is obviated.
       (pspmacs/home-splash-before)
       (setq-default default-directory "~/")
       (run-hooks 'pspmacs/home-splash-hook)))
-
 #+end_src
 
 * Highlighted tags
@@ -511,10 +510,16 @@ Following function may be used to byte-compile any work-tree.
 
 * Kill all other buffers
 #+begin_src emacs-lisp :tangle func.el
-(defun pspmacs/kill-other-buffers ()
-  "Kill all other buffers."
-  (interactive)
-  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+  (defun pspmacs/kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (when (y-or-n-p "Delete all other buffers?")
+      (mapc 'kill-buffer
+            (seq-reduce
+             (lambda (x y) (delq y x))
+             `(,(current-buffer) ,(get-buffer messages-buffer-name))
+             (buffer-list)))
+      (message "Deleted all other buffers.")))
 #+end_src
 
 * Extend list as in python

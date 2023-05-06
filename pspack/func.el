@@ -205,7 +205,13 @@ If window is the only window, it is spared"
 (defun pspmacs/kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
-  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+  (when (y-or-n-p "Delete all other buffers?")
+    (mapc 'kill-buffer
+          (seq-reduce
+           (lambda (x y) (delq y x))
+           `(,(current-buffer) ,(get-buffer messages-buffer-name))
+           (buffer-list)))
+    (message "Deleted all other buffers.")))
 
 (defun pspmacs/extend-list (list-var elements)
   "Iterative form of ‘add-to-list’.

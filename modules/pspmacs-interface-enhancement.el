@@ -111,14 +111,15 @@
   ;; see 'bufler' and 'popper'
   (pspmacs/leader-keys
     "b" '(:ignore t :wk "buffer")
-    "bd" '(kill-this-buffer :wk "kill this buffer")
     "b TAB" '((lambda ()
                 (interactive)
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
-              :which-key "toggle")
+              :wk "toggle")
+    "b-" '(pspmacs/switch-to-minibuffer :wk "minibuffer")
+    "bd" '(kill-this-buffer :wk "kill this buffer")
     "bm" '((lambda () (interactive)
-             (switch-to-buffer (get-buffer-create "*Messages*")))
-           :which-key "messages")
+             (switch-to-buffer (get-buffer-create messages-buffer-name)))
+           :wk "messages")
     "bn" '(next-buffer :wk "previous buffer")
     "bp" '(previous-buffer :wk "previous buffer")
 
