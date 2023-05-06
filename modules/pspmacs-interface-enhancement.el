@@ -120,13 +120,31 @@
     "bm" '((lambda () (interactive)
              (switch-to-buffer (get-buffer-create messages-buffer-name)))
            :wk "messages")
-    "bn" '(next-buffer :wk "previous buffer")
-    "bp" '(previous-buffer :wk "previous buffer")
+    "bn" '(next-buffer :wk "next")
+    "bp" '(previous-buffer :wk "previous")
+
+    "br" '(revert-buffer :wk "reload buffer")
 
     "bs" '(:ignore t :wk "scratch")
-    "bsc" '((lambda () (interactive)
-              (pspmacs/mode-scratch 'conf-mode))
-            :wk "conf")
+
+    "bs-" '((lambda () (interactive)
+              (customize-set-variable 'comment-start "→")
+              (pspmacs/mode-scratch 'fundamental-mode))
+            :wk "fundamental")
+
+    "bss" '((lambda () (interactive)
+              (customize-set-variable 'comment-start "→")
+              (pspmacs/mode-scratch 'text-mode))
+            :wk "plain text")
+
+    "bsc" '(:ignore t :wk "config")
+    "bscc" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'conf-mode))
+             :wk "conf")
+    "bscj" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'js-json-mode))
+             :wk "json")
+
     "bsi" '(pspmacs/mode-scratch :wk "interactive lisp")
     "bso" '((lambda () (interactive)
               (pspmacs/mode-scratch 'org-mode))
@@ -136,9 +154,15 @@
     "bsmd" '((lambda () (interactive)
                (pspmacs/mode-scratch 'markdown-mode))
              :wk "markdown")
+    "bsmr" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'rst-mode))
+             :wk "rST")
     "bsmt" '((lambda () (interactive)
                (pspmacs/mode-scratch 'toml-mode))
              :wk "toml")
+    "bsmX" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'TeX-mode))
+             :wk "TeX")
     "bsmx" '((lambda () (interactive)
                (pspmacs/mode-scratch 'xml-mode))
              :wk "xml")
@@ -147,19 +171,50 @@
              :wk "yaml")
 
     "bsp" '(:ignore t :wk "prog")
+    "bspc" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'c-mode))
+             :wk "c")
+    "bspC" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'c++-mode))
+             :wk "c++")
     "bspe" '((lambda () (interactive)
                (pspmacs/mode-scratch 'emacs-lisp-mode))
              :wk "elisp")
+    "bspj" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'java-mode))
+             :wk "java")
+    "bspl" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'lua-mode))
+             :wk "lua")
     "bspp" '((lambda () (interactive)
                (pspmacs/mode-scratch 'python-mode))
              :wk "python")
+    "bspr" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'rust-mode))
+             :wk "rust")
+    "bspR" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'ess-r-mode))
+             :wk "R")
     "bsps" '((lambda () (interactive)
                (pspmacs/mode-scratch 'shell-script-mode))
              :wk "shell script")
+    "bspy" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'ruby-mode))
+             :wk "ruby")
 
-    "br" '(revert-buffer :wk "reload buffer")
+    "bsw" '(:ignore t :wk "web")
+    "bswh" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'html-mode))
+             :wk "html")
+    "bsws" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'css-mode))
+             :wk "css")
+    "bswj" '((lambda () (interactive)
+               (pspmacs/mode-scratch 'javascript-mode))
+             :wk "javascript")
+
     "bw" '(read-only-mode :wk "read-only")
-    "b C-d" '(pspmacs/kill-other-buffers :wk "delete other"))
+    "b C-d" '(pspmacs/kill-other-buffers :wk "delete others"))
 
   ;; bookmark
   (pspmacs/leader-keys
@@ -289,7 +344,7 @@
     (interactive)
     (pspmacs/home-splash)
     (switch-to-buffer
-     (get-buffer-create "*dashboard*")))
+     (get-buffer-create dashboard-buffer-name)))
   :custom
 
   (dashboard-banner-ascii "PSPMACS")
@@ -307,7 +362,7 @@
   (initial-buffer-choice
    (lambda ()
      (switch-to-buffer
-      (get-buffer-create "*dashboard*"))))
+      (get-buffer-create dashboard-buffer-name))))
   :config
   (dashboard-setup-startup-hook)
   :hook

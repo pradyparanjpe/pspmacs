@@ -409,16 +409,15 @@ to publish orgmode files to html."
                                 "-mode"))
          (scratch-name (format "*%s scratch*" buffer-string-prefix))
          (scratch-notice
-          (format
-           "%s%s\n%s mode.\n\n"
-           "This buffer is for text that is not saved, and for "
-           buffer-string-prefix
-           "To create a file, visit it with C-x C-f and enter text in its buffer.")))
+          (string-replace "Lisp evaluation"
+                          (format "%s mode" buffer-string-prefix)
+                          (string-replace ";; "
+                                          nil initial-scratch-message))))
     (switch-to-buffer scratch-name)
     (with-current-buffer scratch-name
       (funcall-interactively buffer-mode)
       (when (= (buffer-size) 0)
-        (insert scratch-notice)
+        (insert (substitute-command-keys scratch-notice))
         (beginning-of-buffer)
         (comment-line 2)
         (end-of-buffer)))))
