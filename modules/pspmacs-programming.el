@@ -230,7 +230,7 @@
 (use-package origami
   :hook ((prog-mode . origami-mode)))
 
-(use-package stickyfunc-enhance
+(use-package semantic
   :demand t
   :init
   (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)

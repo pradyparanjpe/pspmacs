@@ -23,7 +23,7 @@
 ;;; Code:
 
 (use-package yaml-mode
-  :mode ("\\.yml\\'" . toml-mode)
+  :mode ("\\.ya?ml\\'" . yaml-mode)
   :general
   (:keymaps 'yaml-mode-map
             "\C-m" 'newline-and-indent))

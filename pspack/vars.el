@@ -165,6 +165,9 @@
   :type 'integer)
 
 (use-package yaml
+  ;; This is early configuration
+  ;; Further configuration is maintained
+  ;; under modular tree
   :ensure t
   :demand t)
 (use-package ht

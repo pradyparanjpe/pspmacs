@@ -391,9 +391,11 @@ In Emacs-29, this is obviated.
 * Order of pspmacs modules to load
 Although =use-package-always-ensure= is set to =t=, somehow, it needs to be explicitly passed as kw ~:ensure t~ for the first time.
 This behaviour is only with the builtin package manager, not with =straight.el=.
-
 #+begin_src emacs-lisp :tangle vars.el
   (use-package yaml
+    ;; This is early configuration
+    ;; Further configuration is maintained
+    ;; under modular tree
     :ensure t
     :demand t)
   (use-package ht
