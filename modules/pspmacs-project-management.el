@@ -271,12 +271,13 @@
    `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))
   (auto-save-file-name-transforms
    `((".*" ,(file-name-directory
-             (expand-file-name "auto-saves/" xdg/emacs-state-directory)) t)))
+             (expand-file-name "auto-saves/" xdg/emacs-state-directory))
+      t)))
   (auto-save-list-file-prefix (expand-file-name
                                "auto-saves/sessions"
                                xdg/emacs-state-directory))
-  :general (pspmacs/leader-keys
-             "d" '(:ignore t :wk "dired")
-             "dd" '(dired :wk "open")))
+  :general
+  (pspmacs/leader-keys
+    "xd" '(dired :wk "open")))
 
 (pspmacs/load-inherit)

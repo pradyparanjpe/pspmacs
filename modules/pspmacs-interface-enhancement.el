@@ -171,6 +171,10 @@
     "cl" '(comment-line :wk "comment line")
     "cp" '(comment-region :wk "comment paragraph"))
 
+  ;; dired
+  (pspmacs/leader-keys
+    "d" '(:ignore t :wk "debug"))
+
   ;; powerthesaurus
   (pspmacs/leader-keys
     "D" '(:ignore t :wk "Dictionary"))
@@ -261,7 +265,11 @@
     "wr" 'winner-redo
     "w=" 'balance-windows-area
     "wD" 'kill-buffer-and-window
-    "w C-d" '(delete-other-windows :wk "delete other")))
+    "w C-d" '(delete-other-windows :wk "delete other"))
+
+  ;; explore (dired)
+  (pspmacs/leader-keys
+    "x" '(:ignore t :wk "explore")))
 
 (use-package hydra
   :demand t)

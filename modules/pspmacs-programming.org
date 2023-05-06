@@ -294,6 +294,39 @@
     (prog-mode . semantic-mode))
 #+end_src
 
+* debugging
+#+begin_example emacs-lisp
+  (use-package dap-mode
+    :after corfu
+    :hook
+    (dap-mode . corfu-mode)
+    :general
+    (pspmacs/leader-keys
+      :states 'normal
+      :keymaps '(prog-mode-map dap-ui-repl-mode-map)
+      "d" '(:ignore t :wk "debug")
+      "dd" '(dap-debug :wk "debug")
+
+      "db" '(:ignore t :wk "breakpoint")
+      "dbt" '(dap-breakpoint-toggle :wk "toggle")
+      "dbl" '(dap-ui-breakpoints-list :wk "list")
+
+      "dc" '(dap-continue :wk "continue")
+      "de" '(dap-eval-thing-at-point :wk "eval")
+      "dh" '(dap-hydra :wk "hydra")
+      "dn" '(dap-next :wk "next")
+      "dq" '(dap-disconnect :wk "quit")
+      "dr" '(dap-ui-repl :wk "quit"))
+    :custom
+    ;; prevent minibuffer prompt about reloading from disk
+    (dap-auto-configure-features '(sessions repl))
+    (dap-python-debugger 'debugpy)
+    ;; show stdout
+    (dap-auto-show-output t)
+    (dap-ui-repl-history-dir
+     (expand-file-name "dap-ui-history" xdg/emacs-state-directory)))
+#+end_example
+
 * native Emacs-settings
 #+begin_src emacs-lisp
   (use-package emacs
