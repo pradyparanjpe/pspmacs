@@ -230,13 +230,13 @@ if ASSUME is nil, prompt what to do?"
                   (keyboard-escape-quit))))
         (t (message "Continuing despite failure, since flag was set."))))
 
-(defun emacs-repo/remote-changed-p ()
+(defun emacs-repo/remote-changed-p (&optional print-message)
   "Local repo is behind remote by so many commits.
 
 When called interactively, a human message is displayed.
 When called from function, t is returned if this number is greater than
 the kwyword `stale-at' in the list `emacs-repo/build-args-list'"
-  (interactive)
+  (interactive "p")
   (let* ((default-directory emacs-repo/clone-dir)
          (_ (emacs-repo/call-shell "git" '("fetch" "origin")))
          (behind-by
@@ -244,7 +244,7 @@ the kwyword `stale-at' in the list `emacs-repo/build-args-list'"
            (emacs-repo/call-shell
             "git" '("rev-list" "--count" "--right-only"
                     "HEAD...@{upstream}")))))
-    (if (called-interactively-p 'interactive)
+    (if print-message
         (message "Behind by %s commits." behind-by)
       (< emacs-repo/stale-at behind-by))))
 
