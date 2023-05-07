@@ -50,8 +50,8 @@
 
   ;; don't stretch for ESC
   ;; (general-define-key
-  ;;  :states 'insert
-  ;;  "jk" 'evil-normal-state)
+      ;;  :states 'insert
+      ;;  "jk" 'evil-normal-state)
   (general-imap "j"
     (general-key-dispatch 'self-insert-command
       "k" 'evil-normal-state))
@@ -80,20 +80,20 @@
 
   (pspmacs/leader-keys
     "TAB" '((lambda ()
-                (interactive)
-                (switch-to-buffer (other-buffer (current-buffer) 1)))
-              :which-key "toggle buffer"))
+              (interactive)
+              (switch-to-buffer (other-buffer (current-buffer) 1)))
+            :which-key "toggle buffer"))
 
   (pspmacs/leader-keys
     "1" '(:ignore t :wk "line-numbers")
     "1d" '((lambda () (interactive) (setq display-line-numbers nil))
-      :wk "disable")
+           :wk "disable")
     "1e" '((lambda () (interactive) (setq display-line-numbers t))
-      :wk "enable")
+           :wk "enable")
     "1r" '((lambda () (interactive) (setq display-line-numbers 'relative))
-      :wk "relative")
+           :wk "relative")
     "1v" '((lambda () (interactive) (setq display-line-numbers 'visual))
-      :wk "visual"))
+           :wk "visual"))
 
   (pspmacs/leader-keys
     "8" '(insert-char :wk "UTF-8 character"))
@@ -107,6 +107,13 @@
     :keymaps 'org-mode-map
     "A"   '(:ignore t :wk "AI"))
 
+  (pspmacs/leader-keys
+    "M" '(:ignore t :wk "Mode")
+    "Mc" '(:ignore t :wk "config")
+    "Mm" '(:ignore t :wk "markup")
+    "Mp" '(:ignore t :wk "prog")
+    "Mw" '(:ignore t :wk "web"))
+
   ;; buffer
   ;; see 'bufler' and 'popper'
   (pspmacs/leader-keys
@@ -116,109 +123,63 @@
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
               :wk "toggle")
     "b-" '(pspmacs/switch-to-minibuffer :wk "minibuffer")
-    "bd" '(kill-this-buffer :wk "kill this buffer")
+    "bd" '(kill-this-buffer :wk "kill this")
     "bm" '((lambda () (interactive)
              (switch-to-buffer (get-buffer-create messages-buffer-name)))
            :wk "messages")
     "bn" '(next-buffer :wk "next")
     "bp" '(previous-buffer :wk "previous")
 
-    "br" '(revert-buffer :wk "reload buffer")
+    "br" '(revert-buffer :wk "reload")
+
+    "bw" '(read-only-mode :wk "read-only")
+    "b C-d" '(pspmacs/kill-other-buffers :wk "delete others")
+
+    ;; scratch
 
     "bs" '(:ignore t :wk "scratch")
+    "bsc" '(:ignore t :wk "config")
+    "bsm" '(:ignore t :wk "markup")
+    "bsp" '(:ignore t :wk "prog")
+    "bsw" '(:ignore t :wk "web"))
 
-    "bs-" '((lambda () (interactive)
-              (customize-set-variable 'comment-start "→")
-              (pspmacs/mode-scratch 'fundamental-mode))
-            :wk "fundamental")
+  (let* ((mode-toggle-binding nil)
+         (scratch-binding nil))
+    (dolist (maj-mode pspmacs/mode-keybindings nil)
+      (let* ((key-seq (cdr maj-mode))
+             (target-mode (car maj-mode))
+             (wk-hint (string-replace
+                       "-mode" ""
+                       (symbol-name (car maj-mode)))))
+        (push `(quote (,target-mode :wk ,wk-hint))
+               mode-toggle-binding)
+        (push (format "M%s" key-seq)
+              mode-toggle-binding)
+        (push `(quote ((lambda () (interactive)
+                         (pspmacs/mode-scratch ',target-mode))
+                       :wk ,wk-hint))
+               scratch-binding)
+        (push (format "bs%s" key-seq)
+              scratch-binding)))
+    (eval `(pspmacs/leader-keys ,@mode-toggle-binding))
+    (eval `(pspmacs/leader-keys ,@scratch-binding)))
 
+  ;; Plain modes
+  (pspmacs/leader-keys
     "bss" '((lambda () (interactive)
               (customize-set-variable 'comment-start "→")
               (pspmacs/mode-scratch 'text-mode))
             :wk "plain text")
 
-    "bsc" '(:ignore t :wk "config")
-    "bscc" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'conf-mode))
-             :wk "conf")
-    "bscj" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'js-json-mode))
-             :wk "json")
-
-    "bsi" '(pspmacs/mode-scratch :wk "interactive lisp")
-    "bso" '((lambda () (interactive)
-              (pspmacs/mode-scratch 'org-mode))
-            :wk "org-mode")
-
-    "bsm" '(:ignore t :wk "markup")
-    "bsmd" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'markdown-mode))
-             :wk "markdown")
-    "bsmr" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'rst-mode))
-             :wk "rST")
-    "bsmt" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'toml-mode))
-             :wk "toml")
-    "bsmX" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'TeX-mode))
-             :wk "TeX")
-    "bsmx" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'xml-mode))
-             :wk "xml")
-    "bsmy" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'yaml-mode))
-             :wk "yaml")
-
-    "bsp" '(:ignore t :wk "prog")
-    "bspc" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'c-mode))
-             :wk "c")
-    "bspC" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'c++-mode))
-             :wk "c++")
-    "bspe" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'emacs-lisp-mode))
-             :wk "elisp")
-    "bspj" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'java-mode))
-             :wk "java")
-    "bspl" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'lua-mode))
-             :wk "lua")
-    "bspp" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'python-mode))
-             :wk "python")
-    "bspr" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'rust-mode))
-             :wk "rust")
-    "bspR" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'ess-r-mode))
-             :wk "R")
-    "bsps" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'shell-script-mode))
-             :wk "shell script")
-    "bspy" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'ruby-mode))
-             :wk "ruby")
-
-    "bsw" '(:ignore t :wk "web")
-    "bswh" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'html-mode))
-             :wk "html")
-    "bsws" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'css-mode))
-             :wk "css")
-    "bswj" '((lambda () (interactive)
-               (pspmacs/mode-scratch 'javascript-mode))
-             :wk "javascript")
-
-    "bw" '(read-only-mode :wk "read-only")
-    "b C-d" '(pspmacs/kill-other-buffers :wk "delete others"))
+    "bs-" '((lambda () (interactive)
+              (customize-set-variable 'comment-start "→")
+              (pspmacs/mode-scratch 'fundamental-mode))
+            :wk "fundamental"))
 
   ;; bookmark
   (pspmacs/leader-keys
-    "B" '(:ignore t :wk "bookmark")
+    "B" '(:ignore t :wk "bookmark"
+                  )
     "Bs" '(bookmark-set :wk "set bookmark")
     "Bj" '(bookmark-jump :wk "jump to bookmark"))
 
@@ -241,8 +202,8 @@
     "ff" '(find-file :wk "find")
     "fe" '(:ignote t :wk "emacs")
     "fec" '((lambda ()
-      (interactive)
-      (find-file custom-file))
+              (interactive)
+              (find-file custom-file))
             :wk "custom file")
     "fw" '(:ignote t :wk "worktree")
     "fwl" '((lambda ()
@@ -260,9 +221,9 @@
               (message "disabled"))
             :wk "global <disabled>")
     "fD" '((lambda ()
-         (interactive)
-         (delete-file (buffer-file-name)))
-       :wk "delete File")
+             (interactive)
+             (delete-file (buffer-file-name)))
+           :wk "delete File")
     "fR" '(rename-file :wk "rename")
     "fs" '(save-buffer :wk "save file")
     "fS" '(write-file :wk "save as")
@@ -273,16 +234,6 @@
 
   ;; internet
   (pspmacs/leader-keys "i" '(:ignore t :wk "internet"))
-
-  ;; major mode
-  (pspmacs/leader-keys
-    "M" '(:ignore t :wk "Major Mode")
-    "Me" 'emacs-lisp-mode
-    "Mo" 'org-mode
-    "Mp" 'python-mode
-    "Mr" 'ess-r-mode
-    "Ms" 'shell-script-mode
-    "M-" 'fundamental-mode)
 
   ;; universal argument
   (pspmacs/leader-keys
@@ -419,7 +370,7 @@
    ;; necessary for evil collection
    evil-want-integration t
    evil-want-keybinding nil
-   ;; hopefully this will fix weird tab behaviour
+   ;; fixes weird tab behaviour
    evil-want-C-i-jump nil)
   :custom
   (evil-search-module 'isearch)

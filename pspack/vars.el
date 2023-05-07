@@ -207,6 +207,36 @@
   :group 'pspack
   :type 'boolean)
 
+(defcustom pspmacs/mode-keybindings
+  '((fundamental-mode . "-")
+    (conf-mode . "cc")
+    (js-json-mode . "cj")
+    (markdown-mode . "md")
+    (lisp-interaction-mode . "i")
+    (rst-mode . "mr")
+    (toml-mode . "mt")
+    (TeX-mode . "mX")
+    (xml-mode . "mx")
+    (yaml-mode . "my")
+    (org-mode . "o")
+    (c-mode . "pc")
+    (c++-mode . "pC")
+    (emacs-lisp-mode . "pe")
+    (java-mode . "pj")
+    (lua-mode . "pl")
+    (python-mode . "pp")
+    (rust-mode . "pr")
+    (ess-r-mode . "pR")
+    (shell-script-mode . "ps")
+    (ruby-mode . "py")
+    (html-mode . "wh")
+    (javasript-mode . "wj")
+    (css-mode . "wc"))
+  "Common keybindings for buffer major modes"
+  :group 'pspmacs
+  :type '(repeat (cons (symbol :tag "mode")
+                       (string :tag "key-sequence"))))
+
 (require 'pspmacs/xdg)
 (defcustom pspmacs/org-path
   (expand-file-name "org/" xdg/emacs-data-directory)

@@ -498,6 +498,42 @@ Following function may be used to byte-compile any work-tree.
       (kill-buffer used-buffer)))
 #+end_src
 
+* Buffer mode key-bindings
+Key-bindings to:
+- Change buffer mode
+- Open scratch buffer with mode
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/mode-keybindings
+    '((fundamental-mode . "-")
+      (conf-mode . "cc")
+      (js-json-mode . "cj")
+      (markdown-mode . "md")
+      (lisp-interaction-mode . "i")
+      (rst-mode . "mr")
+      (toml-mode . "mt")
+      (TeX-mode . "mX")
+      (xml-mode . "mx")
+      (yaml-mode . "my")
+      (org-mode . "o")
+      (c-mode . "pc")
+      (c++-mode . "pC")
+      (emacs-lisp-mode . "pe")
+      (java-mode . "pj")
+      (lua-mode . "pl")
+      (python-mode . "pp")
+      (rust-mode . "pr")
+      (ess-r-mode . "pR")
+      (shell-script-mode . "ps")
+      (ruby-mode . "py")
+      (html-mode . "wh")
+      (javasript-mode . "wj")
+      (css-mode . "wc"))
+    "Common keybindings for buffer major modes"
+    :group 'pspmacs
+    :type '(repeat (cons (symbol :tag "mode")
+                         (string :tag "key-sequence"))))
+    #+end_src
+
 * Switch to minibuffer
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/switch-to-minibuffer ()

@@ -52,13 +52,14 @@
   :commands (consult-ripgrep)
   :general
   (pspmacs/leader-keys
-    "b b" '(consult-buffer :wk "buffer")
+    "bb" '(consult-buffer :wk "menu")
     "/" '(consult-ripgrep :wk "find in project")
     "*" '((lambda ()
             (interactive)
             (consult-ripgrep nil (thing-at-point 'symbol)))
           :wk "find this in project")
-    "el" '(consult-flymake :wk "list"))
+    "el" '(consult-flymake :wk "list")
+    "fr" '(consult-recent-file :wk "recent"))
 
   (pspmacs/local-leader-keys
     "M-x" '(consult-mode-command :wk "mode command"))
@@ -81,6 +82,7 @@
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
   (autoload 'projectile-project-root "projectile")
+  (add-to-list 'consult-buffer-filter "\\`\\*epc con [0-9]+\\*\\'")
   :custom
   (consult-narrow-key "<") ;; "C-+"
   (consult-project-root-function #'projectile-project-root))
