@@ -127,7 +127,6 @@
       "rI" '(importmagic-fix-symbol :wk "arbitrary import"))
     :hook
     (python-mode . importmagic-mode))
-
 #+end_src
 
 * Auto - format before saving
