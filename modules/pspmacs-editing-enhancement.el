@@ -68,19 +68,10 @@
                   (unless (file-remote-p default-directory)
                     (all-the-icons-dired-mode)))))
 
-(use-package multiple-cursors
+(use-package evil-mc
   :after evil
-  :general
-  (pspmacs/leader-keys
-    "s" '(:ignore t :wk "multiple-substitute")
-    "se" '(:ignore t :state 'visual :wk "edit")
-    :states 'visual
-    "sef" '(mc/mark-all-like-this-in-defun :wk "function")
-    "seb" '(mc/mark-all-like-this :wk "buffer"))
-  (pspmacs/leader-keys
-    :states 'normal
-    "sef" '(mc/mark-all-symbols-like-this-in-defun :wk "function")
-    "seb" '(mc/mark-all-symbols-like-this :wk "buffer")))
+  :config
+  (global-evil-mc-mode 1))
 
 (use-package undo-tree
   :general
