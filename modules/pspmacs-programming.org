@@ -190,6 +190,24 @@
     :defer t
     :hook (prog-mode . ggtags-mode))
 #+end_src
+* treesitter
+** Base package
+Tree-sitter should ideally be compiled with Emacs.
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :ensure t
+    :config
+    (global-tree-sitter-mode)
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+#+end_src
+
+** Languages
+#+begin_src emacs-lisp
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter)
+#+end_src
+
 * joaotavora/eglot
 - Programming languages (language server)
 - Starting from Emacs-29, eglot will be part of shipped standard library.

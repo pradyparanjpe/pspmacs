@@ -57,6 +57,7 @@
   - emacs-lisp
   - ess-R
   - rust
+  - javascript
   - lua
   - version-control
   - markup
