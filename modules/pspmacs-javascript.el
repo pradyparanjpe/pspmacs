@@ -50,3 +50,13 @@
   :ensure t
   :hook
   (typescript-mode . apheleia-mode))
+
+(use-package ansi-color
+  :init
+  (defun colorize-compilation-buffer ()
+    (ansi-color-apply-on-region compilation-filter-start (point-max)))
+  :config
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+
+(pspmacs/load-inherit)
+;;; pspmacs-javascript.el ends here
