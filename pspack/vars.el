@@ -267,4 +267,9 @@
   :group 'pspmacs
   :type 'boolean)
 
+(defcustom pspmacs/after-code-load-hook nil
+  "run after the program code file is loaded"
+  :group 'pspack
+  :type '(hook :tag "After code-load"))
+
 ;;; vars.el ends there

@@ -192,7 +192,8 @@
   (eglot-extend-to-xref t)
   :hook
   (prog-mode . eglot-ensure)
-  (eglot-managed-mode . pspmacs/eglot-capf))
+  (eglot-managed-mode . pspmacs/eglot-capf)
+  (eglot-connect . pspmacs/after-code-load))
 
 (use-package flymake
   :defer t
@@ -264,7 +265,13 @@
   (pspmacs/leader-keys
     :states 'normal
     :keymaps 'prog-mode-map
-    "C" '(:ignore t :wk "compiler")))
+    "C"  '(:ignore t :wk "compiler")
+    "Cc" '((lambda ()
+             (interactive)
+             (progn
+               (call-interactively 'compile)
+               (switch-to-buffer-other-window "*compilation*")))
+           :wk "compile")))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-programming.el ends here

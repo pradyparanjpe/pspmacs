@@ -958,6 +958,19 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
       (org-update-statistics-cookies nil)))
 #+end_src
 
+* Programming language hooks
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/after-code-load-hook nil
+    "run after the program code file is loaded"
+    :group 'pspack
+    :type '(hook :tag "After code-load"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/after-code-load (&rest _)
+    "run after the program code file is loaded"
+    (run-hooks 'pspmacs/after-code-load-hook))
+#+end_src
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there

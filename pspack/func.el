@@ -507,4 +507,8 @@ only at the end of recursion by the caller function.
         'tree)))
     (org-update-statistics-cookies nil)))
 
+(defun pspmacs/after-code-load (&rest _)
+  "run after the program code file is loaded"
+  (run-hooks 'pspmacs/after-code-load-hook))
+
 ;;; func.el ends there

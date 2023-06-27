@@ -239,7 +239,8 @@ Tree-sitter should ideally be compiled with Emacs.
     (eglot-extend-to-xref t)
     :hook
     (prog-mode . eglot-ensure)
-    (eglot-managed-mode . pspmacs/eglot-capf))
+    (eglot-managed-mode . pspmacs/eglot-capf)
+    (eglot-connect . pspmacs/after-code-load))
     #+end_src
 
 * flymake/flymake
@@ -364,7 +365,13 @@ Tree-sitter should ideally be compiled with Emacs.
     (pspmacs/leader-keys
       :states 'normal
       :keymaps 'prog-mode-map
-      "C" '(:ignore t :wk "compiler")))
+      "C"  '(:ignore t :wk "compiler")
+      "Cc" '((lambda ()
+               (interactive)
+               (progn
+                 (call-interactively 'compile)
+                 (switch-to-buffer-other-window "*compilation*")))
+             :wk "compile")))
 #+end_src
 
 * Inherit from private and local
