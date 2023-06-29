@@ -90,27 +90,6 @@
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t))
 
-(use-package yasnippet
-  :general
-  (pspmacs/leader-keys
-    "y" '(:ignore t :wk "yas")
-    "yn" '(yas-new-snippet :wk "new")
-    "yi" '(yas-insert-snippet :wk "insert"))
-  (yas-minor-mode-map
-   :states 'insert
-   "TAB" 'nil
-   "C-TAB" 'yas-expand)
-  :config
-  (pspmacs/extend-list
-   'yas-snippet-dirs
-   (mapcar
-    (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
-  (dolist (snippets-wt yas-snippet-dirs nil)
-    (mkdir snippets-wt t))
-  (yas-reload-all)
-  :hook
-  (((prog-mode org-mode) . yas-minor-mode)))
-
 (general-add-hook 'org-mode-hook 'flyspell-mode)
 (pspmacs/leader-keys
   "S" '(:ignore t :wk "flyspell")

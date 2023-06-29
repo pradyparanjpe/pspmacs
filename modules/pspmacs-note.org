@@ -466,7 +466,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
   - ChatGPT
   - Whisper
   - DALL-E
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :eval none :tangle no :exports none
   (use-package org-ai
     :commands (org-ai-mode)
     :general

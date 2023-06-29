@@ -193,7 +193,7 @@
   #+end_src
 
 * Python yasnippets
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no :eval no :exports none
   (use-package py-snippets
     :after '(yasnippet python-mode)
     :config

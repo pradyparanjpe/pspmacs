@@ -128,13 +128,13 @@ Default keymap-bindings: "=g .=".
 * FAIL AndreaCrotti/yasnippet-snippets
 This requires =yasnippet v0.8.0=, which is unavailable.
 Yasnippet is already at 0.14.0.
-#+begin_src emacs-lisp :tangle no :eval no
+#+begin_src emacs-lisp :tangle no :eval no :exports none
   (use-package yasnippet-snippets)
 #+end_src
 
 * joaotavora/yasnippets
 Insert snippets of frequently used topics.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no :eval no :exports none
   (use-package yasnippet
     :general
     (pspmacs/leader-keys
