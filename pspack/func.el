@@ -511,4 +511,34 @@ only at the end of recursion by the caller function.
   "run after the program code file is loaded"
   (run-hooks 'pspmacs/after-code-load-hook))
 
+(defun pspmacs/project-init (command)
+  "Run after the program code file is loaded"
+  (interactive
+   (list (read-string "pspmacs/project-init-command: "
+                      pspmacs/project-init-command)))
+  (run-hooks 'pspmacs/project-init-hook)
+  (unless (string= command "")
+    (message "Starting command %s" command)
+    (let* ((command-parts (split-string command))
+           (cmd (car command-parts))
+           (args (cdr command-parts))
+           (process-args `("project-init" "*project-init*" ,cmd ,@args)))
+      (apply 'start-process process-args)
+      (switch-to-buffer-other-window "*project-init*"))))
+
+(defun pspmacs/serve-or-run (command)
+  "Run after the program code file is loaded"
+  (interactive
+   (list (read-string "serve-or-run-command: "
+                      pspmacs/serve-or-run-command)))
+  (run-hooks 'pspmacs/serve-or-run-hook)
+  (unless (string= command "")
+    (message "Starting command %s" command)
+    (let* ((command-parts (split-string command))
+           (cmd (car command-parts))
+           (args (cdr command-parts))
+           (process-args `("serve-or-run" "*serve-or-run*" ,cmd ,@args)))
+      (apply 'start-process process-args)
+      (switch-to-buffer-other-window "*serve-or-run*"))))
+
 ;;; func.el ends there

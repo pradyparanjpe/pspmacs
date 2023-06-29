@@ -271,7 +271,17 @@
              (progn
                (call-interactively 'compile)
                (switch-to-buffer-other-window "*compilation*")))
-           :wk "compile")))
+           :wk "compile")
+    "Ci" '((lambda ()
+             (interactive)
+             (progn
+               (call-interactively 'pspmacs/project-init)))
+           :wk "run")
+    "Cr" '((lambda ()
+             (interactive)
+             (progn
+               (call-interactively 'pspmacs/serve-or-run)))
+           :wk "run")))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-programming.el ends here

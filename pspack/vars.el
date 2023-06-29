@@ -272,4 +272,24 @@
   :group 'pspack
   :type '(hook :tag "After code-load"))
 
+(defcustom pspmacs/project-init-hook nil
+  "Hook called to initialize project"
+  :group 'pspack
+  :type '(hook :tag "Initialize project"))
+
+(defcustom pspmacs/project-init-command nil
+  "Project initialization command"
+  :group 'pspack
+  :type '(hook :tag "Initialize project"))
+
+(defcustom pspmacs/serve-or-run-hook nil
+  "hook called to initialize project"
+  :group 'pspack
+  :type '(hook :tag "Run or serve project"))
+
+(defcustom pspmacs/serve-or-run-command nil
+  "Project initialization command"
+  :group 'pspack
+  :type '(hook :tag "Serve or run project"))
+
 ;;; vars.el ends there

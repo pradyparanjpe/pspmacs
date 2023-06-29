@@ -959,6 +959,7 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
 #+end_src
 
 * Programming language hooks
+- Hooks called after eglot-connect.
 #+begin_src emacs-lisp :tangle vars.el
   (defcustom pspmacs/after-code-load-hook nil
     "run after the program code file is loaded"
@@ -971,6 +972,69 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
     "run after the program code file is loaded"
     (run-hooks 'pspmacs/after-code-load-hook))
 #+end_src
+
+* Programming project initialize
+- Project initialization hooks
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/project-init-hook nil
+    "Hook called to initialize project"
+    :group 'pspack
+    :type '(hook :tag "Initialize project"))
+
+  (defcustom pspmacs/project-init-command nil
+    "Project initialization command"
+    :group 'pspack
+    :type '(hook :tag "Initialize project"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/project-init (command)
+    "Run after the program code file is loaded"
+    (interactive
+     (list (read-string "pspmacs/project-init-command: "
+                        pspmacs/project-init-command)))
+    (run-hooks 'pspmacs/project-init-hook)
+    (unless (string= command "")
+      (message "Starting command %s" command)
+      (let* ((command-parts (split-string command))
+             (cmd (car command-parts))
+             (args (cdr command-parts))
+             (process-args `("project-init" "*project-init*" ,cmd ,@args)))
+        (apply 'start-process process-args)
+        (switch-to-buffer-other-window "*project-init*"))))
+#+end_src
+
+* Run or Serve code
+- Project initialization hooks
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/serve-or-run-hook nil
+    "hook called to initialize project"
+    :group 'pspack
+    :type '(hook :tag "Run or serve project"))
+
+  (defcustom pspmacs/serve-or-run-command nil
+    "Project initialization command"
+    :group 'pspack
+    :type '(hook :tag "Serve or run project"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/serve-or-run (command)
+    "Run after the program code file is loaded"
+    (interactive
+     (list (read-string "serve-or-run-command: "
+                        pspmacs/serve-or-run-command)))
+    (run-hooks 'pspmacs/serve-or-run-hook)
+    (unless (string= command "")
+      (message "Starting command %s" command)
+      (let* ((command-parts (split-string command))
+             (cmd (car command-parts))
+             (args (cdr command-parts))
+             (process-args `("serve-or-run" "*serve-or-run*" ,cmd ,@args)))
+        (apply 'start-process process-args)
+        (switch-to-buffer-other-window "*serve-or-run*"))))
+#+end_src
+
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there

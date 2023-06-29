@@ -22,9 +22,72 @@
 
 ;;; Code:
 
+(defun pspmacs/ensure-webpack ()
+  "Ensure existance of 'webpack.js'.
+
+Else, offer to trigger initialize."
+  (interactive)
+  (catch 'abort
+    (let ((default-directory (or projectile-project-root default-directory)))
+      (when (not (file-exists-p default-directory))
+        (if (y-or-n-p
+             (format "Directory %s doesn't exist. Create?" default-directory))
+            (make-directory default-directory t)
+          (progn
+            (message "aborting")
+            (throw 'abort))))
+      (when (file-exists-p "webpack.config.js")
+        (if (y-or-n-p "File 'webpack.config.js' already exists.")
+            (delete-file "webpack.config.js")
+          (progn
+            (message "aborting")
+            (throw 'abort))))
+      (start-process "initiate webdev" "*init webdev*"
+                     "webpack" "init" "-f"))))
+
+(defun pspmacs/ensure-tsconfig ()
+  "Ensure existance of 'tsconfig.js'.
+
+Else, offer to trigger initialize."
+  (interactive)
+  (catch 'abort
+    (let ((default-directory (or projectile-project-root default-directory)))
+      (when (not (or (file-exists-p "webpack.config.js")
+                     (file-exists-p "src/")))
+        (if (y-or-n-p "Webpack not yet initialized. Init?")
+            (call-interactively 'pspmacs/ensure-webpack)))
+      (when (file-exists-p "tsconfig.json")
+        (if (y-or-n-p "File 'tsconfig.json' already exists. Replace?")
+            (delete-file "tsconfig.json")
+          (progn
+            (message "aborting")
+            (throw 'abort))))
+      (start-process "initialize typescript" "*initialize typescript*"
+                     "tsc" "--init"
+                      "--rootDir" "./src"
+                      "--target" "es2016"
+                      "--jsx" "react"
+                      "--module" "es6"
+                      "--moduleResolution" "node"
+                      "--outDir" "./dist"))))
+
 (use-package typescript-mode
   :after tree-sitter
   :config
+  (dolist (webmode '(html css typescript javascript) nil)
+    (add-hook
+     (intern (format "%s-mode-hook" (symbol-name webmode)))
+     (lambda ()
+       (progn
+         (setq-local compile-command "webpack build ")
+         (setq-local pspmacs/serve-or-run-command "webpack-dev-server "))))
+    (add-hook
+     (intern (format "%s-mode-hook" (symbol-name webmode)))
+     (lambda ()
+       (let ((default-directory (or projectile-project-root default-directory)))
+         (unless (file-exists "tsconfig.json")
+           (pspmacs/ensure-tsconfig))))
+     nil t))
   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
   ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
   (define-derived-mode typescriptreact-mode typescript-mode "TypeScript TSX")
@@ -33,17 +96,7 @@
   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
   ;; by default, typescript-mode is mapped to the treesitter typescript parser
   ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
-  (add-hook
-   'pspmacs/after-code-load-hook
-   (lambda ()
-     (when (and (string= (symbol-name major-mode) "typescript-mode")
-                (not (or (string= (file-name-directory default-directory)
-                                  (file-name-as-directory (getenv "HOME")))
-                         (string= (file-name-directory default-directory) "~/")
-                         (file-exists-p "tsconfig.json"))))
-       (call-process "tsc" nil nil nil "--init"))))
-  (add-hook 'typescript-mode-hook (lambda () (setq-local compile-command "tsc "))))
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
 
 (use-package tsi
   :after tree-sitter

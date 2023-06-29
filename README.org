@@ -21,7 +21,7 @@ Further, opinionated configuration imposes restrictions.
 Downstream modification of template opinions break (as they *did* for me) when the upstream code gets some incompatible commits.
 
 * My Attempt
-This is my *hitherto successful* attempt at configuring Emacs (v28 and v29) from scratch to use it as a /text editor/ (🤣).
+This is my *hitherto successful* attempt at configuring Emacs (v29 and master-branch) from scratch to use it as a /text editor/ (🤣).
 
 ** OPTION 1: Copy Configuration
 To copy /PSPMacs/ configuration (=POSIX=),
