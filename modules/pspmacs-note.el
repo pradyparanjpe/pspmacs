@@ -426,6 +426,24 @@ parent."
     :keymaps 'org-mode-map
     "=wt" '(org-wc-display :wk "org word-count tree")))
 
+(use-package org-ai
+  :commands (org-ai-mode)
+  :general
+  (pspmacs/leader-keys
+    "Ap"  '(:ignore t :wk "prompt")
+    "App" '(org-ai-prompt :wk "prompt")
+    "Apm" '(org-ai-mark-last-region :wk "mark")
+    "Apr" '(org-ai-on-region :wk "region")
+
+    "As"  '(org-ai-summarize :wk "summarize"))
+  :hook
+  (org-mode . org-ai-mode))
+  ;; :config
+  ;; if you are on the gpt-4 beta:
+  ;; (setq org-ai-default-chat-model "gpt-4")
+  ;; if you are using yasnippet and want `ai` snippets
+  ;; (org-ai-install-yasnippets)
+
 (use-package powerthesaurus
   :after org
   :general

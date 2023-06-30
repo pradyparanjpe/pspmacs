@@ -40,7 +40,8 @@
     (add-to-list 'eglot-server-programs
                  '(python-mode . ("pyright-langserver" "--stdio"))))
   :custom
-  (python-indent-offset 0)
+  (python-indent-offset 4)
+
   :config
   (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
   (sp-local-pair 'python-mode "'''" "'''")
@@ -111,6 +112,11 @@
 (use-package yapfify
   :defer t
   :hook (python-mode . yapf-mode))
+
+(use-package py-snippets
+  :after '(yasnippet python-mode)
+  :config
+  (py-snippets-initialize))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-python.el ends here

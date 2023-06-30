@@ -192,8 +192,7 @@
   (eglot-extend-to-xref t)
   :hook
   (prog-mode . eglot-ensure)
-  (eglot-managed-mode . pspmacs/eglot-capf)
-  (eglot-connect . pspmacs/after-code-load))
+  (eglot-managed-mode . pspmacs/eglot-capf))
 
 (use-package flymake
   :defer t
@@ -259,6 +258,7 @@
         #'command-completion-default-include-p)
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
+  (add-hook 'prog-mode-hook 'pspmacs/after-code-load)
   :custom
   (tab-always-indent 'complete)
   :general

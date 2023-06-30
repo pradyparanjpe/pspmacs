@@ -190,7 +190,7 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
   (pspmacs/load-modules)
 #+end_src
 ** Byte compile worktrees
-#+begin_src emacs-lisp :tangle init.el
+#+begin_src emacs-lisp :tangle no :eval no :exports none
   (pspmacs/byte-compile-worktrees)
 #+end_src
 

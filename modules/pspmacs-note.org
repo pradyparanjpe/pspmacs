@@ -466,7 +466,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
   - ChatGPT
   - Whisper
   - DALL-E
-#+begin_src emacs-lisp :eval none :tangle no :exports none
+#+begin_src emacs-lisp
   (use-package org-ai
     :commands (org-ai-mode)
     :general
@@ -478,12 +478,12 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
 
       "As"  '(org-ai-summarize :wk "summarize"))
     :hook
-    (org-mode . org-ai-mode)
-    :config
+    (org-mode . org-ai-mode))
+    ;; :config
     ;; if you are on the gpt-4 beta:
     ;; (setq org-ai-default-chat-model "gpt-4")
     ;; if you are using yasnippet and want `ai` snippets
-    (org-ai-install-yasnippets))
+    ;; (org-ai-install-yasnippets)
 #+end_src
 * SavchenkoValeriy/emacs-powerthesaurus
 #+begin_src emacs-lisp

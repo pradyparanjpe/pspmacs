@@ -32,7 +32,7 @@ if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
     pull_cmd="git pull --recurse-submodules"
 
     # shellcheck disable=SC2034
-    clean_cmd="git -fdx clean"
+    tree_cmd="git clean -fdx"
 
     # shellcheck disable=SC2034
     autogen_cmd="./autogen.sh"
@@ -51,7 +51,7 @@ if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
     # shellcheck disable=SC2034
     install_cmd="make -j \"\$(nproc)\" install"
 
-    all_cmds="${all_cmds} fetch_cmd delta_cmd pull_cmd autogen_cmd \
+    all_cmds="${all_cmds} fetch_cmd delta_cmd pull_cmd tree_cmd autogen_cmd \
       configure_cmd clean_cmd make_cmd install_cmd"
 else
     printf "

@@ -49,7 +49,8 @@
       (add-to-list 'eglot-server-programs
                    '(python-mode . ("pyright-langserver" "--stdio"))))
     :custom
-    (python-indent-offset 0)
+    (python-indent-offset 4)
+
     :config
     (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
     (sp-local-pair 'python-mode "'''" "'''")
@@ -193,7 +194,7 @@
   #+end_src
 
 * Python yasnippets
-#+begin_src emacs-lisp :tangle no :eval no :exports none
+#+begin_src
   (use-package py-snippets
     :after '(yasnippet python-mode)
     :config

@@ -7,6 +7,4 @@
 
 (pspmacs/load-modules)
 
-(pspmacs/byte-compile-worktrees)
-
 (pspmacs/load-inherit)
