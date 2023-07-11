@@ -514,8 +514,8 @@ only at the end of recursion by the caller function.
 (defun pspmacs/project-init (command)
   "Run after the program code file is loaded"
   (interactive
-   (list (read-string "pspmacs/project-init-command: "
-                      pspmacs/project-init-command)))
+   `(,(read-string "pspmacs/project-init-command: "
+                   pspmacs/project-init-command)))
   (run-hooks 'pspmacs/project-init-hook)
   (unless (string= command "")
     (message "Starting command %s" command)
@@ -529,8 +529,8 @@ only at the end of recursion by the caller function.
 (defun pspmacs/serve-or-run (command)
   "Run after the program code file is loaded"
   (interactive
-   (list (read-string "serve-or-run-command: "
-                      pspmacs/serve-or-run-command)))
+   `(,(read-string "serve-or-run-command: "
+                   pspmacs/serve-or-run-command)))
   (run-hooks 'pspmacs/serve-or-run-hook)
   (unless (string= command "")
     (message "Starting command %s" command)

@@ -93,6 +93,39 @@
   :defer t
   :hook ((python-mode . pyvenv-auto-run)))
 
+(cl-defun pspmacs/pip (cmd packages &key (flags nil))
+  "Wrapper around pip install working in current virtual environment.
+
+CMD is pip (sub-)command (install, uninstall, etc) to execute.
+FLAGS may be string or symbol list of flags passed to subcommand.
+PACKAGES are string or symbol list of flags passed to subcommand.
+We assume pip = pip3 *always* (python2 is already in antiquity)."
+  (let*
+      ((pip (or (executable-find "pip") (executable-find "pip")))
+       (cmd (if (symbolp cmd) (symbol-name cmd) cmd))
+       (packages (mapcar (lambda (x)
+                           (if (symbolp x) (symbol-name x) x))
+                         packages))
+       (flags (mapcar (lambda (x) (if (symbolp x) (symbol-name x) x)) flags))
+       (sh-args (remq nil `(,cmd ,@flags ,@packages))))
+    (switch-to-buffer-other-window "*pip*")
+    (apply 'start-process "pip" "*pip*" pip sh-args)))
+
+(defun pspmacs/pip-interactive ()
+  "Handle python pip interactively in current virtualenv
+
+ACTION: action to perform (install, uninstall)"
+  (interactive)
+  (let ((action (completing-read "Action: "
+                                 '("install" "uninstall" "arbitrary"))))
+    (cond ((member action '("uninstall" "install"))
+           (let ((packages (split-string (read-string "Packages: ")))
+                 (flags (split-string (read-string "Flags: "))))
+             (pspmacs/pip action packages :flags flags)))
+          (t (let ((cmd (read-string "sub-command: "))
+                   (args (split-string (read-string "arguments and flags: "))))
+               (pspmacs/pip cmd args))))))
+
 (use-package importmagic
   :defer t
   :general

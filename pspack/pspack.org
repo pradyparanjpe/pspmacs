@@ -991,8 +991,8 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
   (defun pspmacs/project-init (command)
     "Run after the program code file is loaded"
     (interactive
-     (list (read-string "pspmacs/project-init-command: "
-                        pspmacs/project-init-command)))
+     `(,(read-string "pspmacs/project-init-command: "
+                     pspmacs/project-init-command)))
     (run-hooks 'pspmacs/project-init-hook)
     (unless (string= command "")
       (message "Starting command %s" command)
@@ -1022,8 +1022,8 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
   (defun pspmacs/serve-or-run (command)
     "Run after the program code file is loaded"
     (interactive
-     (list (read-string "serve-or-run-command: "
-                        pspmacs/serve-or-run-command)))
+     `(,(read-string "serve-or-run-command: "
+                     pspmacs/serve-or-run-command)))
     (run-hooks 'pspmacs/serve-or-run-hook)
     (unless (string= command "")
       (message "Starting command %s" command)
