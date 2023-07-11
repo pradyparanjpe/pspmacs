@@ -236,7 +236,7 @@
   #+end_src
 
 * Python yasnippets
-#+begin_src
+#+begin_src emacs-lisp :tangle no :results none :export no
   (use-package py-snippets
     :after '(yasnippet python-mode)
     :config

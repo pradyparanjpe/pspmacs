@@ -90,6 +90,9 @@
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t))
 
+(use-package yasnippet-snippets
+  :after yasnippet)
+
 (use-package yasnippet
   :general
   (pspmacs/leader-keys
@@ -101,12 +104,12 @@
    "TAB" 'nil
    "C-TAB" 'yas-expand)
   :config
-  (pspmacs/extend-list
-   'yas-snippet-dirs
-   (mapcar
-    (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
-  (dolist (snippets-wt yas-snippet-dirs nil)
-    (mkdir snippets-wt t))
+  (let ((pspmacs/snippets (mapcar (lambda (x) (expand-file-name "snippets" x))
+    pspmacs/worktrees)))
+    (dolist (snippets-wt pspmacs/snippets nil)
+      (mkdir snippets-wt t))
+    (pspmacs/extend-list
+     'yas-snippet-dirs pspmacs/snippets))
   (yas-reload-all)
   :hook
   (((prog-mode org-mode) . yas-minor-mode)))
@@ -118,11 +121,6 @@
   "Sn" '(evil-next-flyspell-error :wk "next")
   "Sp" '(evil-prev-flyspell-error :wk "previous")
   "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
-
-(use-package emacs
-  :config
-  (setq-default display-line-numbers-type 'relative)
-  (global-display-line-numbers-mode 1))
 
 (use-package smartparens
   :general
@@ -204,6 +202,11 @@
   :hook
   (((markdown-mode text-mode org-mode) . flymake-proselint-setup)
    ((markdown-mode text-mode org-mode) . flymake-mode)))
+
+(use-package emacs
+  :config
+  (setq-default display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode 1))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-editing-enhancement.el ends here

@@ -129,8 +129,9 @@ Default keymap-bindings: "=g .=".
 yasnippet-snippets
 This requires =yasnippet v0.8.0=, which is unavailable.
 Yasnippet is already at 0.14.0.
-#+begin_src emacs-lisp :tangle no :exports none :eval no
-  (use-package yasnippet-snippets)
+#+begin_src emacs-lisp
+  (use-package yasnippet-snippets
+    :after yasnippet)
 #+end_src
 
 * joaotavora/yasnippets
@@ -147,12 +148,12 @@ Insert snippets of frequently used topics.
      "TAB" 'nil
      "C-TAB" 'yas-expand)
     :config
-    (pspmacs/extend-list
-     'yas-snippet-dirs
-     (mapcar
-      (lambda (x) (expand-file-name "snippets" x)) pspmacs/worktrees))
-    (dolist (snippets-wt yas-snippet-dirs nil)
-      (mkdir snippets-wt t))
+    (let ((pspmacs/snippets (mapcar (lambda (x) (expand-file-name "snippets" x))
+      pspmacs/worktrees)))
+      (dolist (snippets-wt pspmacs/snippets nil)
+        (mkdir snippets-wt t))
+      (pspmacs/extend-list
+       'yas-snippet-dirs pspmacs/snippets))
     (yas-reload-all)
     :hook
     (((prog-mode org-mode) . yas-minor-mode)))
@@ -169,15 +170,6 @@ Spell-check on-the-fly
     "Sp" '(evil-prev-flyspell-error :wk "previous")
     "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
 #+end_src
-* native emacs-settings
-- Display line numbers
-#+begin_src emacs-lisp
-  (use-package emacs
-    :config
-    (setq-default display-line-numbers-type 'relative)
-    (global-display-line-numbers-mode 1))
-#+end_src
-
 * fuco1/smartparens
 - Auto-complete pairs
 #+begin_src emacs-lisp
@@ -269,6 +261,15 @@ Dependencies: [[https://www.gnu.org/software/diction/][Gnu style and diction]]
     :hook
     (((markdown-mode text-mode org-mode) . flymake-proselint-setup)
      ((markdown-mode text-mode org-mode) . flymake-mode)))
+#+end_src
+
+* native emacs-settings
+- Display line numbers
+#+begin_src emacs-lisp
+  (use-package emacs
+    :config
+    (setq-default display-line-numbers-type 'relative)
+    (global-display-line-numbers-mode 1))
 #+end_src
 
 * Inherit from private and local

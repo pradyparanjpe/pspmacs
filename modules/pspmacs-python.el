@@ -146,10 +146,5 @@ ACTION: action to perform (install, uninstall)"
   :defer t
   :hook (python-mode . yapf-mode))
 
-(use-package py-snippets
-  :after '(yasnippet python-mode)
-  :config
-  (py-snippets-initialize))
-
 (pspmacs/load-inherit)
 ;;; pspmacs-python.el ends here
