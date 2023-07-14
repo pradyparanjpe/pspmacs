@@ -159,6 +159,25 @@
   :hook
   (dired-mode . dired-git-mode))
 
+(use-package dired-du
+  :init
+  ;; indexing audit
+  (when (executable-find "duc")
+    (run-with-timer
+      0
+      3600
+      (defun index-duc ()
+        (start-process "duc" nil "duc" "index" (getenv "HOME")))))
+  :custom
+  (dired-du-size-format t)
+  :config
+  (when (and (executable-find "duc")
+             (not (string-match-p "Error"
+                                  (shell-command-to-string "duc info"))))
+    (customize-set-variable 'dired-du-used-space-program '("duc" "ls -bD")))
+  :hook
+  (dired-mode . dired-du-mode))
+
 (use-package treemacs
   :defer t
   :init

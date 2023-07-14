@@ -4,7 +4,7 @@
 
 * Header Copyright
 #+begin_src emacs-lisp
-;;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
+;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -182,6 +182,29 @@
     :hook
     (dired-mode . dired-git-mode))
 #+end_src
+
+** dired du
+- Also [[https://emacs.stackexchange.com/questions/20766/display-recursive-folder-sizes-in-line-in-dired][add duc indexing]].
+  #+begin_src emacs-lisp
+    (use-package dired-du
+      :init
+      ;; indexing audit
+      (when (executable-find "duc")
+        (run-with-timer
+          0
+          3600
+          (defun index-duc ()
+            (start-process "duc" nil "duc" "index" (getenv "HOME")))))
+      :custom
+      (dired-du-size-format t)
+      :config
+      (when (and (executable-find "duc")
+                 (not (string-match-p "Error"
+                                      (shell-command-to-string "duc info"))))
+        (customize-set-variable 'dired-du-used-space-program '("duc" "ls -bD")))
+      :hook
+      (dired-mode . dired-du-mode))
+  #+end_src
 
 * Alexander-Miller/treemacs
 #+begin_src emacs-lisp
