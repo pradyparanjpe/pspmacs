@@ -38,6 +38,11 @@
 - [[file:pspmacs-internet.org][internet]]
 
 ** 60: GNU Emacs
+- [[file:pspmacs-ci-cd.org][ci-cd]]
+
+** 70: multimedia
+- [[file:pspmacs-multimedia.org][multimedia]]
+
 * Yaml export
 #+begin_src yaml
   10:
@@ -66,4 +71,6 @@
   - internet
   60:
   - emacs-ci-cd
+  70:
+  - multimedia
 #+end_src

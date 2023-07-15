@@ -122,6 +122,7 @@
 #+end_src
 ** dired hacks
 #+begin_src emacs-lisp
+  (use-package dired-subtree)
   (use-package dired-hacks-utils)
   (use-package dired-rainbow
     :config
@@ -179,7 +180,7 @@
       (dired-rainbow-define vc "#0074d9"
                             ("git" "gitignore" "gitattributes" "gitmodules"))
       (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")))
-  (use-package dired-collapse)
+   (use-package dired-collapse)
     #+end_src
 
 ** dired dotfiles

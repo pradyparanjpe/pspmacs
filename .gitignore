@@ -95,3 +95,6 @@ emacs-reveal-submodules/
 
 # eww bookmarks
 eww-bookmarks
+
+# emms history
+emms/

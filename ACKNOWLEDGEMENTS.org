@@ -20,3 +20,6 @@ to have been inspired by SpaceMacs'.
 
 * [[https://github.com/emacs-tw/awesome-emacs][emacs-tw/awesome-emacs]]
 - Module contents were derived and arranged according to their categories in awesome-emacs.
+
+* [[https://protesilaos.com/emacs/][Protesilaos']] configuration
+- Further improvements were based on Protesilaos's configuration and tutorials.

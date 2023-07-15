@@ -292,6 +292,7 @@
 
   (pspmacs/leader-keys
     "w" '(:ignore t :which-key "window")
+    "w TAB" '(other-window :wk "other")
     "wr" 'winner-redo
     "w=" 'balance-windows-area
     "wD" 'kill-buffer-and-window
@@ -362,7 +363,6 @@
   :general
   ;; window navigations
   (pspmacs/leader-keys
-    "w" '(:ignore t :keymap evil-window-map :wk "window") ;; window bindings
     "wd" '(evil-window-delete :wk "delete window")
     "wH" '(evil-window-move-far-left :wk "move left")
     "wh" '(evil-window-left :wk "left window")
@@ -487,9 +487,9 @@
 
   :general
   (pspmacs/leader-keys
-    (">" '(:ignore t :wk "tempel templates"))
-    (">>" '(tempel-complete :wk "complete"))
-    (">i" '(tempel-insert :wk "insert")))
+    (">t" '(:ignore t :wk "tempel templates"))
+    (">t>" '(tempel-complete :wk "complete"))
+    (">ti" '(tempel-insert :wk "insert")))
 
   :init
   ;; Setup completion at point

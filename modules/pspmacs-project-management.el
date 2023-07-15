@@ -101,6 +101,7 @@
 (use-package treemacs-icons-dired
   :hook (dired-mode . treemacs-icons-dired-enable-once))
 
+(use-package dired-subtree)
 (use-package dired-hacks-utils)
 (use-package dired-rainbow
   :config
@@ -158,7 +159,7 @@
     (dired-rainbow-define vc "#0074d9"
                           ("git" "gitignore" "gitattributes" "gitmodules"))
     (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")))
-(use-package dired-collapse)
+ (use-package dired-collapse)
 
 (use-package dired-hide-dotfiles
   :general
