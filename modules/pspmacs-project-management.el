@@ -1,4 +1,4 @@
-;;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
+;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -81,6 +81,26 @@
     "Git status in project."
     (projectile-vc)))
 
+(use-package dired
+  :ensure nil
+  :general
+  (pspmacs/leader-keys
+    "jd" '(dired-jump :wk "dired")
+    "fc" '(consult-find :wk "consult"))
+  :custom
+  (dired-guess-shell-alist-user
+   '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
+     ("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
+     ("\\.\\(pdf\\)" "zathura")
+     (".*" "xdg-open")))
+  (dired-clean-up-buffers-to t)
+  (dired-clean-confirm-killing-deleted-buffers t)
+  :hook
+  (dired-mode . hl-line-mode))
+
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once))
+
 (use-package dired-hacks-utils)
 (use-package dired-rainbow
   :config
@@ -141,12 +161,13 @@
 (use-package dired-collapse)
 
 (use-package dired-hide-dotfiles
-  :hook (dired-mode . dired-hide-dotfiles-mode)
   :general
   (pspmacs/local-leader-keys
     :keymaps 'dired-mode-map
     :states 'normal
-    "H" 'dired-hide-dotfiles-mode))
+    "H" 'dired-hide-dotfiles-mode)
+  :hook
+  (dired-mode . dired-hide-dotfiles-mode))
 
 (use-package dired-rsync
   :general
@@ -178,108 +199,6 @@
   :hook
   (dired-mode . dired-du-mode))
 
-(use-package treemacs
-  :defer t
-  :init
-  (pspmacs/extend-list 'recentf-exclude
-                       '(".*treemacs-persist\\'"
-                         ".*straight/build\\'"
-                         "/usr/share/emacs/.*\\'"))
-  :general
-  (pspmacs/leader-keys
-    "0" '(treemacs-select-window :wk "treemacs"))
-
-  :custom
-    (treemacs-collapse-dirs                   3)
-    (treemacs-deferred-git-apply-delay        0.5)
-    (treemacs-directory-name-transformer      #'identity)
-    (treemacs-display-in-side-window          t)
-    (treemacs-eldoc-display                   'simple)
-    (treemacs-file-event-delay                2000)
-    (treemacs-file-extension-regex            treemacs-last-period-regex-value)
-    (treemacs-file-follow-delay               0.2)
-    (treemacs-file-name-transformer           #'identity)
-    (treemacs-follow-after-init               t)
-    (treemacs-expand-after-init               t)
-    (treemacs-find-workspace-method           'find-for-file-or-pick-first)
-    (treemacs-git-command-pipe                "")
-    (treemacs-goto-tag-strategy               'refetch-index)
-    (treemacs-header-scroll-indicators        '(nil . "^^^^^^"))
-    (treemacs-hide-dot-git-directory          t)
-    (treemacs-indentation                     2)
-    (treemacs-indentation-string              " ")
-    (treemacs-is-never-other-window           nil)
-    (treemacs-max-git-entries                 5000)
-    (treemacs-missing-project-action          'ask)
-    (treemacs-move-forward-on-expand          nil)
-    (treemacs-no-png-images                   t)
-    (treemacs-no-delete-other-windows         t)
-    (treemacs-project-follow-cleanup          nil)
-    (treemacs-persist-file                    (expand-file-name "treemacs-persist" xdg/emacs-cache-directory))
-    (treemacs-position                        'left)
-    (treemacs-read-string-input               'from-child-frame)
-    (treemacs-recenter-distance               0.1)
-    (treemacs-recenter-after-file-follow      nil)
-    (treemacs-recenter-after-tag-follow       nil)
-    (treemacs-recenter-after-project-jump     'always)
-    (treemacs-recenter-after-project-expand   'on-distance)
-    (treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask"))
-    (treemacs-project-follow-into-home        nil)
-    (treemacs-show-cursor                     nil)
-    (treemacs-show-hidden-files               t)
-    (treemacs-silent-filewatch                nil)
-    (treemacs-silent-refresh                  nil)
-    (treemacs-sorting                         'alphabetic-asc)
-    (treemacs-select-when-already-in-treemacs 'move-back)
-    (treemacs-space-between-root-nodes        t)
-    (treemacs-tag-follow-cleanup              t)
-    (treemacs-tag-follow-delay                1.5)
-    (treemacs-text-scale                      nil)
-    (treemacs-user-mode-line-format           nil)
-    (treemacs-user-header-line-format         nil)
-    (treemacs-wide-toggle-width               70)
-    (treemacs-width                           35)
-    (treemacs-width-increment                 1)
-    (treemacs-width-is-initially-locked       t)
-    (treemacs-workspace-switch-cleanup        nil)
-    (treemacs-last-error-persist-file (expand-file-name "treemacs-persist-at-last-error" xdg/emacs-state-directory))
-
-    ;; The default width and height of the icons is 22 pixels. If you are
-    ;; using a Hi-DPI display, uncomment this to double the icon size.
-    ;;(treemacs-resize-icons 44)
-    :config
-    (treemacs-follow-mode)
-    (treemacs-filewatch-mode))
-
-
-  (use-package treemacs-evil
-    :after (treemacs evil))
-
-  (use-package treemacs-projectile
-    :after (treemacs projectile))
-
-  (use-package treemacs-icons-dired
-    :hook (dired-mode . treemacs-icons-dired-enable-once))
-
-  (use-package treemacs-magit
-    :after (treemacs magit)
-    :config
-    (when treemacs-python-executable
-      (treemacs-git-commit-diff-mode t))
-    (treemacs-fringe-indicator-mode 'always)
-
-    (pcase (cons (not (null (executable-find "git")))
-                 (not (null treemacs-python-executable)))
-      (`(t . t)
-       (treemacs-git-mode 'deferred))
-      (`(t . _)
-       (treemacs-git-mode 'simple)))
-    (treemacs-hide-gitignored-files-mode nil))
-
-  (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
-    :after (treemacs)
-    :config (treemacs-set-scope-type 'Tabs))
-
 (use-package emacs
   :init
   (mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
@@ -294,9 +213,6 @@
       t)))
   (auto-save-list-file-prefix (expand-file-name
                                "auto-saves/sessions"
-                               xdg/emacs-state-directory))
-  :general
-  (pspmacs/leader-keys
-    "xd" '(dired :wk "open")))
+                               xdg/emacs-state-directory)))
 
 (pspmacs/load-inherit)

@@ -92,6 +92,12 @@
       "++" '(pspmacs/git-rebase :wk "PSPMacs Config"))
 
     (pspmacs/leader-keys
+      ">" '(:ignore t :wk "indent")
+      "> TAB" '(indent-rigidly-right-to-tab-stop :wk "tab right")
+      "> <backtab>" '(indent-rigidly-left-to-tab-stop :wk "tab left")
+      "> >" '(indent-rigidly :wk "manually"))
+
+    (pspmacs/leader-keys
       "TAB" '((lambda ()
                 (interactive)
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
@@ -119,13 +125,6 @@
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
       "A"   '(:ignore t :wk "AI"))
-
-    (pspmacs/leader-keys
-      "M" '(:ignore t :wk "Mode")
-      "Mc" '(:ignore t :wk "config")
-      "Mm" '(:ignore t :wk "markup")
-      "Mp" '(:ignore t :wk "prog")
-      "Mw" '(:ignore t :wk "web"))
 
     ;; buffer
     ;; see 'bufler' and 'popper'
@@ -191,10 +190,11 @@
 
     ;; bookmark
     (pspmacs/leader-keys
-      "B" '(:ignore t :wk "bookmark"
-                    )
-      "Bs" '(bookmark-set :wk "set bookmark")
-      "Bj" '(bookmark-jump :wk "jump to bookmark"))
+      "B" '(:ignore t :wk "bookmark")
+      "Bd" '(bookmark-delete :wk "delete")
+      "Bj" '(bookmark-jump :wk "jump")
+      "Bl" '(list-bookmarks :wk "list")
+      "Br" '(consult-bookmark :wk "remember"))
 
     (pspmacs/leader-keys
       "c" '(:ignore t :wk "comment")
@@ -248,9 +248,20 @@
     ;; internet
     (pspmacs/leader-keys "i" '(:ignore t :wk "internet"))
 
-    ;; universal argument
+    ;; jumps
     (pspmacs/leader-keys
-      "u" '(universal-argument :wk "universal prefix"))
+      "j" '(:ignore t :wk "jump"))
+
+    ;; marks
+    (pspmacs/leader-keys
+      "m" '(:ignore t :wk "mark")
+      "mm" '(set-mark-command :wk "set")
+      "mj" '(consult-mark :wk "jump")
+      "mM" '((lambda () (interactive)
+               (call-interactively 'set-mark-command)
+               (call-interactively 'set-mark-command))
+             :wk "set deactivated mark")
+      "mx" '(exchange-point-and-mark :wk "x-change"))
 
     ;; notes
     ;; see 'citar' and 'org-roam'
@@ -259,10 +270,12 @@
 
     ;; see org-roam and citar sections
 
-    ;; code
-    ;; see 'flymake'
     (pspmacs/leader-keys
-      "c" '(:ignore t :wk "code"))
+      "M" '(:ignore t :wk "Mode")
+      "Mc" '(:ignore t :wk "config")
+      "Mm" '(:ignore t :wk "markup")
+      "Mp" '(:ignore t :wk "prog")
+      "Mw" '(:ignore t :wk "web"))
 
     ;; open
     (pspmacs/leader-keys
@@ -275,21 +288,27 @@
       "q C-f" '(delete-other-frames :wk "other frames")
       "qq" '(delete-frame :wk "client"))
 
+    (pspmacs/leader-keys
+      "r" '(:ignore t :wk "register")
+      "rl" '(consult-register-load t :wk "load")
+      "rr" '(consult-register-store :wk "remember")
+      "rj" '(consult-register :wk "jump"))
+
     ;; templating
     ;; see 'tempel'
     (pspmacs/leader-keys
       "t" '(:ignore t :wk "template"))
+
+    ;; universal argument
+    (pspmacs/leader-keys
+      "u" '(universal-argument :wk "universal prefix"))
 
     (pspmacs/leader-keys
       "w" '(:ignore t :which-key "window")
       "wr" 'winner-redo
       "w=" 'balance-windows-area
       "wD" 'kill-buffer-and-window
-      "w C-d" '(delete-other-windows :wk "delete other"))
-
-    ;; explore (dired)
-    (pspmacs/leader-keys
-      "x" '(:ignore t :wk "explore")))
+      "w C-d" '(delete-other-windows :wk "delete other")))
 #+end_src
 
 * abo-abo/hydra
@@ -376,7 +395,6 @@ Jump by word hints
   (use-package avy
     :general
     (pspmacs/leader-keys
-      "j" '(:ignore t :wk "jump")
       "jj" '(avy-goto-char-timer :wk "search")))
  #+end_src
 
@@ -489,7 +507,9 @@ Flash highlight hints on evil actions
     (pspmacs/leader-keys
       "SPC" '(execute-extended-command :wk "vertico M-x"))
     :init
-    (vertico-mode))
+    (vertico-mode)
+    :hook
+    (('rfn-eshadow-update-overlay . vertico-directory-tidy)))
 
   ;; Persist history over Emacs restarts. Vertico sorts by history position.
 

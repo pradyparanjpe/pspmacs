@@ -93,6 +93,33 @@
 #+end_src
 
 * Dired
+** dired
+- While we are at it, hide details by default
+  - Toggle using ~(dired-hide-details-mode)~
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    :general
+    (pspmacs/leader-keys
+      "jd" '(dired-jump :wk "dired")
+      "fc" '(consult-find :wk "consult"))
+    :custom
+    (dired-guess-shell-alist-user
+     '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
+       ("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
+       ("\\.\\(pdf\\)" "zathura")
+       (".*" "xdg-open")))
+    (dired-clean-up-buffers-to t)
+    (dired-clean-confirm-killing-deleted-buffers t)
+    :hook
+    (dired-mode . hl-line-mode))
+#+end_src
+
+** treemacs icons in dired
+#+begin_src emacs-lisp
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once))
+#+end_src
 ** dired hacks
 #+begin_src emacs-lisp
   (use-package dired-hacks-utils)
@@ -156,14 +183,20 @@
     #+end_src
 
 ** dired dotfiles
+- Hide dotfiles by default.
+  - They are called 'hidden' for a reason.
+  - They unnecessarily clutter directory.
+  - Toggle using ",S-h"
+
 #+begin_src emacs-lisp
   (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
     :general
     (pspmacs/local-leader-keys
       :keymaps 'dired-mode-map
       :states 'normal
-      "H" 'dired-hide-dotfiles-mode))
+      "H" 'dired-hide-dotfiles-mode)
+    :hook
+    (dired-mode . dired-hide-dotfiles-mode))
     #+end_src
 
 ** dired rsync
@@ -207,7 +240,7 @@
   #+end_src
 
 * Alexander-Miller/treemacs
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no :exports none :eval no
   (use-package treemacs
     :defer t
     :init
@@ -288,9 +321,6 @@
     (use-package treemacs-projectile
       :after (treemacs projectile))
 
-    (use-package treemacs-icons-dired
-      :hook (dired-mode . treemacs-icons-dired-enable-once))
-
     (use-package treemacs-magit
       :after (treemacs magit)
       :config
@@ -338,11 +368,7 @@
         t)))
     (auto-save-list-file-prefix (expand-file-name
                                  "auto-saves/sessions"
-                                 xdg/emacs-state-directory))
-    :general
-    (pspmacs/leader-keys
-      "xd" '(dired :wk "open")))
-
+                                 xdg/emacs-state-directory)))
 #+end_src
 * Inherit from private and local
 #+begin_src emacs-lisp
