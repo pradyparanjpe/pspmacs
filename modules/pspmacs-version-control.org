@@ -72,6 +72,13 @@
     (global-diff-hl-mode))
 #+end_src
 
+* native Emacs settings
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (auto-revert-check-vc-info t))
+#+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

@@ -85,6 +85,19 @@
 
   "Cursor: row:col")
 
+(defvar pspmacs/pspline-version-control
+  '(when (stringp vc-mode)
+     (let ((vc-spec
+            (replace-regexp-in-string
+             (format "^ %s[:-]" (vc-backend buffer-file-name))
+             " " vc-mode)))
+       (propertize vc-spec
+                   'face
+                   `(:foreground ,(if (member vc-spec '(" main" " master"))
+                                      "#3fff7f"
+                                    "#7f3fff")))))
+  "version control spec")
+
 (defvar pspmacs/pspline-time
   '(propertize (format-time-string "⏲%H:%M")
                'face 'bold 'help-echo (format-time-string "%c"))
@@ -102,7 +115,7 @@
    (:eval ,pspmacs/pspline-cursor-position)
    (:eval mode-line-misc-info)
    mode-line-format-right-align
-   (:eval vc-mode)
+   (:eval ,pspmacs/pspline-version-control)
    " "
    (:eval ,pspmacs/pspline-time)
    mode-line-end-spaces))

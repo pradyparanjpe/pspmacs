@@ -117,6 +117,21 @@
     "Cursor: row:col")
 #+end_src
 
+** Version control
+#+begin_src emacs-lisp
+  (defvar pspmacs/pspline-version-control
+    '(when (stringp vc-mode)
+       (let ((vc-spec
+              (replace-regexp-in-string
+               (format "^ %s[:-]" (vc-backend buffer-file-name))
+               " " vc-mode)))
+         (propertize vc-spec
+                     'face
+                     `(:foreground ,(if (member vc-spec '(" main" " master"))
+                                        "#3fff7f"
+                                      "#7f3fff")))))
+    "version control spec")
+#+end_src
 ** Time
 #+begin_src emacs-lisp
   (defvar pspmacs/pspline-time
@@ -139,7 +154,7 @@
      (:eval ,pspmacs/pspline-cursor-position)
      (:eval mode-line-misc-info)
      mode-line-format-right-align
-     (:eval vc-mode)
+     (:eval ,pspmacs/pspline-version-control)
      " "
      (:eval ,pspmacs/pspline-time)
      mode-line-end-spaces))

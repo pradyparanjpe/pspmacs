@@ -59,6 +59,10 @@
   :config
   (global-diff-hl-mode))
 
+(use-package emacs
+  :custom
+  (auto-revert-check-vc-info t))
+
 (pspmacs/load-inherit)
 
 ;;; pspmacs-version-control.el ends here
