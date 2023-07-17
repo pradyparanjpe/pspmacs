@@ -48,13 +48,6 @@
                    "T" '(:ignore t :wk "Theme")
                    "Tt" 'modus-themes-toggle)
         :init
-        (setq display-time-24hr-format t)
-        (display-time-mode)
-        (setq display-time-default-load-average nil)
-        (line-number-mode t)
-        (column-number-mode t)
-        (size-indication-mode t)
-
         ;; ESSENTIAL to make the underline move to the bottom of the box:
         (setq x-underline-at-descent-line t)
         :custom
@@ -83,8 +76,8 @@
            (fg-heading-6 "#af5f5f")
            (fg-heading-7 "#5f5f5f")
            (fg-heading-8 "#afafaf")
-           (bg-mode-line-active bg-main)
-           (fg-mode-line-active fg-main)
+           (bg-mode-line-active "#000000")
+           (fg-mode-line-active "#7f7f7f")
            (modus-themes-disable-other-themes t)
            (border-mode-line-active bg-mode-line-active)
            (border-mode-line-inactive bg-mode-line-inactive)))

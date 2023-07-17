@@ -538,60 +538,6 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package doom-modeline
-  :demand t
-  :init
-  (setq display-time-24hr-format t)
-  (display-time-mode)
-  (setq display-time-default-load-average nil)
-  (line-number-mode t)
-  (column-number-mode t)
-  (size-indication-mode t)
-  :custom
-  (doom-modeline-icon t)
-  (doom-modeline-modal-icon "")
-  (doom-modeline-major-mode-icon t)
-  (doom-modeline-major-mode-color-icon t)
-  (doom-modeline-env-version t)
-  (doom-modeline-buffer-file-name-style 'relative-to-project)
-  (doom-modeline-buffer-encoding nil)
-  (doom-modeline-height 15)
-  (doom-modeline-project-detection 'projectile)
-  :config
-  ;; with emacs-29 on doom-modeline release, following issue *still* persists
-  ;; https://github.com/seagle0128/doom-modeline/issues/505
-  ;; workaround:
-  (unless (version< emacs-version "29")
-    (setq doom-modeline-fn-alist
-          (--map
-           (cons (remove-pos-from-symbol (car it)) (cdr it))
-           doom-modeline-fn-alist)))
-  (doom-modeline-mode 1)
-  (set-face-attribute 'mode-line nil
-                      :background "#050614"
-                      :foreground "white"
-                      :box '(:line-width 8 :color "#050614")
-                      :overline nil
-                      :underline nil)
-  (set-face-attribute 'mode-line-inactive nil
-                      :background "#262033"
-                      :foreground "white"
-                      :box '(:line-width 8 :color "#262033")
-                      :overline nil
-                      :underline nil)
-  (set-face-attribute 'doom-modeline-buffer-file nil
-                      :foreground "#009f9f")
-  (set-face-attribute 'doom-modeline-time nil
-                      :foreground "#9fafbf")
-  (set-face-attribute 'doom-modeline-evil-insert-state nil
-                      :foreground "green")
-  (set-face-attribute 'doom-modeline-evil-normal-state nil
-                      :foreground "orange")
-  (set-face-attribute 'doom-modeline-evil-replace-state nil
-                      :foreground "yellow")
-  (set-face-attribute 'doom-modeline-evil-visual-state nil
-                      :foreground "cyan"))
-
 (use-package yascroll
   :custom
   (global-yascroll-bar-mode t)

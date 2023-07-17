@@ -155,6 +155,7 @@ Pack of functions, variables, faces for pspmacs
   (add-to-list 'load-path (expand-file-name "pspack" user-emacs-directory))
   (require 'pspmacs/xdg)
   (require 'pspack)
+  (require 'pspmacs/pspline)
 #+end_src
 
 ** Inherit

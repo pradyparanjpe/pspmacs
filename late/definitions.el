@@ -37,5 +37,6 @@ If nothing is found and if NAG is t, throw error. Default: return"
 (add-to-list 'load-path (expand-file-name "pspack" user-emacs-directory))
 (require 'pspmacs/xdg)
 (require 'pspack)
+(require 'pspmacs/pspline)
 
 (pspmacs/load-inherit)

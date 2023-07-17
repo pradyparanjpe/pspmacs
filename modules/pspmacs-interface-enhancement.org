@@ -614,9 +614,26 @@ Flash highlight hints on evil actions
   #+end_src
 
 * mode-line
+** PSPline
+#+begin_src emacs-lisp :tangle no :export none :eval :none
+  (use-package emacs
+    :init
+    (set-face-attribute 'mode-line nil
+                        :background "#050614"
+                        :foreground "white"
+                        :box '(:line-width 8 :color "#050614")
+                        :overline nil
+                        :underline nil)
+    (set-face-attribute 'mode-line-inactive nil
+                        :background "#262033"
+                        :foreground "white"
+                        :box '(:line-width 8 :color "#262033")
+                        :overline nil
+                        :underline nil))
+#+end_src
 ** TODO replace seagle0128/doom-modeline
 - [ ] replace with minimal
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no :export none :eval :none
   (use-package doom-modeline
     :demand t
     :init
