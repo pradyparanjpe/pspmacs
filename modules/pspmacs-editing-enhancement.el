@@ -58,11 +58,13 @@
 (use-package whitespace-cleanup-mode
   :hook (prog-mode . whitespace-cleanup))
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :if (display-graphic-p))
 
 ;; prettify dired with icons
 (use-package all-the-icons-dired
   :if (display-graphic-p)
+  :after all-the-icons
   :hook
   (dired-mode . (lambda () (interactive)
                   (unless (file-remote-p default-directory)

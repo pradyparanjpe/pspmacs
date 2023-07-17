@@ -83,11 +83,13 @@
 * domtronn/all-the-icons
 - Additional font icons/emojis
 #+begin_src emacs-lisp
-  (use-package all-the-icons)
+  (use-package all-the-icons
+    :if (display-graphic-p))
 
   ;; prettify dired with icons
   (use-package all-the-icons-dired
     :if (display-graphic-p)
+    :after all-the-icons
     :hook
     (dired-mode . (lambda () (interactive)
                     (unless (file-remote-p default-directory)
@@ -125,10 +127,7 @@ Default keymap-bindings: "=g .=".
     (undo-tree-visualizer-diff t)
     (undo-tree-visualizer-timestamps t))
 #+end_src
-* FAIL AndreaCrotti/
-yasnippet-snippets
-This requires =yasnippet v0.8.0=, which is unavailable.
-Yasnippet is already at 0.14.0.
+* AndreaCrotti/yasnippet-snippets
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets
     :after yasnippet)
@@ -170,6 +169,7 @@ Spell-check on-the-fly
     "Sp" '(evil-prev-flyspell-error :wk "previous")
     "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
 #+end_src
+
 * fuco1/smartparens
 - Auto-complete pairs
 #+begin_src emacs-lisp

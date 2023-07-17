@@ -321,10 +321,10 @@
   (dashboard-banner-ascii "PSPMACS")
   (dashboard-image-banner-max-width 300)
   (dashboard-startup-banner
-    (expand-file-name "Tux.png" dashboard-banners-directory))
+   (expand-file-name "Tux.png" dashboard-banners-directory))
   (dashboard-set-heading-icons t)
   (dashboard-banner-logo-title
-    "Prady's Structured, Personalized Emacs")
+   "Prady's Structured, Personalized Emacs")
   (dashboard-items '((projects . 2)
                      (recents . 5)
                      (agenda . 5)))
@@ -560,6 +560,11 @@
   :config
   (global-hl-todo-mode))
 
+(defhydra hydra-zoom (global-map "<f8>")
+  "zoom"
+  ("g" text-scale-increase "in")
+  ("l" text-scale-decrease "out"))
+
 (use-package emacs
   :init
   ;; Vertico suggestions
@@ -572,6 +577,7 @@
                    crm-separator)
                   (car args))
           (cdr args)))
+
   ;;; Font
   (if (daemonp)
       (add-hook 'after-make-frame-functions
@@ -595,8 +601,7 @@
   (scroll-margin 5)
   (indent-tabs-mode nil)
   (tab-width 4)
-  (svg-lib-icons-dir
-   (expand-file-name "svg-lib" xdg/emacs-cache-directory))
+  (svg-lib-icons-dir (expand-file-name "svg-lib" xdg/emacs-cache-directory))
   (use-dialog-box nil)
   ;; Vertico suggestions
   ;; Do not allow the cursor in the minibuffer prompt
@@ -605,8 +610,7 @@
   ;; Vertico suggestions
   ;; Enable recursive minibuffers
   (enable-recursive-minibuffers t)
-  (abbrev-file-name (expand-file-name "abbrev_defs"
-                                      xdg/emacs-state-directory))
+  (abbrev-file-name (expand-file-name "abbrev_defs" xdg/emacs-state-directory))
   :hook
   (minibuffer-setup . cursor-intangible-mode)
 
@@ -618,11 +622,6 @@
   (set-selection-coding-system 'utf-8)
   (prefer-coding-system 'utf-8)
   (set-default-coding-systems 'utf-8))
-
-(defhydra hydra-zoom (global-map "<f8>")
-  "zoom"
-  ("g" text-scale-increase "in")
-  ("l" text-scale-decrease "out"))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

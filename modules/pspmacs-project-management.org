@@ -122,8 +122,12 @@
 #+end_src
 ** dired hacks
 #+begin_src emacs-lisp
-  (use-package dired-subtree)
   (use-package dired-hacks-utils)
+
+  (use-package dired-subtree
+    :custom
+    (dired-subtree-line-prefix "——"))
+
   (use-package dired-rainbow
     :config
     (progn

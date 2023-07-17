@@ -347,10 +347,10 @@ Hydra Keybindings
     (dashboard-banner-ascii "PSPMACS")
     (dashboard-image-banner-max-width 300)
     (dashboard-startup-banner
-      (expand-file-name "Tux.png" dashboard-banners-directory))
+     (expand-file-name "Tux.png" dashboard-banners-directory))
     (dashboard-set-heading-icons t)
     (dashboard-banner-logo-title
-      "Prady's Structured, Personalized Emacs")
+     "Prady's Structured, Personalized Emacs")
     (dashboard-items '((projects . 2)
                        (recents . 5)
                        (agenda . 5)))
@@ -468,7 +468,7 @@ Jump by word hints
  #+end_src
 
 * Surround pairs
-- auto complete paired symbols
+- Auto complete paired symbols
 #+begin_src emacs-lisp
   (use-package evil-surround
     :demand t
@@ -613,95 +613,19 @@ Flash highlight hints on evil actions
     (embark-collect-mode . consult-preview-at-point-mode))
   #+end_src
 
-* mode-line
-** PSPline
-#+begin_src emacs-lisp :tangle no :export none :eval :none
-  (use-package emacs
-    :init
-    (set-face-attribute 'mode-line nil
-                        :background "#050614"
-                        :foreground "white"
-                        :box '(:line-width 8 :color "#050614")
-                        :overline nil
-                        :underline nil)
-    (set-face-attribute 'mode-line-inactive nil
-                        :background "#262033"
-                        :foreground "white"
-                        :box '(:line-width 8 :color "#262033")
-                        :overline nil
-                        :underline nil))
-#+end_src
-** TODO replace seagle0128/doom-modeline
-- [ ] replace with minimal
-#+begin_src emacs-lisp :tangle no :export none :eval :none
-  (use-package doom-modeline
-    :demand t
-    :init
-    (setq display-time-24hr-format t)
-    (display-time-mode)
-    (setq display-time-default-load-average nil)
-    (line-number-mode t)
-    (column-number-mode t)
-    (size-indication-mode t)
-    :custom
-    (doom-modeline-icon t)
-    (doom-modeline-modal-icon "")
-    (doom-modeline-major-mode-icon t)
-    (doom-modeline-major-mode-color-icon t)
-    (doom-modeline-env-version t)
-    (doom-modeline-buffer-file-name-style 'relative-to-project)
-    (doom-modeline-buffer-encoding nil)
-    (doom-modeline-height 15)
-    (doom-modeline-project-detection 'projectile)
-    :config
-    ;; with emacs-29 on doom-modeline release, following issue *still* persists
-    ;; https://github.com/seagle0128/doom-modeline/issues/505
-    ;; workaround:
-    (unless (version< emacs-version "29")
-      (setq doom-modeline-fn-alist
-            (--map
-             (cons (remove-pos-from-symbol (car it)) (cdr it))
-             doom-modeline-fn-alist)))
-    (doom-modeline-mode 1)
-    (set-face-attribute 'mode-line nil
-                        :background "#050614"
-                        :foreground "white"
-                        :box '(:line-width 8 :color "#050614")
-                        :overline nil
-                        :underline nil)
-    (set-face-attribute 'mode-line-inactive nil
-                        :background "#262033"
-                        :foreground "white"
-                        :box '(:line-width 8 :color "#262033")
-                        :overline nil
-                        :underline nil)
-    (set-face-attribute 'doom-modeline-buffer-file nil
-                        :foreground "#009f9f")
-    (set-face-attribute 'doom-modeline-time nil
-                        :foreground "#9fafbf")
-    (set-face-attribute 'doom-modeline-evil-insert-state nil
-                        :foreground "green")
-    (set-face-attribute 'doom-modeline-evil-normal-state nil
-                        :foreground "orange")
-    (set-face-attribute 'doom-modeline-evil-replace-state nil
-                        :foreground "yellow")
-    (set-face-attribute 'doom-modeline-evil-visual-state nil
-                        :foreground "cyan"))
-#+end_src
-
 * emacsorphanage/yascroll
 Auto-hiding text-based scroll bar
 #+begin_src emacs-lisp
-(use-package yascroll
-  :custom
-  (global-yascroll-bar-mode t)
-  (yascroll-delay-to-hide 2.0)
-  :config
-  (set-face-attribute 'yascroll:thumb-fringe nil
-                      :background "#7f7f99"
-                      :foreground "#7f7f99")
-  (set-face-attribute 'yascroll:thumb-text-area nil
-                      :background "#7f7f99"))
+  (use-package yascroll
+    :custom
+    (global-yascroll-bar-mode t)
+    (yascroll-delay-to-hide 2.0)
+    :config
+    (set-face-attribute 'yascroll:thumb-fringe nil
+                        :background "#7f7f99"
+                        :foreground "#7f7f99")
+    (set-face-attribute 'yascroll:thumb-text-area nil
+                        :background "#7f7f99"))
 #+end_src
 
 * hlissner/solaire-mode
@@ -722,6 +646,14 @@ Auto-hiding text-based scroll bar
     (global-hl-todo-mode))
 #+end_src
 
+* hydras
+#+begin_src emacs-lisp
+  (defhydra hydra-zoom (global-map "<f8>")
+    "zoom"
+    ("g" text-scale-increase "in")
+    ("l" text-scale-decrease "out"))
+#+end_src
+
 * native emacs-settings
 #+begin_src emacs-lisp
   (use-package emacs
@@ -736,6 +668,7 @@ Auto-hiding text-based scroll bar
                      crm-separator)
                     (car args))
             (cdr args)))
+
     ;;; Font
     (if (daemonp)
         (add-hook 'after-make-frame-functions
@@ -759,8 +692,7 @@ Auto-hiding text-based scroll bar
     (scroll-margin 5)
     (indent-tabs-mode nil)
     (tab-width 4)
-    (svg-lib-icons-dir
-     (expand-file-name "svg-lib" xdg/emacs-cache-directory))
+    (svg-lib-icons-dir (expand-file-name "svg-lib" xdg/emacs-cache-directory))
     (use-dialog-box nil)
     ;; Vertico suggestions
     ;; Do not allow the cursor in the minibuffer prompt
@@ -769,8 +701,7 @@ Auto-hiding text-based scroll bar
     ;; Vertico suggestions
     ;; Enable recursive minibuffers
     (enable-recursive-minibuffers t)
-    (abbrev-file-name (expand-file-name "abbrev_defs"
-                                        xdg/emacs-state-directory))
+    (abbrev-file-name (expand-file-name "abbrev_defs" xdg/emacs-state-directory))
     :hook
     (minibuffer-setup . cursor-intangible-mode)
 
@@ -782,14 +713,6 @@ Auto-hiding text-based scroll bar
     (set-selection-coding-system 'utf-8)
     (prefer-coding-system 'utf-8)
     (set-default-coding-systems 'utf-8))
-#+end_src
-
-* hydras
-#+begin_src emacs-lisp
-  (defhydra hydra-zoom (global-map "<f8>")
-    "zoom"
-    ("g" text-scale-increase "in")
-    ("l" text-scale-decrease "out"))
 #+end_src
 
 * Inherit from private and local

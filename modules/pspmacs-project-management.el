@@ -101,8 +101,12 @@
 (use-package treemacs-icons-dired
   :hook (dired-mode . treemacs-icons-dired-enable-once))
 
-(use-package dired-subtree)
 (use-package dired-hacks-utils)
+
+(use-package dired-subtree
+  :custom
+  (dired-subtree-line-prefix "——"))
+
 (use-package dired-rainbow
   :config
   (progn
