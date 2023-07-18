@@ -549,6 +549,8 @@
   (set-face-attribute 'yascroll:thumb-text-area nil
                       :background "#7f7f99"))
 
+(setq-default mode-line-format (pspmacs/pspline-order))
+
 (use-package solaire-mode
   :config
   (solaire-global-mode +1))

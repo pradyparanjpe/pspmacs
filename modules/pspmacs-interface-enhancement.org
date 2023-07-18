@@ -628,6 +628,12 @@ Auto-hiding text-based scroll bar
                         :background "#7f7f99"))
 #+end_src
 
+* Mode-Line
+- Custom-designed [[file:../pspack/pspmacs/pspline.org][mode-line]]
+#+begin_src emacs-lisp
+  (setq-default mode-line-format (pspmacs/pspline-order))
+#+end_src
+
 * hlissner/solaire-mode
 - Distinguish buffers
 #+begin_src emacs-lisp
