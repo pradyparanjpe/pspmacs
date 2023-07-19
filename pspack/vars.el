@@ -7,16 +7,6 @@
 
 (require 'pspmacs/xdg)
 
-(defcustom pspmacs/home-splash-before-hook nil
-  "Run before switching to pspmacs/home-splash."
-  :group 'pspack
-  :type '(hook :tag "Before home-splash"))
-
-(defcustom pspmacs/home-splash-hook nil
-  "Run after switching to pspmacs/home-splash."
-  :group 'pspack
-  :type '(hook :tag "After home-splash"))
-
 (defcustom pspmacs/hl-tag-faces
   '(("FAIL"  . "#ff3f3f")
     ("FIXME" . "#ff6f3f")

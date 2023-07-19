@@ -110,35 +110,6 @@ In Emacs-29, this is obviated.
         (message "👍"))))
 #+end_src
 
-* Home-splash
-- Home splash screen customizations
-#+begin_src emacs-lisp :tangle vars.el
-  (defcustom pspmacs/home-splash-before-hook nil
-    "Run before switching to pspmacs/home-splash."
-    :group 'pspack
-    :type '(hook :tag "Before home-splash"))
-
-  (defcustom pspmacs/home-splash-hook nil
-    "Run after switching to pspmacs/home-splash."
-    :group 'pspack
-    :type '(hook :tag "After home-splash"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/home-splash-before ()
-    "run functions before switching to splash buffer."
-      (dashboard-refresh-buffer)
-      (run-hooks 'pspmacs/home-splash-before-hook))
-
-  (defun pspmacs/home-splash ()
-    "Visit home screen."
-    (interactive)
-    (progn
-      (pspmacs/home-splash-before)
-      (setq-default default-directory "~/")
-      (run-hooks 'pspmacs/home-splash-hook)))
-#+end_src
-
 * Highlighted tags
 #+begin_src emacs-lisp :tangle vars.el
   (defcustom pspmacs/hl-tag-faces

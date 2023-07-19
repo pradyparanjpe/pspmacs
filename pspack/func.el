@@ -67,19 +67,6 @@ Copied and maybe modufied form module pspmacs-ci-cd."
           (message "Remember to restart!"))
       (message "👍"))))
 
-(defun pspmacs/home-splash-before ()
-  "run functions before switching to splash buffer."
-    (dashboard-refresh-buffer)
-    (run-hooks 'pspmacs/home-splash-before-hook))
-
-(defun pspmacs/home-splash ()
-  "Visit home screen."
-  (interactive)
-  (progn
-    (pspmacs/home-splash-before)
-    (setq-default default-directory "~/")
-    (run-hooks 'pspmacs/home-splash-hook)))
-
 (defun pspmacs/mode-prettify (sub-modes)
   "Apply pretiffy mode alist according to active-mode.
 

@@ -38,5 +38,6 @@ If nothing is found and if NAG is t, throw error. Default: return"
 (require 'pspmacs/xdg)
 (require 'pspack)
 (require 'pspmacs/pspline)
+(require 'pspmacs/startpage)
 
 (pspmacs/load-inherit)

@@ -301,43 +301,8 @@
 (use-package hydra
   :demand t)
 
-(use-package dashboard
-  :demand t
-  :diminish dashboard-mode
-  :general
-  (pspmacs/leader-keys
-    "bh" '(pspmacs-dashboard :which-key "home splash"))
-  :init
-  (customize-set-variable 'dashboard-banners-directory
-   (file-name-as-directory
-    (expand-file-name "data/banners" user-emacs-directory)))
-  (defun pspmacs-dashboard ()
-    (interactive)
-    (pspmacs/home-splash)
-    (switch-to-buffer
-     (get-buffer-create dashboard-buffer-name)))
-  :custom
-
-  (dashboard-banner-ascii "PSPMACS")
-  (dashboard-image-banner-max-width 300)
-  (dashboard-startup-banner
-   (expand-file-name "Tux.png" dashboard-banners-directory))
-  (dashboard-set-heading-icons t)
-  (dashboard-banner-logo-title
-   "Prady's Structured, Personalized Emacs")
-  (dashboard-items '((projects . 2)
-                     (recents . 5)
-                     (agenda . 5)))
-  (dashboard-center-content t)
-  (dashboard-set-footer nil)
-  (initial-buffer-choice
-   (lambda ()
-     (switch-to-buffer
-      (get-buffer-create dashboard-buffer-name))))
-  :config
-  (dashboard-setup-startup-hook)
-  :hook
-  (dashboard-after-initialize-hook . pspmacs/home-splash))
+(pspmacs/leader-keys
+  "bh" '(pspmacs/startpage-show :which-key "startup"))
 
 (use-package helpful
   :after evil
@@ -404,7 +369,6 @@
   (evil-mode t) ;; globally enable evil mode
   ;; default mode: normal
   (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)
   ;; default mode: insert
   (evil-set-initial-state 'eshell-mode 'insert)
   (evil-set-initial-state 'magit-diff-mode 'insert))
