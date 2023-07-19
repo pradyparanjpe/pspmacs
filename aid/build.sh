@@ -51,8 +51,13 @@ if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
     # shellcheck disable=SC2034
     install_cmd="make -j \"\$(nproc)\" install"
 
+    # shellcheck disable=SC2034
+    drop_cache_cmd="eln_cache=\"\${HOME}/.emacs.d/local.d/eln-cache/\"; \
+      if [ -d \"\${eln_cache}\" ]; then \
+      rm -rf \"\${eln_cache}\"; mkdir -p \"\${eln_cache}\"; fi"
+
     all_cmds="${all_cmds} fetch_cmd delta_cmd pull_cmd tree_cmd autogen_cmd \
-      configure_cmd clean_cmd make_cmd install_cmd"
+      configure_cmd clean_cmd make_cmd install_cmd drop_cache_cmd"
 else
     printf "
 PRE-REQUISITE:

@@ -193,104 +193,131 @@
 * Segments
 ** Major mode
 #+begin_src emacs-lisp
-    (defvar pspmacs/pspline-major-icon
-      '(:eval
-         (when (display-graphic-p)
-           (concat
-            (propertize
-             (let*
-                 ((icon (ignore-errors
-                          (all-the-icons-icon-for-buffer)))
-                  (icon (if icon
-                            icon
-                          (all-the-icons-icon-for-mode major-mode))))
-               icon)
-             'help-echo
-             (capitalize (string-trim (symbol-name major-mode) nil "-mode")))
-            " ")))
+  (defun pspmacs/pspline--major-icon ()
+    "evaluated by `pspmacs/pspline-major-icon'."
+    (when (display-graphic-p)
+      (concat
+       (propertize
+        (let*
+            ((icon (ignore-errors
+                     (all-the-icons-icon-for-buffer)))
+             (icon (if icon
+                       icon
+                     (all-the-icons-icon-for-mode major-mode))))
+          icon)
+        'help-echo
+        (capitalize (string-trim (symbol-name major-mode) nil "-mode")))
+       " ")))
 
-      "Major mode icon")
+  (defvar pspmacs/pspline-major-icon
+    '(:eval (pspmacs/pspline--major-icon))
+    "Major mode icon.")
 #+end_src
 
 ** Buffer name
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-buffer-name
-    '(:eval
-       (let* ((base (if (buffer-modified-p)
-                        'pspmacs/pspline-buffer-modified-face
-                      (if (pspmacs/pspline-buffer-focused-p)
-                          'mode-line-buffer-id
-                        'mode-line-inactive)))
-              (box (if buffer-read-only '(:box t) '(:box nil))))
-         (concat
-          (propertize
-           (or
-            (ignore-errors
-              (file-relative-name buffer-file-name (projectile-project-mode)))
-            "%b")
-           'face `(,base ,box))
-          " ")))
+  (defun pspmacs/pspline--buffer-name ()
+    "evaluated by `pspmacs/pspline--buffer-name'."
+    (let* ((base (if (buffer-modified-p)
+                     'pspmacs/pspline-buffer-modified-face
+                   (if (pspmacs/pspline-buffer-focused-p)
+                       'mode-line-buffer-id
+                     'mode-line-inactive)))
+           (box (if buffer-read-only '(:box t) '(:box nil))))
+      (concat
+       (propertize
+        (or
+         (ignore-errors
+           (file-relative-name buffer-file-name (projectile-project-mode)))
+         "%b")
+        'face `(,base ,box))
+       " ")))
 
-    "Buffer-name, process-state")
+  (defvar pspmacs/pspline-buffer-name
+    '(:eval (pspmacs/pspline--buffer-name))
+    "Buffer-name, process-state.
+  Customize face with `pspmacs/pspline-buffer-modified-face'.")
 #+end_src
 
 ** Buffer-process
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-buffer-process
-    '(:eval
-       (if mode-line-process
-           (propertize (format "%s " mode-line-process)
-                       'face '(:foreground modeline-info :box t))))
+  (defun pspmacs/pspline--buffer-process ()
+    "evaluated by `pspmacs/pspline-buffer-process'."
+    (if mode-line-process
+        (propertize (format "%s " mode-line-process)
+                    'face '(:foreground modeline-info :box t))))
 
-    "Buffer-process")
+    (defvar pspmacs/pspline-buffer-process
+      '(:eval (pspmacs/pspline--buffer-process))
+      "Buffer-process.")
 #+end_src
 
 ** Buffer window location
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-win-loc
-    '(:eval
-       (propertize (concat (eval pspmacs/pspline-win-loc-format) " ")
-                   'face (if (pspmacs/pspline-buffer-focused-p)
-                             'pspmacs/pspline-win-loc-face
-                           'mode-line-inactive)))
+  (defun pspmacs/pspline--win-loc ()
+    "evaluated by `pspmacs/pspline-win-loc'."
+    (propertize (concat (eval pspmacs/pspline-win-loc-format) " ")
+                'face (if (pspmacs/pspline-buffer-focused-p)
+                          'pspmacs/pspline-win-loc-face
+                        'mode-line-inactive)))
 
-    "Location of window in buffer")
+  (defvar pspmacs/pspline-win-loc
+    '(:eval (pspmacs/pspline--win-loc))
+    "Location of window in buffer
+  Customize value with `pspmacs/pspline-win-loc-format'.
+  Customize face with `pspmacs/pspline-win-loc-face'.")
 #+end_src
 
 ** Cursor position
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-cursor-position
-    '(:eval
-       (concat
-        (propertize (concat (eval pspmacs/pspline-cursor-position-format) " ")
-                    'face (if (pspmacs/pspline-buffer-focused-p)
-                              'pspmacs/pspline-cursor-position-face
-                            'mode-line-inactive))))
+  (defun pspmacs/pspline--cursor-position ()
+    "evaluated by `pspmacs/pspline-cursor-position'."
+    (concat
+     (propertize (concat (eval pspmacs/pspline-cursor-position-format) " ")
+                 'face (if (pspmacs/pspline-buffer-focused-p)
+                           'pspmacs/pspline-cursor-position-face
+                         'mode-line-inactive))))
 
-    "Cursor: row:col")
+  (defvar pspmacs/pspline-cursor-position
+    '(:eval (pspmacs/pspline--cursor-position))
+    "Cursor position indicator <row:col>.
+  Customize value with `pspmacs/pspline-cursor-position-format'.
+  Customize face with `pspmacs/pspline-cursor-position-face'.")
 #+end_src
 
 ** Evil state
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-evil-state
-    '(:eval
-       (propertize (concat (eval pspmacs/pspline-evil-state-format) " ")
-                   'face
-                   (if (pspmacs/pspline-buffer-focused-p)
-                       (case evil-state
-                         (normal 'pspmacs/pspline-evil-normal-face)
-                         (insert 'pspmacs/pspline-evil-insert-face)
-                         (visual 'pspmacs/pspline-evil-visual-face)
-                         (replace 'pspmacs/pspline-evil-replace-face)
-                         (operator 'pspmacs/pspline-evil-operator-face)
-                         (motion 'pspmacs/pspline-evil-motion-face)
-                         (emacs 'pspmacs/pspline-evil-emacs-face)
-                         (_ 'pspmacs/pspline-evil-emacs-face))
-                     'mode-line-inactive)
-                   'help-echo
-                   (symbol-name evil-state)))
+  (defun pspmacs/pspline--evil-state ()
+    "evaluated by `pspmacs/pspline-evil-state'"
+    (propertize (concat (eval pspmacs/pspline-evil-state-format) " ")
+                'face
+                (if (pspmacs/pspline-buffer-focused-p)
+                    (cl-case evil-state
+                      (normal 'pspmacs/pspline-evil-normal-face)
+                      (insert 'pspmacs/pspline-evil-insert-face)
+                      (visual 'pspmacs/pspline-evil-visual-face)
+                      (replace 'pspmacs/pspline-evil-replace-face)
+                      (operator 'pspmacs/pspline-evil-operator-face)
+                      (motion 'pspmacs/pspline-evil-motion-face)
+                      (emacs 'pspmacs/pspline-evil-emacs-face)
+                      (_ 'pspmacs/pspline-evil-emacs-face))
+                  'mode-line-inactive)
+                'help-echo
+                (symbol-name evil-state)))
 
-    "Evil state dot")
+  (defvar pspmacs/pspline-evil-state
+    '(:eval (pspmacs/pspline--evil-state))
+
+    "Evil state dot
+  Customize faces with `pspmacs/pspline-evil-state-format',
+  `pspmacs/pspline-evil-normal-face',
+  `pspmacs/pspline-evil-insert-face',
+  `pspmacs/pspline-evil-visual-face',
+  `pspmacs/pspline-evil-replace-face',
+  `pspmacs/pspline-evil-operator-face',
+  `pspmacs/pspline-evil-motion-face',
+  `pspmacs/pspline-evil-emacs-face',
+  `pspmacs/pspline-evil-unknown-face'.")
 #+end_src
 
 ** Misc-info
@@ -298,44 +325,54 @@
   (defvar pspmacs/pspline-info
     '(:eval mode-line-misc-info)
 
-    "handle for miscellaneous information")
+    "Handle for miscellaneous information")
 #+end_src
 
 ** Version control
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-version-control
-    '(:eval
-       (when (stringp vc-mode)
-         (let
-             ((vc-spec
-               (replace-regexp-in-string
-                (format "^ %s[:-]" (vc-backend buffer-file-name))
-                " " vc-mode)))
-           (propertize
-            (concat vc-spec " ")
-            'face
-            (pcase
-                vc-spec
-              (" main" 'pspmacs/pspline-vc-main-face)
-              (" master" 'pspmacs/pspline-vc-main-face)
-              (" release" 'pspmacs/pspline-vc-release-face)
-              (_ 'pspmacs/pspline-vc-non-main-face))))))
+  (defun pspmacs/pspline--version-control()
+    "evaluated by `pspmacs/pspline-version-control'."
+    (when (stringp vc-mode)
+      (let
+          ((vc-spec
+            (replace-regexp-in-string
+             (format "^ %s[:-]" (vc-backend buffer-file-name))
+             " " vc-mode)))
+        (propertize
+         (concat vc-spec " ")
+         'face
+         (pcase
+             vc-spec
+           (" main" 'pspmacs/pspline-vc-main-face)
+           (" master" 'pspmacs/pspline-vc-main-face)
+           (" release" 'pspmacs/pspline-vc-release-face)
+           (_ 'pspmacs/pspline-vc-non-main-face))))))
 
-    "version control spec")
+  (defvar pspmacs/pspline-version-control
+    '(:eval (pspmacs/pspline--version-control))
+
+    "Version control spec.
+  Customize faces with `pspmacs/pspline-vc-main-face',
+  `pspmacs/pspline-vc-non-main-face',
+  `pspmacs/pspline-vc-release-face'.")
 #+end_src
 
 ** Time
 #+begin_src emacs-lisp
-  (defvar pspmacs/pspline-time
-    '(:eval
-       (propertize
-        (concat
-         (format-time-string (eval pspmacs/pspline-time-string-format))
-         " ")
-        'face 'bold
-        'help-echo (format-time-string "%c")))
+  (defun pspmacs/pspline--time ()
+    "evaluated by `pspmacs/pspline-time'."
+    (propertize
+     (concat
+      (format-time-string (eval pspmacs/pspline-time-string-format))
+      " ")
+     'face 'bold
+     'help-echo (format-time-string "%c")))
 
-    "Time segment")
+  (defvar pspmacs/pspline-time
+    '(:eval (pspmacs/pspline--time))
+
+    "Time segment.
+  Customize value with `pspmacs/pspline-time-string-format'.")
 #+end_src
 
 ** Segment alist
@@ -390,8 +427,8 @@
 - Emacs version30 includes ~mode-line-format-right-align~.
   #+begin_src emacs-lisp
     (when (version< emacs-version "30")
-        (defcustom mode-line-right-align-edge 'window
-          "For forward compatibility with master branch version 30
+      (defcustom mode-line-right-align-edge 'window
+        "For forward compatibility with master branch version 30
     Where function `mode-line-format-right-align' should align to.
     Internally, that function uses `:align-to' in a display property,
     so aligns to the left edge of the given area.  See info node
@@ -402,14 +439,14 @@
       or fringes
     - `right-fringe': align to right-fringe
     - `right-margin': align to right-margin"
-          :type '(choice (const right-margin)
-                         (const right-fringe)
-                         (const window))
-          :group 'mode-line
-          :version "30.1")
+        :type '(choice (const right-margin)
+                       (const right-fringe)
+                       (const window))
+        :group 'mode-line
+        :version "30.1")
 
-        (defun mode--line-format-right-align ()
-          "For forward compatibility with master branch version 30
+      (defun mode--line-format-right-align ()
+        "For forward compatibility with master branch version 30
     Right-align all following mode-line constructs.
 
     When the symbol `mode-line-format-right-align' appears in
@@ -423,42 +460,42 @@
     such as `(:eval (mode-line-format-right-align)').  This is because
     the symbol `mode-line-format-right-align' is processed by
     `format-mode-line' as a variable."
-          (let* ((rest (cdr (memq 'mode-line-format-right-align
-                      mode-line-format)))
-             (rest-str (format-mode-line `("" ,@rest)))
-             (rest-width (progn
-                               (add-face-text-property
-                                0 (length rest-str) 'mode-line t rest-str)
-                               (string-pixel-width rest-str))))
-            (propertize " " 'display
-                ;; The `right' spec doesn't work on TTY frames
-                ;; when windows are split horizontally (bug#59620)
-                (if (and (display-graphic-p)
-                                 (not (eq mode-line-right-align-edge 'window)))
-                    `(space :align-to (- ,mode-line-right-align-edge
-                                                 (,rest-width)))
-                  `(space :align-to (,(- (window-pixel-width)
-                                                 (window-scroll-bar-width)
-                                                 (window-right-divider-width)
-                                                 (* (or (cdr (window-margins)) 1)
-                                                    (frame-char-width))
-                                                 ;; Manually account for value of
-                                                 ;; `mode-line-right-align-edge' even
-                                                 ;; when display is non-graphical
-                                                 (pcase mode-line-right-align-edge
-                                                   ('right-margin
-                                                    (or (cdr (window-margins)) 0))
-                                                   ('right-fringe
-                                                    ;; what here?
-                                                    (or (cadr (window-fringes)) 0))
-                                                   (_ 0))
-                                                 rest-width)))))))
+        (let* ((rest (cdr (memq 'mode-line-format-right-align
+                                mode-line-format)))
+               (rest-str (format-mode-line `("" ,@rest)))
+               (rest-width (progn
+                             (add-face-text-property
+                              0 (length rest-str) 'mode-line t rest-str)
+                             (string-pixel-width rest-str))))
+          (propertize " " 'display
+                      ;; The `right' spec doesn't work on TTY frames
+                      ;; when windows are split horizontally (bug#59620)
+                      (if (and (display-graphic-p)
+                               (not (eq mode-line-right-align-edge 'window)))
+                          `(space :align-to (- ,mode-line-right-align-edge
+                                               (,rest-width)))
+                        `(space :align-to (,(- (window-pixel-width)
+                                               (window-scroll-bar-width)
+                                               (window-right-divider-width)
+                                               (* (or (cdr (window-margins)) 1)
+                                                  (frame-char-width))
+                                               ;; Manually account for value of
+                                               ;; `mode-line-right-align-edge' even
+                                               ;; when display is non-graphical
+                                               (pcase mode-line-right-align-edge
+                                                 ('right-margin
+                                                  (or (cdr (window-margins)) 0))
+                                                 ('right-fringe
+                                                  ;; what here?
+                                                  (or (cadr (window-fringes)) 0))
+                                                 (_ 0))
+                                               rest-width)))))))
 
-        (defvar mode-line-format-right-align '(:eval (mode--line-format-right-align))
-          "For forward compatibility with master branch version 30
+      (defvar mode-line-format-right-align '(:eval (mode--line-format-right-align))
+        "For forward compatibility with master branch version 30
     Mode line construct to right align all following constructs.")
         ;;;###autoload
-        (put 'mode-line-format-right-align 'risky-local-variable t))
+      (put 'mode-line-format-right-align 'risky-local-variable t))
   #+end_src
 
 ** Set format by order
@@ -469,7 +506,6 @@
     (let* ((left-segs nil)
            (right-segs nil))
       (dolist (seg pspmacs/pspline-segments-plist nil)
-        (print (car seg))
         (if (nth 0 (cdr seg))
             (if (nth 1 (cdr seg))
                 (add-to-list 'right-segs (eval (car seg)) t)
