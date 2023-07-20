@@ -132,7 +132,8 @@
                    (all-the-icons-icon-for-buffer)))
            (icon (if icon
                      icon
-                   (all-the-icons-icon-for-mode major-mode))))
+                   (ignore-errors
+                     (all-the-icons-icon-for-mode major-mode)))))
         icon)
       'help-echo
       (capitalize (string-trim (symbol-name major-mode) nil "-mode")))
@@ -244,7 +245,7 @@ Customize faces with `pspmacs/pspline-evil-state-format',
     (let
         ((vc-spec
           (replace-regexp-in-string
-           (format "^ %s[:-]" (vc-backend buffer-file-name))
+           (format "^ %s[-:@]" (vc-backend buffer-file-name))
            " " vc-mode)))
       (propertize
        (concat vc-spec " ")
