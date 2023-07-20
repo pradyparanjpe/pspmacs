@@ -302,7 +302,7 @@
   :demand t)
 
 (pspmacs/leader-keys
-  "bh" '(pspmacs/startpage-show :which-key "startup"))
+  "bh" '(pspmacs/startpage-show :which-key "start page"))
 
 (use-package helpful
   :after evil

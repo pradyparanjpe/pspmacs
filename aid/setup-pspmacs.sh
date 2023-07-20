@@ -99,7 +99,9 @@ set_vars () {
     # font-release should correctly unzip to necessary format in ~/.local/share/fonts
     fonts="fira-code=https://github.com/tonsky/FiraCode/releases\
 /download/5.2/Fira_Code_v5.2.zip
-victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
+victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip
+fira-code-nerd=https://github.com/ryanoasis/nerd-fonts/releases\
+/download/v3.0.2/FiraCode.zip"
 
     # variables to unset
     global_vars="help_msg usage manager include_deps include_fonts emacs_cache\
@@ -279,6 +281,8 @@ linux_install_fonts () {
     for entry in ${fonts}; do
         font_name="$(echo "${entry}" | cut -d= -f1)"
         url="$(echo "${entry}" | cut -d= -f2)"
+        printf "[INFO] Installing %s, downloading from %s." \
+               "${font_name}" "${url}"
         curl --fail --location --show-error "${url}" \
              --output "${font_name}.zip" \
             || clean_exit 65 "couldn't download %s.\n" "${url}"
@@ -288,7 +292,7 @@ linux_install_fonts () {
 
     echo "[INFO] Rebuilding local fonts cache."
     fc-cache -f || clean_exit 65 "Couldn't initialize fonts.\n"
-    unset fonts_dir fira_url viktor_url
+    unset fonts_dir
 }
 
 # Wrapper around apk initialization (Alpine Linux and derivatives)

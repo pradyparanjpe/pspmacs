@@ -686,6 +686,7 @@ Key-bindings to:
 #+end_src
 
 * Org-paths
+- Use [[file:pspmacs/xdg.org][XDG]] specification-relative for Emacs
 - pspmacs/org-path: base org path
 - pspmacs/org-template-path: path to org setupfile templates
 - pspmacs/org-journal-path: path to org journal

@@ -319,11 +319,11 @@ Hydra Keybindings
     :demand t)
 #+end_src
 
-* Pspmacs startup
-- Better splash home-screen
+* Pspmacs startpage
+- Better splash [[file:../pspack/pspmacs/startpage.org][StartPage]]
 #+begin_src emacs-lisp
   (pspmacs/leader-keys
-    "bh" '(pspmacs/startpage-show :which-key "startup"))
+    "bh" '(pspmacs/startpage-show :which-key "start page"))
 #+end_src
 
 * Wilfred/helpful

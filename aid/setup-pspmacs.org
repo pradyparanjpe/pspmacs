@@ -1,5 +1,5 @@
 #+title: Setup PSPMacs
-#+PROPERTY: header-args :tangle setup-pspmacs.sh :mkdirp t :results no
+#+PROPERTY: header-args :tangle setup-pspmacs.sh :mkdirp t :results no :eval no
 #+auto_tangle: t
 #+export_file_name: setup-pspmacs.html
 
@@ -12,7 +12,7 @@ The reader is expected to be able to fix their configuration.
 As is mentioned in the project's =README=, I have paid a price for using someone's configuration; I suggest that the reader shouldn't.
 This is NOT /Spacemacs/, nor /DOOM-Emacs/, nor /Crafted Emacs/.
 The reader should use this as:
-- A repository of =elisp= code snippets for their own configuration, which when they understand completely.
+- A repository of =elisp= code snippets for their own configuration, which they understand completely.
 - An idea to structure their own configuration.
 - A framework to start configuring Emacs on their own.
 #+begin_src sh :shebang #!/usr/bin/env sh
@@ -128,7 +128,9 @@ So, instead, this single file is composed of modular sections.
       # font-release should correctly unzip to necessary format in ~/.local/share/fonts
       fonts="fira-code=https://github.com/tonsky/FiraCode/releases\
   /download/5.2/Fira_Code_v5.2.zip
-  victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip"
+  victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip
+  fira-code-nerd=https://github.com/ryanoasis/nerd-fonts/releases\
+  /download/v3.0.2/FiraCode.zip"
 
       # variables to unset
       global_vars="help_msg usage manager include_deps include_fonts emacs_cache\
@@ -293,40 +295,42 @@ So, instead, this single file is composed of modular sections.
 ** Local Fonts
 Install fonts required by /PSPMacs/ locally on GNU/Linux at =XDG_DATA_HOME/fonts=.
 #+begin_src sh
-# Install fonts locally
-#
-# Args:
-#     NULL
-# Returns:
-#     NULL
-linux_install_fonts () {
-    # local fonts directory
-    printf "[INFO] installing fonts locally.\n"
+  # Install fonts locally
+  #
+  # Args:
+  #     NULL
+  # Returns:
+  #     NULL
+  linux_install_fonts () {
+      # local fonts directory
+      printf "[INFO] installing fonts locally.\n"
 
-    if ! command -v fc-cache >/dev/null 2>&1; then
-        package_install fontconfig
-    fi
+      if ! command -v fc-cache >/dev/null 2>&1; then
+          package_install fontconfig
+      fi
 
-    fonts_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/fonts"
+      fonts_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/fonts"
 
-    if [ ! -d "${fonts_dir}" ]; then
-        mkdir -p "${fonts_dir}"
-    fi
+      if [ ! -d "${fonts_dir}" ]; then
+          mkdir -p "${fonts_dir}"
+      fi
 
-    for entry in ${fonts}; do
-        font_name="$(echo "${entry}" | cut -d= -f1)"
-        url="$(echo "${entry}" | cut -d= -f2)"
-        curl --fail --location --show-error "${url}" \
-             --output "${font_name}.zip" \
-            || clean_exit 65 "couldn't download %s.\n" "${url}"
-        unzip -o -q -d "${fonts_dir}" "${font_name}.zip"
-        rm "${font_name}.zip"
-    done
+      for entry in ${fonts}; do
+          font_name="$(echo "${entry}" | cut -d= -f1)"
+          url="$(echo "${entry}" | cut -d= -f2)"
+          printf "[INFO] Installing %s, downloading from %s." \
+                 "${font_name}" "${url}"
+          curl --fail --location --show-error "${url}" \
+               --output "${font_name}.zip" \
+              || clean_exit 65 "couldn't download %s.\n" "${url}"
+          unzip -o -q -d "${fonts_dir}" "${font_name}.zip"
+          rm "${font_name}.zip"
+      done
 
-    echo "[INFO] Rebuilding local fonts cache."
-    fc-cache -f || clean_exit 65 "Couldn't initialize fonts.\n"
-    unset fonts_dir fira_url viktor_url
-}
+      echo "[INFO] Rebuilding local fonts cache."
+      fc-cache -f || clean_exit 65 "Couldn't initialize fonts.\n"
+      unset fonts_dir
+  }
 #+end_src
 
 ** Package managers

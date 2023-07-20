@@ -4,7 +4,7 @@
 #+export_file_name: index.html
 
 * Pages
-- All /Org/ files in this project are published in [[https://docs.readthedocs.io/en/stable/][read-the-docs]] format using [[https://github.com/fniessen/org-html-themes][fniessen/org-html-themes/readtheorg]] at [[https://pradyparanjpe.gitlab.io/pspmacs/index.html][gitlab-pages]].
+- All /Org/ files in [[https://gitlab.com/pradyparanjpe/pspmacs][this project]] are published in [[https://docs.readthedocs.io/en/stable/][read-the-docs]] format using [[https://github.com/fniessen/org-html-themes][fniessen/org-html-themes/readtheorg]] at [[https://pradyparanjpe.gitlab.io/pspmacs/index.html][gitlab-pages]].
 
 * Introduction
 #+begin_seealso
@@ -69,6 +69,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - curl (downloads)
 - npm (language servers)
 - ripgrep (Better, faster, broader grep)
+- Nerd Fonts (fancy StartPage, Mode-line)
 - Emacs (Well, obviously.)
 
 * Inheritance principle
