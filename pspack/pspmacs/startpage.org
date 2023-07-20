@@ -57,20 +57,40 @@
     :type '(file :must-match t)
     :group 'startpage)
 
-  (defcustom pspmacs/startpage-block-title-face
+  (defcustom pspmacs/startpage-url-links
+    '(("Documentation" . "https://pradyparanjpe.gitlab.io/pspmacs/index.html")
+      ("Repository" . "https://gitlab.com/pradyparanjpe/pspmacs"))
+    "Details of url links to display"
+    :type '(repeat (cons (string :tag "display text")
+                         (string :tag "url")))
+    :group 'startpage)
+
+  (defcustom pspmacs/startpage-banner-face-props
+    '((:foreground "#ffffff"))
+    "Links face properties"
+    :type 'plist
+    :group 'startpage)
+
+  (defcustom pspmacs/startpage-url-links-face-props
+    '((:foreground "#9fdfff"))
+    "URL links face properties"
+    :type 'plist
+    :group 'startpage)
+
+  (defcustom pspmacs/startpage-block-title-face-props
     '((:foreground "#ff007f")
       (bold))
     "Quicklink block Title Face"
     :type 'plist
     :group 'startpage)
 
-  (defcustom pspmacs/startpage-block-link-face
+  (defcustom pspmacs/startpage-block-link-face-props
     '((:foreground "#af9fa7"))
     "Quicklink block Link item faces"
     :type 'plist
     :group 'startpage)
 
-  (defcustom pspmacs/startpage-load-time-face
+  (defcustom pspmacs/startpage-load-time-face-props
     '((:foreground "#bfdfff")
       (:background "#002040")
       (italic))
@@ -98,7 +118,7 @@
       (when (> (frame-width) banner-width)
 
         (eval `(fancy-splash-insert
-              :face '(bold)
+              :face pspmacs/startpage-banner-face-props
               ,@render-banner)))))
 
   (defun pspmacs/startpage--graphic-banner ()
@@ -162,16 +182,16 @@
                             (lambda (_button) (find-file ,fname)))))
              items)))
       (fancy-splash-insert
-       :face pspmacs/startpage-block-title-face
+       :face pspmacs/startpage-block-title-face-props
        (concat (string-trim-right pad-string "  $") block-title))
       (setq block-point (point))
       (eval `(fancy-splash-insert
-              :face pspmacs/startpage-block-link-face
+              :face pspmacs/startpage-block-link-face-props
               ,@recent-links))
       block-point))
 #+end_src
 
-* Internal Functions
+* Functions
 #+begin_src emacs-lisp
   (defun pspmacs/startpage-put-recentf ()
     "Place a block of recentf files
@@ -194,33 +214,52 @@
   (defun pspmacs/startpage-put-banner ()
     "Place center-aligned banner in current buffer.
 
-   If `display-graphic-p', use `pspmacs/startpage-banner-image'
-   else, use `pspmacs/startpage-banner-ascii'"
+  If `display-graphic-p', use `pspmacs/startpage-banner-image'
+  else, use `pspmacs/startpage-banner-ascii'"
     (if (display-graphic-p)
         (pspmacs/startpage--graphic-banner)
       (pspmacs/startpage--ascii-banner)))
 
-  (defun pspmacs/startpage-bind-jumps (recent project)
-    "Bind jumps to locations RECENT and PROJECT in buffer."
-    (if evil-state
-        (pspmacs/startpage--evil-bind-jumps recent project)
-      (pspmacs/startpage--native-bind-jumps recent project)))
+    (defun pspmacs/startpage-bind-jumps (recent project)
+      "Bind jumps to locations RECENT and PROJECT in buffer."
+      (if evil-state
+          (pspmacs/startpage--evil-bind-jumps recent project)
+        (pspmacs/startpage--native-bind-jumps recent project)))
 
-  (defun pspmacs/startpage-put-load-time ()
-    "Load time information"
-    (let* ((load-string
-            (format
-             (emacs-init-time
-              "Loaded %%d packages in %3.2f seconds")
-             (length package-selected-packages
-)))
-           (pad-string (pspmacs/startpage--center-pad-string
-                        (length load-string))))
-      (fancy-splash-insert
-       "\n"
-       pad-string
-       :face pspmacs/startpage-load-time-face
-       load-string)))
+    (defun pspmacs/startpage-put-load-time ()
+      "Load time information"
+      (let* ((load-string
+              (format
+               (emacs-init-time
+                "Loaded %%d packages in %3.2f seconds")
+               (length package-selected-packages)))
+             (pad-string (pspmacs/startpage--center-pad-string
+                          (length load-string))))
+        (fancy-splash-insert
+         "\n"
+         pad-string
+         :face pspmacs/startpage-load-time-face-props
+         load-string)))
+
+  (defun pspmacs/startpage-put-url-links ()
+    "Place pspmacs links"
+    (let* ((num-letters (apply '+ (mapcar (lambda (x)
+                                            (+ (length (car x)) 2))
+                                          pspmacs/startpage-url-links)))
+           (spacer (make-string (/ (- (frame-width) num-letters)
+                                   (1+ (length pspmacs/startpage-url-links)))
+                                ? ))
+           (links-text (mapcar (lambda (item)
+                                 (concat
+                                  spacer
+                                  "● "
+                                  (buttonize (car item)
+                                             (lambda (_button)
+                                               (browse-url (cdr item))))))
+                               pspmacs/startpage-url-links)))
+      (eval `(fancy-splash-insert
+              :face pspmacs/startpage-url-links-face-props
+              ,@links-text))))
 #+end_src
 
 * Interactive functions
@@ -238,11 +277,13 @@
           (pspmacs/startpage-put-banner)
           (pspmacs/startpage-put-load-time)
           (fancy-splash-insert "\n\n")
+          (pspmacs/startpage-put-url-links)
+          (fancy-splash-insert "\n\n")
           (setq recent-point (pspmacs/startpage-put-recentf))
           (fancy-splash-insert "\n\n")
           (setq project-point (pspmacs/startpage-put-projects))
-          (switch-to-buffer startpage-buffer)
           (fancy-splash-insert "\n")
+          (switch-to-buffer startpage-buffer)
           (read-only-mode 1)
           (pspmacs/startpage-bind-jumps recent-point project-point)))))
 
