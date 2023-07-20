@@ -42,7 +42,33 @@
   :type '(file :must-match t)
   :group 'startpage)
 
+(defcustom pspmacs/startpage-block-title-face
+  '((:foreground "#ff007f")
+    (bold))
+  "Quicklink block Title Face"
+  :type 'plist
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-block-link-face
+  '((:foreground "#af9fa7"))
+  "Quicklink block Link item faces"
+  :type 'plist
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-load-time-face
+  '((:foreground "#bfdfff")
+    (:background "#002040")
+    (italic))
+  "Load-time information face"
+  :type 'plist
+  :group 'startpage)
+
+(defun pspmacs/startpage--shorten-path (filepath)
+  "Shorten FILEPATH replacing home-directory by ~"
+  (replace-regexp-in-string (getenv "HOME") "~" filepath))
+
 (defun pspmacs/startpage--ascii-banner ()
+  "Put ASCII Banner for non-graphic frames"
   (let* ((banner (split-string (f-read pspmacs/startpage-banner-ascii) "\n"))
          (banner-width (length (nth 0 banner)))
          (pad-string (pspmacs/startpage--center-pad-string banner-width))
@@ -58,6 +84,7 @@
             ,@render-banner)))))
 
 (defun pspmacs/startpage--graphic-banner ()
+  "Put Image Banner for graphic frames"
   (let* ((width (round (* pspmacs/startpage-banner-scale-width
                           (frame-width))))
          (banner (create-image
@@ -69,7 +96,10 @@
     (insert-image banner)))
 
 (defun pspmacs/startpage--evil-bind-jumps (recent project)
-  ;; todo bind to recent and project
+  "Bind following keys (evil):
+r: RECENT point
+p: PROJECT point
+R: `pspmacs/startpage-refresh'"
   (keymap-set evil-normal-state-local-map
               (kbd "r") (lambda () (interactive) (goto-char recent)))
   (keymap-set evil-normal-state-local-map
@@ -78,6 +108,10 @@
               (kbd "R") 'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--native-bind-jumps (recent project)
+  "Bind following keys (native):
+r: RECENT point
+p: PROJECT point
+R: `pspmacs/startpage-refresh'"
   (use-local-map (copy-keymap text-mode-map))
   (local-set-key (kbd "r") (lambda () (interactive) (goto-char recent)))
   (local-set-key (kbd "p") (lambda () (interactive) (goto-char project)))
@@ -106,52 +140,66 @@ Returns point to BLOCK-TITLE"
           (mapcan
            (lambda (fname)
              `(,pad-string
-               (buttonize ,fname (lambda (_button) (find-file ,fname)))))
+               (buttonize ,(pspmacs/startpage--shorten-path fname)
+                          (lambda (_button) (find-file ,fname)))))
            items)))
     (fancy-splash-insert
-     :face 'font-lock-type-face
+     :face pspmacs/startpage-block-title-face
      (concat (string-trim-right pad-string "  $") block-title))
     (setq block-point (point))
     (eval `(fancy-splash-insert
-            :face '(bold)
+            :face pspmacs/startpage-block-link-face
             ,@recent-links))
     block-point))
 
 (defun pspmacs/startpage-put-recentf ()
-  (pspmacs/startpage--put-block
-   recentf-list
-   pspmacs/startpage-recentf-num
-   "Recent Files (r)"))
+    "Place a block of recentf files
 
-(defun pspmacs/startpage-put-projects ()
-  (pspmacs/startpage--put-block
-   (project-known-project-roots)
-   pspmacs/startpage-projects-num
-   "Projects (p)"))
+  customize number `pspmacs/startpage-recentf-num'"
+    (pspmacs/startpage--put-block
+     recentf-list
+     pspmacs/startpage-recentf-num
+     "(r) Recent Files"))
 
-(defun pspmacs/startpage-put-banner ()
-  "Place center-aligned banner in current buffer.
+  (defun pspmacs/startpage-put-projects ()
+    "Place a block of known projects
 
- If `display-graphic-p', use `pspmacs/startpage-banner-image'
- else, use `pspmacs/startpage-banner-ascii'"
-  (if (display-graphic-p)
-      (pspmacs/startpage--graphic-banner)
-    (pspmacs/startpage--ascii-banner)))
+  customize number `pspmacs/startpage-projects-num'"
+    (pspmacs/startpage--put-block
+     (project-known-project-roots)
+     pspmacs/startpage-projects-num
+     "(p) Projects"))
 
-(defun pspmacs/startpage-bind-jumps (recent project)
-  "Bind jumps to locations RECENT and PROJECT in buffer."
-  (if evil-state
-      (pspmacs/startpage--evil-bind-jumps recent project)
-    (pspmacs/startpage--native-bind-jumps recent project)))
+  (defun pspmacs/startpage-put-banner ()
+    "Place center-aligned banner in current buffer.
 
-(defun pspmacs/startpage-put-load-time ()
-  (let* ((load-string (emacs-init-time "Loaded in %3.5f seconds"))
-         (pad-string (pspmacs/startpage--center-pad-string (length load-string))))
-    (fancy-splash-insert
-     "\n"
-     pad-string
-     :face 'font-lock-comment-face
-     load-string)))
+   If `display-graphic-p', use `pspmacs/startpage-banner-image'
+   else, use `pspmacs/startpage-banner-ascii'"
+    (if (display-graphic-p)
+        (pspmacs/startpage--graphic-banner)
+      (pspmacs/startpage--ascii-banner)))
+
+  (defun pspmacs/startpage-bind-jumps (recent project)
+    "Bind jumps to locations RECENT and PROJECT in buffer."
+    (if evil-state
+        (pspmacs/startpage--evil-bind-jumps recent project)
+      (pspmacs/startpage--native-bind-jumps recent project)))
+
+  (defun pspmacs/startpage-put-load-time ()
+    "Load time information"
+    (let* ((load-string
+            (format
+             (emacs-init-time
+              "Loaded %%d packages in %3.2f seconds")
+             (length package-selected-packages
+)))
+           (pad-string (pspmacs/startpage--center-pad-string
+                        (length load-string))))
+      (fancy-splash-insert
+       "\n"
+       pad-string
+       :face pspmacs/startpage-load-time-face
+       load-string)))
 
 (defun pspmacs/startpage-refresh ()
   "Refresh start-page"
@@ -170,6 +218,7 @@ Returns point to BLOCK-TITLE"
         (fancy-splash-insert "\n\n")
         (setq project-point (pspmacs/startpage-put-projects))
         (switch-to-buffer startpage-buffer)
+        (fancy-splash-insert "\n")
         (read-only-mode 1)
         (pspmacs/startpage-bind-jumps recent-point project-point)))))
 
