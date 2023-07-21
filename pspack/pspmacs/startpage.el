@@ -57,7 +57,7 @@
   :group 'startpage)
 
 (defcustom pspmacs/startpage-url-links-face-props
-  '((:foreground "#6fafcf"))
+  '((:foreground "#6fafcf") (:underline nil))
   "URL links face properties"
   :type 'plist
   :group 'startpage)
@@ -70,7 +70,7 @@
   :group 'startpage)
 
 (defcustom pspmacs/startpage-block-link-face-props
-  '((:foreground "#af9fa7"))
+  '((:foreground "#af9fa7") (:underline nil))
   "Quicklink block Link item faces"
   :type 'plist
   :group 'startpage)
@@ -78,7 +78,7 @@
 (defcustom pspmacs/startpage-load-time-face-props
   '((:foreground "#bfdfff")
     (:background "#002040")
-    (italic))
+    italic)
   "Load-time information face"
   :type 'plist
   :group 'startpage)
@@ -88,20 +88,21 @@
   (replace-regexp-in-string (getenv "HOME") "~" filepath))
 
 (defun pspmacs/startpage--ascii-banner ()
-  "Put ASCII Banner for non-graphic frames"
-  (let* ((banner (split-string (f-read pspmacs/startpage-banner-ascii) "\n"))
-         (banner-width (length (nth 0 banner)))
-         (pad-string (pspmacs/startpage--center-pad-string banner-width))
-         (render-banner (mapcan
-                         (lambda (line)
-                           `(,pad-string
-                             ,line))
-                         banner)))
-    (when (> (frame-width) banner-width)
-
-      (eval `(fancy-splash-insert
-            :face pspmacs/startpage-banner-face-props
-            ,@render-banner)))))
+    "Put ASCII Banner for non-graphic frames"
+    (let* ((banner (split-string
+                    (f-read pspmacs/startpage-banner-ascii) "\n"))
+           (banner-width (length (nth 0 banner)))
+           (pad-string (pspmacs/startpage--center-pad-string banner-width))
+           (render-banner
+            (mapcan
+             (lambda (line)
+               (progn
+                 (add-face-text-property
+                  0 (length line) pspmacs/startpage-banner-face-props t line)
+                 `(,pad-string ,line)))
+             banner)))
+      (when (> (frame-width) banner-width)
+        (eval `(insert ,@render-banner)))))
 
 (defun pspmacs/startpage--graphic-banner ()
   "Put Image Banner for graphic frames"
@@ -112,7 +113,7 @@
                   nil nil :width width))
          (pad-string (pspmacs/startpage--center-pad-string
                       (car (image-size banner)))))
-    (fancy-splash-insert pad-string)
+    (insert pad-string)
     (insert-image banner)))
 
 (defun pspmacs/startpage--evil-bind-jumps (recent project)
@@ -128,14 +129,14 @@ R: `pspmacs/startpage-refresh'"
               (kbd "R") 'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--native-bind-jumps (recent project)
-  "Bind following keys (native):
+    "Bind following keys (native):
 r: RECENT point
 p: PROJECT point
 R: `pspmacs/startpage-refresh'"
-  (use-local-map (copy-keymap text-mode-map))
-  (local-set-key (kbd "r") (lambda () (interactive) (goto-char recent)))
-  (local-set-key (kbd "p") (lambda () (interactive) (goto-char project)))
-  (local-set-key (kbd "R") 'pspmacs/startpage-refresh))
+    (use-local-map (copy-keymap text-mode-map))
+    (local-set-key (kbd "r") (lambda () (interactive) (goto-char recent)))
+    (local-set-key (kbd "p") (lambda () (interactive) (goto-char project)))
+    (local-set-key (kbd "R") 'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--center-pad-string (display-width)
   "Left padding to center text if DISPLAY-WIDTH size"
@@ -159,17 +160,22 @@ Returns point to BLOCK-TITLE"
          (recent-links
           (mapcan
            (lambda (fname)
-             `(,pad-string
-               (buttonize ,(pspmacs/startpage--shorten-path fname)
-                          (lambda (_button) (find-file ,fname)))))
+             (let ((button
+                    (buttonize
+                     (pspmacs/startpage--shorten-path fname)
+                     (lambda (_button) (find-file fname)))))
+               (add-face-text-property
+                0 (length button)
+                pspmacs/startpage-block-link-face-props
+                nil button)
+               `(,pad-string ,button)))
            items)))
-    (fancy-splash-insert
-     :face pspmacs/startpage-block-title-face-props
-     (concat (string-trim-right pad-string "  $") block-title))
+    (add-face-text-property
+     0 (length block-title)
+     pspmacs/startpage-block-title-face-props t block-title)
+    (insert (string-trim-right pad-string "  $") block-title)
     (setq block-point (point))
-    (eval `(fancy-splash-insert
-            :face pspmacs/startpage-block-link-face-props
-            ,@recent-links))
+    (eval `(insert ,@recent-links))
     block-point))
 
 (defun pspmacs/startpage-put-recentf ()
@@ -211,14 +217,13 @@ else, use `pspmacs/startpage-banner-ascii'"
             (format
              (emacs-init-time
               "Loaded %%d packages in %3.2f seconds")
-             (length package-selected-packages)))
+             (length package-activated-list)))
            (pad-string (pspmacs/startpage--center-pad-string
                         (length load-string))))
-      (fancy-splash-insert
-       "\n"
-       pad-string
-       :face pspmacs/startpage-load-time-face-props
-       load-string)))
+      (add-face-text-property
+       0 (length load-string)
+       pspmacs/startpage-load-time-face-props t load-string)
+      (insert "\n" pad-string load-string)))
 
 (defun pspmacs/startpage-put-url-links ()
   "Place pspmacs links"
@@ -229,16 +234,19 @@ else, use `pspmacs/startpage-banner-ascii'"
                                  (1+ (length pspmacs/startpage-url-links)))
                               ? ))
          (links-text (mapcar (lambda (item)
-                               (concat
-                                spacer
-                                "● "
-                                (buttonize (car item)
+                               (let ((button (buttonize (car item)
                                            (lambda (_button)
                                              (browse-url (cdr item))))))
+                                 (add-face-text-property
+                                  0 (length button)
+                                  pspmacs/startpage-url-links-face-props
+                                  nil button)
+                                 (concat
+                                  spacer
+                                  "● "
+                                  button)))
                              pspmacs/startpage-url-links)))
-    (eval `(fancy-splash-insert
-            :face pspmacs/startpage-url-links-face-props
-            ,@links-text))))
+    (eval `(insert ,@links-text))))
 
 (defun pspmacs/startpage-refresh ()
   "Refresh start-page"
@@ -252,13 +260,13 @@ else, use `pspmacs/startpage-banner-ascii'"
       (save-excursion
         (pspmacs/startpage-put-banner)
         (pspmacs/startpage-put-load-time)
-        (fancy-splash-insert "\n\n")
+        (insert "\n\n")
         (pspmacs/startpage-put-url-links)
-        (fancy-splash-insert "\n\n")
+        (insert "\n\n")
         (setq recent-point (pspmacs/startpage-put-recentf))
-        (fancy-splash-insert "\n\n")
+        (insert "\n\n")
         (setq project-point (pspmacs/startpage-put-projects))
-        (fancy-splash-insert "\n")
+        (insert "\n")
         (switch-to-buffer startpage-buffer)
         (read-only-mode 1)
         (pspmacs/startpage-bind-jumps recent-point project-point)))))
