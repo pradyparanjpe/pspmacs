@@ -1,25 +1,41 @@
-#!/usr/bin/env sh
-# -*- coding:utf-8; mode: shell-script; -*-
-#
-# Copyright 2020-2023 Pradyumna Paranjape
-#
-# This file is part of pspmacs.
-# pspmacs is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# pspmacs is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with pspmacs.  If not, see <https://www.gnu.org/licenses/>.
-#
+#+title: Build Emacs from source
+#+PROPERTY: header-args :tangle build.sh :mkdirp t :results no :eval no
+#+auto_tangle: t
+#+export_file_name: build.html
 
-# set global variables for prady_sh_scripts here (build for Fc38)
+* Introduction
+Using [[https://pradyparanjpe.gitlab.io/sh_scripts][my sh-scripts]], Gnu/Emacs may be built using commands enlisted by calling
+#+begin_src sh :tangle no
+  cmdlist -f ~/.emacs.d/aid/build.sh
+#+end_src
 
+** Header
+#+begin_src sh :shebang #!/usr/bin/env sh
+  # -*- coding:utf-8; mode: shell-script; -*-
+  #
+  # Copyright 2020-2023 Pradyumna Paranjape
+  #
+  # This file is part of pspmacs.
+  # pspmacs is free software: you can redistribute it and/or modify
+  # it under the terms of the GNU General Public License as published by
+  # the Free Software Foundation, either version 3 of the License, or
+  # (at your option) any later version.
+  #
+  # pspmacs is distributed in the hope that it will be useful,
+  # but WITHOUT ANY WARRANTY; without even the implied warranty of
+  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  # GNU General Public License for more details.
+  #
+  # You should have received a copy of the GNU General Public License
+  # along with pspmacs.  If not, see <https://www.gnu.org/licenses/>.
+  #
+
+  # set global variables for prady_sh_scripts here (build for Fc38)
+#+end_src
+
+* Current working directory
+** Correct directory
+#+begin_src sh
 if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
     # shellcheck disable=SC2034
     fetch_cmd="git fetch --recurse-submodules"
@@ -58,7 +74,10 @@ if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
 
     all_cmds="${all_cmds} fetch_cmd delta_cmd pull_cmd tree_cmd autogen_cmd \
       configure_cmd clean_cmd make_cmd install_cmd drop_cache_cmd"
+#+end_src
 
+** Wrong directory
+#+begin_src sh
 else
     printf "
 PRE-REQUISITE:
@@ -73,3 +92,4 @@ ERROR:
 
 " "\${XDG_DATA_HOME}/emacs/src" "${PWD}"
 fi
+#+end_src

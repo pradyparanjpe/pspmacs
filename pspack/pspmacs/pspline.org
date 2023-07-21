@@ -7,7 +7,7 @@
   ;;; pspline.el --- pspline modeline -*- lexical-binding: t; -*-
   ;;; Commentary:
   ;;
-  ;; PSPLINE file-system awareness for pspmacs
+  ;; PSPLINE ModeLine for Emacs
   ;;
   ;;; Code:
   (defgroup pspline nil
@@ -25,6 +25,15 @@
 - Mode line format based on: [[http://emacs-fu.blogspot.com/2011/08/customizing-mode-line.html][emacs-fu]]
 
 * Customization
+** All-the-icons installed
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-all-the-icons-installed-p
+    nil
+    "`all-the-icons-install-fonts' was called"
+    :type 'boolean
+    :group 'pspline)
+#+end_src
+
 ** window location format
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline-win-loc-format
@@ -33,7 +42,8 @@
     "window location string (at:of)"
     :type '(choice
             (string :tag "verbatim")
-            (sexp :tag "Evaluates to string")))
+            (sexp :tag "Evaluates to string"))
+    :group 'pspline)
 #+end_src
 
 ** cursor position format
@@ -195,6 +205,7 @@
 #+begin_src emacs-lisp
   (defun pspmacs/pspline--major-icon ()
     "evaluated by `pspmacs/pspline-major-icon'."
+    (pspmacs/pspline--assert-all-the-icons)
     (when (display-graphic-p)
       (concat
        (propertize
@@ -399,6 +410,17 @@
 #+end_src
 
 * Helper functions
+** confirm all-the-icons fonts
+#+begin_src emacs-lisp
+  (defun pspmacs/pspline--assert-all-the-icons ()
+    (unless pspmacs/pspline-all-the-icons-installed-p
+      (if (ignore-errors
+            (all-the-icons-install-fonts t))
+          (customize-save-variable
+           'pspmacs/pspline-all-the-icons-installed-p)
+        t)))
+#+end_src
+
 ** position-coverage
 #+begin_src emacs-lisp
   (defvar pspmacs/pspline-loc-pc-format
@@ -503,7 +525,6 @@
 #+begin_src emacs-lisp
   (defun pspmacs/pspline-order ()
     "Construct pspline-order"
-
     (let* ((left-segs nil)
            (right-segs nil))
       (dolist (seg pspmacs/pspline-segments-plist nil)

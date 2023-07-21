@@ -1,7 +1,7 @@
 ;;; pspline.el --- pspline modeline -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
-;; PSPLINE file-system awareness for pspmacs
+;; PSPLINE ModeLine for Emacs
 ;;
 ;;; Code:
 (defgroup pspline nil
@@ -11,13 +11,20 @@
 (use-package all-the-icons
   :if (display-graphic-p))
 
+(defcustom pspmacs/pspline-all-the-icons-installed-p
+  nil
+  "`all-the-icons-install-fonts' was called"
+  :type 'boolean
+  :group 'pspline)
+
 (defcustom pspmacs/pspline-win-loc-format
   '(concat (eval pspmacs/pspline-loc-pc-format) "/%05I")
 
   "window location string (at:of)"
   :type '(choice
           (string :tag "verbatim")
-          (sexp :tag "Evaluates to string")))
+          (sexp :tag "Evaluates to string"))
+  :group 'pspline)
 
 (defcustom pspmacs/pspline-cursor-position-format
   "%03l:%02c"
@@ -124,6 +131,7 @@
 
 (defun pspmacs/pspline--major-icon ()
   "evaluated by `pspmacs/pspline-major-icon'."
+  (pspmacs/pspline--assert-all-the-icons)
   (when (display-graphic-p)
     (concat
      (propertize
@@ -299,6 +307,14 @@ When ON-RIGHT is non-nil, the segment is aligned from the right."
                        (boolean :tag "Show this segment")
                        (boolean :tag "Align right"))))
 
+(defun pspmacs/pspline--assert-all-the-icons ()
+  (unless pspmacs/pspline-all-the-icons-installed-p
+    (if (ignore-errors
+          (all-the-icons-install-fonts t))
+        (customize-save-variable
+         'pspmacs/pspline-all-the-icons-installed-p)
+      t)))
+
 (defvar pspmacs/pspline-loc-pc-format
   '(or
     (ignore-errors
@@ -391,7 +407,6 @@ Mode line construct to right align all following constructs.")
 
 (defun pspmacs/pspline-order ()
   "Construct pspline-order"
-
   (let* ((left-segs nil)
          (right-segs nil))
     (dolist (seg pspmacs/pspline-segments-plist nil)

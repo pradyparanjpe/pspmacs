@@ -133,7 +133,7 @@ fira-code-nerd=https://github.com/ryanoasis/nerd-fonts/releases\
     --help\t\tprint this message and exit
     -d|--no-deps\tDon't install dependencies (skip to the next PART).
     -F|--no-fonts\tDon't install fonts (skip to the next PART).
-    --recommend\t\tShow a lisf of recommended dependencies.
+    --recommend\t\tShow a list of recommended dependencies.
 "
     if [ ! "${ostype%inux}" = "${ostype}" ]; then
         help_msg="${help_msg}    --manager MAN\tUse MAN as the package manager.
