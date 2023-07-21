@@ -11,6 +11,10 @@
 (use-package all-the-icons
   :if (display-graphic-p))
 
+(use-package battery
+  :ensure nil
+  :commands battery-upower)
+
 (defcustom pspmacs/pspline-all-the-icons-installed-p
   nil
   "`all-the-icons-install-fonts' was called"
@@ -49,6 +53,35 @@
 
   "window location format"
   :type '(string :tag "Time string format")
+  :group 'pspline)
+
+(defcustom pspmacs/pspline--show-string
+  "percent"
+  "Type of information to show as battery"
+  :type '(string :options ("time" "percent"))
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-battery-icon-plist
+  '((90 . "\uf240")
+    (66 . "\uf241")
+    (33 . "\uf242")
+    (10 . "\uf243")
+    (0  . "\uf244"))
+  "Battery icon cdr for battery-percentage above car"
+  :type '(repeat (cons (number :tag "Icon above")
+                       (string :tag "Icon")))
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-battery-color-plist
+  '((101 . "#00cfcf")
+    (75  . "#00cf00")
+    (50  . "#cfcf00")
+    (25  . "#cf4f00")
+    (0   . "#cf0000"))
+  "Color cdr for battery-percentage above car
+car >101 is interpreted as *charging*"
+  :type '(repeat (cons (number :tag "Icon above")
+                       (string :tag "color-string")))
   :group 'pspline)
 
 (defface pspmacs/pspline-buffer-modified-face
@@ -156,6 +189,11 @@
   '(:eval (pspmacs/pspline--major-icon))
   "Major mode icon.")
 
+(defun pspmacs/pspline--toggle-read-only (&optional _button)
+  "Toggle read-only-mode"
+  (read-only-mode 'toggle)
+  (force-mode-line-update t))
+
 (defun pspmacs/pspline--buffer-name ()
   "evaluated by `pspmacs/pspline--buffer-name'."
   (let* ((base (if (buffer-modified-p)
@@ -163,15 +201,17 @@
                  (if (pspmacs/pspline-buffer-focused-p)
                      'mode-line-buffer-id
                    'mode-line-inactive)))
-         (box (if buffer-read-only '(:box t) '(:box nil))))
-    (concat
+         (box (if buffer-read-only '(:box t) '(:box nil)))
+         (buffer-string (concat (or
+                         (ignore-errors
+                           (file-relative-name buffer-file-name
+                                               (projectile-project-mode)))
+                         "%b")
+                                " ")))
      (propertize
-      (or
-       (ignore-errors
-         (file-relative-name buffer-file-name (projectile-project-mode)))
-       "%b")
-      'face `(,base ,box))
-     " ")))
+      (buttonize buffer-string #'pspmacs/pspline--toggle-read-only)
+      'face `(,base ,box)
+      'help-echo "mouse-1 toggle read-only")))
 
 (defvar pspmacs/pspline-buffer-name
   '(:eval (pspmacs/pspline--buffer-name))
@@ -293,6 +333,66 @@ Customize faces with `pspmacs/pspline-vc-main-face',
   "Time segment.
 Customize value with `pspmacs/pspline-time-string-format'.")
 
+(defun pspmacs/pspline--battery-toggle-show-string (&optional _button)
+  "Toggle display and help-text"
+  (customize-set-variable
+   'pspmacs/pspline--show-string
+   (if (string= pspmacs/pspline--show-string "time")
+       "percent"
+     "time"))
+  (force-mode-line-update t))
+
+(defun pspmacs/pspline--battery-icon (perc)
+  "Battery icon based on current battery percentage PERC"
+  (cl-some (lambda (x)
+             (if (> perc (car x)) (cdr x)))
+           pspmacs/pspline-battery-icon-plist))
+
+(defun pspmacs/pspline--battery-color (perc)
+  "Battery color based on current battery percentage PERC
+
+PERC > 101 is interpreted as *charging*"
+  (cl-some (lambda (x)
+             (if (> perc (car x)) (cdr x)))
+           pspmacs/pspline-battery-color-plist))
+
+(defun pspmacs/pspline--battery ()
+  "evaluated by `pspmacs/pspline-battery'."
+  (let* ((battery-info (funcall battery-status-function))
+         (hours-remain (concat (cdr (assq ?t battery-info)) "h"))
+         (bat-perc (cdr (assq ?p battery-info)))
+         (bat-perc-num (if (stringp bat-perc)
+                           (string-to-number bat-perc)
+                         bat-perc))
+         (bat-perc-string (format "%s%%" bat-perc-num))
+         (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
+         (bat-color (pspmacs/pspline--battery-color
+                     (if (string= (cdr (assq ?b battery-info)) "+")
+                         200
+                       bat-perc-num)))
+         (bat-string (concat bat-icon
+                              (if (string= pspmacs/pspline--show-string "time")
+                                  hours-remain
+                                (format "%s%%" bat-perc-string))
+                              " "))
+         (tooltip-string (if (string= pspmacs/pspline--show-string "time")
+                             bat-perc-string
+                           hours-remain)))
+    (propertize (buttonize bat-string
+                           #'pspmacs/pspline--battery-toggle-show-string)
+                'face
+                `(:foreground ,bat-color)
+                'help-echo
+                tooltip-string
+                'mouse-face
+                `(:foreground "#000000" :background ,bat-color))))
+
+(defvar pspmacs/pspline-battery
+  '(:eval (pspmacs/pspline--battery))
+  "Battery segment.
+Customize value with `pspmacs/pspline-battery-icon-plist',
+`pspmacs/pspline-battery-color-plist'.")
+
 (defcustom pspmacs/pspline-segments-plist
   '((pspmacs/pspline-evil-state t nil)
     (pspmacs/pspline-cursor-position t nil)
@@ -302,6 +402,7 @@ Customize value with `pspmacs/pspline-time-string-format'.")
     (pspmacs/pspline-buffer-name t nil)
     (pspmacs/pspline-buffer-process t nil)
     (pspmacs/pspline-info t t)
+    (pspmacs/pspline-battery t t)
     (pspmacs/pspline-time t t))
 
   "Ordered list whose car is segment handle and cdr is '(show on-right)

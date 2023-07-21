@@ -589,6 +589,14 @@ Auto-hiding text-based scroll bar
 
 * Mode-Line
 - Custom-designed [[file:../pspack/pspmacs/pspline.org][mode-line]]
+** HACK Load battery-status-function
+- Interactive function ~(battery)~ needs to be called,
+  to load ~(battery-status-function)~
+#+begin_src emacs-lisp
+  (battery)
+#+end_src
+
+** Mode-line format
 #+begin_src emacs-lisp
   (setq-default mode-line-format (pspmacs/pspline-order))
 #+end_src
