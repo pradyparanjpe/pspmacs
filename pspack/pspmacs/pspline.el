@@ -52,25 +52,25 @@
   :group 'pspline)
 
 (defface pspmacs/pspline-buffer-modified-face
-  '((t (:foreground "#ff8f9f")))
+  '((t (:foreground "#cf5f6f")))
 
   "Face of buffer name when buffer is modified"
   :group 'pspline)
 
 (defface pspmacs/pspline-win-loc-face
-  '((t (:foreground "#5fafff")))
+  '((t (:foreground "#2f7fcf")))
 
   "Face of window location indicator"
   :group 'pspline)
 
 (defface pspmacs/pspline-cursor-position-face
-  '((t (:foreground "#cfcf3f")))
+  '((t (:foreground "#ffff7f")))
 
   "Face of cursor position row:col indicator"
   :group 'pspline)
 
 (defface pspmacs/pspline-vc-main-face
-  '((t (:foreground "#ff7f3f")))
+  '((t (:foreground "#cf4f0f")))
 
   "Face of buffer name when buffer is state"
   :group 'pspline)
@@ -82,7 +82,7 @@
   :group 'pspline)
 
 (defface pspmacs/pspline-vc-non-main-face
-  '((t (:foreground "#7fff3f")))
+  '((t (:foreground "#4fcf0f")))
 
   "Face of vc non-main branch"
   :group 'pspline)
@@ -94,7 +94,7 @@
   :group 'pspline)
 
 (defface pspmacs/pspline-evil-insert-face
-  '((t (:foreground "#00ff9f")))
+  '((t (:foreground "#00cf6f")))
 
   "Evil insert state"
   :group 'pspline)
@@ -127,6 +127,11 @@
   '((t (:foreground "#000000")))
 
   "Unknown evil state"
+  :group 'pspline)
+
+(defface pspmacs/pspline-time-face
+  '((t (:bold t :foreground "#af8f00")))
+  "Pspline time face"
   :group 'pspline)
 
 (defun pspmacs/pspline--major-icon ()
@@ -279,7 +284,7 @@ Customize faces with `pspmacs/pspline-vc-main-face',
    (concat
     (format-time-string (eval pspmacs/pspline-time-string-format))
     " ")
-   'face 'bold
+   'face 'pspmacs/pspline-time-face
    'help-echo (format-time-string "%c")))
 
 (defvar pspmacs/pspline-time

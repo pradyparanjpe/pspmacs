@@ -37,7 +37,7 @@
   :group 'startpage)
 
 (defcustom pspmacs/startpage-banner-ascii
-  (expand-file-name "data/banners/1.txt" user-emacs-directory)
+  (expand-file-name "data/banners/2.txt" user-emacs-directory)
   "Banner Image"
   :type '(file :must-match t)
   :group 'startpage)
@@ -51,13 +51,13 @@
   :group 'startpage)
 
 (defcustom pspmacs/startpage-banner-face-props
-  '((:foreground "#ffffff"))
+  '((:foreground "#9f8f4f"))
   "Links face properties"
   :type 'plist
   :group 'startpage)
 
 (defcustom pspmacs/startpage-url-links-face-props
-  '((:foreground "#9fdfff"))
+  '((:foreground "#6fafcf"))
   "URL links face properties"
   :type 'plist
   :group 'startpage)

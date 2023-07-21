@@ -215,7 +215,7 @@ Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location,
 
 * .gitignore
 - Remember to add =local.d/= to =pvt-emacs-dir/.gitignore=, since it may be used as =local-emacs-dir=.
-- As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in =late/xdg.el= to point at =xdg/emacs-cache-directory=.
+- As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in =pspack/pspmacs/xdg.el= to point at =xdg/emacs-cache-directory=.
   - However, if they store them at the hard-coded location =user-emacs-home/NEW-NAME=, =NEW-NAME= needs to be added to =pspmacs/.gitignore=.
     I shall do so whenever I notice such incidences either myself or through an issue.
 
