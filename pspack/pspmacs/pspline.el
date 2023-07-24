@@ -467,12 +467,14 @@ Customize value with `pspmacs/pspline-battery-icon-plist',
                pspmacs/pspline-segments-plist)))
 
 (defun pspmacs/pspline--assert-all-the-icons ()
+(with-eval-after-load
+    custom-file
   (unless pspmacs/pspline-all-the-icons-installed-p
     (if (ignore-errors
           (all-the-icons-install-fonts t))
         (customize-save-variable
          'pspmacs/pspline-all-the-icons-installed-p
-         t))))
+         t)))))
 
 (defvar pspmacs/pspline-loc-pc-format
   '(or (ignore-errors

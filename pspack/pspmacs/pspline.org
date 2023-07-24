@@ -588,12 +588,14 @@
 ** confirm all-the-icons fonts
 #+begin_src emacs-lisp
   (defun pspmacs/pspline--assert-all-the-icons ()
+  (with-eval-after-load
+      custom-file
     (unless pspmacs/pspline-all-the-icons-installed-p
       (if (ignore-errors
             (all-the-icons-install-fonts t))
           (customize-save-variable
            'pspmacs/pspline-all-the-icons-installed-p
-           t))))
+           t)))))
 #+end_src
 
 ** position-coverage
