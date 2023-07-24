@@ -101,13 +101,13 @@
                   0 (length line) pspmacs/startpage-banner-face-props t line)
                  `(,pad-string ,line)))
              banner)))
-      (when (> (frame-width) banner-width)
+      (when (> (window-width) banner-width)
         (eval `(insert ,@render-banner)))))
 
 (defun pspmacs/startpage--graphic-banner ()
   "Put Image Banner for graphic frames"
   (let* ((width (round (* pspmacs/startpage-banner-scale-width
-                          (frame-width))))
+                          (window-width))))
          (banner (create-image
                   pspmacs/startpage-banner-image
                   nil nil :width width))
@@ -142,7 +142,7 @@ R: `pspmacs/startpage-refresh'"
   "Left padding to center text if DISPLAY-WIDTH size"
   (concat "\n"
           (make-string
-           (round (/ (max 0 (- (frame-width) display-width)) 2))
+           (round (/ (max 0 (- (window-width) display-width)) 2))
            ? )))
 
 (defun pspmacs/startpage--put-block (block-list &optional num block-title)
@@ -230,7 +230,7 @@ else, use `pspmacs/startpage-banner-ascii'"
   (let* ((num-letters (apply '+ (mapcar (lambda (x)
                                           (+ (length (car x)) 2))
                                         pspmacs/startpage-url-links)))
-         (spacer (make-string (/ (- (frame-width) num-letters)
+         (spacer (make-string (/ (- (window-width) num-letters)
                                  (1+ (length pspmacs/startpage-url-links)))
                               ? ))
          (links-text (mapcar (lambda (item)
