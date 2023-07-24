@@ -29,6 +29,13 @@
 - Mode line format based on: [[http://emacs-fu.blogspot.com/2011/08/customizing-mode-line.html][emacs-fu]]
 
 * Customization
+** Save-old-format
+#+begin_src emacs-lisp
+  (defvar pspmacs/pspline--original-format
+    mode-line-format
+    "Save original mode-line format")
+#+end_src
+
 ** All-the-icons installed
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline-all-the-icons-installed-p
@@ -105,9 +112,14 @@
 
   (defcustom pspmacs/pspline-battery-color-plist
     '((101 . "#00cfcf")
-      (75  . "#00cf00")
+      (90  . "#00cf00")
+      (80  . "#3fcf00")
+      (70  . "#6fcf00")
+      (60  . "#9fcf00")
       (50  . "#cfcf00")
-      (25  . "#cf4f00")
+      (40  . "#cf9f00")
+      (30  . "#cf6f00")
+      (20  . "#cf3f00")
       (0   . "#cf0000"))
     "Color cdr for battery-percentage above car
   car >101 is interpreted as *charging*"
@@ -115,6 +127,34 @@
                          (string :tag "color-string")))
     :group 'pspline)
 #+end_src
+** Segment alist
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-segments-plist
+    '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
+      (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
+      (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
+      (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
+      (pspmacs/pspline-version-control . (:display t :right nil :inactive nil))
+      (pspmacs/pspline-buffer-name . (:display t :right nil :inactive t))
+      (pspmacs/pspline-buffer-process . (:display t :right nil :inactive t))
+      (pspmacs/pspline-info . (:display t :right t :inactive nil))
+      (pspmacs/pspline-battery . (:display t :right t :inactive nil))
+      (pspmacs/pspline-time . (:display t :right t :inactive nil)))
+
+    "Ordered list whose
+  car is segment handle
+  cdr is '(:show nil :on-right nil :inactive nil)
+
+  When :SHOW is non-nil, display the segment on mode-line
+  When :RIGHT is non-nil, align the setment from the right.
+  When :INACTIVE is non-nil, display the segment even in inactive buffer"
+    :type '(repeat (cons (symbol :tag "Evaluates to segment string")
+                         (plist :key-type
+                                (symbol :options '(:display :right :inactive))
+                                :value-type boolean)))
+    :group 'pspline)
+#+end_src
+
 * Faces
 ** Buffer modified face
 #+begin_src emacs-lisp
@@ -155,19 +195,19 @@
 
 *** non-main
 #+begin_src emacs-lisp
-  (defface pspmacs/pspline-vc-release-face
-    '((t (:foreground "#7f3fff")))
-
-    "Face of vc release branch"
-    :group 'pspline)
-#+end_src
-
-*** feat-face
-#+begin_src emacs-lisp
   (defface pspmacs/pspline-vc-non-main-face
     '((t (:foreground "#4fcf0f")))
 
     "Face of vc non-main branch"
+    :group 'pspline)
+#+end_src
+
+*** release
+#+begin_src emacs-lisp
+  (defface pspmacs/pspline-vc-release-face
+    '((t (:foreground "#7f3fff")))
+
+    "Face of vc release branch"
     :group 'pspline)
 #+end_src
 
@@ -194,6 +234,15 @@
 #+begin_src emacs-lisp
   (defface pspmacs/pspline-evil-visual-face
     '((t (:foreground "#009fff")))
+
+    "Evil visual state"
+    :group 'pspline)
+#+end_src
+
+*** Replace
+#+begin_src emacs-lisp
+  (defface pspmacs/pspline-evil-replace-face
+    '((t (:foreground "#ffff00")))
 
     "Evil visual state"
     :group 'pspline)
@@ -239,6 +288,7 @@
 #+begin_src emacs-lisp
   (defface pspmacs/pspline-time-face
     '((t (:bold t :foreground "#af8f00")))
+
     "Pspline time face"
     :group 'pspline)
 #+end_src
@@ -248,7 +298,6 @@
 #+begin_src emacs-lisp
   (defun pspmacs/pspline--major-icon ()
     "evaluated by `pspmacs/pspline-major-icon'."
-    (pspmacs/pspline--assert-all-the-icons)
     (when (display-graphic-p)
       (concat
        (propertize
@@ -265,7 +314,9 @@
        " ")))
 
   (defvar pspmacs/pspline-major-icon
-    '(:eval (pspmacs/pspline--major-icon))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-major-icon)
+                (pspmacs/pspline--major-icon)))
     "Major mode icon.")
 #+end_src
 
@@ -280,23 +331,25 @@
     "evaluated by `pspmacs/pspline--buffer-name'."
     (let* ((base (if (buffer-modified-p)
                      'pspmacs/pspline-buffer-modified-face
-                   (if (pspmacs/pspline-buffer-focused-p)
+                   (if (pspmacs/pspline--buffer-focused-p)
                        'mode-line-buffer-id
                      'mode-line-inactive)))
            (box (if buffer-read-only '(:box t) '(:box nil)))
            (buffer-string (concat (or
-                           (ignore-errors
-                             (file-relative-name buffer-file-name
-                                                 (projectile-project-mode)))
-                           "%b")
+                                   (ignore-errors
+                                     (file-relative-name buffer-file-name
+                                                         (projectile-project-mode)))
+                                   "%b")
                                   " ")))
-       (propertize
-        (buttonize buffer-string #'pspmacs/pspline--toggle-read-only)
-        'face `(,base ,box)
-        'help-echo "mouse-1 toggle read-only")))
+      (propertize
+       (buttonize buffer-string #'pspmacs/pspline--toggle-read-only)
+       'face `(,base ,box)
+       'help-echo "mouse-1 toggle read-only")))
 
   (defvar pspmacs/pspline-buffer-name
-    '(:eval (pspmacs/pspline--buffer-name))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-buffer-name)
+                (pspmacs/pspline--buffer-name)))
     "Buffer-name, process-state.
   Customize face with `pspmacs/pspline-buffer-modified-face'.")
 #+end_src
@@ -309,9 +362,11 @@
         (propertize (format "%s " mode-line-process)
                     'face '(:foreground modeline-info :box t))))
 
-    (defvar pspmacs/pspline-buffer-process
-      '(:eval (pspmacs/pspline--buffer-process))
-      "Buffer-process.")
+  (defvar pspmacs/pspline-buffer-process
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-buffer-process)
+                (pspmacs/pspline--buffer-process)))
+    "Buffer-process.")
 #+end_src
 
 ** Buffer window location
@@ -319,12 +374,14 @@
   (defun pspmacs/pspline--win-loc ()
     "evaluated by `pspmacs/pspline-win-loc'."
     (propertize (concat (eval pspmacs/pspline-win-loc-format) " ")
-                'face (if (pspmacs/pspline-buffer-focused-p)
+                'face (if (pspmacs/pspline--buffer-focused-p)
                           'pspmacs/pspline-win-loc-face
                         'mode-line-inactive)))
 
   (defvar pspmacs/pspline-win-loc
-    '(:eval (pspmacs/pspline--win-loc))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-win-loc)
+                (pspmacs/pspline--win-loc)))
     "Location of window in buffer
   Customize value with `pspmacs/pspline-win-loc-format'.
   Customize face with `pspmacs/pspline-win-loc-face'.")
@@ -336,12 +393,14 @@
     "evaluated by `pspmacs/pspline-cursor-position'."
     (concat
      (propertize (concat (eval pspmacs/pspline-cursor-position-format) " ")
-                 'face (if (pspmacs/pspline-buffer-focused-p)
+                 'face (if (pspmacs/pspline--buffer-focused-p)
                            'pspmacs/pspline-cursor-position-face
                          'mode-line-inactive))))
 
   (defvar pspmacs/pspline-cursor-position
-    '(:eval (pspmacs/pspline--cursor-position))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-cursor-position)
+                (pspmacs/pspline--cursor-position)))
     "Cursor position indicator <row:col>.
   Customize value with `pspmacs/pspline-cursor-position-format'.
   Customize face with `pspmacs/pspline-cursor-position-face'.")
@@ -353,7 +412,7 @@
     "evaluated by `pspmacs/pspline-evil-state'"
     (propertize (concat (eval pspmacs/pspline-evil-state-format) " ")
                 'face
-                (if (pspmacs/pspline-buffer-focused-p)
+                (if (pspmacs/pspline--buffer-focused-p)
                     (cl-case evil-state
                       (normal 'pspmacs/pspline-evil-normal-face)
                       (insert 'pspmacs/pspline-evil-insert-face)
@@ -368,7 +427,9 @@
                 (symbol-name evil-state)))
 
   (defvar pspmacs/pspline-evil-state
-    '(:eval (pspmacs/pspline--evil-state))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-evil-statr)
+                (pspmacs/pspline--evil-state)))
 
     "Evil state dot
   Customize faces with `pspmacs/pspline-evil-state-format',
@@ -384,15 +445,20 @@
 
 ** Misc-info
 #+begin_src emacs-lisp
+  (defun pspmacs/pspline--info (&optional show-always
+      mode-line-misc-info))
+
   (defvar pspmacs/pspline-info
-    '(:eval mode-line-misc-info)
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-info)
+                (pspmacs/pspline--info)))
 
     "Handle for miscellaneous information")
 #+end_src
 
 ** Version control
 #+begin_src emacs-lisp
-  (defun pspmacs/pspline--version-control()
+  (defun pspmacs/pspline--version-control ()
     "evaluated by `pspmacs/pspline-version-control'."
     (when (stringp vc-mode)
       (let
@@ -403,15 +469,19 @@
         (propertize
          (concat vc-spec " ")
          'face
-         (pcase
-             vc-spec
-           (" main" 'pspmacs/pspline-vc-main-face)
-           (" master" 'pspmacs/pspline-vc-main-face)
-           (" release" 'pspmacs/pspline-vc-release-face)
-           (_ 'pspmacs/pspline-vc-non-main-face))))))
+         (if (pspmacs/pspline--buffer-focused-p)
+             (pcase
+                 vc-spec
+               (" main" 'pspmacs/pspline-vc-main-face)
+               (" master" 'pspmacs/pspline-vc-main-face)
+               (" release" 'pspmacs/pspline-vc-release-face)
+               (_ 'pspmacs/pspline-vc-non-main-face))
+           'mode-line-inactive)))))
 
   (defvar pspmacs/pspline-version-control
-    '(:eval (pspmacs/pspline--version-control))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-version-control)
+                (pspmacs/pspline--version-control)))
 
     "Version control spec.
   Customize faces with `pspmacs/pspline-vc-main-face',
@@ -431,7 +501,9 @@
      'help-echo (format-time-string "%c")))
 
   (defvar pspmacs/pspline-time
-    '(:eval (pspmacs/pspline--time))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-time)
+                (pspmacs/pspline--time)))
 
     "Time segment.
   Customize value with `pspmacs/pspline-time-string-format'.")
@@ -477,10 +549,10 @@
                            200
                          bat-perc-num)))
            (bat-string (concat bat-icon
-                                (if (string= pspmacs/pspline--show-string "time")
-                                    hours-remain
-                                  (format "%s%%" bat-perc-string))
-                                " "))
+                               (if (string= pspmacs/pspline--show-string "time")
+                                   hours-remain
+                                 (format "%s%%" bat-perc-string))
+                               " "))
            (tooltip-string (if (string= pspmacs/pspline--show-string "time")
                                bat-perc-string
                              hours-remain)))
@@ -494,35 +566,25 @@
                   `(:foreground "#000000" :background ,bat-color))))
 
   (defvar pspmacs/pspline-battery
-    '(:eval (pspmacs/pspline--battery))
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-battery)
+                (pspmacs/pspline--battery)))
     "Battery segment.
   Customize value with `pspmacs/pspline-battery-icon-plist',
   `pspmacs/pspline-battery-color-plist'.")
 #+end_src
-** Segment alist
+* Helper functions
+** display-segment
 #+begin_src emacs-lisp
-  (defcustom pspmacs/pspline-segments-plist
-    '((pspmacs/pspline-evil-state t nil)
-      (pspmacs/pspline-cursor-position t nil)
-      (pspmacs/pspline-win-loc t nil)
-      (pspmacs/pspline-major-icon t nil)
-      (pspmacs/pspline-version-control t nil)
-      (pspmacs/pspline-buffer-name t nil)
-      (pspmacs/pspline-buffer-process t nil)
-      (pspmacs/pspline-info t t)
-      (pspmacs/pspline-battery t t)
-      (pspmacs/pspline-time t t))
-
-    "Ordered list whose car is segment handle and cdr is '(show on-right)
-
-  When SHOW is non-nil, we display the segment on mode-line
-  When ON-RIGHT is non-nil, the segment is aligned from the right."
-    :type '(repeat (list (symbol :tag "Evaluates to segment string")
-                         (boolean :tag "Show this segment")
-                         (boolean :tag "Align right"))))
+  (defun pspmacs/pspline--display-segment (seg-symbol)
+    "Whether SEG-SYMBOL should be displayed"
+    (or (pspmacs/pspline--buffer-focused-p)
+        (cl-some (lambda (x)
+                   (if (eq (car x) seg-symbol)
+                       (plist-get (cdr x) :inactive)))
+                 pspmacs/pspline-segments-plist)))
 #+end_src
 
-* Helper functions
 ** confirm all-the-icons fonts
 #+begin_src emacs-lisp
   (defun pspmacs/pspline--assert-all-the-icons ()
@@ -530,33 +592,102 @@
       (if (ignore-errors
             (all-the-icons-install-fonts t))
           (customize-save-variable
-           'pspmacs/pspline-all-the-icons-installed-p)
-        t)))
+           'pspmacs/pspline-all-the-icons-installed-p
+           t))))
 #+end_src
 
 ** position-coverage
 #+begin_src emacs-lisp
   (defvar pspmacs/pspline-loc-pc-format
-    '(or
-      (ignore-errors
-        (format "%3d%%%%"
-                (let ((fend (/ (window-end) 0.01 (point-max)))
-                      (fstart (/ (- (window-start) 1) 0.01 (point-max))))
-                  (if (= fstart 0)
-                      (if (= fend 100)
-                          nil
-                        0)
-                    fend))))
-      " all")
+    '(or (ignore-errors
+           (format "%3d%%%%"
+                   (let ((fend (/ (window-end) 0.01 (point-max)))
+                         (fstart (/ (- (window-start) 1) 0.01 (point-max))))
+                     (if (= fstart 0) (if (= fend 100) nil 0) fend))))
+         " all")
     "Buffer location in percentage or all")
 #+end_src
 
 ** Buffer focused
+- Copied, trimmed and modified from doom-emacs
 #+begin_src emacs-lisp
-  (defun pspmacs/pspline-buffer-focused-p ()
-    "Is the cognate buffer focused?"
+  (defvar pspmacs/pspline--current-window
+    (frame-selected-window)
+    "Current window.")
 
-    (eq (current-buffer) (window-buffer (selected-window))))
+  (defun pspmacs/pspline--set-selected-window (&rest _)
+    "Set `pspmacs/pspline--current-window' appropriately."
+    (let ((win (frame-selected-window)))
+      (setq pspmacs/pspline--current-window
+            (if (minibuffer-window-active-p win)
+                (minibuffer-selected-window)
+              win))))
+
+  (add-hook 'pre-redisplay-functions #'pspmacs/pspline--set-selected-window)
+
+  (defun pspmacs/pspline--buffer-focused-p ()
+    "Is the cognate buffer focused?"
+    (let ((fsw (frame-selected-window)))
+      (and fsw (eq fsw pspmacs/pspline--current-window))))
+#+end_src
+
+** Set format by order
+#+begin_src emacs-lisp
+  (defun pspmacs/pspline-generate ()
+    "Generate format of pspline.
+
+  If current buffer is not focused,
+  only display segments meant for inactive buffer"
+    (let* ((left-segs nil)
+           (right-segs nil))
+      (dolist (seg pspmacs/pspline-segments-plist nil)
+        (if (plist-get (cdr seg) :display)
+            (let ((segment (eval (car seg))))
+              (if (plist-get (cdr seg) :right)
+                  (add-to-list 'right-segs segment t)
+                (add-to-list 'left-segs segment t)))))
+      ;; Mode line format
+      `("%e"
+        mode-line-front-space
+        ,@left-segs
+        mode-line-format-right-align
+        ,@right-segs
+        mode-line-end-spaces)))
+  #+end_src
+
+** Set up / tear down pspline
+#+begin_src emacs-lisp
+  (defun pspmacs/pspline-reset ()
+    "Reset pspline as default mode-line
+
+  When setting for first time, use `pspmacs/pspline-set-up'.
+  "
+    (interactive)
+    (let ((pspline-format (pspmacs/pspline-generate)))
+      (setq-default mode-line-format pspline-format)
+      (dolist (open-buff (buffer-list) nil)
+        (with-current-buffer open-buff
+          (setq mode-line-format (pspmacs/pspline-generate)))))
+    (pspmacs/pspline--assert-all-the-icons))
+
+  (defun pspmacs/pspline-set-up ()
+    "Set up pspline as mode-line
+
+  Save current `mode-line-format' as `pspmacs/pspline--original-format'
+  To reset, consider `pspmacs/pspline-reset'
+  "
+    (interactive)
+    (setq pspmacs/pspline--original-format mode-line-format)
+    (pspmacs/pspline-reset))
+
+  (defun pspmacs/pspline-tear-down ()
+    "tear down pspline as mode-line, resetting to
+  `pspmacs/pspline--original-format'"
+    (interactive)
+    (setq-default mode-line-format  pspmacs/pspline--original-format)
+    (dolist (open-buff (buffer-list) nil)
+      (with-current-buffer open-buff
+        (setq mode-line-format pspmacs/pspline--original-format))))
 #+end_src
 
 ** TEMP Compatibility for Emacs-29
@@ -632,25 +763,6 @@
     Mode line construct to right align all following constructs.")
         ;;;###autoload
       (put 'mode-line-format-right-align 'risky-local-variable t))
-  #+end_src
-
-** Set format by order
-#+begin_src emacs-lisp
-  (defun pspmacs/pspline-order ()
-    "Construct pspline-order"
-    (let* ((left-segs nil)
-           (right-segs nil))
-      (dolist (seg pspmacs/pspline-segments-plist nil)
-        (if (nth 0 (cdr seg))
-            (if (nth 1 (cdr seg))
-                (add-to-list 'right-segs (eval (car seg)) t)
-              (add-to-list 'left-segs (eval (car seg)) t))))
-      `("%e"
-        mode-line-front-space
-        ,@left-segs
-        mode-line-format-right-align
-        ,@right-segs
-        mode-line-end-spaces)))
   #+end_src
 
 * Footer

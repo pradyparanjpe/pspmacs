@@ -515,7 +515,7 @@
 
 (battery)
 
-(setq-default mode-line-format (pspmacs/pspline-order))
+(pspmacs/pspline-set-up)
 
 (use-package solaire-mode
   :config
