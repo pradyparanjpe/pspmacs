@@ -29,6 +29,11 @@
 
 * Custom variables
 #+begin_src emacs-lisp
+  (defcustom pspmacs/startpage-buffer-name "*StartPage*"
+    "Name of startpage buffer"
+    :type 'string
+    :group 'startpage)
+
   (defcustom pspmacs/startpage-recentf-num 5
     "number of recent files to link"
     :type 'integer
@@ -99,6 +104,16 @@
     :group 'startpage)
 #+end_src
 
+* Variables
+#+begin_src emacs-lisp
+  (defvar pspmacs/startpage-recent-files-point
+    (point-min)
+    "Point to recent files")
+
+  (defvar pspmacs/startpage-projects-point
+    (point-min)
+    "Point to projects")
+#+end_src
 * Internal Functions
 #+begin_src emacs-lisp
   (defun pspmacs/startpage--shorten-path (filepath)
@@ -134,26 +149,32 @@
       (insert pad-string)
       (insert-image banner)))
 
-  (defun pspmacs/startpage--evil-bind-jumps (recent project)
+  (defun pspmacs/startpage--evil-bind-jumps ()
     "Bind following keys (evil):
   r: RECENT point
   p: PROJECT point
   R: `pspmacs/startpage-refresh'"
     (keymap-set evil-normal-state-local-map
-                (kbd "r") (lambda () (interactive) (goto-char recent)))
+                (kbd "r") (lambda () (interactive)
+                            (goto-char pspmacs/startpage-recent-files-point)))
     (keymap-set evil-normal-state-local-map
-                (kbd "p") (lambda () (interactive) (goto-char project)))
+                (kbd "p") (lambda () (interactive)
+                            (goto-char pspmacs/startpage-projects-point)))
     (keymap-set evil-normal-state-local-map
                 (kbd "R") 'pspmacs/startpage-refresh))
 
-  (defun pspmacs/startpage--native-bind-jumps (recent project)
+  (defun pspmacs/startpage--native-bind-jumps ()
       "Bind following keys (native):
   r: RECENT point
   p: PROJECT point
   R: `pspmacs/startpage-refresh'"
       (use-local-map (copy-keymap text-mode-map))
-      (local-set-key (kbd "r") (lambda () (interactive) (goto-char recent)))
-      (local-set-key (kbd "p") (lambda () (interactive) (goto-char project)))
+      (local-set-key (kbd "r")
+                     (lambda () (interactive)
+                       (goto-char pspmacs/startpage-recent-files-point)))
+      (local-set-key (kbd "p")
+                     (lambda () (interactive)
+                       (goto-char pspmacs/startpage-projects-point)))
       (local-set-key (kbd "R") 'pspmacs/startpage-refresh))
 
   (defun pspmacs/startpage--center-pad-string (display-width)
@@ -203,19 +224,21 @@
     "Place a block of recentf files
 
   customize number `pspmacs/startpage-recentf-num'"
-    (pspmacs/startpage--put-block
-     recentf-list
-     pspmacs/startpage-recentf-num
-     "(r) Recent Files"))
+    (customize-set-variable 'pspmacs/startpage-recent-files-point
+                            (pspmacs/startpage--put-block
+                             recentf-list
+                             pspmacs/startpage-recentf-num
+                             "(r) Recent Files")))
 
   (defun pspmacs/startpage-put-projects ()
     "Place a block of known projects
 
   customize number `pspmacs/startpage-projects-num'"
-    (pspmacs/startpage--put-block
-     (project-known-project-roots)
-     pspmacs/startpage-projects-num
-     "(p) Projects"))
+    (customize-set-variable 'pspmacs/startpage-projects-point
+                            (pspmacs/startpage--put-block
+                             (project-known-project-roots)
+                             pspmacs/startpage-projects-num
+                             "(p) Projects")))
 
   (defun pspmacs/startpage-put-banner ()
     "Place center-aligned banner in current buffer.
@@ -226,11 +249,11 @@
         (pspmacs/startpage--graphic-banner)
       (pspmacs/startpage--ascii-banner)))
 
-    (defun pspmacs/startpage-bind-jumps (recent project)
+    (defun pspmacs/startpage-bind-jumps ()
       "Bind jumps to locations RECENT and PROJECT in buffer."
       (if evil-state
-          (pspmacs/startpage--evil-bind-jumps recent project)
-        (pspmacs/startpage--native-bind-jumps recent project)))
+          (pspmacs/startpage--evil-bind-jumps)
+        (pspmacs/startpage--native-bind-jumps)))
 
     (defun pspmacs/startpage-put-load-time ()
       "Load time information"
@@ -273,12 +296,18 @@
 * Interactive functions
 #+begin_src emacs-lisp
   (defun pspmacs/startpage-refresh ()
-    "Refresh start-page"
+    "Refresh start-page
+
+  Returns buffer handle"
     (interactive)
-    (let ((startpage-buffer (get-buffer-create "*StartPage*"))
-          (recent-point 0)
-          (project-point 0))
+    (let ((startpage-buffer (get-buffer-create pspmacs/startpage-buffer-name)))
       (with-current-buffer startpage-buffer
+        (special-mode)
+        (when (featurep 'whitespace) (whitespace-mode -1))
+        (when (featurep 'linum) (linum-mode -1))
+        (when (featurep 'display-line-numbers) (display-line-numbers-mode -1))
+        (when (featurep 'page-break-lines) (page-break-lines-mode 1))
+        (when (featurep 'linum) ())
         (read-only-mode -1)
         (erase-buffer)
         (save-excursion
@@ -287,21 +316,25 @@
           (insert "\n\n")
           (pspmacs/startpage-put-url-links)
           (insert "\n\n")
-          (setq recent-point (pspmacs/startpage-put-recentf))
+          (pspmacs/startpage-put-recentf)
           (insert "\n\n")
-          (setq project-point (pspmacs/startpage-put-projects))
+          (pspmacs/startpage-put-projects)
           (insert "\n")
           (switch-to-buffer startpage-buffer)
           (read-only-mode 1)
-          (pspmacs/startpage-bind-jumps recent-point project-point)))))
+          (pspmacs/startpage-bind-jumps)))
+      startpage-buffer))
 
   (defun pspmacs/startpage-show ()
-    "Switch to existing OR new startpage buffer"
+    "Switch to existing OR new startpage buffer
+
+  Returns buffer handle"
     (interactive)
-    (let ((startpage-buffer (get-buffer "*StartPage*")))
+    (let ((startpage-buffer (get-buffer pspmacs/startpage-buffer-name)))
       (if startpage-buffer
           (switch-to-buffer startpage-buffer)
-        (pspmacs/startpage-refresh))))
+        (setq startpage-buffer (pspmacs/startpage-refresh)))
+      startpage-buffer))
 
   (defun pspmacs/startpage-display ()
     "Switch to existing OR new startpage buffer
@@ -315,9 +348,9 @@
 * Hooks
 #+begin_src emacs-lisp
   (customize-set-variable 'inhibit-startpage-screen t)
+  (customize-set-variable 'initial-buffer-choice #'pspmacs/startpage-show)
   (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display)
-    (add-hook 'emacs-startup-hook #'pspmacs/startpage-display))
+      (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display))
 #+end_src
 
 * Footer
