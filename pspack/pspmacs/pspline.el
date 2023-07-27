@@ -311,7 +311,13 @@ Customize face with `pspmacs/pspline-buffer-modified-face'.")
   "evaluated by `pspmacs/pspline-buffer-process'."
   (if mode-line-process
       (propertize (format "%s " mode-line-process)
-                  'face '(:foreground modeline-info :box t))))
+                  'face
+                  '(:foreground (or
+                                 (ignore-errors
+                                   (modus-themes-get-color-value
+                                    'modeline-info))
+                                 'unspecified)
+                                :box t))))
 
 (defvar pspmacs/pspline-buffer-process
   '(:eval (if (pspmacs/pspline--display-segment
@@ -522,6 +528,7 @@ PERC > 101 is interpreted as *charging*"
          (tooltip-string (if (string= pspmacs/pspline--show-string "time")
                              bat-perc-string
                            hours-remain)))
+    (when bat-color
     (propertize (buttonize bat-string
                            #'pspmacs/pspline--battery-toggle-show-string)
                 'face
@@ -529,7 +536,7 @@ PERC > 101 is interpreted as *charging*"
                 'help-echo
                 tooltip-string
                 'mouse-face
-                `(:foreground "#000000" :background ,bat-color))))
+                `(:foreground "#000000" :background ,bat-color)))))
 
 (defvar pspmacs/pspline-battery
   '(:eval (if (pspmacs/pspline--display-segment
