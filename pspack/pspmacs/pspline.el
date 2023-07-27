@@ -444,8 +444,8 @@ Customize faces with `pspmacs/pspline-vc-main-face',
         (wrng (pspmacs/pspline--flymake-counter :warning))
         (note (pspmacs/pspline--flymake-counter :note)))
     (concat
-     (cond ((cl-plusp (+ errr wrng note)) pspmacs/pspline-flymake-error-icon)
-           ((cl-plusp (+ wrng note)) pspmacs/pspline-flymake-warning-icon)
+     (cond ((cl-plusp errr) pspmacs/pspline-flymake-error-icon)
+           ((cl-plusp wrng) pspmacs/pspline-flymake-warning-icon)
            ((cl-plusp note) pspmacs/pspline-flymake-note-icon)
            (t pspmacs/pspline-flymake-good-icon))
      (if (cl-plusp errr)
