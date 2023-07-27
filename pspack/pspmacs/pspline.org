@@ -81,6 +81,43 @@
     :group 'pspline)
 #+end_src
 
+** error hints
+*** Error
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-flymake-error-icon
+    (propertize " ⛌ " 'face 'pspmacs/pspline-flymake-error-face)
+    "Flymake error icon"
+    :type '(string :tag "Propertized with `pspmacs/pspline-flymake-error-face'")
+    :group 'pspline)
+#+end_src
+
+*** Warning
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-flymake-warning-icon
+    (propertize " ! " 'face 'pspmacs/pspline-flymake-warning-face)
+    "Flymake warning icon"
+    :type '(string :tag "Propertized with `pspmacs/pspline-flymake-warning-face'")
+    :group 'pspline)
+#+end_src
+
+*** Note
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-flymake-note-icon
+    (propertize " ? " 'face 'pspmacs/pspline-flymake-note-face)
+    "Flymake note icon"
+    :type '(string :tag "Propertized with `pspmacs/pspline-flymake-note-face'")
+    :group 'pspline)
+#+end_src
+
+*** Good
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-flymake-good-icon
+    (propertize " 🗸 " 'face 'pspmacs/pspline-flymake-good-face)
+    "Flymake good icon"
+    :type '(string :tag "Propertized with `pspmacs/pspline-flymake-good-face'")
+    :group 'pspline)
+#+end_src
+
 ** time string format
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline-time-string-format
@@ -129,30 +166,31 @@
 #+end_src
 ** Segment alist
 #+begin_src emacs-lisp
-  (defcustom pspmacs/pspline-segments-plist
-    '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
-      (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
-      (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
-      (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
-      (pspmacs/pspline-version-control . (:display t :right nil :inactive nil))
-      (pspmacs/pspline-buffer-name . (:display t :right nil :inactive t))
-      (pspmacs/pspline-buffer-process . (:display t :right nil :inactive t))
-      (pspmacs/pspline-info . (:display t :right t :inactive nil))
-      (pspmacs/pspline-battery . (:display t :right t :inactive nil))
-      (pspmacs/pspline-time . (:display t :right t :inactive nil)))
+   (defcustom pspmacs/pspline-segments-plist
+     '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
+       (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
+       (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
+       (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
+       (pspmacs/pspline-version-control . (:display t :right nil :inactive nil))
+       (pspmacs/pspline-buffer-name . (:display t :right nil :inactive t))
+       (pspmacs/pspline-buffer-process . (:display t :right nil :inactive t))
+       (pspmacs/pspline-info . (:display t :right t :inactive nil))
+       (pspmacs/pspline-error-hints . (:display t :right t :inactive nil))
+       (pspmacs/pspline-battery . (:display t :right t :inactive nil))
+       (pspmacs/pspline-time . (:display t :right t :inactive nil)))
 
-    "Ordered list whose
-  car is segment handle
-  cdr is '(:show nil :on-right nil :inactive nil)
+     "Ordered list whose
+   car is segment handle
+   cdr is '(:show nil :on-right nil :inactive nil)
 
-  When :SHOW is non-nil, display the segment on mode-line
-  When :RIGHT is non-nil, align the setment from the right.
-  When :INACTIVE is non-nil, display the segment even in inactive buffer"
-    :type '(repeat (cons (symbol :tag "Evaluates to segment string")
-                         (plist :key-type
-                                (symbol :options '(:display :right :inactive))
-                                :value-type boolean)))
-    :group 'pspline)
+   When :SHOW is non-nil, display the segment on mode-line
+   When :RIGHT is non-nil, align the setment from the right.
+   When :INACTIVE is non-nil, display the segment even in inactive buffer"
+     :type '(repeat (cons (symbol :tag "Evaluates to segment string")
+                          (plist :key-type
+                                 (symbol :options '(:display :right :inactive))
+                                 :value-type boolean)))
+     :group 'pspline)
 #+end_src
 
 * Faces
@@ -183,7 +221,7 @@
       :group 'pspline)
 #+end_src
 
-** vc faces
+** VC faces
 *** main
 #+begin_src emacs-lisp
   (defface pspmacs/pspline-vc-main-face
@@ -211,7 +249,7 @@
     :group 'pspline)
 #+end_src
 
-** evil-state-faces
+** Evil-state-faces
 *** Normal
 #+begin_src emacs-lisp
   (defface pspmacs/pspline-evil-normal-face
@@ -284,10 +322,33 @@
     :group 'pspline)
 #+end_src
 
+** Error counter faces
+#+begin_src emacs-lisp
+  (defface pspmacs/pspline-flymake-error-face
+    '((t (:foreground "#cf0f8f")))
+    "Face of Flymake Error Counter"
+    :group 'pspline)
+
+  (defface pspmacs/pspline-flymake-warning-face
+    '((t (:foreground "#cf8f0f")))
+    "Face of Flymake Error Counter"
+    :group 'pspline)
+
+  (defface pspmacs/pspline-flymake-note-face
+    '((t (:foreground "#0fcf8f")))
+    "Face of Flymake Error Counter"
+    :group 'pspline)
+
+  (defface pspmacs/pspline-flymake-good-face
+    '((t (:foreground "#0f8fcf")))
+    "Face of Flymake Error Counter"
+    :group 'pspline)
+#+end_src
+
 ** Time
 #+begin_src emacs-lisp
   (defface pspmacs/pspline-time-face
-    '((t (:bold t :foreground "#af8f00")))
+    '((t (:foreground "#df00ff")))
 
     "Pspline time face"
     :group 'pspline)
@@ -489,6 +550,44 @@
   `pspmacs/pspline-vc-release-face'.")
 #+end_src
 
+** Flymake errors
+#+begin_src emacs-lisp
+  (defun pspmacs/pspline--flymake-counter (type)
+    (let ((count 0))
+      (dolist (d (flymake-diagnostics))
+        (when (= (flymake--severity type)
+                 (flymake--severity (flymake-diagnostic-type d)))
+          (cl-incf count)))
+      count))
+
+  (defun pspmacs/pspline--error-hints ()
+    "Evaluated by `pspmacs/pspline-error-hints'."
+    (let ((errr (pspmacs/pspline--flymake-counter :error))
+          (wrng (pspmacs/pspline--flymake-counter :warning))
+          (note (pspmacs/pspline--flymake-counter :note)))
+      (concat
+       (cond ((cl-plusp (+ errr wrng note)) pspmacs/pspline-flymake-error-icon)
+             ((cl-plusp (+ wrng note)) pspmacs/pspline-flymake-warning-icon)
+             ((cl-plusp note) pspmacs/pspline-flymake-note-icon)
+             (t pspmacs/pspline-flymake-good-icon))
+       (if (cl-plusp errr)
+           (propertize (format "%d " errr)
+                       'face 'pspmacs/pspline-flymake-error-face))
+       (if (cl-plusp wrng)
+           (propertize (format "%d " wrng)
+                       'face 'pspmacs/pspline-flymake-warning-face))
+       (if (cl-plusp note)
+           (propertize (format "%d " note)
+                       'face 'pspmacs/pspline-flymake-note-face)))))
+
+  (defvar pspmacs/pspline-error-hints
+    '(:eval (if (pspmacs/pspline--display-segment
+                 'pspmacs/pspline-error-hints)
+                (pspmacs/pspline--error-hints)))
+
+    "Version control spec.
+  Customize faces with")
+#+end_src
 ** Time
 #+begin_src emacs-lisp
   (defun pspmacs/pspline--time ()

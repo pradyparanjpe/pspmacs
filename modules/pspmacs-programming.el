@@ -204,6 +204,7 @@
     "en" '(flymake-goto-next-error :wk "next")
     "ep" '(flymake-goto-prev-error :wk "previous"))
   :custom
+  (flymake-suppress-zero-counters t)
   (flymake-number-of-errors-to-display nil)
   (python-flymake-command '("flake8" "-"))
   :hook

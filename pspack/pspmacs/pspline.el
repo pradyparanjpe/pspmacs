@@ -52,6 +52,30 @@
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
+(defcustom pspmacs/pspline-flymake-error-icon
+  (propertize " ⛌ " 'face 'pspmacs/pspline-flymake-error-face)
+  "Flymake error icon"
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-error-face'")
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-flymake-warning-icon
+  (propertize " ! " 'face 'pspmacs/pspline-flymake-warning-face)
+  "Flymake warning icon"
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-warning-face'")
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-flymake-note-icon
+  (propertize " ? " 'face 'pspmacs/pspline-flymake-note-face)
+  "Flymake note icon"
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-note-face'")
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-flymake-good-icon
+  (propertize " 🗸 " 'face 'pspmacs/pspline-flymake-good-face)
+  "Flymake good icon"
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-good-face'")
+  :group 'pspline)
+
 (defcustom pspmacs/pspline-time-string-format
   "%H:%M"
 
@@ -102,6 +126,7 @@ car >101 is interpreted as *charging*"
     (pspmacs/pspline-buffer-name . (:display t :right nil :inactive t))
     (pspmacs/pspline-buffer-process . (:display t :right nil :inactive t))
     (pspmacs/pspline-info . (:display t :right t :inactive nil))
+    (pspmacs/pspline-error-hints . (:display t :right t :inactive nil))
     (pspmacs/pspline-battery . (:display t :right t :inactive nil))
     (pspmacs/pspline-time . (:display t :right t :inactive nil)))
 
@@ -202,8 +227,28 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
   "Unknown evil state"
   :group 'pspline)
 
+(defface pspmacs/pspline-flymake-error-face
+  '((t (:foreground "#cf0f8f")))
+  "Face of Flymake Error Counter"
+  :group 'pspline)
+
+(defface pspmacs/pspline-flymake-warning-face
+  '((t (:foreground "#cf8f0f")))
+  "Face of Flymake Error Counter"
+  :group 'pspline)
+
+(defface pspmacs/pspline-flymake-note-face
+  '((t (:foreground "#0fcf8f")))
+  "Face of Flymake Error Counter"
+  :group 'pspline)
+
+(defface pspmacs/pspline-flymake-good-face
+  '((t (:foreground "#0f8fcf")))
+  "Face of Flymake Error Counter"
+  :group 'pspline)
+
 (defface pspmacs/pspline-time-face
-  '((t (:bold t :foreground "#af8f00")))
+  '((t (:foreground "#df00ff")))
 
   "Pspline time face"
   :group 'pspline)
@@ -378,6 +423,42 @@ Customize faces with `pspmacs/pspline-evil-state-format',
 Customize faces with `pspmacs/pspline-vc-main-face',
 `pspmacs/pspline-vc-non-main-face',
 `pspmacs/pspline-vc-release-face'.")
+
+(defun pspmacs/pspline--flymake-counter (type)
+  (let ((count 0))
+    (dolist (d (flymake-diagnostics))
+      (when (= (flymake--severity type)
+               (flymake--severity (flymake-diagnostic-type d)))
+        (cl-incf count)))
+    count))
+
+(defun pspmacs/pspline--error-hints ()
+  "Evaluated by `pspmacs/pspline-error-hints'."
+  (let ((errr (pspmacs/pspline--flymake-counter :error))
+        (wrng (pspmacs/pspline--flymake-counter :warning))
+        (note (pspmacs/pspline--flymake-counter :note)))
+    (concat
+     (cond ((cl-plusp (+ errr wrng note)) pspmacs/pspline-flymake-error-icon)
+           ((cl-plusp (+ wrng note)) pspmacs/pspline-flymake-warning-icon)
+           ((cl-plusp note) pspmacs/pspline-flymake-note-icon)
+           (t pspmacs/pspline-flymake-good-icon))
+     (if (cl-plusp errr)
+         (propertize (format "%d " errr)
+                     'face 'pspmacs/pspline-flymake-error-face))
+     (if (cl-plusp wrng)
+         (propertize (format "%d " wrng)
+                     'face 'pspmacs/pspline-flymake-warning-face))
+     (if (cl-plusp note)
+         (propertize (format "%d " note)
+                     'face 'pspmacs/pspline-flymake-note-face)))))
+
+(defvar pspmacs/pspline-error-hints
+  '(:eval (if (pspmacs/pspline--display-segment
+               'pspmacs/pspline-error-hints)
+              (pspmacs/pspline--error-hints)))
+
+  "Version control spec.
+Customize faces with")
 
 (defun pspmacs/pspline--time ()
   "evaluated by `pspmacs/pspline-time'."
