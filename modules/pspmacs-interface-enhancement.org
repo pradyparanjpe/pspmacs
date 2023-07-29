@@ -91,18 +91,21 @@
       "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
       "++" '(pspmacs/git-rebase :wk "PSPMacs Config"))
 
+    ;; Hard Indentation
     (pspmacs/leader-keys
       ">" '(:ignore t :wk "indent")
       "> TAB" '(indent-rigidly-right-to-tab-stop :wk "tab right")
       "> <backtab>" '(indent-rigidly-left-to-tab-stop :wk "tab left")
       "> >" '(indent-rigidly :wk "manually"))
 
+    ;; Toggle buffers
     (pspmacs/leader-keys
       "TAB" '((lambda ()
                 (interactive)
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
               :which-key "toggle buffer"))
 
+    ;; Line-numbers in left fringe
     (pspmacs/leader-keys
       "1" '(:ignore t :wk "line-numbers")
       "1d" '((lambda () (interactive) (setq display-line-numbers nil))
@@ -114,6 +117,10 @@
       "1v" '((lambda () (interactive) (setq display-line-numbers 'visual))
              :wk "visual"))
 
+    ;; Emoji Menu (New in Emacs-29)
+    (pspmacs/leader-keys "@" (general-simulate-key "C-x 8 e"))
+
+    ;; UTF-8
     (pspmacs/leader-keys
       "8" '(insert-char :wk "UTF-8 character"))
 
@@ -122,6 +129,7 @@
       :keymaps 'org-mode-map
       "a"   '(:ignore t :wk "agenda"))
 
+    ;; AI
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
       "A"   '(:ignore t :wk "AI"))
@@ -155,6 +163,7 @@
       "bsp" '(:ignore t :wk "prog")
       "bsw" '(:ignore t :wk "web"))
 
+    ;; Scratch buffers and mode-toggles
     (let* ((mode-toggle-binding nil)
            (scratch-binding nil))
       (dolist (maj-mode pspmacs/mode-keybindings nil)
@@ -196,6 +205,7 @@
       "Bl" '(list-bookmarks :wk "list")
       "Br" '(consult-bookmark :wk "remember"))
 
+    ;; Comments
     (pspmacs/leader-keys
       "c" '(:ignore t :wk "comment")
       "cl" '(comment-line :wk "comment line")
@@ -209,30 +219,10 @@
     (pspmacs/leader-keys
       "D" '(:ignore t :wk "Dictionary"))
 
-    ;; worktrees
+    ;; file operations
     (pspmacs/leader-keys
       "f" '(:ignore t :wk "file")
       "ff" '(find-file :wk "find")
-      "fe" '(:ignote t :wk "emacs")
-      "fec" '((lambda ()
-                (interactive)
-                (find-file custom-file))
-              :wk "custom file")
-      "fw" '(:ignote t :wk "worktree")
-      "fwl" '((lambda ()
-                (interactive)
-                (find-file local-emacs-dir))
-              :wk "local")
-      "fwp" '((lambda ()
-                (interactive)
-                (if pvt-emacs-dir
-                    (find-file pvt-emacs-dir)
-                  (message "private work-tree is not declared.")))
-              :wk "private")
-      "fwg" '((lambda ()
-                (interactive)
-                (message "disabled"))
-              :wk "global <disabled>")
       "fD" '((lambda ()
                (interactive)
                (delete-file (buffer-file-name)))
@@ -282,12 +272,37 @@
       "o" '(:ignore t :wk "open")
       "os" '(speedbar t :wk "speedbar"))
 
+    ;; pspmacs
+    (pspmacs/leader-keys
+      "p" '(:ignote t :wk "PSPMacs")
+      "pc" '((lambda ()
+               (interactive)
+               (find-file custom-file))
+              :wk "custom file")
+      "pw" '(:ignote t :wk "worktree")
+      "pwl" '((lambda ()
+                (interactive)
+                (find-file local-emacs-dir))
+              :wk "local")
+      "pwp" '((lambda ()
+                (interactive)
+                (if pvt-emacs-dir
+                    (find-file pvt-emacs-dir)
+                  (message "private work-tree is not declared.")))
+              :wk "private")
+      "pwg" '((lambda ()
+                (interactive)
+                (message "disabled"))
+              :wk "global <disabled>"))
+
+    ;; quit
     (pspmacs/leader-keys
       "q" '(:ignore t :wk "quit")
       "qQ" '(kill-emacs :wk "daemon")
       "q C-f" '(delete-other-frames :wk "other frames")
       "qq" '(delete-frame :wk "client"))
 
+    ;; Registers *consult*
     (pspmacs/leader-keys
       "r" '(:ignore t :wk "register")
       "rl" '(consult-register-load t :wk "load")
@@ -303,6 +318,7 @@
     (pspmacs/leader-keys
       "u" '(universal-argument :wk "universal prefix"))
 
+    ;; Window
     (pspmacs/leader-keys
       "w" '(:ignore t :which-key "window")
       "w TAB" '(other-window :wk "other")
