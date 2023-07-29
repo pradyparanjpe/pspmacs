@@ -69,6 +69,20 @@
     :group 'pspline)
 #+end_src
 
+** Buffer name size
+#+begin_src emacs-lisp
+  (defcustom pspmacs/pspline-buffer-name-length
+    20
+    "Length of buffer beyond which, name is trimmed"
+    :type 'number
+    :group 'pspline)
+
+  (defcustom pspmacs/pspline-buffer-name-ellipses
+    "…"
+    "Character(s) that indicates that the name was trimmed"
+    :type '(string)
+    :group 'pspline)
+#+end_src
 ** evil state format
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline-evil-state-format
@@ -146,24 +160,8 @@
     :type '(repeat (cons (number :tag "Icon above")
                          (string :tag "Icon")))
     :group 'pspline)
-
-  (defcustom pspmacs/pspline-battery-color-plist
-    '((101 . "#00cfcf")
-      (90  . "#00cf00")
-      (80  . "#3fcf00")
-      (70  . "#6fcf00")
-      (60  . "#9fcf00")
-      (50  . "#cfcf00")
-      (40  . "#cf9f00")
-      (30  . "#cf6f00")
-      (20  . "#cf3f00")
-      (0   . "#cf0000"))
-    "Color cdr for battery-percentage above car
-  car >101 is interpreted as *charging*"
-    :type '(repeat (cons (number :tag "Icon above")
-                         (string :tag "color-string")))
-    :group 'pspline)
 #+end_src
+
 ** Segment alist
 #+begin_src emacs-lisp
    (defcustom pspmacs/pspline-segments-plist
@@ -388,6 +386,17 @@
     (read-only-mode 'toggle)
     (force-mode-line-update t))
 
+  (defun pspmacs/pspline--shorten (buffer-name)
+    "Shorten buffer name"
+    (let* ((buffer-mid (/ (length buffer-name) 2))
+           (buffer-cut
+            (1+ (- buffer-mid (/ pspmacs/pspline-buffer-name-length 2)))))
+      (if (cl-plusp buffer-cut)
+          (concat (substring buffer-name 0 (- buffer-mid buffer-cut))
+                  pspmacs/pspline-buffer-name-ellipses
+                  (substring buffer-name (+ buffer-mid buffer-cut)))
+        buffer-name)))
+
   (defun pspmacs/pspline--buffer-name ()
     "evaluated by `pspmacs/pspline--buffer-name'."
     (let* ((base (if (buffer-modified-p)
@@ -396,14 +405,16 @@
                        'mode-line-buffer-id
                      'mode-line-inactive)))
            (box (if buffer-read-only '(:box t) '(:box nil)))
-           (buffer-string (concat (or
-                                   (ignore-errors
-                                     (file-relative-name buffer-file-name
-                                                         (projectile-project-mode)))
-                                   "%b")
-                                  " ")))
+           (buffer-string
+            (concat (or
+                     (ignore-errors
+                       (file-relative-name buffer-file-name
+                                           (projectile-project-mode)))
+                     "%b")
+                    " ")))
       (propertize
-       (buttonize buffer-string #'pspmacs/pspline--toggle-read-only)
+       (buttonize (pspmacs/pspline--shorten buffer-string)
+                  #'pspmacs/pspline--toggle-read-only)
        'face `(,base ,box)
        'help-echo "mouse-1 toggle read-only")))
 
@@ -420,14 +431,10 @@
   (defun pspmacs/pspline--buffer-process ()
     "evaluated by `pspmacs/pspline-buffer-process'."
     (if mode-line-process
-        (propertize (format "%s " mode-line-process)
-                    'face
-                    '(:foreground (or
-                                   (ignore-errors
-                                     (modus-themes-get-color-value
-                                      'modeline-info))
-                                   'unspecified)
-                                  :box t))))
+      (propertize (pspmacs/pspline--shorten (format "%s " mode-line-process))
+                  'face '(:foreground
+                          (modus-themes-get-color-value 'modeline-info)
+                          :box t))))
 
   (defvar pspmacs/pspline-buffer-process
     '(:eval (if (pspmacs/pspline--display-segment
@@ -635,9 +642,11 @@
     "Battery color based on current battery percentage PERC
 
   PERC > 101 is interpreted as *charging*"
-    (cl-some (lambda (x)
-               (if (> perc (car x)) (cdr x)))
-             pspmacs/pspline-battery-color-plist))
+    (when perc
+      (let* ((red (* 0.008125 (* 2 (- 50 (max 0 (- perc 50))))))
+             (green (* 0.008125 (* 2 (- 50 (max 0 (- 50 perc))))))
+             (blue (* 0.008125 (* 10 (max 0 (- perc 90))))))
+        (color-rgb-to-hex red green blue 2))))
 
   (defun pspmacs/pspline--battery ()
     "evaluated by `pspmacs/pspline-battery'."
@@ -649,10 +658,7 @@
                            bat-perc))
            (bat-perc-string (format "%s%%" bat-perc-num))
            (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
-           (bat-color (pspmacs/pspline--battery-color
-                       (if (string= (cdr (assq ?b battery-info)) "+")
-                           200
-                         bat-perc-num)))
+           (bat-color (pspmacs/pspline--battery-color bat-perc-num))
            (bat-string (concat bat-icon
                                (if (string= pspmacs/pspline--show-string "time")
                                    hours-remain
@@ -662,14 +668,16 @@
                                bat-perc-string
                              hours-remain)))
       (when bat-color
-      (propertize (buttonize bat-string
-                             #'pspmacs/pspline--battery-toggle-show-string)
-                  'face
-                  `(:foreground ,bat-color)
-                  'help-echo
-                  tooltip-string
-                  'mouse-face
-                  `(:foreground "#000000" :background ,bat-color)))))
+        (propertize (buttonize bat-string
+                               #'pspmacs/pspline--battery-toggle-show-string)
+                    'face
+                    (if (string= (cdr (assq ?b battery-info)) "+")
+                        `(:background ,bat-color)
+                      `(:foreground ,bat-color))
+                    'help-echo
+                    tooltip-string
+                    'mouse-face
+                    `(:foreground "#000000" :background ,bat-color)))))
 
   (defvar pspmacs/pspline-battery
     '(:eval (if (pspmacs/pspline--display-segment
