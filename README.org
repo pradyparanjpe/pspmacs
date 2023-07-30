@@ -75,7 +75,7 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - ripgrep (Better, faster, broader grep)
 - Nerd Fonts (fancy StartPage, Mode-line)
 - Gnu/Emacs (Well, obviously.)
-  With flags (at least):
+  Built with flags (at least):
   - --with-pgtk
   - --with-mailutils
   - --with-gnutls

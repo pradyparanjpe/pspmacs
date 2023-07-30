@@ -246,6 +246,12 @@
     (pspmacs/leader-keys
       "j" '(:ignore t :wk "jump"))
 
+    ;; Language server protocol
+    (pspmacs/leader-keys
+      :states 'normal
+      :keymaps 'prog-mode-map
+      "l" '(:ignore t :wk "language-server"))
+
     ;; marks
     (pspmacs/leader-keys
       "m" '(:ignore t :wk "mark")

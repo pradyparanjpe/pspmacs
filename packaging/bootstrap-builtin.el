@@ -19,8 +19,7 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
          (last-update-time (decode-time (file-attribute-modification-time
                                          (file-attributes archive-path))))
          (delta (make-decoded-time :day pspmacs/archives-stale-days)))
-    (cond ((not (file-readable-p archive-path))
-           nil)
+    (cond ((not (file-readable-p archive-path)) nil)
           ((time-less-p (encode-time
                          (decoded-time-add last-update-time delta))
                         (encode-time today))
@@ -33,35 +32,46 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
   (cl-every #'pspmacs/archive-refreshed-recently-p
             (mapcar #'car package-archives)))
 
-(defun pspmacs/init-vc-use-package ()
-  "Emacs v29 can install packages from version control."
-  (unless (version< emacs-version "29")
+(defun pspmacs/init-use-package ()
+  "Emacs v29 can install packages from version control.
+
+vc-use-package is included in Emacs 30"
+  (eval-and-compile
+    (customize-set-variable 'use-package-compute-statistics t)
+    (customize-set-variable 'use-package-always-defer t)
+    (customize-set-variable 'use-package-expand-minimally t))
+
+  ;; NEXT Drop once released with Gnu/Emacs (29 or 30)
+  (when (version< emacs-version "30")
     (unless (package-installed-p 'vc-use-package)
       (package-vc-install "https://github.com/slotThe/vc-use-package"))
     (require 'vc-use-package)))
 
 (defun pspmacs/init-package-manager ()
   "Initialize `package.el' as the package manager"
-  ;; Additional package archives
+  ;; package should store data locally.
+  (customize-set-variable 'package-user-dir
+                          (expand-file-name "packages" local-emacs-dir))
+  (unless (file-exists-p package-user-dir) (mkdir package-user-dir t))
+
   ;; Paranoia
+  ;; (add-to-list 'package-archives
+  ;;              '("stable" . "https://stable.melpa.org/packages/"))
+  ;; ("stable" . 70)
+
+  ;; Additional package archives
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
   (customize-set-variable 'package-archive-priorities
                           '(("gnu"    . 99)
                             ("nongnu" . 80)
                             ("melpa"  . 0)))
-  ;; (add-to-list 'package-archives '("stable" . "https://stable.melpa.org/packages/"))
-  ;; ("stable" . 70)
 
-  ;; package should store data locally.
-  (customize-set-variable 'package-user-dir
-                          (expand-file-name "packages" local-emacs-dir))
-  (unless (file-exists-p package-user-dir)
-    (mkdir package-user-dir t))
   (package-initialize)
   (unless (pspmacs/archives-refreshed-recently-p)
-    (message "Refreshing package archives")
+    (message "Refreshing package archives...")
     (package-refresh-contents))
-  (pspmacs/init-vc-use-package))
+  (pspmacs/init-use-package))
 
+(pspmacs/load-inherit)
 ;;; bootstrap-builtin.el ends here

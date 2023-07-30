@@ -189,47 +189,35 @@ Initialize configurations
 ** Ensure a =local-emacs-dir=
 - Make if absent
 #+begin_src emacs-lisp :tangle init.el
-  (unless (file-exists-p local-emacs-dir)
-    (mkdir local-emacs-dir t))
+  (unless (file-exists-p local-emacs-dir) (mkdir local-emacs-dir t))
 #+end_src
 
 ** Native compilation settings
 #+begin_src emacs-lisp :tangle init.el
   (when (featurep 'native-compile)
     ;; Silence compiler warnings as they can be pretty disruptive
-    (setq native-comp-async-report-warnings-errors nil)
+    (customize-set-variable 'native-comp-async-report-warnings-errors nil)
 
     ;; Make native compilation happen asynchronously
-    (setq native-comp-deferred-compilation t)
+    (customize-set-variable 'native-comp-deferred-compilation t)
 
     ;; Set the right directory to store the native compilation cache
     ;; NOTE the method for setting the eln-cache directory
     ;; depends on the emacs version
     (when (fboundp 'startup-redirect-eln-cache)
-      (if (version< emacs-version "29")
-          (add-to-list
-           'native-comp-eln-load-path
-           (convert-standard-filename
-            (expand-file-name "var/eln-cache/" local-emacs-dir)))
-        (startup-redirect-eln-cache
-         (convert-standard-filename
-          (expand-file-name "var/eln-cache/" local-emacs-dir)))))
-    (add-to-list
-     'native-comp-eln-load-path
-     (expand-file-name "eln-cache/" local-emacs-dir)))
+      (startup-redirect-eln-cache
+       (convert-standard-filename
+        (expand-file-name "var/eln-cache/" local-emacs-dir))))
+    (add-to-list 'native-comp-eln-load-path
+                 (expand-file-name "eln-cache/" local-emacs-dir)))
 #+end_src
 
 ** Package management
-- User may overwrite the =pspmacs/packaging-directory= in private or local init-tree to customize packaging system.
-- User may want to set =pspmacs/package-manager= to =straight= to clone and build packages locally.
-  - This allows for better grip because the user can decide to stick to different commits, branches, forks.
-- With /builtin/ (default), if optional git-controlled packages are desired, =pspmacs/install-git-clones= should be set to non-nil. (This feature is for future. Currently, only planned, not supported.) It is =t= by default when =straight= is the package manager.
+- User may overwrite the =pspmacs/packaging-directory= in private or local init-tree to customize packaging system and decide how packages are to be initiated.
 - These values are set in the =early-init=, but take effect as the /first step/ of =init.el=.
 #+begin_src emacs-lisp :tangle init.el
   (setq pspmacs/packaging-directory
-        (expand-file-name "pspackaging" user-emacs-directory))
-  (setq pspmacs/package-manager 'builtin)
-  ;; (setq pspmacs/install-git-clones nil)
+        (expand-file-name "packaging" user-emacs-directory))
 #+end_src
 
 ** Single key-press response to yes-or-no

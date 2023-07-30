@@ -1,7 +1,7 @@
 ;;; late/version.el --- package version -*- lexical-binding: t; -*-
 
 (defconst pspmacs/version
-  "0.0.1"
+  "0.0.2"
   "PSPMACS version")
 
 (defun pspmacs/version ()

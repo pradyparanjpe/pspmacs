@@ -33,22 +33,17 @@
 ** Package installation directory
 We want packages to be cloned/downloaded locally.
 #+begin_src emacs-lisp :tangle package-management.el
-  (customize-set-variable
-   'package-user-dir
-   (expand-file-name "packages" local-emacs-dir))
+  (customize-set-variable 'package-user-dir
+                          (expand-file-name "packages" local-emacs-dir))
 #+end_src
 
 ** Package system
 - Load the package-system (=straight.el= or =package.el=).
   This file is maintained separately.
 #+begin_src emacs-lisp :tangle  package-management.el
-  (load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
-          nil 'nomessage)
-  (pspmacs/package-bootstrap)
+  (load (expand-file-name "bootstrap-builtin.el" pspmacs/packaging-directory)
+        nil 'nomessage)
   (pspmacs/init-package-manager)
-  (load (expand-file-name "bootstrap-use-package.el" pspmacs/packaging-directory)
-          nil 'nomessage)
-  (pspmacs/init-use-package)
 #+end_src
 
 ** Initiate org mode with latest release
@@ -96,7 +91,7 @@ We want packages to be cloned/downloaded locally.
 - Maintain a pspmacs version variable and caller function.
   #+begin_src emacs-lisp :tangle version.el
     (defconst pspmacs/version
-      "0.0.1"
+      "0.0.2"
       "PSPMACS version")
 
     (defun pspmacs/version ()
@@ -161,26 +156,27 @@ Pack of functions, variables, faces for pspmacs
 
 ** Inherit
 #+begin_src emacs-lisp :tangle definitions.el
-    (pspmacs/load-inherit)
+  (pspmacs/load-inherit)
 #+end_src
 
 * Init
 ** Header
 #+begin_src emacs-lisp :tangle init.el
-;;; late/init.el --- Late init file, loads modules -*- lexical-binding: t; -*-
+  ;;; late/init.el --- Late init file, loads modules -*- lexical-binding: t; -*-
 #+end_src
 
 ** Custom file
 - The file ~custom-file~ is used by the Customization UI to store value-setting forms in a customization file, rather than at the end of the =~/.emacs.d/init.el= file. It defaults to =~/.emacs.d/custom.el=. The file is loaded after =late/config.el= file. Any variable values set till that point (=late/config.el=) will be overridden with the values set with the Customization UI and saved in the custom file.
 #+begin_src emacs-lisp :tangle init.el
   (customize-set-variable 'custom-file
-    (expand-file-name "custom.el" local-emacs-dir))
+                          (expand-file-name "custom.el" local-emacs-dir))
 #+end_src
+
 ** Reset gc-cons
 - To hasten early-init, gc-cons was set to highest possible value in =early/definitions.el=
   - Let's reduce it back to 2MB.
 #+begin_src emacs-lisp :tangle init.el
-  (setq gc-cons-threshold (* 2 1000 1000))
+  (customize-set-variable 'gc-cons-threshold (* 2 1000 1000))
 #+end_src
 
 #+begin_note
@@ -198,14 +194,14 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 ** Inherit
 #+begin_src emacs-lisp :tangle init.el
-    (pspmacs/load-inherit)
+  (pspmacs/load-inherit)
 #+end_src
 
 * Config
 - Allow for very late configurations.
 ** Headers
 #+begin_src emacs-lisp :tangle config.el
-;;; late/config.el --- Final configurations -*- lexical-binding: t; -*-
+  ;;; late/config.el --- Final configurations -*- lexical-binding: t; -*-
 #+end_src
 
 ** Set theme
@@ -217,5 +213,5 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 
 ** Inherit
 #+begin_src emacs-lisp :tangle config.el
-    (pspmacs/load-inherit)
+  (pspmacs/load-inherit)
 #+end_src

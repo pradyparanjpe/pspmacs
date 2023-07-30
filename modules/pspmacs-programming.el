@@ -71,13 +71,20 @@
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-(unless (version< emacs-version "29")
-  (use-package corfu-terminal
-    :after corfu
-    :ensure nil
-    :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
-    :config
-    (unless (display-graphic-p))
+(use-package corfu-doc-terminal
+  :after corfu-terminal
+  :ensure nil
+  :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-doc-terminal")
+  :config
+  (unless (display-graphic-p)
+    (corfu-doc-terminal-mode t)))
+
+(use-package corfu-terminal
+  :after corfu
+  :ensure nil
+  :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
+  :config
+  (unless (display-graphic-p)
     (corfu-terminal-mode t)))
 
 (use-package ligature
@@ -174,9 +181,9 @@
   (pspmacs/leader-keys
     :states 'normal
     :keymaps 'prog-mode-map
-    "l" '(:ignore t :wk "language-server")
     "ls" '(:ignore t :wk "server (eglot)")
     "lss" '(eglot :wk "start"))
+
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'eglot-mode-map

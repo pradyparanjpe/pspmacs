@@ -21,17 +21,12 @@
 ;; Commentary: Set packate manager system, Also, initiate latest org mode.:
 ;; Code:
 
-(customize-set-variable
- 'package-user-dir
- (expand-file-name "packages" local-emacs-dir))
+(customize-set-variable 'package-user-dir
+                        (expand-file-name "packages" local-emacs-dir))
 
-(load (expand-file-name "bootstrap-package.el" pspmacs/packaging-directory)
-        nil 'nomessage)
-(pspmacs/package-bootstrap)
+(load (expand-file-name "bootstrap-builtin.el" pspmacs/packaging-directory)
+      nil 'nomessage)
 (pspmacs/init-package-manager)
-(load (expand-file-name "bootstrap-use-package.el" pspmacs/packaging-directory)
-        nil 'nomessage)
-(pspmacs/init-use-package)
 
 (use-package org
   :demand t)

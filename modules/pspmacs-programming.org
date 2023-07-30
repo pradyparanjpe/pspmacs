@@ -82,25 +82,23 @@
 #+end_src
 
 ** Using git-cloned repository
-- Only after Emacs 29
-#+begin_example emacs-lisp
-(use-package corfu-doc-terminal
-:after corfu-terminal
-:ensure nil
-:vc (:fetcher "codeberg" :repo "akib/emacs-corfu-doc-terminal")
-:config
-(unless (display-graphic-p)
-(corfu-doc-terminal-mode t)))
-#+end_example
+#+begin_src emacs-lisp
+  (use-package corfu-doc-terminal
+    :after corfu-terminal
+    :ensure nil
+    :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-doc-terminal")
+    :config
+    (unless (display-graphic-p)
+      (corfu-doc-terminal-mode t)))
+#+end_src
 
 #+begin_src emacs-lisp
-  (unless (version< emacs-version "29")
-    (use-package corfu-terminal
-      :after corfu
-      :ensure nil
-      :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
-      :config
-      (unless (display-graphic-p))
+  (use-package corfu-terminal
+    :after corfu
+    :ensure nil
+    :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
+    :config
+    (unless (display-graphic-p)
       (corfu-terminal-mode t)))
 #+end_src
 
@@ -210,8 +208,8 @@ Tree-sitter should ideally be compiled with Emacs.
 
 * joaotavora/eglot
 - Programming languages (language server)
-- Starting from Emacs-29, eglot will be part of shipped standard library.
-  It may gain more attention and support.
+- Prefer Eglot over LSP.
+  Eglot is a part of shipped standard library.
 #+begin_src emacs-lisp
   (use-package eglot
     :init
@@ -221,9 +219,9 @@ Tree-sitter should ideally be compiled with Emacs.
     (pspmacs/leader-keys
       :states 'normal
       :keymaps 'prog-mode-map
-      "l" '(:ignore t :wk "language-server")
       "ls" '(:ignore t :wk "server (eglot)")
       "lss" '(eglot :wk "start"))
+
     (pspmacs/local-leader-keys
       :states 'normal
       :keymaps 'eglot-mode-map

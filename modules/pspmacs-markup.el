@@ -38,22 +38,19 @@
 (use-package mermaid-mode)
 (use-package ob-mermaid)
 
-(unless (version< emacs-version "29")
-  (customize-set-variable 'oer-reveal-org-includes-dir local-emacs-dir)
-  (use-package emacs-reveal
-    :ensure nil
-    :vc (:fetcher "gitlab" :repo "oer/emacs-reveal")
-    :general
-    (pspmacs/local-leader-keys
-      :keymaps 'org-mode-map
-      "v" '(:ignore t :wk "reveal")
-      "vv" '(org-pandoc-export-to-revealjs :wk "export")
-      "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
-    :custom
-    (oer-reveal-org-includes-dir (expand-file-name
-                                  "oer-reveal-org" local-emacs-dir))
-    :config
-    (setq org-re-reveal-single-file t)
-    :hook (org-mode . reveal-mode)))
+(customize-set-variable 'oer-reveal-org-includes-dir local-emacs-dir)
+(use-package emacs-reveal
+  :ensure nil
+  :vc (:fetcher "gitlab" :repo "oer/emacs-reveal")
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'org-mode-map
+    "v" '(:ignore t :wk "reveal")
+    "vv" '(org-pandoc-export-to-revealjs :wk "export")
+    "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
+  :custom
+  (oer-reveal-org-includes-dir (expand-file-name "oer-reveal-org" local-emacs-dir))
+  (org-re-reveal-single-file t)
+  :hook (org-mode . reveal-mode))
 
 (pspmacs/load-inherit)
