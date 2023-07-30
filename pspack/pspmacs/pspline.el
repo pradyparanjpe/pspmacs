@@ -8,6 +8,7 @@
   "PSPLINE: modeline for pspmacs."
   :group 'pspmacs)
 
+(require 'pspmacs/common)
 (use-package all-the-icons
   :if (display-graphic-p))
 
@@ -43,18 +44,6 @@
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
-(defcustom pspmacs/pspline-buffer-name-length
-  20
-  "Length of buffer beyond which, name is trimmed"
-  :type 'number
-  :group 'pspline)
-
-(defcustom pspmacs/pspline-buffer-name-ellipses
-  "…"
-  "Character(s) that indicates that the name was trimmed"
-  :type '(string)
-  :group 'pspline)
-
 (defcustom pspmacs/pspline-evil-state-format
   ""
 
@@ -62,6 +51,12 @@
   :type '(choice
           (string :tag "verbatim")
           (sexp :tag "Evaluates to string"))
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-buffer-name-length
+  20
+  "Length of buffer beyond which, name is trimmed"
+  :type 'number
   :group 'pspline)
 
 (defcustom pspmacs/pspline-flymake-error-icon
@@ -277,22 +272,6 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
   (read-only-mode 'toggle)
   (force-mode-line-update t))
 
-(defun pspmacs/pspline--shorten (buffer-name)
-  "Shorten buffer name"
-  (cond ((stringp buffer-name)
-         (let* ((buffer-mid (/ (length buffer-name) 2))
-                (buffer-cut
-                 (1+ (- buffer-mid (/ pspmacs/pspline-buffer-name-length 2)))))
-           (if (cl-plusp buffer-cut)
-               (concat (substring buffer-name 0 (- buffer-mid buffer-cut))
-                       pspmacs/pspline-buffer-name-ellipses
-                       (substring buffer-name (+ buffer-mid buffer-cut)))
-             buffer-name)))
-        ((sequencep buffer-name)
-         (mapcar (lambda (x) (pspmacs/pspline--shorten x)) buffer-name))
-        ((symbolp buffer-name)
-         (pspmacs/pspline--shorten (symbol-name buffer-name)))))
-
 (defun pspmacs/pspline--buffer-name ()
   "Evaluated by `pspmacs/pspline--buffer-name'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-name)
@@ -310,7 +289,8 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
              "%b")
             ))
       `(,(propertize
-          (buttonize (pspmacs/pspline--shorten buffer-string)
+          (buttonize (pspmacs/shorten-it
+                      buffer-string pspmacs/pspline-buffer-name-length)
                      #'pspmacs/pspline--toggle-read-only)
           'face `(,base ,box)
           'help-echo "mouse-1 toggle read-only")
@@ -331,7 +311,8 @@ Customize face with `pspmacs/pspline-buffer-modified-face'.")
                                        (symbol-name mode-line-process))))))
       (when proc-string
         `(,(propertize
-            (pspmacs/pspline--shorten proc-string)
+            (pspmacs/shorten-it
+             proc-string pspmacs/pspline-buffer-name-length)
             'face `(:foreground
                     ,(modus-themes-get-color-value 'modeline-info)
                     :box t))

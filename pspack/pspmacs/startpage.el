@@ -8,6 +8,7 @@
   "STARTPAGE for pspmacs."
   :group 'pspmacs)
 
+(require 'pspmacs/common)
 (use-package recentf
   :commands (recentf-list)
   :demand t
@@ -17,6 +18,11 @@
 (defcustom pspmacs/startpage-buffer-name "*StartPage*"
   "Name of startpage buffer"
   :type 'string
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-block-cap 0.8
+  "Fraction of window-width as limit on length of file-names."
+  :type 'number
   :group 'startpage)
 
 (defcustom pspmacs/startpage-recentf-num 5
@@ -98,7 +104,9 @@
 
 (defun pspmacs/startpage--shorten-path (filepath)
   "Shorten FILEPATH replacing home-directory by ~"
-  (replace-regexp-in-string (getenv "HOME") "~" filepath))
+  (pspmacs/shorten-it
+   (replace-regexp-in-string (getenv "HOME") "~" filepath)
+   (round (* pspmacs/startpage-block-cap (window-width)))))
 
 (defun pspmacs/startpage--ascii-banner ()
     "Put ASCII Banner for non-graphic frames"
@@ -159,10 +167,22 @@ R: `pspmacs/startpage-refresh'"
 
 (defun pspmacs/startpage--center-pad-string (display-width)
   "Left padding to center text if DISPLAY-WIDTH size"
-  (concat "\n"
-          (make-string
-           (round (/ (max 0 (- (window-width) display-width)) 2))
-           ? )))
+  (concat "\n" (make-string (round (/ (max 0 (- (window-width) display-width))
+                                      2))
+                            ? )))
+
+(defun pspmacs/startpage--put-links (fname-list &optional pad-string)
+  "Put link to FNAME padded with pad-string"
+  (dolist (fname fname-list nil)
+    (let ((button
+           (buttonize
+            (pspmacs/startpage--shorten-path fname)
+            (lambda (_button) (find-file fname)))))
+      (add-face-text-property
+       0 (length button)
+       pspmacs/startpage-block-link-face-props
+       nil button)
+      (insert (or pad-string "") button))))
 
 (defun pspmacs/startpage--put-block (block-list &optional num block-title)
   "Place center-aligned block of links.
@@ -173,28 +193,21 @@ If BLOCK-TITLE is non-nil, it is placed as a heading to the block.
 Returns point to BLOCK-TITLE"
   (let* ((num (if num (min (length block-list ) num) (length block-list)))
          (items (subseq block-list 0 num))
-         (max-len (apply #'max (mapcar (lambda (fname) (length fname)) items)))
+         (max-len (min (round (* (window-width) pspmacs/startpage-block-cap))
+                       (apply #'max (mapcar (lambda (fpath)
+                                              (length fpath))
+                                            items))))
          (pad-string (pspmacs/startpage--center-pad-string max-len))
-         (block-point nil)
-         (recent-links
-          (mapcan
-           (lambda (fname)
-             (let ((button
-                    (buttonize
-                     (pspmacs/startpage--shorten-path fname)
-                     (lambda (_button) (find-file fname)))))
-               (add-face-text-property
-                0 (length button)
-                pspmacs/startpage-block-link-face-props
-                nil button)
-               `(,pad-string ,button)))
-           items)))
+         (block-point nil))
     (add-face-text-property
      0 (length block-title)
      pspmacs/startpage-block-title-face-props t block-title)
     (insert (string-trim-right pad-string "  $") block-title)
+
+    ;; Remember this point
     (setq block-point (point))
-    (eval `(insert ,@recent-links))
+
+    (pspmacs/startpage--put-links items pad-string)
     block-point))
 
 (defun pspmacs/startpage-put-recentf ()
@@ -226,25 +239,25 @@ else, use `pspmacs/startpage-banner-ascii'"
       (pspmacs/startpage--graphic-banner)
     (pspmacs/startpage--ascii-banner)))
 
-  (defun pspmacs/startpage-bind-jumps ()
-    "Bind jumps to locations RECENT and PROJECT in buffer."
-    (if evil-state
-        (pspmacs/startpage--evil-bind-jumps)
-      (pspmacs/startpage--native-bind-jumps)))
+(defun pspmacs/startpage-bind-jumps ()
+  "Bind jumps to locations RECENT and PROJECT in buffer."
+  (if evil-state
+      (pspmacs/startpage--evil-bind-jumps)
+    (pspmacs/startpage--native-bind-jumps)))
 
-  (defun pspmacs/startpage-put-load-time ()
-    "Load time information"
-    (let* ((load-string
-            (format
-             (emacs-init-time
-              "Loaded %%d packages in %3.2f seconds")
-             (length package-activated-list)))
-           (pad-string (pspmacs/startpage--center-pad-string
-                        (length load-string))))
-      (add-face-text-property
-       0 (length load-string)
-       pspmacs/startpage-load-time-face-props t load-string)
-      (insert "\n" pad-string load-string)))
+(defun pspmacs/startpage-put-load-time ()
+  "Load time information"
+  (let* ((load-string
+          (format
+           (emacs-init-time
+            "Loaded %%d packages in %3.2f seconds")
+           (length package-activated-list)))
+         (pad-string (pspmacs/startpage--center-pad-string
+                      (length load-string))))
+    (add-face-text-property
+     0 (length load-string)
+     pspmacs/startpage-load-time-face-props t load-string)
+    (insert "\n" pad-string load-string)))
 
 (defun pspmacs/startpage-put-url-links ()
   "Place pspmacs links"
