@@ -65,7 +65,7 @@
   :group 'pspline)
 
 (defcustom pspmacs/pspline-flymake-error-icon
-  (propertize " ⛌ " 'face 'pspmacs/pspline-flymake-error-face)
+  (propertize " × " 'face 'pspmacs/pspline-flymake-error-face)
   "Flymake error icon"
   :type '(string :tag "Propertized with `pspmacs/pspline-flymake-error-face'")
   :group 'pspline)
@@ -328,7 +328,7 @@ Customize face with `pspmacs/pspline-buffer-modified-face'.")
                          (string mode-line-process)
                          (list (remq nil (mapconcat (lambda (x) (eval x)) mode-line-process)))
                          (symbol (if mode-line-process
-                                     (symbol-name mode-line-process))))))
+                                       (symbol-name mode-line-process))))))
       (when proc-string
         `(,(propertize
             (pspmacs/pspline--shorten proc-string)
@@ -444,6 +444,7 @@ Customize faces with `pspmacs/pspline-vc-main-face',
 `pspmacs/pspline-vc-release-face'.")
 
 (defun pspmacs/pspline--flymake-counter (type)
+  "Plain `flymake--mode-line-counter' without properties"
   (let ((count 0))
     (dolist (d (flymake-diagnostics))
       (when (= (flymake--severity type)
@@ -451,27 +452,41 @@ Customize faces with `pspmacs/pspline-vc-main-face',
         (cl-incf count)))
     count))
 
+(defvar pspmacs/pspline-flymake-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line down-mouse-1] 'flymake-show-buffer-diagnostics)
+    (define-key map [mode-line down-mouse-3] 'flymake-show-project-diagnostics)
+    map)
+  "Keymap to display on Flymake indicator.")
+
+(defun pspmacs/pspline--hint-part (type)
+  (let ((err (pspmacs/pspline--flymake-counter type)))
+    (if (cl-plusp err)
+        (propertize (format "%d " err)
+                    'face
+                    (intern
+                     (format "pspmacs/pspline-flymake-%s-face"
+                             (string-trim (symbol-name type) ":")))
+                    'local-map pspmacs/pspline-flymake-map
+                    'help-echo
+                    (concat "mouse-1: buffer diagnostics"
+                            "\n"
+                            "mouse-3: project diagnostics")))))
+
 (defun pspmacs/pspline--error-hints ()
   "Evaluated by `pspmacs/pspline-error-hints'."
   (if (pspmacs/pspline--display-segment 'pspmacs/pspline-error-hints)
 
-      (let ((errr (pspmacs/pspline--flymake-counter :error))
-            (wrng (pspmacs/pspline--flymake-counter :warning))
-            (note (pspmacs/pspline--flymake-counter :note)))
-        (concat
-         (cond ((cl-plusp errr) pspmacs/pspline-flymake-error-icon)
-               ((cl-plusp wrng) pspmacs/pspline-flymake-warning-icon)
-               ((cl-plusp note) pspmacs/pspline-flymake-note-icon)
-               (t pspmacs/pspline-flymake-good-icon))
-         (if (cl-plusp errr)
-             (propertize (format "%d " errr)
-                         'face 'pspmacs/pspline-flymake-error-face))
-         (if (cl-plusp wrng)
-             (propertize (format "%d " wrng)
-                         'face 'pspmacs/pspline-flymake-warning-face))
-         (if (cl-plusp note)
-             (propertize (format "%d " note)
-                         'face 'pspmacs/pspline-flymake-note-face))))))
+      (let ((errr (pspmacs/pspline--hint-part :error))
+            (wrng (pspmacs/pspline--hint-part :warning))
+            (note (pspmacs/pspline--hint-part :note)))
+        `(,(cond (errr pspmacs/pspline-flymake-error-icon)
+                 (wrng pspmacs/pspline-flymake-warning-icon)
+                 (note pspmacs/pspline-flymake-note-icon)
+                 (t pspmacs/pspline-flymake-good-icon))
+          ,errr
+          ,wrng
+          ,note))))
 
 (defvar-local pspmacs/pspline-error-hints
   '(:eval (pspmacs/pspline--error-hints))
@@ -480,12 +495,12 @@ Customize faces with `pspmacs/pspline-vc-main-face',
 (defun pspmacs/pspline--time ()
   "evaluated by `pspmacs/pspline-time'."
   (if (pspmacs/pspline--display-segment 'pspmacs/pspline-time)
-      (propertize
-       (concat
-        (format-time-string (eval pspmacs/pspline-time-string-format))
-        " ")
-       'face 'pspmacs/pspline-time-face
-       'help-echo (format-time-string "%c"))))
+      `(
+        ,(propertize
+          (format-time-string (eval pspmacs/pspline-time-string-format))
+          'face 'pspmacs/pspline-time-face
+          'help-echo (format-time-string "%c"))
+        " ")))
 
 (defvar-local pspmacs/pspline-time
   '(:eval (pspmacs/pspline--time))
@@ -501,55 +516,54 @@ Customize value with `pspmacs/pspline-time-string-format'.")
        "time"))
     (force-mode-line-update t))
 
-  (defun pspmacs/pspline--battery-icon (perc)
-    "Battery icon based on current battery percentage PERC"
-    (cl-some (lambda (x)
-               (if (> perc (car x)) (cdr x)))
-             pspmacs/pspline-battery-icon-plist))
+(defun pspmacs/pspline--battery-icon (perc)
+  "Battery icon based on current battery percentage PERC"
+  (cl-some (lambda (x)
+             (if (> perc (car x)) (cdr x)))
+           pspmacs/pspline-battery-icon-plist))
 
-  (defun pspmacs/pspline--battery-color (perc)
-    "Battery color based on current battery percentage PERC
+(defun pspmacs/pspline--battery-color (perc)
+  "Battery color based on current battery percentage PERC
 
-  PERC > 101 is interpreted as *charging*"
-    (when perc
-      (let* ((red (* 0.008125 (* 2 (- 50 (max 0 (- perc 50))))))
-             (green (* 0.008125 (* 2 (- 50 (max 0 (- 50 perc))))))
-             (blue (* 0.008125 (* 10 (max 0 (- perc 90))))))
-        (color-rgb-to-hex red green blue 2))))
+PERC > 101 is interpreted as *charging*"
+  (when perc
+    (let* ((red (* 0.008125 (* 2 (- 50 (max 0 (- perc 50))))))
+           (green (* 0.008125 (* 2 (- 50 (max 0 (- 50 perc))))))
+           (blue (* 0.008125 (* 10 (max 0 (- perc 90))))))
+      (color-rgb-to-hex red green blue 2))))
 
-  (defun pspmacs/pspline--battery ()
-    "evaluated by `pspmacs/pspline-battery'."
-    (when (pspmacs/pspline--display-segment 'pspmacs/pspline-battery)
-      (let* ((battery-info (funcall battery-status-function))
-             (hours-remain (concat (cdr (assq ?t battery-info)) "h"))
-             (bat-perc (cdr (assq ?p battery-info)))
-             (bat-perc-num (if (stringp bat-perc)
-                               (string-to-number bat-perc)
-                             bat-perc))
-             (bat-perc-string (format "%s%%" bat-perc-num))
-             (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
-             (bat-color (pspmacs/pspline--battery-color bat-perc-num))
-             (bat-string (concat bat-icon
-                                 (if (string= pspmacs/pspline--show-string "time")
-                                     hours-remain
-
-                                   (format "%s%%" bat-perc-string))
-                                 ))
-             (tooltip-string (if (string= pspmacs/pspline--show-string "time")
-                                 bat-perc-string
-                               hours-remain)))
-        (when bat-color
-          `(,(propertize (buttonize bat-string
-                                    #'pspmacs/pspline--battery-toggle-show-string)
-                         'face
-                         (if (string= (cdr (assq ?b battery-info)) "+")
-                             `(:background ,bat-color :foreground ,"#000000")
-                           `(:foreground ,bat-color))
-                         'help-echo
-                         tooltip-string
-                         'mouse-face
-                         `(:foreground "#000000" :background ,bat-color))
-            " ")))))
+(defun pspmacs/pspline--battery ()
+  "evaluated by `pspmacs/pspline-battery'."
+  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-battery)
+    (let* ((battery-info (funcall battery-status-function))
+           (hours-remain (concat (cdr (assq ?t battery-info)) "h"))
+           (bat-perc (cdr (assq ?p battery-info)))
+           (bat-perc-num (if (stringp bat-perc)
+                             (string-to-number bat-perc)
+                           bat-perc))
+           (bat-perc-string (format "%s%%" bat-perc-num))
+           (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
+           (bat-color (pspmacs/pspline--battery-color bat-perc-num))
+           (bat-string (concat bat-icon
+                               (if (string= pspmacs/pspline--show-string "time")
+                                   hours-remain
+                                 (format "%s%%" bat-perc-string))
+                               ))
+           (tooltip-string (if (string= pspmacs/pspline--show-string "time")
+                               bat-perc-string
+                             hours-remain)))
+      (when bat-color
+        `(,(propertize (buttonize bat-string
+                                  #'pspmacs/pspline--battery-toggle-show-string)
+                       'face
+                       (if (string= (cdr (assq ?b battery-info)) "+")
+                           `(:background ,bat-color :foreground ,"#000000")
+                         `(:foreground ,bat-color))
+                       'help-echo
+                       tooltip-string
+                       'mouse-face
+                       `(:foreground "#000000" :background ,bat-color))
+          " ")))))
 
 (defvar-local pspmacs/pspline-battery
     '(:eval (pspmacs/pspline--battery))
@@ -558,7 +572,7 @@ Customize value with `pspmacs/pspline-battery-icon-plist',
 `pspmacs/pspline-battery-color-plist'.")
 
 (dolist (seg pspmacs/pspline-segments-plist nil)
-  (put (car seg) 'risky t))
+  (put (car seg) 'risky-local-variable t))
 
 (defun pspmacs/pspline--display-segment (seg-symbol)
   "Whether SEG-SYMBOL should be displayed"
@@ -606,6 +620,7 @@ only display segments meant for inactive buffer"
       ,@left-segs
       mode-line-format-right-align
       ,@right-segs
+      " "
       mode-line-end-spaces)))
 
 (defun pspmacs/pspline-reset ()
@@ -711,7 +726,7 @@ Mode line construct to right align all following constructs.")
     ;;;###autoload
   (put 'mode-line-format-right-align 'risky-local-variable t))
 
-(when (version< emacs-version "30")
+(when (version< emacs-version "29")
   (defun mode-line-window-selected-p ()
   "Return non-nil if we're updating the mode line for the selected window.
 This function is meant to be called in `:eval' mode line
