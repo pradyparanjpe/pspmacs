@@ -23,15 +23,6 @@
 ;;; Code:
 
 (use-package projectile
-  :general
-  ;; window bindings
-  (pspmacs/leader-keys
-    :states 'normal
-    "p" '(:ignore t :keymap projectile-command-map :which-key "projectile")
-    "p <escape>" 'keyboard-escape-quit
-    "p a" '(projectile-add-known-project :wk "add known")
-    "p F" '(pspmacs/projectile-find-file-all :wk "find file (all)")
-    "p t" '(projectile-run-vterm :wk "term"))
   :custom
   ;; Do not include straight repos (emacs packages) to project list
   (projectile-ignored-project-function

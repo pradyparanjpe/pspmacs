@@ -25,16 +25,27 @@
 (use-package vterm
   :general
   (pspmacs/leader-keys
-    "'" '((lambda () (interactive)
-            (pspmacs/inferior-interpreter 'vterm))
-           :wk "terminal"))
+    "'v" '((lambda () (interactive)
+             (pspmacs/inferior-interpreter 'vterm))
+           :wk "vterm"))
   :custom
   (vterm-always-compile-module t)
   (vterm-ignore-blink-cursor t)
   :config
   (general-add-hook
    'vterm-exit-functions
-   '(lambda (_ _) (pspmacs/destroy-buffer-and-window))))
+   '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
+
+(use-package eat
+  :general
+  (pspmacs/leader-keys
+    "'e" '((lambda () (interactive)
+             (pspmacs/inferior-interpreter 'eat))
+           :wk "eat"))
+  :config
+  (general-add-hook
+     'eat-exit-hook
+     '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 
 (setq wl-copy-process nil)
 (when (string-collate-equalp (getenv "XDG_SESSION_TYPE") "WAYLAND" nil t)
@@ -91,10 +102,7 @@
 
 (use-package systemd)
 
-(use-package pass
-  :general
-  (pspmacs/leader-keys
-    "P" 'pass))
+(use-package pass)
 
 (use-package emacs
   :custom

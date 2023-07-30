@@ -85,6 +85,10 @@
     "> <backtab>" '(indent-rigidly-left-to-tab-stop :wk "tab left")
     "> >" '(indent-rigidly :wk "manually"))
 
+  ;; terminal
+  (pspmacs/leader-keys
+    "'" '(:ignore t :wk "terminal"))
+
   ;; Toggle buffers
   (pspmacs/leader-keys
     "TAB" '((lambda ()
@@ -281,6 +285,9 @@
               (interactive)
               (message "disabled"))
             :wk "global <disabled>"))
+
+  ;; unix password store
+  (pspmacs/leader-keys "P" '(pass :wk "passwords"))
 
   ;; quit
   (pspmacs/leader-keys
