@@ -12,20 +12,21 @@ file:ACKNOWLEDGEMENTS.org
 #+end_seealso
 
 I was a SpaceMacs user for more than 2 years before [[https://github.com/syl20bnr/spacemacs/issues/15667][this]] issue landed.
-It was high time I became independent of opinionated Gnu/Emacs configurations, especially because it seriously affected my python programming workflow.
+It was high time I became independent of opinionated GNU/Emacs configurations, especially because it seriously affected my python programming workflow.
 
 ** /BAD/ Opinionated
 I didn't like doom-emacs for a similar reason.
-Dependence on either of them forces one to rely on /another layer of commits/ being flawless in addition to Gnu/Emacs' production commits and installed Emacs-lisp packages.
+Dependence on either of them forces one to rely on /another layer of commits/ being flawless in addition to GNU/Emacs' production commits and installed Emacs-lisp packages.
 Further, opinionated configuration imposes restrictions.
 Downstream modification of template opinions break (as they *did* for me) when the upstream code gets some incompatible commits.
 
 * My Attempt
-This is my *hitherto successful* attempt at configuring Gnu/Emacs (v29 and master-branch) from scratch to use it as a /text editor/ (🤣).
+This is my *hitherto successful* attempt at configuring GNU/Emacs (v29 and master-branch) from scratch to use it as a /text editor/ (🤣).
+/PSPMacs/ is distributed with an idea that it may aid others, under terms of [[https://www.gnu.org/licenses/lgpl-3.0.html][GNU LGPLv3]].
 
 ** OPTION 1: Copy Configuration
 To copy /PSPMacs/ configuration (=POSIX=),
-- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh?inline=false][setup-pspmacs.sh]], which is exported from [[file:aid/setup-pspmacs.org]].
+- Download [[https://gitlab.com/pradyparanjpe/pspmacs/-/raw/master/aid/setup-pspmacs.sh?inline=false][setup-pspmacs.sh]].
   #+begin_warning
   Read and understand [[file:aid/setup-pspmacs.org]] before proceeding.
   #+end_warning
@@ -69,33 +70,30 @@ The *script* will invoke =sudo= privileges whenever necessary.
 
 ** Requirements
 Bare Minimal Dependencies: (the installation script tries to install them.)
-- git (version control)
-- curl (downloads)
-- npm (language servers)
-- ripgrep (Better, faster, broader grep)
-- Nerd Fonts (fancy StartPage, Mode-line)
-- Gnu/Emacs (Well, obviously.)
-  Built with flags (at least):
-  - --with-pgtk
-  - --with-mailutils
-  - --with-gnutls
-  - --with-cairo
-  - --with-modules
-  - --with-native-compilation
-  - --with-rsvg
-  - --with-png
-  - --with-tree-sitter
+- =git= (version control)
+- =curl= (downloads)
+- =npm= (language servers)
+- =ripgrep= (Better, faster, broader grep)
+- [[https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip][Nerd Fonts]] (fancy StartPage, Mode-line)
+- =GNU/Emacs= (Well, obviously.)
+  [[file:aid/build.org][Built]] with flags (at least):
+#+begin_src bash :tangle no
+  ./configure --prefix="${HOME}/.local" --with-pgtk --with-cairo --with-rsvg \
+              --with-gnutls=ifavailable --with-native-compilation --with-png \
+              --with-modules --with-mailutils --with-tree-sitter
+#+end_src
 
 ** Update
-Update Gnu/Emacs using suitable package manager.
-Update PSPMacs configuration by pulling the latest commit from the repository.
+Update GNU/Emacs using suitable package manager.
+Update /PSPMacs/ configuration by pulling the latest commit from the repository.
+This is bound to keybinding =SPC + += in /PSPMacs/.
 #+begin_src bash :tangle no
   git -C ~/.emacs.d pull --rebase
 #+end_src
 
-*** Build Gnu/Emacs
-Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location, preferably at =${XDG_CONFIG_HOME:-${HOME}/.local/share}/emacs/src=, switching to branch /emacs-29/.
-- If you also use [[https://pradyparanjpe.gitlab.io/sh_scripts][my sh-scripts]], [[file:aid/build.org]] lists commands to pull, clean, build and install Gnu/Emacs v29 at =${HOME}/.local/bin/emacs=.
+*** Build GNU/Emacs
+GNU/Emacs may be built by maintaining its source-code at a suitable location, preferably at =${XDG_CONFIG_HOME:-${HOME}/.local/share}/emacs/src=, switching to branch =emacs-29= or with caution, =master=.
+- If you also use [[https://pradyparanjpe.gitlab.io/sh_scripts][my sh-scripts]], [[file:aid/build.org]] lists commands to pull, clean, build and install GNU/Emacs v29 at the location =${HOME}/.local/bin/emacs=.
 
 * Inheritance principle
 - The configuration is made with three *inherited work-trees*.
@@ -108,11 +106,10 @@ Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location,
   However, *this* configuration is meant to occupy that location.
   Since this configuration is git-version-controlled, any changes in =~/.emacs.d= may cause commit-conflicts.
   Hence, we try to put *nothing* more in this location than what it already contains.
-- For Gnu/Emacs 28, [[https://github.com/plexus/chemacs2][chemacs2]] may occupy =~/.emacs.d= and redirect to /this/ configuration.
-  - Since Gnu/Emacs 29, /this/ directory may be specified from the command-line with the flag =--init-directory=.
+- If not accessible at path =~/.emacs.d=, or =~/.config/emacs=, /this/ directory may be supplied as the =user-emacs-directory= while launching from the command-line using the flag =--init-directory=.
 
 *** Private: =pvt-emacs-dir=
-- A user may want to make some over-writing changes (supersede) and need to synchronize them across a private /ecosystem/ using a private version-control repository.
+- A user may want to make some over-writing changes (supersede) and need to synchronize them across a private /ecosystem/ using a *private* version-control repository.
   Such changes should be placed in 'exactly the same location' as that of the file to be superseded, but relative to a separate location, =pvt-emacs-dir=.
 - They may include settings such as full-name, email, etc.
 - The value of this variable is learnt from the environment variable =PVT_EMACS_HOME=.
@@ -128,7 +125,7 @@ Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location,
 - The value of this variable is learnt from the environment variable =LOCAL_EMACS_HOME=.
   - If =LOCAL_EMACS_HOME= is not set, =PVT_EMACS_HOME/local.d= is used when =PVT_EMACS_HOME= is defined, else =USER_EMACS_HOME/local.d= is used.
   #+begin_warning
-  - Don't synchronize local.d.
+  - *Don't* synchronize local.d.
   #+end_warning
 
 ** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html][Load-order]]
@@ -152,10 +149,10 @@ Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location,
 ** [[file:early/index.org][early-init.el]]
 - This init should *NEVER* throw errors.
 - If error is encountered, Emacs never launches GUI and exits with error.
-- Since we won't use built-in org-mode, we shall refrain from using the function ~org-babel-load-file~
+- Since we won't use built-in =org-mode=, we shall refrain from using any reference to =org= such as the function ~org-babel-load-file~.
 #+begin_tip
 - This section only establishes a platform for configuration and doesn't in fact affect the final configuration outcome.
-  - Many settings in =early-init= may be over-written by *this config* during /late/ init.
+  - Many settings in =early-init= may be over-written by *this very config* during /late/ init.
 #+end_tip
 
 #+begin_warning
@@ -190,7 +187,7 @@ Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location,
 
 - Code
   - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modules=.
-  - The customization file =<local-emacs-dir>/custom.el= will only be loaded after `config.el' only if the value of `pspmacs/load-custom-file' is set to a non-nil.
+  - The customization file =<local-emacs-dir>/custom.el= will be loaded after =late/config.el= only if the value of `pspmacs/load-custom-file' is set to a non-nil.
 #+begin_src emacs-lisp :tangle init.el
   ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
   ;;; late definitions init configs
@@ -212,9 +209,10 @@ Gnu/Emacs-29 may be built by maintaining its source-code at a suitable location,
 
 ** [[file:pspack/pspack.org][pspack]]
 - Functions, variables, faces, keywords used by /PSPMacs/ are compiled in a package pspack.
+  [[file:pspack/pspmacs/xdg.org][XDG-specification]], miscellaneous definitions, mode-line [[file:pspack/pspmacs/pspline.org][pspline]] and start-page [[file:pspack/pspmacs/startpage.org][startpage]] from pspack are loaded at the end of =late/definitions=.
 
 * .gitignore
-- Remember to add =local.d/= to =pvt-emacs-dir/.gitignore=, since it may be used as =local-emacs-dir=.
+- Remember to add =local.d/= to =<pvt-emacs-dir>/.gitignore=, since it may be used as =local-emacs-dir=.
 - As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in =pspack/pspmacs/xdg.el= to point at =xdg/emacs-cache-directory=.
   - However, if they store them at the hard-coded location =user-emacs-home/NEW-NAME=, =NEW-NAME= needs to be added to =pspmacs/.gitignore=.
     I shall do so whenever I notice such incidences either myself or through an issue.

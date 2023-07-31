@@ -41,7 +41,7 @@ vc-use-package is included in Emacs 30"
     (customize-set-variable 'use-package-always-defer t)
     (customize-set-variable 'use-package-expand-minimally t))
 
-  ;; NEXT Drop once released with Gnu/Emacs (29 or 30)
+  ;; NEXT Drop once released with GNU/Emacs (29 or 30)
   (when (version< emacs-version "30")
     (unless (package-installed-p 'vc-use-package)
       (package-vc-install "https://github.com/slotThe/vc-use-package"))

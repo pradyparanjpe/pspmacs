@@ -794,7 +794,7 @@
 #+end_src
 
 ** TEMP Compatibility for Emacs-29
-- Gnu/Emacs ~master~ branch includes ~mode-line-format-right-align~.
+- GNU/Emacs ~master~ branch includes ~mode-line-format-right-align~.
   #+begin_src emacs-lisp
     (when (version< emacs-version "30")
       (defcustom mode-line-right-align-edge 'window

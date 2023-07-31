@@ -43,7 +43,7 @@
 #+end_src
 
 * Emacs-30
-- [[https://github.com/slotThe/vc-use-package][vc-use-package]] will get included in Gnu/Emacs soon.
+- [[https://github.com/slotThe/vc-use-package][vc-use-package]] will get included in GNU/Emacs soon.
 #+begin_src emacs-lisp
   (defun pspmacs/init-use-package ()
     "Emacs v29 can install packages from version control.
@@ -54,7 +54,7 @@
       (customize-set-variable 'use-package-always-defer t)
       (customize-set-variable 'use-package-expand-minimally t))
 
-    ;; NEXT Drop once released with Gnu/Emacs (29 or 30)
+    ;; NEXT Drop once released with GNU/Emacs (29 or 30)
     (when (version< emacs-version "30")
       (unless (package-installed-p 'vc-use-package)
         (package-vc-install "https://github.com/slotThe/vc-use-package"))

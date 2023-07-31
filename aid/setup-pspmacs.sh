@@ -716,7 +716,7 @@ printf_byelogue () {
     unset bye_message
 }
 
-# initialize pspmacs
+# Initialize PSPMacs
 #
 # Args:
 #     Command line arguments, usually "$@"

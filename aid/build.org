@@ -4,7 +4,7 @@
 #+export_file_name: build.html
 
 * Introduction
-Using [[https://pradyparanjpe.gitlab.io/sh_scripts][my sh-scripts]], Gnu/Emacs may be built using commands enlisted by calling
+Using [[https://pradyparanjpe.gitlab.io/sh_scripts][my sh-scripts]], GNU/Emacs may be built using commands enlisted by calling
 #+begin_src sh :tangle no
   cmdlist -f ~/.emacs.d/aid/build.sh
 #+end_src

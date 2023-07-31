@@ -93,6 +93,7 @@ assume skip_check _nproc stale_at usage help_msg"
 
 # For testing and debugging
 # print parsed cli command and exit
+# shellcheck disable=SC2317
 _print_parsed () {
     for l_var in ${local_vars}; do
         # shellcheck disable=SC3053

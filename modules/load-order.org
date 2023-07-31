@@ -38,7 +38,7 @@
 - [[file:pspmacs-internet.org][internet]]
 
 ** 60: GNU Emacs
-- [[file:pspmacs-ci-cd.org][ci-cd]]
+- [[file:pspmacs-emacs-ci-cd.org][ci-cd]]
 
 ** 70: multimedia
 - [[file:pspmacs-multimedia.org][multimedia]]

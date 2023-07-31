@@ -5,11 +5,11 @@
 
 * Introduction
 ** Disclaimer
-/PSPMacs/ is distributed with an idea that it may aid others, under terms of =GNU LGPLv3=.
+/PSPMacs/ is distributed with an idea that it may aid others, under terms of [[https://www.gnu.org/licenses/lgpl-3.0.html][GNU LGPLv3]].
 However, I am neither selling, nor endorsing its use as the reader's personal configuration.
 /PSPMacs/ MAY and often WILL break due to my clumsy commits.
 The reader is expected to be able to fix their configuration.
-As is mentioned in the project's =README=, I have paid a price for using someone's configuration; I suggest that the reader shouldn't.
+As is mentioned in the project's [[file:../README.org][README]], I have paid a price for using someone's configuration; I suggest that the reader shouldn't.
 This is NOT /Spacemacs/, nor /DOOM-Emacs/, nor /Crafted Emacs/.
 The reader should use this as:
 - A repository of =elisp= code snippets for their own configuration, which they understand completely.
@@ -46,6 +46,7 @@ That would either require the user to select the correct script, or supply corre
 So, instead, this single file is composed of modular sections.
 
 * Script Environment
+Prepare environment for installation and set-up.
 #+begin_src sh
   ###############################################################################
 
@@ -57,7 +58,9 @@ So, instead, this single file is composed of modular sections.
 
 #+end_src
 
-** Set/Unset Variables, clean environment
+** Set/Unset variables, clean environment
+Declare global variables, arrange to clean them at the end.
+Organize command-line calls.
 #+begin_src sh
   # set script-variables
   #
@@ -281,6 +284,7 @@ So, instead, this single file is composed of modular sections.
 #+end_src
 
 * GNU/Linux functions
+Installation and set-up on GNU/Linux platform.
 #+begin_src sh
   ###############################################################################
 
@@ -402,6 +406,7 @@ Update repository index.
   }
 #+end_src
 *** Install
+Package-manager aided installations.
 #+begin_src sh
   # Wrapper around apk installation (Alpine Linux and derivatives)
   #
@@ -462,7 +467,11 @@ Update repository index.
 #+end_src
 
 * MacOS functions
-Completely untested
+Installation and set-up on Apple-MacOS platform.
+#+begin_warning
+Proprietary platform, minimally tested.
+#+end_warning
+
 #+begin_src sh
   ###############################################################################
 
@@ -475,7 +484,7 @@ Completely untested
 #+end_src
 
 ** Init Homebrew
-Install if unavailable
+Install [[https://brew.sh/][Homebrew]], package-manager if missing.
 #+begin_src sh
   # Install fonts using brew cask
   #
@@ -525,6 +534,7 @@ Install if unavailable
 #+end_src
 
 ** Install using Homebrew
+Package-manager aided installations.
 #+begin_src sh
   # Installation wrapper around default package manager
   #
@@ -569,6 +579,7 @@ Install if unavailable
 #+end_src
 
 ** Initialize suitable package manager
+Platform's preferred package manager.
 #+begin_src sh
   # Initialize package manager for the platform (distribution/MacOS)
   #
@@ -683,7 +694,7 @@ Reset them later if installation fails.
 #+end_src
 
 ** =LOCAL_EMACS_HOME=
-As explained in the project's =README=, =LOCAL_EMACS_HOME= holds machine-specific cache.
+As explained in the project's [[file:../README.org][README]], [[file:../README.org::*Local: =local-emacs-dir=][LOCAL_EMACS_HOME]] holds machine-specific cache.
 We set it prior to loading /PSPMacs/ the first time, so that the same location is used always.
 #+begin_src sh
   # Location for $LOCAL_EMACS_HOME
@@ -812,9 +823,16 @@ God by ye.
 #+end_src
 
 * Main guard
-Python equivalent ~if __name__ == __main__~
+Main Entry Point.
+
+Python equivalent of
+#+begin_example python :eval no :tangle no
+  if ___name___ == __main__:
+      main()
+#+end_example
+
 #+begin_src sh
-  # initialize pspmacs
+  # Initialize PSPMacs
   #
   # Args:
   #     Command line arguments, usually "$@"
