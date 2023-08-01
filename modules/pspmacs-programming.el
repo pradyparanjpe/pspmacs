@@ -250,9 +250,10 @@
 
 (use-package semantic
   :demand t
-  :init
-  (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
   :hook
+  (prog-mode . (lambda () (interactive)
+                 (unless (eq major-mode 'lisp-interaction-mode)
+                   (semantic-idle-breadcrumbs-mode))))
   (prog-mode . semantic-mode))
 
 (use-package emacs

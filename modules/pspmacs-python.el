@@ -101,7 +101,7 @@ FLAGS may be string or symbol list of flags passed to subcommand.
 PACKAGES are string or symbol list of flags passed to subcommand.
 We assume pip = pip3 *always* (python2 is already in antiquity)."
   (let*
-      ((pip (or (executable-find "pip") (executable-find "pip")))
+      ((pip (or (executable-find "pip") (executable-find "pip3")))
        (cmd (if (symbolp cmd) (symbol-name cmd) cmd))
        (packages (mapcar (lambda (x)
                            (if (symbolp x) (symbol-name x) x))

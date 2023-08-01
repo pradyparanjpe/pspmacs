@@ -89,6 +89,14 @@
   (pspmacs/leader-keys
     "'" '(:ignore t :wk "terminal"))
 
+  ;; Eval expressions, lisp symbols
+  (pspmacs/leader-keys
+    ":" '(:ignore t :wk "eval")
+    ":d" 'eval-defun
+    ":e" 'eval-expression
+    ":l" 'eval-last-expression
+    ":r" 'eval-region)
+
   ;; Toggle buffers
   (pspmacs/leader-keys
     "TAB" '((lambda ()
