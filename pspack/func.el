@@ -42,6 +42,32 @@ Copied and maybe modufied form module pspmacs-ci-cd."
           (message "Remember to restart!"))
       (message "👍"))))
 
+(defun pspmacs/fill-cap-color (perc &optional bright invert)
+  "Color based on filled capacity percentage PERC.
+
+=0= is empty (bad = red), =100= is filled (good = green)
+Percent of brightness is provided through BRIGHT, else assumed as 100%
+If INVERT is non-nil, goodness/badness is reversed.
+PERC > 101 is interpreted as *overfilled* (returns BRIGHT magenta)"
+  (if (> perc 100)
+      (let ((bright (if bright (/ bright 100.0) 1)))
+        (color-rgb-to-hex bright 0 bright 2))
+    (let* ((frac (/ (if invert (- 100 perc) perc) 100.0))
+           (bright (if bright (/ bright 100.0) 1))
+           (red (* bright (* 2 (- 0.5 (max 0 (- frac 0.5))))))
+           (green (* bright (* 2 (- 0.5 (max 0 (- 0.5 frac))))))
+           (blue (* bright (* 10 (max 0 (- frac 0.9))))))
+      (color-rgb-to-hex red green blue 2))))
+
+(defun pspmacs/recolor-fill-column ()
+  "Recolor fill-column according to position of cursor"
+  (interactive)
+  (when display-fill-column-indicator-mode
+    (set-face-background
+     'fill-column-indicator
+     (pspmacs/fill-cap-color
+      (/ (* 100 (current-column)) fill-column) 30 t))))
+
 (defun pspmacs/mode-prettify (sub-modes)
   "Apply pretiffy mode alist according to active-mode.
 

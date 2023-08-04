@@ -12,4 +12,6 @@
       nil 'nomessage)
 (load (expand-file-name "func.el" (file-name-directory load-file-name))
       nil 'nomessage)
+(load (expand-file-name "modes.el" (file-name-directory load-file-name))
+      nil 'nomessage)
 (provide 'pspack)

@@ -31,6 +31,13 @@
   :group 'pspack
   :type '(repeat (cons (string :tag "hl-tag") (string :tag "color"))))
 
+(defvar pspmacs/recolor-fill-column-timer nil
+  "Handle for `fill-column-color-mode'")
+
+(defvar pspmacs/display-column-orig-bg-color
+  (face-attribute 'fill-column-indicator :background)
+  "Original value of background for face `fill-column-indicator'")
+
 (defcustom pspmacs/pretty-alist
   '(("code" . (("\\n" . ?⏎)
                ("\\t" . ?↹)))

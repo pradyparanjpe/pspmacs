@@ -249,12 +249,19 @@
   :hook ((prog-mode . origami-mode)))
 
 (use-package semantic
-  :demand t
-  :hook
-  (prog-mode . (lambda () (interactive)
-                 (unless (eq major-mode 'lisp-interaction-mode)
-                   (semantic-idle-breadcrumbs-mode))))
-  (prog-mode . semantic-mode))
+  :demand t)
+(mapc (lambda (x)
+        "Add semantic mode, semantic-idle-breadcrumbs mode
+
+to_list all modes that have parsers"
+        (let ((target-hook
+               (intern (format "%s-hook" (symbol-name (car x))))))
+          (add-hook target-hook #'semantic-idle-breadcrumbs-mode)
+          (add-hook target-hook #'semantic-mode)))
+      semantic-new-buffer-setup-functions)
+
+(add-hook 'prog-mode-hook #'fill-column-color-mode)
+(add-hook 'prog-mode-hook #'pspmacs/after-code-load)
 
 (use-package emacs
   :init
@@ -267,7 +274,6 @@
         #'command-completion-default-include-p)
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
-  (add-hook 'prog-mode-hook 'pspmacs/after-code-load)
   :custom
   (tab-always-indent 'complete)
   :general

@@ -107,6 +107,69 @@
     :type '(repeat (cons (string :tag "hl-tag") (string :tag "color"))))
 #+end_src
 
+* Dynamic Colors
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/fill-cap-color (perc &optional bright invert)
+    "Color based on filled capacity percentage PERC.
+
+  =0= is empty (bad = red), =100= is filled (good = green)
+  Percent of brightness is provided through BRIGHT, else assumed as 100%
+  If INVERT is non-nil, goodness/badness is reversed.
+  PERC > 101 is interpreted as *overfilled* (returns BRIGHT magenta)"
+    (if (> perc 100)
+        (let ((bright (if bright (/ bright 100.0) 1)))
+          (color-rgb-to-hex bright 0 bright 2))
+      (let* ((frac (/ (if invert (- 100 perc) perc) 100.0))
+             (bright (if bright (/ bright 100.0) 1))
+             (red (* bright (* 2 (- 0.5 (max 0 (- frac 0.5))))))
+             (green (* bright (* 2 (- 0.5 (max 0 (- 0.5 frac))))))
+             (blue (* bright (* 10 (max 0 (- frac 0.9))))))
+        (color-rgb-to-hex red green blue 2))))
+#+end_src
+
+* Recolor fill-column face
+#+begin_src emacs-lisp :tangle vars.el
+  (defvar pspmacs/recolor-fill-column-timer nil
+    "Handle for `fill-column-color-mode'")
+
+  (defvar pspmacs/display-column-orig-bg-color
+    (face-attribute 'fill-column-indicator :background)
+    "Original value of background for face `fill-column-indicator'")
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/recolor-fill-column ()
+    "Recolor fill-column according to position of cursor"
+    (interactive)
+    (when display-fill-column-indicator-mode
+      (set-face-background
+       'fill-column-indicator
+       (pspmacs/fill-cap-color
+        (/ (* 100 (current-column)) fill-column) 30 t))))
+#+end_src
+
+#+begin_src emacs-lisp :tangle modes.el
+  (define-minor-mode fill-column-color-mode
+    "Toggle fill-column-color-mode
+
+  When fill-column-color-mode is on,
+  color-rgb-to-hex of `display-fill-column-indicator-character'
+  changes according to fill-column, overriding `pspmacs/pspline-cursor-position-face'"
+    :lighter nil
+    (if fill-column-color-mode
+        (unless pspmacs/recolor-fill-column-timer
+          (setq pspmacs/display-column-orig-bg-color
+                (face-attribute 'fill-column-indicator :background))
+          (setq pspmacs/recolor-fill-column-timer
+                (run-with-idle-timer 2 t #'pspmacs/recolor-fill-column)))
+      (when pspmacs/recolor-fill-column-timer
+        (cancel-timer pspmacs/recolor-fill-column-timer)
+        (setq pspmacs/recolor-fill-column-timer nil)
+        (set-face-background
+         'fill-column-indicator
+         pspmacs/display-column-orig-bg-color))))
+#+end_src
+
 * Prettify data
 - Prettify modes with emoji
 #+begin_src emacs-lisp :tangle vars.el
@@ -980,6 +1043,8 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
   (load (expand-file-name "vars.el" (file-name-directory load-file-name))
         nil 'nomessage)
   (load (expand-file-name "func.el" (file-name-directory load-file-name))
+        nil 'nomessage)
+  (load (expand-file-name "modes.el" (file-name-directory load-file-name))
         nil 'nomessage)
   (provide 'pspack)
 #+end_src
