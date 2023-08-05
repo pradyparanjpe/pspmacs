@@ -34,6 +34,15 @@
   ;;; Code:
 #+end_src
 
+#+begin_src emacs-lisp :tangle modes.el
+  ;;; pspack/modes.el --- common pspmacs minor modes -*- lexical-binding: t; -*-
+  ;;; Commentary:
+  ;;
+  ;; minor mode for pspmacs config.
+  ;;
+  ;;; Code:
+#+end_src
+
 * Packaging
 ** Move url cookies to =XDG=
 #+begin_src emacs-lisp :tangle vars.el
@@ -125,49 +134,6 @@
              (green (* bright (* 2 (- 0.5 (max 0 (- 0.5 frac))))))
              (blue (* bright (* 10 (max 0 (- frac 0.9))))))
         (color-rgb-to-hex red green blue 2))))
-#+end_src
-
-* Recolor fill-column face
-#+begin_src emacs-lisp :tangle vars.el
-  (defvar pspmacs/recolor-fill-column-timer nil
-    "Handle for `fill-column-color-mode'")
-
-  (defvar pspmacs/display-column-orig-bg-color
-    (face-attribute 'fill-column-indicator :background)
-    "Original value of background for face `fill-column-indicator'")
-#+end_src
-
-#+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/recolor-fill-column ()
-    "Recolor fill-column according to position of cursor"
-    (interactive)
-    (when display-fill-column-indicator-mode
-      (set-face-background
-       'fill-column-indicator
-       (pspmacs/fill-cap-color
-        (/ (* 100 (current-column)) fill-column) 30 t))))
-#+end_src
-
-#+begin_src emacs-lisp :tangle modes.el
-  (define-minor-mode fill-column-color-mode
-    "Toggle fill-column-color-mode
-
-  When fill-column-color-mode is on,
-  color-rgb-to-hex of `display-fill-column-indicator-character'
-  changes according to fill-column, overriding `pspmacs/pspline-cursor-position-face'"
-    :lighter nil
-    (if fill-column-color-mode
-        (unless pspmacs/recolor-fill-column-timer
-          (setq pspmacs/display-column-orig-bg-color
-                (face-attribute 'fill-column-indicator :background))
-          (setq pspmacs/recolor-fill-column-timer
-                (run-with-idle-timer 2 t #'pspmacs/recolor-fill-column)))
-      (when pspmacs/recolor-fill-column-timer
-        (cancel-timer pspmacs/recolor-fill-column-timer)
-        (setq pspmacs/recolor-fill-column-timer nil)
-        (set-face-background
-         'fill-column-indicator
-         pspmacs/display-column-orig-bg-color))))
 #+end_src
 
 * Prettify data

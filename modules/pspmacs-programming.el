@@ -245,6 +245,13 @@
   :init
   (customize-set-variable 'fill-column 80))
 
+(use-package color-fci
+  :vc (:fetcher "gitlab" :repo "pradyparanjpe/color-fci")
+  :custom
+  (color-fci-overflow-color "#ffffff")
+  :hook
+  (prog-mode . color-fci-mode))
+
 (use-package origami
   :hook ((prog-mode . origami-mode)))
 
@@ -260,7 +267,6 @@ to_list all modes that have parsers"
           (add-hook target-hook #'semantic-mode)))
       semantic-new-buffer-setup-functions)
 
-(add-hook 'prog-mode-hook #'fill-column-color-mode)
 (add-hook 'prog-mode-hook #'pspmacs/after-code-load)
 
 (use-package emacs

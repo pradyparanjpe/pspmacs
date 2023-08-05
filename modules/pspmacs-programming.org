@@ -296,6 +296,17 @@ Tree-sitter should ideally be compiled with Emacs.
     (customize-set-variable 'fill-column 80))
 #+end_src
 
+** pradyparanjpe/color-fci
+Color it
+#+begin_src emacs-lisp
+  (use-package color-fci
+    :vc (:fetcher "gitlab" :repo "pradyparanjpe/color-fci")
+    :custom
+    (color-fci-overflow-color "#ffffff")
+    :hook
+    (prog-mode . color-fci-mode))
+#+end_src
+
 * gregsexton/origami
 #+begin_src emacs-lisp
   (use-package origami
@@ -351,7 +362,6 @@ Tree-sitter should ideally be compiled with Emacs.
 
 * pspmacs bindings
 #+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook #'fill-column-color-mode)
   (add-hook 'prog-mode-hook #'pspmacs/after-code-load)
 #+end_src
 

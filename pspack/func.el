@@ -59,15 +59,6 @@ PERC > 101 is interpreted as *overfilled* (returns BRIGHT magenta)"
            (blue (* bright (* 10 (max 0 (- frac 0.9))))))
       (color-rgb-to-hex red green blue 2))))
 
-(defun pspmacs/recolor-fill-column ()
-  "Recolor fill-column according to position of cursor"
-  (interactive)
-  (when display-fill-column-indicator-mode
-    (set-face-background
-     'fill-column-indicator
-     (pspmacs/fill-cap-color
-      (/ (* 100 (current-column)) fill-column) 30 t))))
-
 (defun pspmacs/mode-prettify (sub-modes)
   "Apply pretiffy mode alist according to active-mode.
 
