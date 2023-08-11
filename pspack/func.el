@@ -306,6 +306,17 @@ Copy TEXT to wayland wl-copy"
       nil ; should return nil if we're the current paste owner
     (shell-command-to-string "wl-paste -n | tr -d \r")))
 
+(defun pspmacs/drop-bom ()
+  "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer"
+  (interactive)
+  (let ((bom '(?\ufeff ?\ufffe ?\uffff))
+        (current-point (point)))
+    (beginning-of-buffer)
+    (when (member (char-after 1) bom)
+      (delete-char 1)
+      (message "BOM deleted"))
+    (goto-char current-point)))
+
 (defun pspmacs/project-to-publish-alist
     (org-root html-root org-templates)
   "Set root locations for source ORG-ROOT and target HTML-ROOT

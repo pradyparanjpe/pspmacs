@@ -239,7 +239,8 @@ Revert to the normal definition outside of these fragments."
   :hook
   ((org-mode . pspmacs/prettify-note)
    (org-mode . visual-line-mode)
-   (org-mode . karthink/add-latex-in-org-mode-expansions)))
+   (org-mode . karthink/add-latex-in-org-mode-expansions))
+  (org-babel-post-tangle . pspmacs/drop-bom))
    ;; (org-mode . turn-on-org-cdlatex)
 
 (use-package org-bullets
