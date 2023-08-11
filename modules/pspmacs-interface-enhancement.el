@@ -308,7 +308,8 @@
     "q" '(:ignore t :wk "quit")
     "qQ" '(kill-emacs :wk "daemon")
     "q C-f" '(delete-other-frames :wk "other frames")
-    "qq" '(delete-frame :wk "client"))
+    "qq" '(delete-frame :wk "client")
+    "qr" '(restart-emacs :wk "and restart"))
 
   ;; Registers *consult*
   (pspmacs/leader-keys

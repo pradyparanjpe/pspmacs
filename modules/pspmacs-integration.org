@@ -73,15 +73,6 @@ Integration
     (setq interprogram-paste-function 'wl-paste))
 #+end_src
 
-* Restart in same state
-Primary to bind restart key
-#+begin_src emacs-lisp
-  (use-package restart-emacs
-    :general
-    (pspmacs/leader-keys
-      "qr" '(restart-emacs :wk "and restart")))
-#+end_src
-
 * Search
 - Attempted order
   1. ripgrep (~rg~)

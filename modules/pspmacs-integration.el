@@ -52,11 +52,6 @@
   (setq interprogram-cut-function 'wl-copy)
   (setq interprogram-paste-function 'wl-paste))
 
-(use-package restart-emacs
-  :general
-  (pspmacs/leader-keys
-    "qr" '(restart-emacs :wk "and restart")))
-
 ;; Example configuration for Consult
 (use-package consult
   ;; Replace bindings. Lazily loaded due by `use-package'.
