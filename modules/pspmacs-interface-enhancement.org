@@ -61,10 +61,6 @@
       :prefix "," ;; set local leader
       :global-prefix "M-,") ;; access local leader in insert mode
 
-    ;; don't stretch for ESC
-    ;; (general-define-key
-        ;;  :states 'insert
-        ;;  "jk" 'evil-normal-state)
     (general-imap "j"
       (general-key-dispatch 'self-insert-command
         "k" 'evil-normal-state))
@@ -78,10 +74,15 @@
       "C-x C-d"   ;; unbind list directory
       "<mouse-2>") ;; pasting with mouse wheel click
 
-    (general-define-key "ESC" #'keyboard-escape-quit)
+    ;; (general-define-key "ESC" #'keyboard-escape-quit)
+    (general-define-key
+     :keymaps '(minibuffer-mode-map
+                minibuffer-local-map
+                read-extended-command-mode-map)
+     "ESC" #'keyboard-escape-quit)
 
     ;; rebind C-c C-c to ,,
-    (general-nmap ",," (general-simulate-key "C-c C-c"))
+    (general-nmap ",," (general-simulate-key "C-c C-c" :which-key "C-c C-c"))
 
     (pspmacs/leader-keys
       :states 'normal
@@ -130,7 +131,8 @@
              :wk "visual"))
 
     ;; Emoji Menu (New in Emacs-29)
-    (pspmacs/leader-keys "@" (general-simulate-key "C-x 8 e"))
+    (pspmacs/leader-keys "@" (general-simulate-key "C-x 8 e"
+                               :which-key "Emoji"))
 
     ;; UTF-8
     (pspmacs/leader-keys
@@ -245,7 +247,8 @@
       "fy" '(pspmacs/yank-file-name :wk "Copy file name"))
 
     ;; help
-    (pspmacs/leader-keys "h" (general-simulate-key "C-h"))
+    (pspmacs/leader-keys "h" (general-simulate-key "C-h"
+                               :which-key "Help Map"))
 
     ;; internet
     (pspmacs/leader-keys "i" '(:ignore t :wk "internet"))
@@ -525,7 +528,7 @@ Flash highlight hints on evil actions
     :general
     (general-define-key
      :keymaps 'minibuffer-local-map
-     "M-a" #'marginalia-cycle)
+     "C-<escape>" #'marginalia-cycle)
     :init
     (marginalia-mode))
 #+end_src
