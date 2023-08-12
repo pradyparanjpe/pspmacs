@@ -38,6 +38,7 @@ t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
 vc-use-package is included in Emacs 30"
   (eval-and-compile
     (customize-set-variable 'use-package-compute-statistics t)
+    (customize-set-variable 'use-package-always-ensure t)
     (customize-set-variable 'use-package-always-defer t)
     (customize-set-variable 'use-package-expand-minimally t))
 
