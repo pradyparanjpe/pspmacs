@@ -27,91 +27,77 @@
                `(outline-minor-mode . ,outline-minor-mode-map))
   (outline-minor-mode 1))
 
-(setq auctex-kw
-      (if (string= pspmacs/package-manager 'builtin)
-          '(:ensure auctex)
-        '(:straight auctex)))
-
-(setq tex-kwargs
-      `(latex
-        ,@auctex-kw
-        :hook ((LaTeX-mode . smartparens-mode)
-               (LaTeX-mode . karthink/latex-with-outline))
-        :mode ("\\.tex\\'" . LaTeX-mode)
-        :defines (TeX-auto-save
-                  TeX-parse-self
-                  TeX-electric-escape
-                  TeX-PDF-mode
-                  TeX-source-correlate-method
-                  TeX-newline-function
-                  TeX-view-program-list
-                  TeX-view-program-selection
-                  TeX-mode-map)
-        :general
-        (pspmacs/local-leader-keys
-          :keymaps 'LaTeX-mode-map
-          "TAB" '(TeX-complete-symbol :wk "complete symbol")
-          "=" '(reftex-toc :wk "reftex toc")
-          "(" '(reftex-latex :wk "reftex label")
-          ")" '(reftex-reference :wk "reftex ref")
-          "c" '(TeX-command-run-all :wk "compile")
-          "e" '(LaTeX-environment :wk "insert environment")
-          "f" '(TeX-font :wk "font")
-          "i" '(LaTeX-insert-item :wk "insert item")
-          "m" '(LaTeX-macro :wk "insert macro")
-          "p" '(preview-at-point :wk "preview at point")
-          "s" '(LaTeX-section :wk "insert section header"))
-        :custom
-        (TeX-auto-save t)  ; parse on save
-        (TeX-parse-self t) ; parse on load
-        (TeX-electric-escape nil) ; for preview
-        (TeX-PDF-mode nil)
-        (TeX-error-overview-open-after-TeX-run nil)
-        (TeX-engine 'xetex) ;; use xetex by default
-        (TeX-source-correlate-start-server nil)
-        (TeX-source-correlate-mode t)
-        (TeX-source-correlate-method 'synctex)
-        (TeX-newline-function 'reindent-then-newline-and-indent)
-        (TeX-electric-sub-and-superscript t)
-        (TeX-PDF-from-DVI "Dvips")
-        (TeX-save-query nil)
-        :config
-        (add-to-list 'TeX-view-program-selection '(output-pdf "pdf-tools"))
-        (add-to-list 'TeX-view-program-selection '(output-pdf "zathura"))
-        (add-hook 'TeX-after-compilation-finished-functions
-                  #'TeX-revert-document-buffer)
-        (sp-with-modes
-            '(tex-mode plain-tex-mode latex-mode)
-
-          (sp-local-pair "\\(" "\\)"
-                         :unless '(sp-point-before-word-p
-                                   sp-point-before-same-p
-                                   sp-latex-point-after-backslash)
-                         :trigger-wrap "$"
-                         :trigger "$")
-
-          (sp-local-pair "\\[" "\\]"
-                         :unless '(sp-point-before-word-p
-                                   sp-point-before-same-p
-                                   sp-latex-point-after-backslash)))))
-
-(eval `(use-package ,@tex-kwargs))
-;; (add-hook 'TeX-mode-hook #'flymake-aspell-setup)
+(use-package latex
+  :ensure auctex
+  :hook ((LaTeX-mode . smartparens-mode)
+         (LaTeX-mode . karthink/latex-with-outline))
+  :mode ("\\.tex\\'" . LaTeX-mode)
+  :defines (TeX-auto-save
+            TeX-parse-self
+            TeX-electric-escape
+            TeX-PDF-mode
+            TeX-source-correlate-method
+            TeX-newline-function
+            TeX-view-program-list
+            TeX-view-program-selection
+            TeX-mode-map)
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'LaTeX-mode-map
+    "TAB" '(TeX-complete-symbol :wk "complete symbol")
+    "=" '(reftex-toc :wk "reftex toc")
+    "(" '(reftex-latex :wk "reftex label")
+    ")" '(reftex-reference :wk "reftex ref")
+    "c" '(TeX-command-run-all :wk "compile")
+    "e" '(LaTeX-environment :wk "insert environment")
+    "f" '(TeX-font :wk "font")
+    "i" '(LaTeX-insert-item :wk "insert item")
+    "m" '(LaTeX-macro :wk "insert macro")
+    "p" '(preview-at-point :wk "preview at point")
+    "s" '(LaTeX-section :wk "insert section header"))
+  :custom
+  (TeX-auto-save t)  ; parse on save
+  (TeX-parse-self t) ; parse on load
+  (TeX-electric-escape nil) ; for preview
+  (TeX-PDF-mode nil)
+  (TeX-error-overview-open-after-TeX-run nil)
+  (TeX-engine 'xetex) ;; use xetex by default
+  (TeX-source-correlate-start-server nil)
+  (TeX-source-correlate-mode t)
+  (TeX-source-correlate-method 'synctex)
+  (TeX-newline-function 'reindent-then-newline-and-indent)
+  (TeX-electric-sub-and-superscript t)
+  (TeX-PDF-from-DVI "Dvips")
+  (TeX-save-query nil)
+  :config
+  (add-to-list 'TeX-view-program-selection '(output-pdf "pdf-tools"))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "zathura"))
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+  (sp-with-modes
+      '(tex-mode plain-tex-mode latex-mode)
+    (sp-local-pair "\\(" "\\)"
+                   :unless '(sp-point-before-word-p
+                             sp-point-before-same-p
+                             sp-latex-point-after-backslash)
+                   :trigger-wrap "$"
+                   :trigger "$")
+    (sp-local-pair "\\[" "\\]"
+                   :unless '(sp-point-before-word-p
+                             sp-point-before-same-p
+                             sp-latex-point-after-backslash))))
 
 (defun karthink/preview-scale-larger ()
   "Increase the size of `preview-latex' images"
   (setq preview-scale-function
         (lambda nil (* 1.25 (funcall (preview-scale-from-face))))))
 
-(setq preview-kwargs
-      `(preview
-        :after latex
-        ,@auctex-kw
-        :hook (LaTeX-mode . karthink/preview-scale-larger)
-        :general
-        (pspmacs/local-leader-keys :keymaps 'LaTeX-mode-map
-          "p" 'preview-map)))
-(eval `(use-package ,@preview-kwargs))
+(use-package preview
+  :after latex
+  :ensure auctex
+  :hook (LaTeX-mode . karthink/preview-scale-larger)
+  :general
+  (pspmacs/local-leader-keys :keymaps 'LaTeX-mode-map "p" 'preview-map))
 
 (use-package evil-tex
   :hook (LaTeX-mode . evil-tex-mode))

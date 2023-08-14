@@ -1,4 +1,4 @@
-;;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
+;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -228,13 +228,15 @@ Revert to the normal definition outside of these fragments."
   :config
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((python . t)
-     (shell . t)
+   '((awk . t)
      (ditaa . t)
-     (sed . t)
      (emacs-lisp . t)
+     (latex . t)
+     (lisp . t)
+     (python . t)
      (R . t)
-     (awk . t)))
+     (shell . t)
+     (sed . t)))
 
   :hook
   ((org-mode . pspmacs/prettify-note)
@@ -277,22 +279,27 @@ Revert to the normal definition outside of these fragments."
 Each headline tagged \"ignore\" will be removed retaining its
 contents and promoting any children headlines to the level of the
 parent."
-  (org-element-map data 'headline
+  (org-element-map
+      data
+      'headline
     (lambda (object)
       (when (member "ignore" (org-element-property :tags object))
-        (let ((level-top (org-element-property :level object))
-              level-diff)
+        (let ((level-top (org-element-property :level object)) level-diff)
           (mapc (lambda (el)
                   ;; recursively promote all nested headlines
-                  (org-element-map el 'headline
+                  (org-element-map
+                      el
+                      'headline
                     (lambda (el)
                       (when (equal 'headline (org-element-type el))
                         (unless level-diff
-                          (setq level-diff (- (org-element-property :level el)
-                                              level-top)))
-                        (org-element-put-property el
-                                                  :level (- (org-element-property :level el)
-                                                            level-diff)))))
+                          (setq
+                           level-diff
+                           (- (org-element-property :level el) level-top)))
+                        (org-element-put-property
+                         el
+                         :level
+                         (- (org-element-property :level el) level-diff)))))
                   ;; insert back into parse tree
                   (org-element-insert-before el object))
                 (org-element-contents object)))
@@ -300,39 +307,37 @@ parent."
     info nil)
   data)
 
-(setq ox-kw
-      (if (string= pspmacs/package-manager 'builtin)
-          '(:ensure org)
-        '(:straight org)))
+(use-package ox
+  :ensure org
+  :after org
+  :commands org-export-dispatch
+  :custom
+  (org-html-htmlize-output-type 'css)
+  :config
+  ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
+  ;; (add-to-list 'org-latex-packages-alist '("" "color"))
+  (add-hook 'org-export-filter-parse-tree-functions
+            'karthink/org-export-ignore-headlines))
 
-(setq ox-kwargs
-      `(ox
-        ,@ox-kw
-        :after org
-        :commands org-export-dispatch
-        :custom
-        (org-html-htmlize-output-type 'css)
-        :config
-        ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
-        ;; (add-to-list 'org-latex-packages-alist '("" "color"))
-        (add-hook 'org-export-filter-parse-tree-functions 'karthink/org-export-ignore-headlines)))
-(eval `(use-package ,@ox-kwargs))
-
-(setq ox-latex-kwargs
- `(ox-latex
-   ,@ox-kw
-   :after ox
-   :custom
-   (org-latex-caption-above nil)
-   (org-export-with-LaTeX-fragments t)
-   (org-latex-tables-booktabs t)
-   (org-export-with-smart-quotes t)
-   (org-latex-prefer-user-labels t)
-   (org-latex-reference-command "\\cref{%s}")
-   ;; From https://git.tecosaur.net/tec/emacs-config, the default link colors
-   ;; are hideous.
-   (org-latex-hyperref-template
-   "\\hypersetup{
+(use-package ox-latex
+ :ensure org
+ :after ox
+ :custom
+ (org-latex-caption-above nil)
+ (org-export-with-LaTeX-fragments t)
+ (org-latex-tables-booktabs t)
+ (org-export-with-smart-quotes t)
+ (org-latex-prefer-user-labels t)
+ (org-latex-reference-command "\\cref{%s}")
+ ;; From https://git.tecosaur.net/tec/emacs-config,
+ ;; the default link colors are hideous.
+ (org-latex-hyperref-template
+  "
+\\usepackage{xcolor}
+\\providecolor{url}{HTML}{006fcf}
+\\providecolor{link}{HTML}{6f2f47}
+\\providecolor{cite}{HTML}{8f8f2f}
+\\hypersetup{
   pdfauthor={%a},
   pdftitle={%t},
   pdfkeywords={%k},
@@ -347,35 +352,35 @@ parent."
 \\urlstyle{same}
 %% hide links styles in toc
 \\NewCommandCopy{\\oldtoc}{\\tableofcontents}
-\\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}")
+\\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}
+")
 
-   :config
-   (dolist (package '((""           "longtable" nil)
-                      (""           "booktabs"  nil)
-                      (""           "color"     nil)
-                      (""           "cancel"    t)))
-     ;; ;FIXME: Some documentclasses load these themselves,
-     ;; ;causing all manner of conflicts.
-     ;; ("capitalize" "cleveref"  nil)
-     ;; (""           "amsmath"   t)
-     ;; (""           "amssymb"   t)
-     (cl-pushnew package org-latex-packages-alist
-                 :test (lambda (a b) (equal (cadr a) (cadr b)))))
-   (let* ((article-sections '(("\\section{%s}"       . "\\section*{%s}")
-                              ("\\subsection{%s}"    . "\\subsection*{%s}")
-                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                              ("\\paragraph{%s}"     . "\\paragraph*{%s}")
-                              ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))
-     (pcase-dolist (`(,name ,class-string . ,extra)
-                    `(("IEEEtran" "\\documentclass[conference]{IEEEtran}")
-                      ("article" "\\documentclass{scrartcl}")
-                      ("report" "\\documentclass{scrreprt}")
-                      ("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
-                      ("book" "\\documentclass[twoside=false]{scrbook}"
-                       ("\\chapter{%s}" . "\\chapter*{%s}"))))
-       (setf (alist-get name org-latex-classes nil nil #'equal)
-             (append (list class-string) extra article-sections))))))
-(eval `(use-package ,@ox-latex-kwargs))
+ :config
+ (dolist (package '(("" "longtable" nil)
+                    ("" "booktabs"  nil)
+                    ("" "color"     nil)
+                    ("" "cancel"    t)))
+   ;; ;FIXME: Some documentclasses load these themselves,
+   ;; ;causing all manner of conflicts.
+   ;; ("capitalize" "cleveref"  nil)
+   ;; (""           "amsmath"   t)
+   ;; (""           "amssymb"   t)
+   (cl-pushnew package org-latex-packages-alist
+               :test (lambda (a b) (equal (cadr a) (cadr b)))))
+ (let* ((article-sections '(("\\section{%s}"       . "\\section*{%s}")
+                            ("\\subsection{%s}"    . "\\subsection*{%s}")
+                            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                            ("\\paragraph{%s}"     . "\\paragraph*{%s}")
+                            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))
+   (pcase-dolist (`(,name ,class-string . ,extra)
+                   `(("IEEEtran" "\\documentclass[conference]{IEEEtran}")
+                     ("article" "\\documentclass{scrartcl}")
+                     ("report" "\\documentclass{scrreprt}")
+                     ("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
+                     ("book" "\\documentclass[twoside=false]{scrbook}"
+                      ("\\chapter{%s}" . "\\chapter*{%s}"))))
+     (setf (alist-get name org-latex-classes nil nil #'equal)
+           (append (list class-string) extra article-sections)))))
 
 (use-package org-ref)
 
