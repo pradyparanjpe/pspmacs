@@ -603,10 +603,6 @@
   ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
   ;; Vertico commands are hidden in normal buffers.
   (read-extended-command-predicate #'command-completion-default-include-p)
-  (locale-coding-system 'utf-8)
-  (coding-system-for-read 'utf-8)
-  (coding-system-for-write 'utf-8)
-  (default-process-coding-system '(utf-8-unix . utf-8-unix))
   (scroll-margin 5)
   (indent-tabs-mode nil)
   (tab-width 4)
@@ -626,11 +622,7 @@
   :config
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
   ;;; locale
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8))
+  (set-charset-priority 'unicode))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-interface-enhancement.el ends here

@@ -1,4 +1,4 @@
-;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
+﻿;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -241,9 +241,8 @@ Revert to the normal definition outside of these fragments."
   :hook
   ((org-mode . pspmacs/prettify-note)
    (org-mode . visual-line-mode)
-   (org-mode . karthink/add-latex-in-org-mode-expansions))
-  (org-babel-post-tangle . pspmacs/drop-bom))
-   ;; (org-mode . turn-on-org-cdlatex)
+   (org-mode . karthink/add-latex-in-org-mode-expansions)))
+  ;; (org-mode . turn-on-org-cdlatex)
 
 (use-package org-bullets
   :after org

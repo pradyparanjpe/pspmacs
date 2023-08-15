@@ -700,9 +700,16 @@ Key-bindings to:
 #+end_src
 
 * remove BOM from org babel tangle
+If org-tangle adds BOM, (utf signature), drop it by adding following code to =org-babel-post-tangle-hook=
+#+begin_src emacs-lisp :tangle no :eval no :results no
+  (add-hook 'org-babel-post-tangle #'pspmacs/drop-bom)
+#+end_src
+
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/drop-bom ()
-    "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer"
+    "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer
+
+  Suggestion: add to `org-babel-post-tangle-hook'"
     (interactive)
     (let ((bom '(?\ufeff ?\ufffe ?\uffff))
           (current-point (point)))

@@ -1,4 +1,4 @@
-;;; pspack/func.el --- common pspmacs functions -*- lexical-binding: t; -*-
+﻿;;; pspack/func.el --- common pspmacs functions -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; Functions used by pspmacs configuration
@@ -307,7 +307,9 @@ Copy TEXT to wayland wl-copy"
     (shell-command-to-string "wl-paste -n | tr -d \r")))
 
 (defun pspmacs/drop-bom ()
-  "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer"
+  "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer
+
+Suggestion: add to `org-babel-post-tangle-hook'"
   (interactive)
   (let ((bom '(?\ufeff ?\ufffe ?\uffff))
         (current-point (point)))
