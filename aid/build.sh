@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+﻿#!/usr/bin/env sh
 # -*- coding:utf-8; mode: shell-script; -*-
 #
 # Copyright 2020-2023 Pradyumna Paranjape
@@ -38,9 +38,11 @@ if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
     autogen_cmd="./autogen.sh"
 
     # shellcheck disable=SC2034
-    configure_cmd="./configure --prefix=\"\${HOME}/.local\" --with-pgtk \
-      --with-mailutils --with-gnutls --with-cairo --with-modules \
-      --with-native-compilation --with-rsvg --with-png --with-tree-sitter"
+    configure_cmd="./configure --prefix=\"\${HOME}/.local\" --with-dbus \
+        --with-gif --with-jpeg --with-png --with-rsvg --with-tiff --with-xft \
+        --with-xpm --with-gpm=no --with-modules --with-harfbuzz --with-cairo \
+        --with-json --with-native-compilation --with-pgtk --with-mailutils \
+        --with-gnutls --with-tree-sitter"
 
     # shellcheck disable=SC2034
     clean_cmd="make -j \"\$(nproc)\" clean"
