@@ -1,4 +1,4 @@
-;;; pspmacs-interface-enhancement.el --- User experience/interface -*- lexical-binding: t; -*-
+﻿;;; pspmacs-interface-enhancement.el --- User experience/interface -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -329,6 +329,11 @@
   ;; universal argument
   (pspmacs/leader-keys
     "u" '(universal-argument :wk "universal prefix"))
+
+  ;; vsiuals
+  (pspmacs/leader-keys
+    "v" '(:ignore t :wk "visuals (toggle)")
+    "vl" '(visual-line-mode :wk "line"))
 
   ;; Window
   (pspmacs/leader-keys

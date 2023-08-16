@@ -343,6 +343,11 @@
     (pspmacs/leader-keys
       "u" '(universal-argument :wk "universal prefix"))
 
+    ;; vsiuals
+    (pspmacs/leader-keys
+      "v" '(:ignore t :wk "visuals (toggle)")
+      "vl" '(visual-line-mode :wk "line"))
+
     ;; Window
     (pspmacs/leader-keys
       "w" '(:ignore t :which-key "window")

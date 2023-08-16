@@ -48,12 +48,8 @@
   :custom
   (magit-display-buffer-function
    #'magit-display-buffer-same-window-except-diff-v1)
-  (magit-log-arguments '("--graph" "--decorate" "--color"))
-  ;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
-
-  :config
-  (evil-define-key* '(normal visual) magit-mode-map
-    "zz" #'evil-scroll-line-to-center))
+  (magit-log-arguments '("--graph" "--decorate" "--color")))
+;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
 
 (use-package diff-hl
   :config
