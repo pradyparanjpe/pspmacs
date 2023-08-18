@@ -236,8 +236,10 @@
 
     :config
     (mapc (lambda (wrap) (sp-local-pair 'org-mode wrap wrap))
-          '("_" "+" "=" "~" "*" "/" "$"))
-    (sp-local-pair 'org-mode "<" ">")
+          '("_" "+" "=" "~" "/" "$"))
+    (sp-local-pair 'org-mode "*" "*" :unless '(pspmacs/at-org-headerp
+                                               pspmacs/at-line-beginp))
+    (sp-local-pair 'org-mode "<" ">" :unless '(pspmacs/at-line-beginp))
     (let ((paren-bindings
            (mapcan
             (lambda (wrapper)

@@ -1017,6 +1017,35 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
         (switch-to-buffer-other-window "*serve-or-run*"))))
 #+end_src
 
+* Point at Org-beginnings
+** Org Header
+Point is currently placed at potential org-header.
+Useful when we want to decide if a "*" should be 'smart-completed' as /bold/.
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/at-org-headerp (&rest _)
+    "Returns t if point is at potential org header
+
+  i.e. if at ^\\**
+
+  All arguments are ignored"
+    (string= ""
+             (string-replace "*" nil (buffer-substring
+                                      (- (point) (current-column)) (point)))))
+#+end_src
+
+** Line-start
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/at-line-beginp (&rest _)
+    "Returns t if point is at potential beginning of item list
+
+  i.e. if at ^\\ *
+
+  All arguments are ignored"
+    (string= ""
+             (string-replace " " nil (buffer-substring
+                                      (- (point) (current-column)) (point)))))
+#+end_src
+
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there

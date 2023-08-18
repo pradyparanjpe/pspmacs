@@ -534,4 +534,24 @@ only at the end of recursion by the caller function.
       (apply 'start-process process-args)
       (switch-to-buffer-other-window "*serve-or-run*"))))
 
+(defun pspmacs/at-org-headerp (&rest _)
+  "Returns t if point is at potential org header
+
+i.e. if at ^\\**
+
+All arguments are ignored"
+  (string= ""
+           (string-replace "*" nil (buffer-substring
+                                    (- (point) (current-column)) (point)))))
+
+(defun pspmacs/at-line-beginp (&rest _)
+  "Returns t if point is at potential beginning of item list
+
+i.e. if at ^\\ *
+
+All arguments are ignored"
+  (string= ""
+           (string-replace " " nil (buffer-substring
+                                    (- (point) (current-column)) (point)))))
+
 ;;; func.el ends there
