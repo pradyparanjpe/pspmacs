@@ -24,7 +24,7 @@
 
 (defun org-cdlatex-pbb (&rest _arg)
   "Execute `cdlatex-pbb' in LaTeX fragments.
-Revert to the normal definition outside of these fragments."
+  Revert to the normal definition outside of these fragments."
   (interactive "P")
   (if (org-inside-LaTeX-fragment-p)
       (call-interactively 'cdlatex-pbb)
@@ -226,6 +226,22 @@ Revert to the normal definition outside of these fragments."
       "CANT(c)")))
 
   :config
+  (mapc (lambda (wrap) (sp-local-pair 'org-mode wrap wrap))
+        '("_" "+" "=" "~" "*" "/" "$"))
+  (sp-local-pair 'org-mode "<" ">")
+  (let ((paren-bindings
+         (mapcan
+          (lambda (wrapper)
+            (let ((pair-open wrapper)
+                  (pair-close (plist-get (sp-get-pair wrapper) :close)))
+              `(,(format "(%s" wrapper)
+                 '((lambda (&optional arg)
+                     (interactive "P")
+                     (sp-wrap-with-pair ,pair-open))
+                   :wk ,(format "%s%s" pair-open pair-close)))))
+         '("_" "+" "=" "~" "*" "/" "<" "$"))))
+    (eval `(pspmacs/leader-keys :keymaps 'org-mode-map ,@paren-bindings)))
+
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((awk . t)

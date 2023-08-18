@@ -1,5 +1,5 @@
 #+title: pspmacs-interface-enhancement
-#+PROPERTY: header-args :tangle pspmacs-interface-enhancement.el :mkdirp t :results no :eval no :eval no
+#+PROPERTY: header-args :tangle pspmacs-interface-enhancement.el :mkdirp t :results no :eval no
 #+auto_tangle: t
 
 * Header Copyright
@@ -92,6 +92,10 @@
       "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
       "++" '(pspmacs/git-rebase :wk "PSPMacs Config"))
 
+    ;;smart wrap
+    (pspmacs/leader-keys
+      "(" '(:ignore t :wk "smart wrap"))
+
     ;; Hard Indentation
     (pspmacs/leader-keys
       ">" '(:ignore t :wk "indent")
@@ -116,11 +120,11 @@
       "TAB" '((lambda ()
                 (interactive)
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
-              :which-key "toggle buffer"))
+              :which-key "last buff"))
 
     ;; Line-numbers in left fringe
     (pspmacs/leader-keys
-      "1" '(:ignore t :wk "line-numbers")
+      "1" '(:ignore t :wk "line num")
       "1d" '((lambda () (interactive) (setq display-line-numbers nil))
              :wk "disable")
       "1e" '((lambda () (interactive) (setq display-line-numbers t))
@@ -136,7 +140,7 @@
 
     ;; UTF-8
     (pspmacs/leader-keys
-      "8" '(insert-char :wk "UTF-8 character"))
+      "8" '(insert-char :wk "UTF-8 char"))
 
     ;; see pspmacs-notes.org
     (pspmacs/leader-keys
@@ -213,11 +217,10 @@
 
     ;; bookmark
     (pspmacs/leader-keys
-      "B" '(:ignore t :wk "bookmark")
+      "B" '(:ignore t :wk "Bookmark")
       "Bd" '(bookmark-delete :wk "delete")
       "Bj" '(bookmark-jump :wk "jump")
-      "Bl" '(list-bookmarks :wk "list")
-      "Br" '(consult-bookmark :wk "remember"))
+      "Bl" '(list-bookmarks :wk "list"))
 
     ;; Comments
     (pspmacs/leader-keys
@@ -231,7 +234,11 @@
 
     ;; powerthesaurus
     (pspmacs/leader-keys
-      "D" '(:ignore t :wk "Dictionary"))
+      "D" '(:ignore t :wk "Diction"))
+
+    ;; errors
+    (pspmacs/leader-keys
+      "e" '(:ignore t :wk "error"))
 
     ;; file operations
     (pspmacs/leader-keys
@@ -246,12 +253,14 @@
       "fS" '(write-file :wk "save as")
       "fy" '(pspmacs/yank-file-name :wk "Copy file name"))
 
+    ;; git
+    (pspmacs/leader-keys "g" '(:ignore t :wk "git"))
+
     ;; help
-    (pspmacs/leader-keys "h" (general-simulate-key "C-h"
-                               :which-key "Help Map"))
+    (pspmacs/leader-keys "h" (general-simulate-key "C-h" :which-key "Help"))
 
     ;; internet
-    (pspmacs/leader-keys "i" '(:ignore t :wk "internet"))
+    (pspmacs/leader-keys "i" '(:ignore t :wk "inet"))
 
     ;; jumps
     (pspmacs/leader-keys
@@ -261,13 +270,12 @@
     (pspmacs/leader-keys
       :states 'normal
       :keymaps 'prog-mode-map
-      "l" '(:ignore t :wk "language-server"))
+      "l" '(:ignore t :wk "lang"))
 
     ;; marks
     (pspmacs/leader-keys
       "m" '(:ignore t :wk "mark")
       "mm" '(set-mark-command :wk "set")
-      "mj" '(consult-mark :wk "jump")
       "mM" '((lambda () (interactive)
                (call-interactively 'set-mark-command)
                (call-interactively 'set-mark-command))
@@ -317,7 +325,7 @@
               :wk "global <disabled>"))
 
     ;; unix password store
-    (pspmacs/leader-keys "P" '(pass :wk "passwords"))
+    (pspmacs/leader-keys "P" '(pass :wk "Password"))
 
     ;; quit
     (pspmacs/leader-keys
@@ -329,32 +337,36 @@
 
     ;; Registers *consult*
     (pspmacs/leader-keys
-      "r" '(:ignore t :wk "register")
-      "rl" '(consult-register-load t :wk "load")
-      "rr" '(consult-register-store :wk "remember")
-      "rj" '(consult-register :wk "jump"))
+      "r" '(:ignore t :wk "register"))
+
+    ;; FlySpell
+    (pspmacs/leader-keys
+      "S" '(:ignore t :wk "flySpell"))
 
     ;; templating
     ;; see 'tempel'
     (pspmacs/leader-keys
       "t" '(:ignore t :wk "template"))
 
+    ;; Modus themes
+    (pspmacs/leader-keys
+      "T" '(:ignore t :wk "theme"))
+
     ;; universal argument
     (pspmacs/leader-keys
-      "u" '(universal-argument :wk "universal prefix"))
+      "u" '(universal-argument :wk "universal"))
 
     ;; vsiuals
     (pspmacs/leader-keys
-      "v" '(:ignore t :wk "visuals (toggle)")
-      "vl" '(visual-line-mode :wk "line"))
+      "v" '(:ignore t :wk "visuals")
+      "vl" '(visual-line-mode :wk "line (toggle)"))
 
     ;; Window
     (pspmacs/leader-keys
       "w" '(:ignore t :which-key "window")
-      "w TAB" '(other-window :wk "other")
-      "wr" 'winner-redo
-      "w=" 'balance-windows-area
-      "wD" 'kill-buffer-and-window
+      "w TAB" '(other-window :wk "focus other")
+      "w=" '(balance-windows-area :wk "balance")
+      "wD" '(kill-buffer-and-window :wk "delete, & buffer")
       "w C-d" '(delete-other-windows :wk "delete other")))
 #+end_src
 
@@ -412,19 +424,19 @@ Jump by word hints
     :general
     ;; window navigations
     (pspmacs/leader-keys
-      "wd" '(evil-window-delete :wk "delete window")
+      "wd" '(evil-window-delete :wk "delete")
       "wH" '(evil-window-move-far-left :wk "move left")
-      "wh" '(evil-window-left :wk "left window")
+      "wh" '(evil-window-left :wk "focus left")
       "wJ" '(evil-window-move-very-bottom :wk "move down")
-      "wj" '(evil-window-down :wk "down window")
+      "wj" '(evil-window-down :wk "focus down")
       "wK" '(evil-window-move-very-top :wk "move up")
-      "wk" '(evil-window-up :wk "up window")
+      "wk" '(evil-window-up :wk "focus up")
       "wL" '(evil-window-move-far-right :wk "move right")
-      "wl" '(evil-window-right :wk "right window")
-      "wn" '(evil-window-next :wk "next window")
-      "wp" '(evil-window-prev :wk "previous window")
-      "ws" '(evil-window-split :wk "split window horizontally")
-      "wv" '(evil-window-vsplit :wk "split window vertically"))
+      "wl" '(evil-window-right :wk "focus right")
+      "wn" '(evil-window-next :wk "focus next")
+      "wp" '(evil-window-prev :wk "focus previous")
+      "ws" '(evil-window-split :wk "split horizontally")
+      "wv" '(evil-window-vsplit :wk "split vertically"))
     (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
     (general-define-key :keymaps 'evil-insert-state-map "C-k" nil)
     :demand t
@@ -510,14 +522,17 @@ Flash highlight hints on evil actions
               ;; "C-;" #'kb/vertico-multiform-flat-toggle
               "M-<backspace>" #'vertico-directory-delete-word)
     (pspmacs/leader-keys
-      "SPC" '(execute-extended-command :wk "vertico M-x"))
+      "SPC" '(execute-extended-command :wk "M-x"))
+
     :init
     (vertico-mode)
     :hook
     (('rfn-eshadow-update-overlay . vertico-directory-tidy)))
+#+end_src
 
-  ;; Persist history over Emacs restarts. Vertico sorts by history position.
-
+* Save histories
+- Persist history over Emacs restarts. Vertico sorts by history position.
+#+begin_src emacs-lisp
   (use-package savehist
     :init
     (savehist-mode))
@@ -743,4 +758,5 @@ Auto-hiding text-based scroll bar
   (pspmacs/load-inherit)
   ;;; pspmacs-interface-enhancement.el ends here
 #+end_src
+
 

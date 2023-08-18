@@ -1,4 +1,4 @@
-;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
+﻿;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -52,20 +52,24 @@
   (setq interprogram-cut-function 'wl-copy)
   (setq interprogram-paste-function 'wl-paste))
 
-;; Example configuration for Consult
 (use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
   :commands (consult-ripgrep)
   :general
   (pspmacs/leader-keys
-    "bb" '(consult-buffer :wk "menu")
-    "/" '(consult-ripgrep :wk "find in project")
+    "/" '(consult-ripgrep :wk "find: proj")
     "*" '((lambda ()
             (interactive)
             (consult-ripgrep nil (thing-at-point 'symbol)))
-          :wk "find this in project")
+          :wk "/'THIS'")
+    "Br" '(consult-bookmark :wk "remember")
+    "bb" '(consult-buffer :wk "menu")
     "el" '(consult-flymake :wk "list")
-    "fr" '(consult-recent-file :wk "recent"))
+    "fc" '(consult-find :wk "consult")
+    "fr" '(consult-recent-file :wk "recent")
+    "mj" '(consult-mark :wk "jump")
+    "rl" '(consult-register-load t :wk "load")
+    "rr" '(consult-register-store :wk "remember")
+    "rj" '(consult-register :wk "jump"))
 
   (pspmacs/local-leader-keys
     "M-x" '(consult-mode-command :wk "mode command"))

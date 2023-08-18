@@ -1,4 +1,4 @@
-;;; pspmacs-editing-enhancement.el --- writing aid -*- lexical-binding: t; -*-
+﻿;;; pspmacs-editing-enhancement.el --- writing aid -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -118,8 +118,8 @@
 
 (general-add-hook 'org-mode-hook 'flyspell-mode)
 (pspmacs/leader-keys
-  "S" '(:ignore t :wk "flyspell")
-  "Sb" '(flyspell-buffer :wk "next")
+  "S" '(:ignore t :wk "flySpell")
+  "Sb" '(flyspell-buffer :wk "buffer")
   "Sn" '(evil-next-flyspell-error :wk "next")
   "Sp" '(evil-prev-flyspell-error :wk "previous")
   "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
@@ -127,54 +127,28 @@
 (use-package smartparens
   :general
   (pspmacs/leader-keys
-    "(" '(:ignore t :wk "smart-wrap")
-    "( <backspace>" '(sp-unwrap-sexp :wk "wrap unwrap")
-    "((" '(sp-wrap-round :wk "()")
-    "()" '(sp-wrap-round :wk "()")
-    "([" '(sp-wrap-square :wk "[]")
-    "(]" '(sp-wrap-square :wk "[]")
-    "({" '(sp-wrap-curly :wk "{}")
-    "(}" '(sp-wrap-curly :wk "{}")
-    "(<" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "<"))
-           :wk "<>")
-    "(>" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "<"))
-           :wk "<>")
-    "(\"" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "\""))
-           :wk "\"\"")
-    "('" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "'"))
-           :wk "''")
-    "(/" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "/"))
-           :wk "//")
-    "(_" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "_"))
-           :wk "__")
-    "(+" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "+"))
-           :wk "++")
-    "(=" '((lambda (&optional arg)
-             (interactive "P")
-             (sp-wrap-with-pair "="))
-           :wk "=="))
+    "(" '(:ignore t :wk "smart wrap")
+    "( <backspace>" '(sp-unwrap-sexp :wk "wrap unwrap"))
 
   :custom
   (sp-show-pair-from-inside nil)
   (show-paren-mode t)
   (smartparens-global-mode t)
+
   :config
-  (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
-  (sp-local-pair 'python-mode "__" "__")
+  (let ((paren-bindings
+         (mapcan
+          (lambda (wrapper)
+            (let ((pair-open wrapper)
+                  (pair-close (plist-get (sp-get-pair wrapper) :close)))
+              `(,(format "(%s" wrapper)
+                 '((lambda (&optional arg)
+                     (interactive "P")
+                     (sp-wrap-with-pair ,pair-open))
+                   :wk ,(format "%s%s" pair-open pair-close)))))
+          '("(" "[" "{" "\"" "'"))))
+    (eval `(pspmacs/leader-keys ,@paren-bindings)))
+
   (sp-with-modes 'emacs-lisp-mode-map
     ;; disable ', it's the quote character.
     (sp-local-pair "'" nil :actions nil)

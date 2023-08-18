@@ -92,8 +92,7 @@
     :ensure nil
     :general
     (pspmacs/leader-keys
-      "jd" '(dired-jump :wk "dired")
-      "fc" '(consult-find :wk "consult"))
+      "jd" '(dired-jump :wk "dired"))
     :custom
     (dired-guess-shell-alist-user
      '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")

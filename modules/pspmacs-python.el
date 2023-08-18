@@ -1,4 +1,4 @@
-;;; python.el --- python ide -*- lexical-binding: t; -*-
+﻿;;; python.el --- python ide -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -43,9 +43,11 @@
   (python-indent-offset 4)
 
   :config
-  (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
-  (sp-local-pair 'python-mode "'''" "'''")
-  (sp-local-pair 'python-mode "__" "__")
+  (eval-after-load 'smartparens
+    (progn
+      (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
+      (sp-local-pair 'python-mode "'''" "'''")
+      (sp-local-pair 'python-mode "__" "__")))
   :hook
   ((python-mode . pspmacs/prefer-interpreter-ipython)
    (python-mode . pspmacs/prettify-python)

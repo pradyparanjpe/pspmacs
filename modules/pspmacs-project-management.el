@@ -1,4 +1,4 @@
-;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
+﻿;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -76,8 +76,7 @@
   :ensure nil
   :general
   (pspmacs/leader-keys
-    "jd" '(dired-jump :wk "dired")
-    "fc" '(consult-find :wk "consult"))
+    "jd" '(dired-jump :wk "dired"))
   :custom
   (dired-guess-shell-alist-user
    '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
