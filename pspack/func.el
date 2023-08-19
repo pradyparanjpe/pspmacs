@@ -549,4 +549,15 @@ all arguments are ignored"
   (string-match-p
    "^\\W*#" (buffer-substring (line-beginning-position) (point))))
 
+(defmacro pspmacs/toggle (&optional var)
+  "If VAR is non-nil, set it to nil else, t
+VAR must be quoted"
+  (let ((var (or var `(intern ,(symbol-name (read-variable "Variable: "))))))
+    `(customize-set-variable ,var (not ,(eval var)))))
+
+(defun pspmacs/org-toggle-emphasis-display ()
+  "Toggle org emphasis markers such as **, //, ~~, ==, ++"
+  (interactive)
+  (pspmacs/toggle 'org-hide-emphasis-markers))
+
 ;;; func.el ends there

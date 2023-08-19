@@ -149,10 +149,12 @@
       "t"   '(org-todo :wk "todo")
 
       "T"   '(:ignore t :wk "Toggle")
+      "T="  '(pspmacs/org-toggle-emphasis-display :wk "markers")
       "Ti"  '(org-toggle-inline-images :wk "inline images")
       "Tl"  '(org-toggle-link-display :wk "link display")
       "Tt"  '(org-toggle-timestamp-type :wk "time-stamp")
-      "Tp"  '(org-latex-preview t :wk "preview latex")
+      "Tp"  '(org-latex-preview :wk "preview latex")
+      "Tv"  '(visual-line-mode :wk "visual line")
 
       "x"   '(:ignore t :wk "export")
       "xm"  '(org-export-dispatch :wk "dispatch menu")

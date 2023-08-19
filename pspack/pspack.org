@@ -1042,6 +1042,24 @@ Useful when we want to decide if a "*" should be 'smart-completed' as /bold/.
      "^\\W*#" (buffer-substring (line-beginning-position) (point))))
 #+end_src
 
+* Toggle emphasis markers
+A generic macro to toggle any variable, optionally interactively.
+#+begin_src emacs-lisp :tangle func.el
+  (defmacro pspmacs/toggle (&optional var)
+    "If VAR is non-nil, set it to nil else, t
+  VAR must be quoted"
+    (let ((var (or var `(intern ,(symbol-name (read-variable "Variable: "))))))
+      `(customize-set-variable ,var (not ,(eval var)))))
+#+end_src
+
+** Toggle org emphasis
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/org-toggle-emphasis-display ()
+    "Toggle org emphasis markers such as **, //, ~~, ==, ++"
+    (interactive)
+    (pspmacs/toggle 'org-hide-emphasis-markers))
+#+end_src
+
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there
