@@ -313,7 +313,7 @@ Suggestion: add to `org-babel-post-tangle-hook'"
   (interactive)
   (let ((bom '(?\ufeff ?\ufffe ?\uffff))
         (current-point (point)))
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (when (member (char-after 1) bom)
       (delete-char 1)
       (message "BOM deleted"))
@@ -411,20 +411,18 @@ to publish orgmode files to html."
       (funcall-interactively buffer-mode)
       (when (= (buffer-size) 0)
         (insert (substitute-command-keys scratch-notice))
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (comment-line 2)
-        (end-of-buffer)))))
+        (goto-char (point-max))))))
 
 (defun pspmacs--org-pop-cookie (heading-cookie-re)
   "PRIVATE: used by `pspmacs/org-put-checkboxes'.
 
 HEADING-COOKIE-RE: regular expression that recognises cookies"
-  (replace-regexp heading-cookie-re
-                  ""
-                  nil
-                  (line-beginning-position)
-                  (line-end-position)
-                  t)
+  (save-excursion
+    (goto-char (line-end-position))
+    (while (re-search-backward heading-cookie-re (line-beginning-position) t)
+      (replace-match "" nil nil)))
   (if (string= (org-get-todo-state) "TODO")
       (org-todo "")))
 
@@ -534,24 +532,21 @@ only at the end of recursion by the caller function.
       (apply 'start-process process-args)
       (switch-to-buffer-other-window "*serve-or-run*"))))
 
-(defun pspmacs/at-org-headerp (&rest _)
+(defun pspmacs/at-org-header-p (&rest _)
   "Returns t if point is at potential org header
 
-i.e. if at ^\\**
+i.e. if at ^\\\\**$
 
 All arguments are ignored"
-  (string= ""
-           (string-replace "*" nil (buffer-substring
-                                    (- (point) (current-column)) (point)))))
+  (string-match-p
+   "^\\**$" (buffer-substring (line-beginning-position) (point))))
 
-(defun pspmacs/at-line-beginp (&rest _)
-  "Returns t if point is at potential beginning of item list
+(defun pspmacs/at-org-in-buffer-settings-p (&rest _)
+  "Returns t only if in-buffer settings tag '#+' is opened
 
-i.e. if at ^\\ *
-
-All arguments are ignored"
-  (string= ""
-           (string-replace " " nil (buffer-substring
-                                    (- (point) (current-column)) (point)))))
+t if point is at '^\\\\W*#'
+all arguments are ignored"
+  (string-match-p
+   "^\\W*#" (buffer-substring (line-beginning-position) (point))))
 
 ;;; func.el ends there

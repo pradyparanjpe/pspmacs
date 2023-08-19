@@ -1,4 +1,4 @@
-;;; startpage.el --- startpage modeline -*- lexical-binding: t; -*-
+﻿;;; startpage.el --- startpage modeline -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; STARTPAGE file-system awareness for pspmacs
@@ -192,7 +192,7 @@ If NUM is non-zero, only NUM elements from block list are inserted.
 If BLOCK-TITLE is non-nil, it is placed as a heading to the block.
 Returns point to BLOCK-TITLE"
   (let* ((num (if num (min (length block-list ) num) (length block-list)))
-         (items (subseq block-list 0 num))
+         (items (cl-subseq block-list 0 num))
          (max-len (min (round (* (window-width) pspmacs/startpage-block-cap))
                        (apply #'max (mapcar (lambda (fpath)
                                               (length fpath))
@@ -294,7 +294,6 @@ Returns buffer handle"
       (when (featurep 'linum) (linum-mode -1))
       (when (featurep 'display-line-numbers) (display-line-numbers-mode -1))
       (when (featurep 'page-break-lines) (page-break-lines-mode 1))
-      (when (featurep 'linum) ())
       (read-only-mode -1)
       (erase-buffer)
       (save-excursion

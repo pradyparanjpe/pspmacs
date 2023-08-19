@@ -226,11 +226,24 @@
       "CANT(c)")))
 
   :config
-  (mapc (lambda (wrap) (sp-local-pair 'org-mode wrap wrap))
-        '("_" "+" "=" "~" "/" "$"))
-  (sp-local-pair 'org-mode "*" "*" :unless '(pspmacs/at-org-headerp
-                                             pspmacs/at-line-beginp))
-  (sp-local-pair 'org-mode "<" ">" :unless '(pspmacs/at-line-beginp))
+  (mapc (lambda (wrap)
+          (sp-local-pair 'org-mode wrap wrap
+                         :unless '(sp-point-after-word-p)))
+        '("=" "~" "/" "$"))
+  (sp-local-pair 'org-mode "<" ">"
+                 :unless '(sp-in-code-p
+                           sp-point-after-word-p
+                           sp-point-after-bol-p))
+  (sp-local-pair 'org-mode "*" "*"
+                 :unless '(pspmacs/at-org-header-p
+                           sp-point-after-bol-p
+                           sp-point-after-word-p))
+  (sp-local-pair 'org-mode "+" "+"
+                 :unless '(pspmacs/at-org-in-buffer-settings-p
+                           sp-point-after-word-p))
+  (sp-local-pair 'org-mode "_" "_"
+                 :unless '(pspmacs/at-org-in-buffer-settings-p
+                           sp-point-after-word-p))
   (let ((paren-bindings
          (mapcan
           (lambda (wrapper)

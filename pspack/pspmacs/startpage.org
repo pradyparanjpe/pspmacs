@@ -212,7 +212,7 @@
   If BLOCK-TITLE is non-nil, it is placed as a heading to the block.
   Returns point to BLOCK-TITLE"
     (let* ((num (if num (min (length block-list ) num) (length block-list)))
-           (items (subseq block-list 0 num))
+           (items (cl-subseq block-list 0 num))
            (max-len (min (round (* (window-width) pspmacs/startpage-block-cap))
                          (apply #'max (mapcar (lambda (fpath)
                                                 (length fpath))
@@ -320,7 +320,6 @@
         (when (featurep 'linum) (linum-mode -1))
         (when (featurep 'display-line-numbers) (display-line-numbers-mode -1))
         (when (featurep 'page-break-lines) (page-break-lines-mode 1))
-        (when (featurep 'linum) ())
         (read-only-mode -1)
         (erase-buffer)
         (save-excursion

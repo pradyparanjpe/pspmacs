@@ -713,7 +713,7 @@ If org-tangle adds BOM, (utf signature), drop it by adding following code to =or
     (interactive)
     (let ((bom '(?\ufeff ?\ufffe ?\uffff))
           (current-point (point)))
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (when (member (char-after 1) bom)
         (delete-char 1)
         (message "BOM deleted"))
@@ -847,9 +847,9 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
         (funcall-interactively buffer-mode)
         (when (= (buffer-size) 0)
           (insert (substitute-command-keys scratch-notice))
-          (beginning-of-buffer)
+          (goto-char (point-min))
           (comment-line 2)
-          (end-of-buffer)))))
+          (goto-char (point-max))))))
 #+end_src
 
 * Org insert check-boxes and cookies
@@ -858,12 +858,10 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
     "PRIVATE: used by `pspmacs/org-put-checkboxes'.
 
   HEADING-COOKIE-RE: regular expression that recognises cookies"
-    (replace-regexp heading-cookie-re
-                    ""
-                    nil
-                    (line-beginning-position)
-                    (line-end-position)
-                    t)
+    (save-excursion
+      (goto-char (line-end-position))
+      (while (re-search-backward heading-cookie-re (line-beginning-position) t)
+        (replace-match "" nil nil)))
     (if (string= (org-get-todo-state) "TODO")
         (org-todo "")))
 
@@ -1017,33 +1015,31 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
         (switch-to-buffer-other-window "*serve-or-run*"))))
 #+end_src
 
-* Point at Org-beginnings
+* Filter =smartparens=
 ** Org Header
 Point is currently placed at potential org-header.
 Useful when we want to decide if a "*" should be 'smart-completed' as /bold/.
 #+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/at-org-headerp (&rest _)
+  (defun pspmacs/at-org-header-p (&rest _)
     "Returns t if point is at potential org header
 
-  i.e. if at ^\\**
+  i.e. if at ^\\\\**$
 
   All arguments are ignored"
-    (string= ""
-             (string-replace "*" nil (buffer-substring
-                                      (- (point) (current-column)) (point)))))
+    (string-match-p
+     "^\\**$" (buffer-substring (line-beginning-position) (point))))
 #+end_src
 
-** Line-start
+** In-Buffer Settings
+[[https://orgmode.org/manual/In_002dbuffer-Settings.html][In-Buffer settings]]
 #+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/at-line-beginp (&rest _)
-    "Returns t if point is at potential beginning of item list
+  (defun pspmacs/at-org-in-buffer-settings-p (&rest _)
+    "Returns t only if in-buffer settings tag '#+' is opened
 
-  i.e. if at ^\\ *
-
-  All arguments are ignored"
-    (string= ""
-             (string-replace " " nil (buffer-substring
-                                      (- (point) (current-column)) (point)))))
+  t if point is at '^\\\\W*#'
+  all arguments are ignored"
+    (string-match-p
+     "^\\W*#" (buffer-substring (line-beginning-position) (point))))
 #+end_src
 
 * Footers

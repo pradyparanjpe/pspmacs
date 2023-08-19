@@ -1,4 +1,4 @@
-;;; pspline.el --- pspline modeline -*- lexical-binding: t; -*-
+﻿;;; pspline.el --- pspline modeline -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; PSPLINE ModeLine for Emacs
@@ -122,7 +122,7 @@
 
   "Ordered list whose
 car is segment handle
-cdr is '(:show nil :on-right nil :inactive nil)
+cdr is \\'(:show nil :on-right nil :inactive nil)
 
 When :SHOW is non-nil, display the segment on mode-line
 When :RIGHT is non-nil, align the setment from the right.
@@ -593,14 +593,14 @@ only display segments meant for inactive buffer"
       (if (plist-get (cdr seg) :display)
           (let ((segment (eval (car seg))))
             (if (plist-get (cdr seg) :right)
-                (add-to-list 'right-segs segment t)
-              (add-to-list 'left-segs segment t)))))
+                (push segment right-segs)
+              (push segment left-segs)))))
     ;; Mode line format
     `("%e"
       mode-line-front-space
-      ,@left-segs
+      ,@(nreverse left-segs)
       mode-line-format-right-align
-      ,@right-segs
+      ,@(nreverse right-segs)
       " "
       mode-line-end-spaces)))
 
