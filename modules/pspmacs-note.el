@@ -177,8 +177,6 @@
   (org-hide-emphasis-markers t)
   (org-roam-dailies-directory pspmacs/org-journal-path)
   (org-startup-folded t)
-  (org-todo-keyword-faces pspmacs/hl-tag-faces)
-
   (org-startup-with-latex-preview t)
   (org-format-latex-options
    (progn (plist-put org-format-latex-options :background "Transparent")
@@ -263,10 +261,6 @@
    (org-mode . visual-line-mode)
    (org-mode . karthink/add-latex-in-org-mode-expansions)))
   ;; (org-mode . turn-on-org-cdlatex)
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . (lambda () (org-bullets-mode 1))))
 
 (use-package org-auto-tangle
   :after org
@@ -485,6 +479,58 @@ parent."
     "D?" '(powerthesaurus-lookup-definitions-dwim :wk "define")
     "DL" '(powerthesaurus-transient :wk "explore")
     "Dl" '(powerthesaurus-lookup-dwim :wk "lookup")))
+
+(use-package org-modern
+  :custom
+  (org-modern-todo-faces
+   '(("FAIL" :foreground "#ff3f3f")
+     ("FIXME" :foreground "#ff6f3f")
+     ("TEMP" :foreground "#ff9f3f")
+     ("HACK" :foreground "#ffcf3f")
+     ("TODO" :foreground "#ffff3f")
+     ("LAZY" :foreground "#e7ff3f")
+     ("WAIT" :foreground "#cfff3f")
+     ("NEXT" :foreground "#9fff3f")
+     ("ALGO" :foreground "#6fff3f")
+     ("PROG" :foreground "#3fff3f")
+     ("TEST" :foreground "#3fe757")
+     ("ACTS" :foreground "#3fcf6f")
+     ("SENT" :foreground "#3f9f9f")
+     ("OKAY" :foreground "#3f6fcf")
+     ("DONE" :foreground "#3f3fff")
+     ("NOTE" :foreground "#ffcf6f")
+     ("XXXX" :foreground "#ff9f9f")
+     ("DONT" :foreground "#ff6fcf")
+     ("CANT" :foreground "#ff3fff")))
+  (org-modern-block-name
+   '(("note"    . ("📋" . "⏎"))
+     ("example" . ("🥚" . "⏎"))
+     ("src"     . ("🤖" . "⏎"))
+     ("tip"     . ("💡" . "👍"))
+     ("warn"    . ("⚠" . "⏎"))
+     ("warning" . ("⚠" . "⏎"))
+     ("danger"  . ("🕱" . "⏎"))))
+  (org-modern-keyword
+   '(("setupfile" . "🛒")
+     ("author" . "🖋")
+     ("email" . "✉")
+     ("language" . "🗣")
+     ("options" . "🔘")
+     ("property" . "⚙")
+     ("results" . "📜")
+     ("startup" . "")
+     ("html_head" . "")
+     ("attr_latex:" . "🖺")
+     ("title" . "§")
+     ("auto_tangle" . "🤖🔗")
+     (t . t)))
+  (org-modern-checkbox
+   '((88 . "✔")
+     (45 . "⏳")
+     (32 . "❌")))
+  :hook
+  (org-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda))
 
 (use-package emacs
   :custom

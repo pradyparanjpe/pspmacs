@@ -655,16 +655,6 @@ Auto-hiding text-based scroll bar
     (solaire-global-mode +1))
 #+end_src
 
-* Highlight tags: TODO, ...
-#+begin_src emacs-lisp
-  (use-package hl-todo
-    :demand t
-    :custom
-    (hl-todo-keyword-faces pspmacs/hl-tag-faces)
-    :config
-    (global-hl-todo-mode))
-#+end_src
-
 * hydras
 #+begin_src emacs-lisp
   (defhydra hydra-zoom (global-map "<f8>")

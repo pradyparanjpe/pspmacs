@@ -89,33 +89,6 @@
         (message "👍"))))
 #+end_src
 
-* Highlighted tags
-#+begin_src emacs-lisp :tangle vars.el
-  (defcustom pspmacs/hl-tag-faces
-    '(("FAIL"  . "#ff3f3f")
-      ("FIXME" . "#ff6f3f")
-      ("TEMP"  . "#ff9f3f")
-      ("HACK"  . "#ffcf3f")
-      ("TODO"  . "#ffff3f")
-      ("LAZY"  . "#e7ff3f")
-      ("WAIT"  . "#cfff3f")
-      ("NEXT"  . "#9fff3f")
-      ("ALGO"  . "#6fff3f")
-      ("PROG"  . "#3fff3f")
-      ("TEST"  . "#3fe757")
-      ("ACTS"  . "#3fcf6f")
-      ("SENT"  . "#3f9f9f")
-      ("OKAY"  . "#3f6fcf")
-      ("DONE"  . "#3f3fff")
-      ("NOTE"  . "#ffcf6f")
-      ("XXXX"  . "#ff9f9f")
-      ("DONT"  . "#ff6fcf")
-      ("CANT"  . "#ff3fff"))
-    "Highlight colors for TODO tags."
-    :group 'pspack
-    :type '(repeat (cons (string :tag "hl-tag") (string :tag "color"))))
-#+end_src
-
 * Dynamic Colors
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/fill-cap-color (perc &optional bright invert)
@@ -143,36 +116,10 @@
     '(("code" . (("\\n" . ?⏎)
                  ("\\t" . ?↹)))
       ("lisp" . (("lambda" . ?λ)))
-      ("org" . (("#+setupfile" . ?🛒)
-                ("#+author" . ?🖋)
-                ("#+begin_note" . ?📋)
-                ("#+end_note" . ?⏎)
-                ("#+begin_example" . ?🥚)
-                ("#+end_example" . ?⏎)
-                ("#+begin_src" . ?🤖)
-                ("#+end_src" . ?⏎)
-                ("#+begin_tip" . ?💡)
-                ("#+end_tip" . ?👍)
-                ("#+begin_warn" . ?⚠)
-                ("#+end_warn" . ?⏎)
-                ("#+begin_warning" . ?⚠)
-                ("#+end_warning" . ?⏎)
-                ("#+email" . ?✉)
-                ("#+language" . ?🗣)
-                ("#+options" . ?🔘)
-                ("#+property" . ?⚙)
-                ("#+results" . ?📜)
-                ("#+startup" . ?)
-                ("#+html_head" . ?)
-                ("#+attr_latex:" . ?🖺)
-                ("#+title" . ?§)
-                (":properties:" . ?)
+      ("org" . ((":properties:" . ?)
                 (":end:" . ?⏎)
                 ("tangle" . ?🔗)
-                ("shebang" . ?⌘)
-                ("[x]" . ?✔)
-                ("[ ]" . ?❌)
-                ("[-]" . ?⏳)))
+                ("shebang" . ?⌘)))
       ("python" . (("->" . ?⇒)))
       ("rust" . ()))
     "Pretty symbols."

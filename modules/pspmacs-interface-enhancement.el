@@ -555,13 +555,6 @@
   :config
   (solaire-global-mode +1))
 
-(use-package hl-todo
-  :demand t
-  :custom
-  (hl-todo-keyword-faces pspmacs/hl-tag-faces)
-  :config
-  (global-hl-todo-mode))
-
 (defhydra hydra-zoom (global-map "<f8>")
   "zoom"
   ("g" text-scale-increase "in")
