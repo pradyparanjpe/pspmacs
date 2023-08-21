@@ -40,6 +40,14 @@
 
 * noctuid/general.el
 - Keybindings
+  |---------------+-------|
+  | Function      | Key   |
+  |---------------+-------|
+  | Global Prefix | <SPC> |
+  | Local Prefix  | ,     |
+  | C-c C-c       | ,,    |
+  |---------------+-------|
+
 #+begin_src emacs-lisp
   (use-package general
     :demand t
@@ -47,19 +55,19 @@
     (general-evil-setup)
     ;; integrate general with evil
 
-    ;; set up 'SPC' as the global leader key
     (general-create-definer pspmacs/leader-keys
       :states '(normal insert visual emacs)
       :keymaps 'override
-      :prefix "SPC" ;; set leader
-      :global-prefix "M-SPC") ;; access leader in insert mode
+      :prefix "SPC"
+      :global-prefix "M-SPC")
 
-    ;; set up ',' as the local leader key
     (general-create-definer pspmacs/local-leader-keys
       :states '(normal insert visual emacs)
       :keymaps 'override
-      :prefix "," ;; set local leader
-      :global-prefix "M-,") ;; access local leader in insert mode
+      :prefix ","
+      :global-prefix "M-,")
+
+    (general-nmap ",," (general-simulate-key "C-c C-c" :which-key "C-c C-c"))
 
     (general-imap "j"
       (general-key-dispatch 'self-insert-command
@@ -81,9 +89,15 @@
                 read-extended-command-mode-map)
      "ESC" #'keyboard-escape-quit)
 
-    ;; rebind C-c C-c to ,,
-    (general-nmap ",," (general-simulate-key "C-c C-c" :which-key "C-c C-c"))
+    ;; Toggle buffers
+    (pspmacs/leader-keys
+      "TAB" '((lambda ()
+                (interactive)
+                (switch-to-buffer (other-buffer (current-buffer) 1)))
+              :which-key "last buff"))
 
+
+    ;; Updates
     (pspmacs/leader-keys
       :states 'normal
       "+" '(:ignore t :wk "Update")
@@ -115,25 +129,6 @@
       ":l" 'eval-last-expression
       ":r" 'eval-region)
 
-    ;; Toggle buffers
-    (pspmacs/leader-keys
-      "TAB" '((lambda ()
-                (interactive)
-                (switch-to-buffer (other-buffer (current-buffer) 1)))
-              :which-key "last buff"))
-
-    ;; Line-numbers in left fringe
-    (pspmacs/leader-keys
-      "1" '(:ignore t :wk "line num")
-      "1d" '((lambda () (interactive) (setq display-line-numbers nil))
-             :wk "disable")
-      "1e" '((lambda () (interactive) (setq display-line-numbers t))
-             :wk "enable")
-      "1r" '((lambda () (interactive) (setq display-line-numbers 'relative))
-             :wk "relative")
-      "1v" '((lambda () (interactive) (setq display-line-numbers 'visual))
-             :wk "visual"))
-
     ;; Emoji Menu (New in Emacs-29)
     (pspmacs/leader-keys "@" (general-simulate-key "C-x 8 e"
                                :which-key "Emoji"))
@@ -142,15 +137,53 @@
     (pspmacs/leader-keys
       "8" '(insert-char :wk "UTF-8 char"))
 
-    ;; see pspmacs-notes.org
-    (pspmacs/leader-keys
-      :keymaps 'org-mode-map
-      "a"   '(:ignore t :wk "agenda"))
-
     ;; AI
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
       "A"   '(:ignore t :wk "AI"))
+
+    ;; bookmark
+    (pspmacs/leader-keys
+      "B" '(:ignore t :wk "Bookmark")
+      "Bd" '(bookmark-delete :wk "delete")
+      "Bj" '(bookmark-jump :wk "jump")
+      "Bl" '(list-bookmarks :wk "list"))
+
+    ;; powerthesaurus
+    (pspmacs/leader-keys
+      "D" '(:ignore t :wk "Diction"))
+
+    ;; FlySpell
+    (pspmacs/leader-keys
+      "S" '(:ignore t :wk "flySpell"))
+
+    ;; pspmacs
+    (pspmacs/leader-keys
+      "[" '(:ignote t :wk "PSPMacs")
+      "[c" '((lambda ()
+               (interactive)
+               (find-file custom-file))
+              :wk "custom file")
+      "[w" '(:ignote t :wk "worktree")
+      "[wl" '((lambda ()
+                (interactive)
+                (find-file local-emacs-dir))
+              :wk "local")
+      "[wp" '((lambda ()
+                (interactive)
+                (if pvt-emacs-dir
+                    (find-file pvt-emacs-dir)
+                  (message "private work-tree is not declared.")))
+              :wk "private")
+      "[wg" '((lambda ()
+                (interactive)
+                (message "disabled"))
+              :wk "global <disabled>"))
+
+    ;; see pspmacs-notes.org
+    (pspmacs/leader-keys
+      :keymaps 'org-mode-map
+      "a"   '(:ignore t :wk "agenda"))
 
     ;; buffer
     ;; see 'bufler' and 'popper'
@@ -181,28 +214,6 @@
       "bsp" '(:ignore t :wk "prog")
       "bsw" '(:ignore t :wk "web"))
 
-    ;; Scratch buffers and mode-toggles
-    (let* ((mode-toggle-binding nil)
-           (scratch-binding nil))
-      (dolist (maj-mode pspmacs/mode-keybindings nil)
-        (let* ((key-seq (cdr maj-mode))
-               (target-mode (car maj-mode))
-               (wk-hint (string-replace
-                         "-mode" ""
-                         (symbol-name (car maj-mode)))))
-          (push `(quote (,target-mode :wk ,wk-hint))
-                 mode-toggle-binding)
-          (push (format "M%s" key-seq)
-                mode-toggle-binding)
-          (push `(quote ((lambda () (interactive)
-                           (pspmacs/mode-scratch ',target-mode))
-                         :wk ,wk-hint))
-                 scratch-binding)
-          (push (format "bs%s" key-seq)
-                scratch-binding)))
-      (eval `(pspmacs/leader-keys ,@mode-toggle-binding))
-      (eval `(pspmacs/leader-keys ,@scratch-binding)))
-
     ;; Plain modes
     (pspmacs/leader-keys
       "bss" '((lambda () (interactive)
@@ -215,13 +226,6 @@
                 (pspmacs/mode-scratch 'fundamental-mode))
               :wk "fundamental"))
 
-    ;; bookmark
-    (pspmacs/leader-keys
-      "B" '(:ignore t :wk "Bookmark")
-      "Bd" '(bookmark-delete :wk "delete")
-      "Bj" '(bookmark-jump :wk "jump")
-      "Bl" '(list-bookmarks :wk "list"))
-
     ;; Comments
     (pspmacs/leader-keys
       "c" '(:ignore t :wk "comment")
@@ -231,10 +235,6 @@
     ;; dired
     (pspmacs/leader-keys
       "d" '(:ignore t :wk "debug"))
-
-    ;; powerthesaurus
-    (pspmacs/leader-keys
-      "D" '(:ignore t :wk "Diction"))
 
     ;; errors
     (pspmacs/leader-keys
@@ -282,47 +282,8 @@
              :wk "set deactivated mark")
       "mx" '(exchange-point-and-mark :wk "x-change"))
 
-    ;; notes
-    ;; see 'citar' and 'org-roam'
-    (pspmacs/leader-keys
-      "n" '(:ignore t :wk "notes"))
-
-    ;; see org-roam and citar sections
-
-    (pspmacs/leader-keys
-      "M" '(:ignore t :wk "Mode")
-      "Mc" '(:ignore t :wk "config")
-      "Mm" '(:ignore t :wk "markup")
-      "Mp" '(:ignore t :wk "prog")
-      "Mw" '(:ignore t :wk "web"))
-
-    ;; open
-    (pspmacs/leader-keys
-      "o" '(:ignore t :wk "open")
-      "os" '(speedbar t :wk "speedbar"))
-
-    ;; pspmacs
-    (pspmacs/leader-keys
-      "p" '(:ignote t :wk "PSPMacs")
-      "pc" '((lambda ()
-               (interactive)
-               (find-file custom-file))
-              :wk "custom file")
-      "pw" '(:ignote t :wk "worktree")
-      "pwl" '((lambda ()
-                (interactive)
-                (find-file local-emacs-dir))
-              :wk "local")
-      "pwp" '((lambda ()
-                (interactive)
-                (if pvt-emacs-dir
-                    (find-file pvt-emacs-dir)
-                  (message "private work-tree is not declared.")))
-              :wk "private")
-      "pwg" '((lambda ()
-                (interactive)
-                (message "disabled"))
-              :wk "global <disabled>"))
+    ;; TODO:
+    ;; set 'citar' and 'org-roam'
 
     ;; unix password store
     (pspmacs/leader-keys "P" '(pass :wk "Password"))
@@ -331,26 +292,34 @@
     (pspmacs/leader-keys
       "q" '(:ignore t :wk "quit")
       "qQ" '(kill-emacs :wk "daemon")
-      "q C-f" '(delete-other-frames :wk "other frames")
       "qq" '(delete-frame :wk "client")
-      "qr" '(restart-emacs :wk "and restart"))
+      "qr" '(restart-emacs :wk "and restart")
+      "q C-f" '(delete-other-frames :wk "other frames"))
 
     ;; Registers *consult*
     (pspmacs/leader-keys
       "r" '(:ignore t :wk "register"))
 
-    ;; FlySpell
+    ;; Toggles
     (pspmacs/leader-keys
-      "S" '(:ignore t :wk "flySpell"))
+      "t"     '(:ignore t :wk "toggle")
+      "t RET" '(pspmacs/toggle-var :wk "toggle arbitrary")
+      "t#"    '(:ignore t :wk "line number")
+      "t#d"   '((lambda () (interactive) (setq display-line-numbers nil))
+                :wk "disable")
+      "t#e"   '((lambda () (interactive) (setq display-line-numbers t))
+                :wk "enable")
+      "t#r"   '((lambda () (interactive) (setq display-line-numbers 'relative))
+                :wk "relative")
+      "t#v"   '((lambda () (interactive) (setq display-line-numbers 'visual))
+                :wk "visual")
+      "tm"    '(:ignore t :wk "major mode")
+      "tmc"   '(:ignore t :wk "config")
+      "tmm"   '(:ignore t :wk "markup")
+      "tmp"   '(:ignore t :wk "prog")
+      "tmw"   '(:ignore t :wk "web")
 
-    ;; templating
-    ;; see 'tempel'
-    (pspmacs/leader-keys
-      "t" '(:ignore t :wk "template"))
-
-    ;; Modus themes
-    (pspmacs/leader-keys
-      "T" '(:ignore t :wk "theme"))
+      "tv"  '(visual-line-mode :wk "visual line"))
 
     ;; universal argument
     (pspmacs/leader-keys
@@ -362,7 +331,29 @@
       "w TAB" '(other-window :wk "focus other")
       "w=" '(balance-windows-area :wk "balance")
       "wD" '(kill-buffer-and-window :wk "delete, & buffer")
-      "w C-d" '(delete-other-windows :wk "delete other")))
+      "w C-d" '(delete-other-windows :wk "delete other"))
+
+    ;; Scratch buffers and mode-toggles
+    (let* ((mode-toggle-binding nil)
+           (scratch-binding nil))
+      (dolist (maj-mode pspmacs/mode-keybindings nil)
+        (let* ((key-seq (cdr maj-mode))
+               (target-mode (car maj-mode))
+               (wk-hint (string-replace
+                         "-mode" ""
+                         (symbol-name (car maj-mode)))))
+          (push `(quote (,target-mode :wk ,wk-hint))
+                 mode-toggle-binding)
+          (push (format "M%s" key-seq)
+                mode-toggle-binding)
+          (push `(quote ((lambda () (interactive)
+                           (pspmacs/mode-scratch ',target-mode))
+                         :wk ,wk-hint))
+                 scratch-binding)
+          (push (format "bs%s" key-seq)
+                scratch-binding)))
+      (eval `(pspmacs/leader-keys ,@mode-toggle-binding))
+      (eval `(pspmacs/leader-keys ,@scratch-binding))))
 #+end_src
 
 * abo-abo/hydra
@@ -472,8 +463,7 @@ Jump by word hints
     :after evil
     :demand t
     :custom
-    ;; '<TAB>' cycles visibility in 'outline-minor-mode'
-    (evil-collection-outline-bind-tab-p t)
+    ;; (evil-collection-outline-bind-tab-p t)
     (evil-collection-setup-minibuffer t)
     :config
     (evil-collection-init))
@@ -568,14 +558,14 @@ Flash highlight hints on evil actions
   ;; Configure Tempel
   (use-package tempel
     ;; Require trigger prefix before template name when completing.
-    ;; :custom
-    ;; (tempel-trigger-prefix "<")
+    :custom
+    (tempel-trigger-prefix "<")
 
     :general
     (pspmacs/leader-keys
-      (">t" '(:ignore t :wk "tempel templates"))
-      (">t>" '(tempel-complete :wk "complete"))
-      (">ti" '(tempel-insert :wk "insert")))
+      ">t" '(:ignore t :wk "tempel templates")
+      ">t>" '(tempel-complete :wk "complete")
+      ">ti" '(tempel-insert :wk "insert"))
 
     :init
     ;; Setup completion at point

@@ -1,4 +1,4 @@
-;;; pspmacs-theme.el --- Emacs themes -*- lexical-binding: t; -*-
+﻿;;; pspmacs-theme.el --- Emacs themes -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -26,8 +26,8 @@
   :demand t
   :vc (modus-themes . (:url "https://www.github.com/protesilaos/modus-themes"))
   :general (pspmacs/leader-keys
-             "T" '(:ignore t :wk "Theme")
-             "Tt" 'modus-themes-toggle)
+             "t" '(:ignore t :wk "Theme")
+             "tT" 'modus-themes-toggle)
   :init
   ;; ESSENTIAL to make the underline move to the bottom of the box:
   (setq x-underline-at-descent-line t)

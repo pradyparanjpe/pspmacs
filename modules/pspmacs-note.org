@@ -54,48 +54,45 @@
       "aoo" '(org-agenda :wk "capture")
       "aot" '(org-todo-list :wk "todo")
 
-      "t"   '(:ignore t :wk "time")
-      "tc"  '(:ignore t :wk "clock")
-      "tcc" '(org-clock-cancel :wk "cancel")
-      "tci" '(org-clock-in :wk "in")
-      "tco" '(org-clock-out :wk "out")
-      "tcj" '(org-clock-goto :wk "goto"))
+      "t"   '(:ignore t :wk "Toggle")
+      "t="  '(pspmacs/org-toggle-emphasis-display :wk "markers")
+      "ti"  '(org-toggle-inline-images :wk "inline images")
+      "tl"  '(org-toggle-link-display :wk "link display")
+      "tt"  '(org-toggle-timestamp-type :wk "time-stamp")
+      "tp"  '(org-latex-preview :wk "preview latex"))
 
     ;; ORG TABLE
     (pspmacs/local-leader-keys
-      :keymaps 'org-mode-map
-      "TAB"    '(:ignore t :wk "table")
+      :keymaps  'org-mode-map
+      "TAB"     '(:ignore t :wk "table")
 
-      "TAB ?"  '(org-table-field-info :wk "field info")
-      "TAB H"  '(org-table-move-column-left :wk "move column left")
-      "TAB K"  '(org-table-move-row-up :wk "move row up")
-      "TAB J"  '(org-table-move-row-down :wk "move row down")
-      "TAB L"  '(org-table-move-column-right :wk "move column right")
+      "TAB RET" '(org-table-create-or-convert-from-region :wk "create")
+      "TAB <"   '(org-table-shrink :wk "shrink")
+      "TAB >"   '(org-table-expand :wk "expand")
+      "TAB ?"   '(org-table-field-info :wk "field info")
 
-      "TAB d"  '(:ignore t :wk "delete")
-      "TAB dc" '(org-table-delete-column :wk "column")
-      "TAB dd" '(org-table-blank-field :wk "field contents")
-      "TAB dr" '(org-table-kill-row :wk "row")
+      "TAB P"   '(:ignore t :wk "plot")
+      "TAB Pa"  '(orgtbl-ascii-plot :wk "ascii")
+      "TAB Pg"  '(org-plot/gnuplot :wk "gnuplot")
+      "TAB Pp"  '(org-plot/gnuplot :wk "gnuplot")
 
-      "TAB h"  '(org-table-previous-field :wk "prev field")
+      "TAB d"   '(:ignore t :wk "delete")
+      "TAB dc"  '(org-table-delete-column :wk "column")
+      "TAB dd"  '(org-table-blank-field :wk "field contents")
+      "TAB dr"  '(org-table-kill-row :wk "row")
 
-      "TAB i"  '(:ignore t :wk "insert")
-      "TAB iH" '(org-table-hline-and-move :wk "¯¯¯¯")
-      "TAB ic" '(org-table-insert-column :wk "column")
-      "TAB ih" '(org-table-insert-hline :wk "____")
-      "TAB ii" '(table-insert :wk "table")
-      "TAB ir" '(org-table-insert-row :wk "row")
+      "TAB i"   '(:ignore t :wk "insert")
+      "TAB iH"  '(org-table-hline-and-move :wk "‾‾‾‾")
+      "TAB ic"  '(org-table-insert-column :wk "column")
+      "TAB ih"  '(org-table-insert-hline :wk "____")
+      "TAB ii"  '(table-insert :wk "table")
+      "TAB ir"  '(org-table-insert-row :wk "row")
 
-      "TAB j"  '(org-table-previous-row :wk "prev row")
-      "TAB k"  '(org-table-next-row :wk "next row")
-      "TAB l"  '(org-table-next-field :wk "next field")
+      "TAB p"   '(org-table-paste-rectangle)
 
-      "TAB p"  '(:ignore t :wk "plot")
-      "TAB pa" '(orgtbl-ascii-plot :wk "ascii")
-      "TAB pg" '(org-plot/gnuplot :wk "gnuplot")
-      "TAB pp" '(org-plot/gnuplot :wk "gnuplot")
-
-      "TAB s"  '(org-table-sort-lines :wk "sort"))
+      "TAB s"   '(org-table-sort-lines :wk "sort")
+      "TAB x"   '(org-table-cut-region :wk "cut")
+      "TAB y"   '(org-tablecopy-region))
 
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map
@@ -112,21 +109,17 @@
       "["   '(:ignore t :wk "checkboxes")
       "[]"  '(pspmacs/org-put-checkboxes :wk "here")
       "[*"  '(pspmacs/org-put-checkboxes-recursively
-              :wk "recursively")
+              :wk "all")
       "[!"  '(:ignore t :wk "remove")
-      "[!]" '((lambda () (interactive)
-                (pspmacs/org-put-checkboxes t))
-              :wk "insert here")
-      "[!*" '((lambda () (interactive)
-                (pspmacs/org-put-checkboxes-recursively t))
-              :wk "insert here")
+      "[!]" '((lambda () (interactive) (pspmacs/org-put-checkboxes t)) :wk "this")
+      "[!*" '((lambda () (interactive) (pspmacs/org-put-checkboxes-recursively t))
+              :wk "all")
 
       "S"   '(:ignore t :wk "special")
       "Sx"  '(org-cut-special :wk "org cut special")
       "Se"  '(org-edit-special :wk "edit")
 
       "b"   '(:keymap org-babel-map :wk "babel")
-      "f"   '(org-footnote-action :wk "footnote action")
 
       "d"   '(:ignore t :wk "date-time")
       "dd"  '(org-deadline :wk "date-time")
@@ -134,27 +127,21 @@
       "ds"  '(org-schedule :wk "schedule")
       "dt"  '(org-time-stamp :wk "time-stamp")
 
-      "L"   '(:ignore t :wk "link")
-      "Lp"  '(pspmacs/org-paste-as-link :wk "paste")
-      "LL"  '(org-store-link t :wk "grab")
-      "Ll"  '(org-insert-link t :wk "put")
-      "Ly"  '(pspmacs/org-copy-link-at-point :wk "yank")
+      "f"   '(org-footnote-action :wk "footnote action")
 
       "i"   '(:ignore t :wk "insert")
       "ih"  '(org-insert-heading :wk "insert heading")
       "is"  '(org-insert-subheading :wk "insert heading")
 
+      "l"   '(:ignore t :wk "link")
+      "lL"  '(org-store-link t :wk "grab")
+      "lp"  '(pspmacs/org-paste-as-link :wk "paste")
+      "ll"  '(org-insert-link t :wk "put")
+      "ly"  '(pspmacs/org-copy-link-at-point :wk "yank")
+
       "p"   '(org-paste-special :wk "org paste special")
       "s"   '(org-insert-structure-template :wk "template")
       "t"   '(org-todo :wk "todo")
-
-      "T"   '(:ignore t :wk "Toggle")
-      "T="  '(pspmacs/org-toggle-emphasis-display :wk "markers")
-      "Ti"  '(org-toggle-inline-images :wk "inline images")
-      "Tl"  '(org-toggle-link-display :wk "link display")
-      "Tt"  '(org-toggle-timestamp-type :wk "time-stamp")
-      "Tp"  '(org-latex-preview :wk "preview latex")
-      "Tv"  '(visual-line-mode :wk "visual line")
 
       "x"   '(:ignore t :wk "export")
       "xm"  '(org-export-dispatch :wk "dispatch menu")
@@ -163,15 +150,10 @@
       "xw"  '(org-pandoc-export-to-docs :wk "windows docx")
       "y"   '(org-copy-special :wk "org copy special"))
 
-    (:keymaps 'org-agenda-mode-map
-              "j" '(org-agenda-next-line)
-              "h" '(org-agenda-previous-line))
-
     (general-def
-      :keymaps 'org-mode-map
-      :states 'normal
-      "S-TAB" 'org-cycle-global
-      "<backtab>" 'org-cycle-global)
+      :keymaps 'org-agenda-mode-map
+      "j" '(org-agenda-next-line)
+      "h" '(org-agenda-previous-line))
 
     (general-def 'normal org-cdlatex-mode-map
       "(" #'org-cdlatex-pbb
@@ -179,6 +161,11 @@
       "{" #'org-cdlatex-pbb)
 
     :custom
+    ;; Org table
+    (org-table-automatic-realign nil)
+    (org-table-header-line-p t)
+    (org-table-shrunk-column-indicator "↷")
+
     (org-cite-global-bibliography
      (remq 'nil
            (mapcar
@@ -454,22 +441,28 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     :general
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
-      "t"   '(:ignore t :wk "time")
-      "tp"  '(:ignore t :wk "pomodoro")
-      "tpp" '(org-pomodoro :wk "pomodoro")
-      "tpe" '(org-pomodoro-extend-last-clock :wk "extend last")
-      "tp?" '((lambda ()
+      "T"   '(:ignore t :wk "Time")
+      "Tc"  '(:ignore t :wk "clock")
+      "Tcc" '(org-clock-cancel :wk "cancel")
+      "Tci" '(org-clock-in :wk "in")
+      "Tco" '(org-clock-out :wk "out")
+      "Tcj" '(org-clock-goto :wk "goto")
+
+      "Tp"  '(:ignore t :wk "pomodoro")
+      "Tpp" '(org-pomodoro :wk "pomodoro")
+      "Tpe" '(org-pomodoro-extend-last-clock :wk "extend last")
+      "Tp?" '((lambda ()
                 (interactive)
                 (message
                  (format-seconds
                   "%0.2m:%0.2s left"
                   (round (org-pomodoro-remaining-seconds)))))
               :wk "remaining")
-      "tpk" '((lambda ()
+      "Tpk" '((lambda ()
                 (interactive)
                 (org-pomodoro-kill))
               :wk "kill")
-      "tpx" '((lambda ()
+      "Tpx" '((lambda ()
                 (interactive)
                 (cond
                  ((eq org-pomodoro-state :pomodoro)

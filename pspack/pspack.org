@@ -1052,6 +1052,15 @@ A generic macro to toggle any variable, optionally interactively.
       `(customize-set-variable ,var (not ,(eval var)))))
 #+end_src
 
+** Variable
+A thin wrapper around macro [[*Toggle emphasis markers][pspmacs/toggle]]
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/toggle-var ()
+    "A thin wrapper around macro `pspmacs/toggle'"
+    (interactive)
+    (eval '(pspmacs/toggle)))
+#+end_src
+
 ** Toggle org emphasis
 #+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/org-toggle-emphasis-display ()

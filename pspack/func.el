@@ -555,6 +555,11 @@ VAR must be quoted"
   (let ((var (or var `(intern ,(symbol-name (read-variable "Variable: "))))))
     `(customize-set-variable ,var (not ,(eval var)))))
 
+(defun pspmacs/toggle-var ()
+  "A thin wrapper around macro `pspmacs/toggle'"
+  (interactive)
+  (eval '(pspmacs/toggle)))
+
 (defun pspmacs/org-toggle-emphasis-display ()
   "Toggle org emphasis markers such as **, //, ~~, ==, ++"
   (interactive)
