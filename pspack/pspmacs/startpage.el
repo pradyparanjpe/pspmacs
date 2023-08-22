@@ -6,7 +6,8 @@
 ;;; Code:
 (defgroup startpage nil
   "STARTPAGE for pspmacs."
-  :group 'pspmacs)
+  :group 'pspmacs
+  :prefix "pspmacs/startpage")
 
 (require 'pspmacs/common)
 (require 'recentf)
@@ -17,9 +18,23 @@
   :type 'string
   :group 'startpage)
 
-(defcustom pspmacs/startpage-block-cap 0.8
-  "Fraction of window-width as limit on length of file-names."
-  :type 'number
+(defcustom pspmacs/startpage-banner-image
+  (expand-file-name "data/banners/Tux.svg" user-emacs-directory)
+  "Banner Image"
+  :type '(file :must-match t)
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-banner-scale-width 1.5
+  "Width of `pspmacs/startpage-banner-image' in pixels
+
+is set as this factor times frame width in columns"
+  :type 'integer
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-banner-ascii
+  (expand-file-name "data/banners/2.txt" user-emacs-directory)
+  "Banner Image"
+  :type '(file :must-match t)
   :group 'startpage)
 
 (defcustom pspmacs/startpage-dont-see
@@ -71,6 +86,11 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
   :type '(repeat string)
   :group 'startpage)
 
+(defcustom pspmacs/startpage-block-cap 0.8
+  "Fraction of window-width as limit on length of file-names."
+  :type 'number
+  :group 'startpage)
+
 (defcustom pspmacs/startpage-recentf-num 5
   "number of recent files to link"
   :type 'integer
@@ -79,24 +99,6 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
 (defcustom pspmacs/startpage-projects-num 3
   "number of projects to link"
   :type 'integer
-  :group 'startpage)
-
-(defcustom pspmacs/startpage-banner-image
-  (expand-file-name "data/banners/Tux.svg" user-emacs-directory)
-  "Banner Image"
-  :type '(file :must-match t)
-  :group 'startpage)
-
-(defcustom pspmacs/startpage-banner-scale-width 1.5
-  "Width of `pspmacs/startpage-banner-image' in pixels
- is set as this factor time frame width in columns"
-  :type 'integer
-  :group 'startpage)
-
-(defcustom pspmacs/startpage-banner-ascii
-  (expand-file-name "data/banners/2.txt" user-emacs-directory)
-  "Banner Image"
-  :type '(file :must-match t)
   :group 'startpage)
 
 (defcustom pspmacs/startpage-url-links
@@ -187,9 +189,13 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
 
 (defun pspmacs/startpage--evil-bind-jumps ()
   "Bind following keys (evil):
+tab: next button
 r: RECENT point
 p: PROJECT point
 R: `pspmacs/startpage-refresh'"
+  (keymap-set evil-normal-state-local-map
+              "TAB" (lambda () (interactive)
+                      (forward-button 1)))
   (keymap-set evil-normal-state-local-map
               (kbd "r") (lambda () (interactive)
                           (goto-char pspmacs/startpage-recent-files-point)))
@@ -205,6 +211,8 @@ r: RECENT point
 p: PROJECT point
 R: `pspmacs/startpage-refresh'"
     (use-local-map (copy-keymap text-mode-map))
+    (local-set-key (kbd "<tab>")
+                   (lambda () (interactive) (forward-button 1)))
     (local-set-key (kbd "r")
                    (lambda () (interactive)
                      (goto-char pspmacs/startpage-recent-files-point)))
@@ -333,7 +341,7 @@ else, use `pspmacs/startpage-banner-ascii'"
 
 (defun pspmacs/startpage-bind-jumps ()
   "Bind jumps to locations RECENT and PROJECT in buffer."
-  (if evil-state
+  (if (featurep 'evil)
       (pspmacs/startpage--evil-bind-jumps)
     (pspmacs/startpage--native-bind-jumps)))
 
@@ -400,7 +408,8 @@ Returns buffer handle"
         (insert "\n")
         (switch-to-buffer startpage-buffer)
         (read-only-mode 1)
-        (pspmacs/startpage-bind-jumps)))
+        (pspmacs/startpage-bind-jumps))
+      (forward-button 1))
     startpage-buffer))
 
 (defun pspmacs/startpage-show ()
@@ -417,7 +426,7 @@ Returns buffer handle"
 (defun pspmacs/startpage-display ()
   "Switch to existing OR new startpage buffer
 
-And then, forcefully run `pspmacs/startpage-refres'"
+And then, forcefully run `pspmacs/startpage-refresh'"
   (interactive)
   (pspmacs/startpage-show)
   (pspmacs/startpage-refresh))

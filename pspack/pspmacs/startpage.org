@@ -12,7 +12,8 @@
   ;;; Code:
   (defgroup startpage nil
     "STARTPAGE for pspmacs."
-    :group 'pspmacs)
+    :group 'pspmacs
+    :prefix "pspmacs/startpage")
 #+end_src
 
 * Acknowledgements
@@ -31,59 +32,89 @@
     "Name of startpage buffer"
     :type 'string
     :group 'startpage)
+#+end_src
 
+** Banner
+#+begin_src emacs-lisp
+  (defcustom pspmacs/startpage-banner-image
+    (expand-file-name "data/banners/Tux.svg" user-emacs-directory)
+    "Banner Image"
+    :type '(file :must-match t)
+    :group 'startpage)
+
+  (defcustom pspmacs/startpage-banner-scale-width 1.5
+    "Width of `pspmacs/startpage-banner-image' in pixels
+
+  is set as this factor times frame width in columns"
+    :type 'integer
+    :group 'startpage)
+
+  (defcustom pspmacs/startpage-banner-ascii
+    (expand-file-name "data/banners/2.txt" user-emacs-directory)
+    "Banner Image"
+    :type '(file :must-match t)
+    :group 'startpage)
+  #+end_src
+
+** Hide
+- Hide information from quick-link display.
+  Memory of visit to Emacs packages or to system-files is often not useful.
+  #+begin_src emacs-lisp
+    (defcustom pspmacs/startpage-dont-see
+      (mapcar (lambda (x) (expand-file-name (file-name-as-directory x)))
+              `(,package-user-dir
+                ,(or (getenv "XDG_CACHE_HOME")
+                     (expand-file-name ".cache" (getenv "HOME")))
+                ,(or (getenv "XDG_STATE_HOME")
+                     (expand-file-name ".local/state" (getenv "HOME")))))
+      "Don't even look at anything placed inside this location. (recursively)"
+      :type '(repeat directory)
+      :group 'startpage)
+
+    (defcustom pspmacs/startpage-emacs-roots
+      (mapcar #'expand-file-name
+              (remq nil `(,(and (boundp 'local-emacs-dir) local-emacs-dir)
+                          ,(and (boundp 'pvt-emacs-dir) pvt-emacs-dir)
+                          ,user-emacs-directory
+                          ;; ,(file-name-as-directory (getenv "HOME"))
+                          ,(file-name-as-directory
+                            (expand-file-name ".local/share" (getenv "HOME")))
+                          ,(file-name-as-directory
+                            (expand-file-name
+                             "emacs/src"
+                             (file-name-as-directory
+                              (or (getenv "XDG_DATA_HOME")
+                                  (expand-file-name
+                                   ".local/share" (getenv "HOME")))))))))
+      "List of file system locations, which are known roots for system files.
+
+    `recentf-list' files located in any of these locations are hidden (recursive).
+    Known project locations which are known as roots through this list are hidden.
+    If any entry is a file-location, *ONLY THAT* file is hidden.
+    Projects located \=inside\= known roots are *NOT* hidden.
+
+    Rather than customizing this variable in an init file, use helper function
+    `pspmacs/startpage-add-roots'
+
+    Confirm that directories have a trailing \=/\="
+      :type '(repeat (choice file directory))
+      :group 'startpage)
+
+    (defcustom pspmacs/startpage-ignore-file-regex
+      '("\\.gpg$" "\\.elc$" "\\(.*\\)\\.#" "~$" "\\(.*\\)~" "\\.tmp$")
+      "Ignore files satisfying regular these regular expressions.
+
+    Remember: absolute file names are matched; regexp matching with beginning of
+    file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
+      :type '(repeat string)
+      :group 'startpage)
+#+end_src
+
+** Space restrictions
+#+begin_src emacs-lisp
   (defcustom pspmacs/startpage-block-cap 0.8
     "Fraction of window-width as limit on length of file-names."
     :type 'number
-    :group 'startpage)
-
-  (defcustom pspmacs/startpage-dont-see
-    (mapcar (lambda (x) (expand-file-name (file-name-as-directory x)))
-            `(,package-user-dir
-              ,(or (getenv "XDG_CACHE_HOME")
-                   (expand-file-name ".cache" (getenv "HOME")))
-              ,(or (getenv "XDG_STATE_HOME")
-                   (expand-file-name ".local/state" (getenv "HOME")))))
-    "Don't even look at anything placed inside this location. (recursively)"
-    :type '(repeat directory)
-    :group 'startpage)
-
-  (defcustom pspmacs/startpage-emacs-roots
-    (mapcar #'expand-file-name
-            (remq nil `(,(and (boundp 'local-emacs-dir) local-emacs-dir)
-                        ,(and (boundp 'pvt-emacs-dir) pvt-emacs-dir)
-                        ,user-emacs-directory
-                        ;; ,(file-name-as-directory (getenv "HOME"))
-                        ,(file-name-as-directory
-                          (expand-file-name ".local/share" (getenv "HOME")))
-                        ,(file-name-as-directory
-                          (expand-file-name
-                           "emacs/src"
-                           (file-name-as-directory
-                            (or (getenv "XDG_DATA_HOME")
-                                (expand-file-name
-                                 ".local/share" (getenv "HOME")))))))))
-    "List of file system locations, which are known roots for system files.
-
-  `recentf-list' files located in any of these locations are hidden (recursive).
-  Known project locations which are known as roots through this list are hidden.
-  If any entry is a file-location, *ONLY THAT* file is hidden.
-  Projects located \=inside\= known roots are *NOT* hidden.
-
-  Rather than customizing this variable in an init file, use helper function
-  `pspmacs/startpage-add-roots'
-
-  Confirm that directories have a trailing \=/\="
-    :type '(repeat (choice file directory))
-    :group 'startpage)
-
-  (defcustom pspmacs/startpage-ignore-file-regex
-    '("\\.gpg$" "\\.elc$" "\\(.*\\)\\.#" "~$" "\\(.*\\)~" "\\.tmp$")
-    "Ignore files satisfying regular these regular expressions.
-
-  Remember: absolute file names are matched; regexp matching with beginning of
-  file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
-    :type '(repeat string)
     :group 'startpage)
 
   (defcustom pspmacs/startpage-recentf-num 5
@@ -96,24 +127,6 @@
     :type 'integer
     :group 'startpage)
 
-  (defcustom pspmacs/startpage-banner-image
-    (expand-file-name "data/banners/Tux.svg" user-emacs-directory)
-    "Banner Image"
-    :type '(file :must-match t)
-    :group 'startpage)
-
-  (defcustom pspmacs/startpage-banner-scale-width 1.5
-    "Width of `pspmacs/startpage-banner-image' in pixels
-   is set as this factor time frame width in columns"
-    :type 'integer
-    :group 'startpage)
-
-  (defcustom pspmacs/startpage-banner-ascii
-    (expand-file-name "data/banners/2.txt" user-emacs-directory)
-    "Banner Image"
-    :type '(file :must-match t)
-    :group 'startpage)
-
   (defcustom pspmacs/startpage-url-links
     '(("GNU/Emacs" . "https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html")
       ("Emacs-lisp" . "https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html")
@@ -123,7 +136,10 @@
     :type '(repeat (cons (string :tag "display text")
                          (string :tag "url")))
     :group 'startpage)
+#+end_src
 
+* Faces
+#+begin_src emacs-lisp
   (defcustom pspmacs/startpage-banner-face-props
     '((:foreground "#9f8f4f"))
     "Links face properties"
@@ -168,6 +184,7 @@
     (point-min)
     "Point to projects")
 #+end_src
+
 * Internal Functions
 #+begin_src emacs-lisp
   (defun pspmacs/startpage--shorten-path (filepath)
@@ -207,9 +224,13 @@
 
   (defun pspmacs/startpage--evil-bind-jumps ()
     "Bind following keys (evil):
+  tab: next button
   r: RECENT point
   p: PROJECT point
   R: `pspmacs/startpage-refresh'"
+    (keymap-set evil-normal-state-local-map
+                "TAB" (lambda () (interactive)
+                        (forward-button 1)))
     (keymap-set evil-normal-state-local-map
                 (kbd "r") (lambda () (interactive)
                             (goto-char pspmacs/startpage-recent-files-point)))
@@ -225,6 +246,8 @@
   p: PROJECT point
   R: `pspmacs/startpage-refresh'"
       (use-local-map (copy-keymap text-mode-map))
+      (local-set-key (kbd "<tab>")
+                     (lambda () (interactive) (forward-button 1)))
       (local-set-key (kbd "r")
                      (lambda () (interactive)
                        (goto-char pspmacs/startpage-recent-files-point)))
@@ -315,9 +338,10 @@
      recentf-list))
 #+end_src
 
-#+end_src
-
-* Functions
+* Exposed Functions
+- ~pspmacs/startpage-add-roots~ is especially useful in an =init.el= Emacs configuration file.
+  The function adds directories/files to [[*Hide][pspmacs/startpage-emacs-roots]].
+- Other functions insert quick-link blocks and may be useful otherwise as well.
 #+begin_src emacs-lisp
   (defun pspmacs/startpage-add-roots (&rest roots)
     "Add entry to `pspmacs/startpage-emacs-roots'
@@ -358,7 +382,7 @@
 
   (defun pspmacs/startpage-bind-jumps ()
     "Bind jumps to locations RECENT and PROJECT in buffer."
-    (if evil-state
+    (if (featurep 'evil)
         (pspmacs/startpage--evil-bind-jumps)
       (pspmacs/startpage--native-bind-jumps)))
 
@@ -401,6 +425,23 @@
 #+end_src
 
 * Interactive functions
+** Refresh
+Refresh buffer
+- Unset =whitespace-mode=, =linum=, =display-line-numbers=, =page-break-lines=.
+- Place contents
+  - Banner (ASCII/Picture)
+  - load-time
+  - External Reference manuals/documentation URLs
+  - Quick link blocks
+    - Recent files
+    - Projects
+- Bind Jumps:
+  - <TAB>: Jump to next button
+  - R: Refresh (This function)
+  - p: projects
+  - r: recent files
+- Move point to the first button (first URL)
+
 #+begin_src emacs-lisp
   (defun pspmacs/startpage-refresh ()
     "Refresh start-page
@@ -428,9 +469,15 @@
           (insert "\n")
           (switch-to-buffer startpage-buffer)
           (read-only-mode 1)
-          (pspmacs/startpage-bind-jumps)))
+          (pspmacs/startpage-bind-jumps))
+        (forward-button 1))
       startpage-buffer))
+#+end_src
 
+** Wrappers
+*** Show
+Switch startpage if it exists, else create one.
+#+begin_src emacs-lisp
   (defun pspmacs/startpage-show ()
     "Switch to existing OR new startpage buffer
 
@@ -441,11 +488,15 @@
           (switch-to-buffer startpage-buffer)
         (setq startpage-buffer (pspmacs/startpage-refresh)))
       startpage-buffer))
+#+end_src
 
+*** Display
+Show startpage and refresh (re-display) it.
+#+begin_src emacs-lisp
   (defun pspmacs/startpage-display ()
     "Switch to existing OR new startpage buffer
 
-  And then, forcefully run `pspmacs/startpage-refres'"
+  And then, forcefully run `pspmacs/startpage-refresh'"
     (interactive)
     (pspmacs/startpage-show)
     (pspmacs/startpage-refresh))
