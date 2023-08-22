@@ -111,37 +111,29 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
                        (string :tag "url")))
   :group 'startpage)
 
-(defcustom pspmacs/startpage-banner-face-props
-  '((:foreground "#9f8f4f"))
+(defface pspmacs/startpage-banner-face
+  '((t (:foreground "#9f8f4f")))
   "Links face properties"
-  :type 'plist
   :group 'startpage)
 
-(defcustom pspmacs/startpage-url-links-face-props
-  '((:foreground "#6fafcf") (:underline nil))
+(defface pspmacs/startpage-url-links-face
+  '((t (:foreground "#6fafcf" :underline nil)))
   "URL links face properties"
-  :type 'plist
   :group 'startpage)
 
-(defcustom pspmacs/startpage-block-title-face-props
-  '((:foreground "#ff007f")
-    (bold))
+(defface pspmacs/startpage-block-title-face
+  '((t (:foreground "#ff007f" :bold t)))
   "Quicklink block Title Face"
-  :type 'plist
   :group 'startpage)
 
-(defcustom pspmacs/startpage-block-link-face-props
-  '((:foreground "#af9fa7") (:underline nil))
+(defface pspmacs/startpage-block-link-face
+  '((t (:foreground "#af9fa7" :underline nil)))
   "Quicklink block Link item faces"
-  :type 'plist
   :group 'startpage)
 
-(defcustom pspmacs/startpage-load-time-face-props
-  '((:foreground "#bfdfff")
-    (:background "#002040")
-    italic)
+(defface pspmacs/startpage-load-time-face
+  '((t (:foreground "#bfdfff" :background "#002040" :italic t)))
   "Load-time information face"
-  :type 'plist
   :group 'startpage)
 
 (defvar pspmacs/startpage-recent-files-point
@@ -169,7 +161,7 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
              (lambda (line)
                (progn
                  (add-face-text-property
-                  0 (length line) pspmacs/startpage-banner-face-props t line)
+                  0 (length line) 'pspmacs/startpage-banner-face t line)
                  `(,pad-string ,line)))
              banner)))
       (when (> (window-width) banner-width)
@@ -236,7 +228,7 @@ R: `pspmacs/startpage-refresh'"
             (lambda (_button) (find-file fname)))))
       (add-face-text-property
        0 (length button)
-       pspmacs/startpage-block-link-face-props
+       'pspmacs/startpage-block-link-face
        nil button)
       (insert (or pad-string "") button))))
 
@@ -257,7 +249,7 @@ Returns point to BLOCK-TITLE"
          (block-point nil))
     (add-face-text-property
      0 (length block-title)
-     pspmacs/startpage-block-title-face-props t block-title)
+     'pspmacs/startpage-block-title-face t block-title)
     (insert (string-trim-right pad-string "  $") block-title)
 
     ;; Remember this point
@@ -356,7 +348,7 @@ else, use `pspmacs/startpage-banner-ascii'"
                       (length load-string))))
     (add-face-text-property
      0 (length load-string)
-     pspmacs/startpage-load-time-face-props t load-string)
+     'pspmacs/startpage-load-time-face t load-string)
     (insert "\n" pad-string load-string)))
 
 (defun pspmacs/startpage-put-url-links ()
@@ -373,7 +365,7 @@ else, use `pspmacs/startpage-banner-ascii'"
                                              (browse-url (cdr item))))))
                                  (add-face-text-property
                                   0 (length button)
-                                  pspmacs/startpage-url-links-face-props
+                                  'pspmacs/startpage-url-links-face
                                   nil button)
                                  (concat
                                   spacer
