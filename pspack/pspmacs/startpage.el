@@ -9,11 +9,8 @@
   :group 'pspmacs)
 
 (require 'pspmacs/common)
-(use-package recentf
-  :commands (recentf-list)
-  :demand t
-  :config
-  (recentf-mode 1))
+(require 'recentf)
+(recentf-mode 1)
 
 (defcustom pspmacs/startpage-buffer-name "*StartPage*"
   "Name of startpage buffer"
@@ -23,6 +20,55 @@
 (defcustom pspmacs/startpage-block-cap 0.8
   "Fraction of window-width as limit on length of file-names."
   :type 'number
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-dont-see
+  (mapcar (lambda (x) (expand-file-name (file-name-as-directory x)))
+          `(,package-user-dir
+            ,(or (getenv "XDG_CACHE_HOME")
+                 (expand-file-name ".cache" (getenv "HOME")))
+            ,(or (getenv "XDG_STATE_HOME")
+                 (expand-file-name ".local/state" (getenv "HOME")))))
+  "Don't even look at anything placed inside this location. (recursively)"
+  :type '(repeat directory)
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-emacs-roots
+  (mapcar #'expand-file-name
+          (remq nil `(,(and (boundp 'local-emacs-dir) local-emacs-dir)
+                      ,(and (boundp 'pvt-emacs-dir) pvt-emacs-dir)
+                      ,user-emacs-directory
+                      ;; ,(file-name-as-directory (getenv "HOME"))
+                      ,(file-name-as-directory
+                        (expand-file-name ".local/share" (getenv "HOME")))
+                      ,(file-name-as-directory
+                        (expand-file-name
+                         "emacs/src"
+                         (file-name-as-directory
+                          (or (getenv "XDG_DATA_HOME")
+                              (expand-file-name
+                               ".local/share" (getenv "HOME")))))))))
+  "List of file system locations, which are known roots for system files.
+
+`recentf-list' files located in any of these locations are hidden (recursive).
+Known project locations which are known as roots through this list are hidden.
+If any entry is a file-location, *ONLY THAT* file is hidden.
+Projects located \=inside\= known roots are *NOT* hidden.
+
+Rather than customizing this variable in an init file, use helper function
+`pspmacs/startpage-add-roots'
+
+Confirm that directories have a trailing \=/\="
+  :type '(repeat (choice file directory))
+  :group 'startpage)
+
+(defcustom pspmacs/startpage-ignore-file-regex
+  '("\\.gpg$" "\\.elc$" "\\(.*\\)\\.#" "~$" "\\(.*\\)~" "\\.tmp$")
+  "Ignore files satisfying regular these regular expressions.
+
+Remember: absolute file names are matched; regexp matching with beginning of
+file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
+  :type '(repeat string)
   :group 'startpage)
 
 (defcustom pspmacs/startpage-recentf-num 5
@@ -54,7 +100,9 @@
   :group 'startpage)
 
 (defcustom pspmacs/startpage-url-links
-  '(("Documentation" . "https://pradyparanjpe.gitlab.io/pspmacs/index.html")
+  '(("GNU/Emacs" . "https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html")
+    ("Emacs-lisp" . "https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html")
+    ("Documentation" . "https://pradyparanjpe.gitlab.io/pspmacs/index.html")
     ("Repository" . "https://gitlab.com/pradyparanjpe/pspmacs"))
   "Details of url links to display"
   :type '(repeat (cons (string :tag "display text")
@@ -191,11 +239,11 @@ Links to files in BLOCK-LIST are enlisted in the block.
 If NUM is non-zero, only NUM elements from block list are inserted.
 If BLOCK-TITLE is non-nil, it is placed as a heading to the block.
 Returns point to BLOCK-TITLE"
-  (let* ((num (if num (min (length block-list ) num) (length block-list)))
+  (let* ((block-list (or block-list '("<<< EMPTY >>>")))
+         (num (if num (min (length block-list) num) (length block-list)))
          (items (cl-subseq block-list 0 num))
          (max-len (min (round (* (window-width) pspmacs/startpage-block-cap))
-                       (apply #'max (mapcar (lambda (fpath)
-                                              (length fpath))
+                       (apply #'max (mapcar (lambda (fpath) (length fpath))
                                             items))))
          (pad-string (pspmacs/startpage--center-pad-string max-len))
          (block-point nil))
@@ -210,25 +258,69 @@ Returns point to BLOCK-TITLE"
     (pspmacs/startpage--put-links items pad-string)
     block-point))
 
+(defun pspmacs/startpage--known-projects ()
+  "Get Projects list from suitable project-manager.
+
+Supported project-managers: project.el (builtin), projectile"
+  (seq-filter
+   (lambda (proj)
+     (let ((proj-path (expand-file-name
+                       (file-name-as-directory proj))))
+       (not (or
+             (member proj-path pspmacs/startpage-emacs-roots)
+             ;; don't see
+             (seq-filter (lambda (root) (eq 0 (cl-search root proj-path)))
+                         pspmacs/startpage-dont-see)))))
+   (if (featurep 'projectile) (projectile-load-known-projects)
+     (project-known-project-roots))))
+
+(defun pspmacs/recentf--list ()
+  "Filtered recentf list"
+  (seq-filter
+   (lambda (filename)
+     (let ((fname (expand-file-name filename)))
+       (not
+        (or
+         ;; Verbatim file name
+         (member fname pspmacs/startpage-emacs-roots)
+         ;; Regular expression match
+         (seq-filter (lambda (regex) (string-match regex fname))
+                     pspmacs/startpage-ignore-file-regex)
+         ;; don't see
+         (seq-filter (lambda (root) (eq 0 (cl-search root fname)))
+                     pspmacs/startpage-dont-see)
+         ;; file inside project (anywhere deep)
+         (seq-filter (lambda (root) (eq 0 (cl-search root fname)))
+                     pspmacs/startpage-emacs-roots)))))
+   recentf-list))
+
+(defun pspmacs/startpage-add-roots (&rest roots)
+  "Add entry to `pspmacs/startpage-emacs-roots'
+
+Use this in configuration file \=init.el\=
+Add to list all ROOTS without checking if that location exists.
+
+Directories *must* and file paths *can not* have a trailing \=/\="
+  (dolist (root roots nil)
+    (add-to-list 'pspmacs/startpage-emacs-roots root)))
+
 (defun pspmacs/startpage-put-recentf ()
   "Place a block of recentf files
 
-customize number `pspmacs/startpage-recentf-num'"
-  (customize-set-variable 'pspmacs/startpage-recent-files-point
-                          (pspmacs/startpage--put-block
-                           recentf-list
-                           pspmacs/startpage-recentf-num
-                           "(r) Recent Files")))
+customize-save-variable number `pspmacs/startpage-recentf-num'"
+  (setq pspmacs/startpage-recent-files-point
+        (pspmacs/startpage--put-block (pspmacs/recentf--list)
+                                      pspmacs/startpage-recentf-num
+                                      "(r) Recent Files")))
 
 (defun pspmacs/startpage-put-projects ()
   "Place a block of known projects
 
 customize number `pspmacs/startpage-projects-num'"
-  (customize-set-variable 'pspmacs/startpage-projects-point
-                          (pspmacs/startpage--put-block
-                           (project-known-project-roots)
-                           pspmacs/startpage-projects-num
-                           "(p) Projects")))
+  (setq pspmacs/startpage-projects-point
+        (pspmacs/startpage--put-block (pspmacs/startpage--known-projects)
+                                      pspmacs/startpage-projects-num
+                                      "(p) Projects")))
 
 (defun pspmacs/startpage-put-banner ()
   "Place center-aligned banner in current buffer.
