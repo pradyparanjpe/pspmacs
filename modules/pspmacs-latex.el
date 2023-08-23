@@ -1,4 +1,4 @@
-;;; pspmacs-latex.el --- LaTeX -*- lexical-binding: t; -*-
+﻿;;; pspmacs-latex.el --- LaTeX -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -28,6 +28,7 @@
   (outline-minor-mode 1))
 
 (use-package latex
+  :after tex
   :ensure auctex
   :hook ((LaTeX-mode . smartparens-mode)
          (LaTeX-mode . karthink/latex-with-outline))
@@ -87,6 +88,93 @@
                              sp-point-before-same-p
                              sp-latex-point-after-backslash))))
 
+(defun karthink/add-latex-in-org-mode-expansions ()
+  "Extend org-mode expansions with LaTeX"
+  ;; Make Emacs recognize \ as an escape character in org
+  (modify-syntax-entry ?\\ "\\" org-mode-syntax-table)
+  ;; Paragraph end at end of math environment
+  (setq paragraph-start (concat paragraph-start "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
+  ;; (setq paragraph-separate (concat paragraph-separate "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
+  ;; Latex mode expansions
+  (with-eval-after-load 'expand-region
+    (set (make-local-variable 'karthink/try-expand-list)
+         (append (remove #'karthink/mark-method-call karthink/try-expand-list)
+                 '(LaTeX-mark-environment
+                   karthink/mark-LaTeX-inside-math
+                   karthink/mark-latex-inside-delimiters
+                   karthink/mark-latex-outside-delimiters
+                   karthink/mark-LaTeX-math)))))
+
+(use-package ox-latex
+ :ensure org
+ :after ox
+ :custom
+ (org-export-with-LaTeX-fragments t)
+ (org-export-with-smart-quotes t)
+ (org-latex-caption-above nil)
+ (org-latex-tables-booktabs t)
+ (org-latex-prefer-user-labels t)
+ (org-latex-reference-command "\\cref{%s}")
+ (org-latex-compiler "xelatex")
+ (org-latex-pdf-process
+  '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+
+ ;; From https://git.tecosaur.net/tec/emacs-config,
+ ;; the default link colors are hideous.
+ (org-latex-hyperref-template
+  "
+\\usepackage{xcolor}
+\\providecolor{url}{HTML}{006fcf}
+\\providecolor{link}{HTML}{6f2f47}
+\\providecolor{cite}{HTML}{8f8f2f}
+\\hypersetup{
+  pdfauthor={%a},
+  pdftitle={%t},
+  pdfkeywords={%k},
+  pdfsubject={%d},
+  pdfcreator={%c},
+  pdflang={%L},
+  breaklinks=true,
+  colorlinks=true,
+  linkcolor=link,
+  urlcolor=url,
+  citecolor=cite}
+\\urlstyle{same}
+%% hide links styles in toc
+\\NewCommandCopy{\\oldtoc}{\\tableofcontents}
+\\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}
+")
+
+ :hook
+ (org-mode . karthink/add-latex-in-org-mode-expansions)
+
+ :config
+ (dolist (package '(("" "longtable" nil)
+                    ("" "booktabs"  nil)
+                    ("" "color"     nil)
+                    ("" "cancel"    t)))
+   ;; ;FIXME: Some documentclasses load these themselves,
+   ;; ;causing all manner of conflicts.
+   ;; ("capitalize" "cleveref"  nil)
+   ;; (""           "amsmath"   t)
+   ;; (""           "amssymb"   t)
+   (cl-pushnew package org-latex-packages-alist
+               :test (lambda (a b) (equal (cadr a) (cadr b)))))
+ (let* ((article-sections '(("\\section{%s}"       . "\\section*{%s}")
+                            ("\\subsection{%s}"    . "\\subsection*{%s}")
+                            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                            ("\\paragraph{%s}"     . "\\paragraph*{%s}")
+                            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))
+   (pcase-dolist (`(,name ,class-string . ,extra)
+                   `(("IEEEtran" "\\documentclass[conference]{IEEEtran}")
+                     ("article" "\\documentclass{scrartcl}")
+                     ("report" "\\documentclass{scrreprt}")
+                     ("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
+                     ("book" "\\documentclass[twoside=false]{scrbook}"
+                      ("\\chapter{%s}" . "\\chapter*{%s}"))))
+     (setf (alist-get name org-latex-classes nil nil #'equal)
+           (append (list class-string) extra article-sections)))))
+
 (defun karthink/preview-scale-larger ()
   "Increase the size of `preview-latex' images"
   (setq preview-scale-function
@@ -102,8 +190,47 @@
 (use-package evil-tex
   :hook (LaTeX-mode . evil-tex-mode))
 
+(use-package bibtex
+  :custom
+  ;; Following customizations are suggested by org-ref in their wiki
+  (bibtex-autokey-year-length 4)
+  (bibtex-autokey-name-year-separator "-")
+  (bibtex-autokey-year-title-separator "-")
+  (bibtex-autokey-titleword-separator "-")
+  (bibtex-autokey-titlewords 2)
+  (bibtex-autokey-titlewords-stretch 1)
+  (bibtex-autokey-titleword-length 5)
+  (bibtex-completion-bibliography
+   (remq 'nil (mapcar
+               (lambda (x)
+                 (let ((bibfile (expand-file-name "biblio.bib" x)))
+                   (if (file-exists-p bibfile) bibfile)))
+               pspmacs/ref-paths)))
+  (bibtex-completion-library-path
+   (remq 'nil (mapcar
+               (lambda (x)
+                 (let ((bibdir (file-name-as-directory
+                                (expand-file-name "library" x))))
+                   (if (file-exists-p bibdir) bibdir)))
+               pspmacs/ref-paths)))
+  (bibtex-completion-notes-path
+   (car (last (remq 'nil (mapcar
+                          (lambda (x)
+                            (let ((bibdir (file-name-as-directory
+                                           (expand-file-name "notes" x))))
+                              (if (file-exists-p bibdir) bibdir)))
+                          pspmacs/ref-paths)))))
+  (biblio-download-directory
+   (car (last (remq 'nil
+                    (mapcar
+                     (lambda (x)
+                       (let ((bibdir (file-name-as-directory
+                                      (expand-file-name "downloads" x))))
+                         (if (file-exists-p bibdir) bibdir)))
+                     pspmacs/ref-paths))))))
+
 (use-package reftex
-  :after latex
+  :after (latex bibtex)
   :commands turn-on-reftex
   :hook ((latex-mode LaTeX-mode) . turn-on-reftex)
   :custom
@@ -111,6 +238,33 @@
   (reftex-insert-label-flags '("sf" "sfte"))
   (reftex-plug-into-AUCTeX t)
   (reftex-use-multiple-selection-buffers t))
+
+(use-package org-ref
+  :after (org bibtex)
+  :demand t
+  :general
+  (pspmacs/local-leader-keys :keymaps 'bibtex-mode-map
+    "i" '(:ignore t :wk "insert")
+    "ir" '(:ignore t :wk "org-ref")
+    "irh" '(org-ref-bibtex-hydra/body :wk "hydra"))
+
+  (pspmacs/local-leader-keys :keymaps 'org-mode-map
+    "i" '(:ignore t :wk "insert")
+    "ir" '(:ignore t :wk "org-ref")
+    "irl" '(org-ref-insert-link :wk "link")
+    "irh" '(org-ref-insert-link-hydra/body :wk "hydra"))
+
+  :init
+  ;; Initialize components
+  (require 'org-ref-arxiv)
+  (require 'org-ref-scopus)
+  (require 'org-ref-wos)
+
+  :custom
+  (org-ref-bibtex-pdf-download-directory
+   (pcase (type-of bibtex-completion-library-path)
+     (string bibtex-completion-library-path)
+     (_ (car (last bibtex-completion-library-path))))))
 
 (use-package citar
   :after latex
@@ -132,15 +286,20 @@
   (org-cite-activate-processor 'citar))
 
 (use-package cdlatex
-  :after latex
+  :after latex org
   ;; :commands turn-on-cdlatex
-  :hook (LaTeX-mode . turn-on-cdlatex)
+  :hook
+  ((org-mode . turn-on-org-cdlatex)
+   (LaTeX-mode . turn-on-cdlatex))
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-cdlatex-mode-map
     "c"  '(:ignore t :wk "cdlatex")
+    "c`" '(cdlatex-math-symbol :wk "symbol")
+    "c_" '(org-cdlatex-underscore-caret :wk "sub-superscript")
     "ce" '(org-cdlatex-environment-indent :wk "environment"))
   :custom
+  (cdlatex-math-symbol-prefix (kbd "M-+") "unbind cdlatex-math-symbol")
   (cdlatex-math-symbol-alist '((?F ("\\Phi"))
                                (?o ("\\omega" "\\mho" "\\mathcal{O}"))
                                (?. ("\\cdot" "\\circ"))
@@ -173,5 +332,18 @@
                   cdlatex-position-cursor nil t nil)))
     (push cmd cdlatex-command-alist))
   (cdlatex-reset-mode))
+
+(use-package pdf-tools
+  :config
+  ;; initialise
+  (pdf-tools-install)
+  ;; open pdfs scaled to fit width
+  ;; use normal isearch
+  :general
+  (general-def 'normal pdf-view-mode-map
+    (kbd "C-s") 'isearch-forward)
+  :custom
+  (pdf-view-display-size 'fit-width)
+  (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
 
 (pspmacs/load-inherit)

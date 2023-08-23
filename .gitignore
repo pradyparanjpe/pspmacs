@@ -104,3 +104,6 @@ multisession/
 
 # auto-package-update
 .last-package-update-day
+
+# emojis are added to directory 'auto'
+auto/

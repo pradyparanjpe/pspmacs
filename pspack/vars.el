@@ -198,9 +198,9 @@
 
 (defcustom pspmacs/ref-paths
   `(,(expand-file-name "references/" xdg/emacs-data-directory))
-  "Reference base paths"
+  "Reference base paths order"
   :group 'pspmacs
-  :type '(list (string :tag "Base to references")))
+  :type '(repeat directory))
 
 (defcustom pspmacs/set-mailbox nil
   "Set Emacs Mailbox (Mu4e, mbsync)"

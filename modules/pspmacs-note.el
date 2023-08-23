@@ -22,15 +22,6 @@
 
 ;;; Code:
 
-(defun org-cdlatex-pbb (&rest _arg)
-  "Execute `cdlatex-pbb' in LaTeX fragments.
-  Revert to the normal definition outside of these fragments."
-  (interactive "P")
-  (if (org-inside-LaTeX-fragment-p)
-      (call-interactively 'cdlatex-pbb)
-    (let (org-cdlatex-mode)
-      (call-interactively (key-binding (vector last-input-event))))))
-
 (use-package org
   :mode ("\\.org\\'" . org-mode)
   :general
@@ -146,11 +137,6 @@
     "j" '(org-agenda-next-line)
     "h" '(org-agenda-previous-line))
 
-  (general-def 'normal org-cdlatex-mode-map
-    "(" #'org-cdlatex-pbb
-    "[" #'org-cdlatex-pbb
-    "{" #'org-cdlatex-pbb)
-
   :custom
   ;; Org table
   (org-table-automatic-realign nil)
@@ -161,9 +147,7 @@
    (remq 'nil
          (mapcar
           (lambda (x)
-            (let
-                ((bibfile
-                  (expand-file-name "biblio.bib" x)))
+            (let ((bibfile (expand-file-name "biblio.bib" x)))
               (if (file-exists-p bibfile) bibfile)))
           pspmacs/ref-paths)))
 
@@ -181,16 +165,7 @@
 
   ;; LaTeX
   (org-highlight-latex-and-related '(native))
-  (org-format-latex-options
-   (progn (plist-put org-format-latex-options :background "Transparent")
-          (plist-put org-format-latex-options :scale 1.5)
-          (plist-put org-format-latex-options :zoom 1.0)))
-
-  (org-latex-preview-options
-   (progn (plist-put  org-latex-preview-options :background "Transparent")
-          (plist-put org-latex-preview-options :scale 1.5)
-          (plist-put org-latex-preview-options :zoom 1.0)))
-  (org-latex-compiler "xelatex")
+  (org-preview-latex-default-process 'dvipng)
 
   ;; Prettify
   (org-ellipsis " ↷")
@@ -222,6 +197,12 @@
       "CANT(c)")))
 
   :config
+  ;; TeX
+  (plist-put org-format-latex-options :background "Transparent")
+  (plist-put org-format-latex-options :scale 1.5)
+  (plist-put org-format-latex-options :zoom 1.0)
+
+  ;; smart-parentheses
   (mapc (lambda (wrap)
           (sp-local-pair 'org-mode wrap wrap
                          :unless '(sp-point-after-word-p)))
@@ -253,6 +234,7 @@
          '("_" "+" "=" "~" "*" "/" "<" "$"))))
     (eval `(pspmacs/leader-keys :keymaps 'org-mode-map ,@paren-bindings)))
 
+  ;; babel source codes
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((awk . t)
@@ -267,8 +249,7 @@
 
   :hook
   ((org-mode . pspmacs/prettify-note)
-   (org-mode . visual-line-mode)
-   (org-mode . karthink/add-latex-in-org-mode-expansions)))
+   (org-mode . visual-line-mode)))
   ;; (org-mode . turn-on-org-cdlatex)
 
 (use-package org-auto-tangle
@@ -279,22 +260,6 @@
   :after org
   :custom
   (org-roam-directory (expand-file-name "roam" pspmacs/org-path)))
-
-(defun karthink/add-latex-in-org-mode-expansions ()
-  ;; Make Emacs recognize \ as an escape character in org
-  (modify-syntax-entry ?\\ "\\" org-mode-syntax-table)
-  ;; Paragraph end at end of math environment
-  (setq paragraph-start (concat paragraph-start "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
-  ;; (setq paragraph-separate (concat paragraph-separate "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
-  ;; Latex mode expansions
-  (with-eval-after-load 'expand-region
-    (set (make-local-variable 'karthink/try-expand-list)
-         (append (remove #'karthink/mark-method-call karthink/try-expand-list)
-                 '(LaTeX-mark-environment
-                   karthink/mark-LaTeX-inside-math
-                   karthink/mark-latex-inside-delimiters
-                   karthink/mark-latex-outside-delimiters
-                   karthink/mark-LaTeX-math)))))
 
 (defun karthink/org-export-ignore-headlines (data backend info)
   "Remove headlines tagged \"ignore\" retaining contents and promoting children.
@@ -340,71 +305,6 @@ parent."
   ;; (add-to-list 'org-latex-packages-alist '("" "color"))
   (add-hook 'org-export-filter-parse-tree-functions
             'karthink/org-export-ignore-headlines))
-
-(use-package ox-latex
- :ensure org
- :after ox
- :custom
- (org-latex-caption-above nil)
- (org-export-with-LaTeX-fragments t)
- (org-latex-tables-booktabs t)
- (org-export-with-smart-quotes t)
- (org-latex-prefer-user-labels t)
- (org-latex-reference-command "\\cref{%s}")
- ;; From https://git.tecosaur.net/tec/emacs-config,
- ;; the default link colors are hideous.
- (org-latex-hyperref-template
-  "
-\\usepackage{xcolor}
-\\providecolor{url}{HTML}{006fcf}
-\\providecolor{link}{HTML}{6f2f47}
-\\providecolor{cite}{HTML}{8f8f2f}
-\\hypersetup{
-  pdfauthor={%a},
-  pdftitle={%t},
-  pdfkeywords={%k},
-  pdfsubject={%d},
-  pdfcreator={%c},
-  pdflang={%L},
-  breaklinks=true,
-  colorlinks=true,
-  linkcolor=link,
-  urlcolor=url,
-  citecolor=cite}
-\\urlstyle{same}
-%% hide links styles in toc
-\\NewCommandCopy{\\oldtoc}{\\tableofcontents}
-\\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}
-")
-
- :config
- (dolist (package '(("" "longtable" nil)
-                    ("" "booktabs"  nil)
-                    ("" "color"     nil)
-                    ("" "cancel"    t)))
-   ;; ;FIXME: Some documentclasses load these themselves,
-   ;; ;causing all manner of conflicts.
-   ;; ("capitalize" "cleveref"  nil)
-   ;; (""           "amsmath"   t)
-   ;; (""           "amssymb"   t)
-   (cl-pushnew package org-latex-packages-alist
-               :test (lambda (a b) (equal (cadr a) (cadr b)))))
- (let* ((article-sections '(("\\section{%s}"       . "\\section*{%s}")
-                            ("\\subsection{%s}"    . "\\subsection*{%s}")
-                            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                            ("\\paragraph{%s}"     . "\\paragraph*{%s}")
-                            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))
-   (pcase-dolist (`(,name ,class-string . ,extra)
-                   `(("IEEEtran" "\\documentclass[conference]{IEEEtran}")
-                     ("article" "\\documentclass{scrartcl}")
-                     ("report" "\\documentclass{scrreprt}")
-                     ("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
-                     ("book" "\\documentclass[twoside=false]{scrbook}"
-                      ("\\chapter{%s}" . "\\chapter*{%s}"))))
-     (setf (alist-get name org-latex-classes nil nil #'equal)
-           (append (list class-string) extra article-sections)))))
-
-(use-package org-ref)
 
 (use-package org-pomodoro
   :after org

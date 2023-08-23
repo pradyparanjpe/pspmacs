@@ -664,9 +664,9 @@ If org-tangle adds BOM, (utf signature), drop it by adding following code to =or
 #+begin_src emacs-lisp :tangle vars.el
   (defcustom pspmacs/ref-paths
     `(,(expand-file-name "references/" xdg/emacs-data-directory))
-    "Reference base paths"
+    "Reference base paths order"
     :group 'pspmacs
-    :type '(list (string :tag "Base to references")))
+    :type '(repeat directory))
 #+end_src
 
 * Org-publish alist
