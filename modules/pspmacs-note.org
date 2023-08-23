@@ -30,6 +30,47 @@
 #+end_src
 
 * Late org customization
+** Code Completion Keywords
+- Following table describes the use of keywords, registered with GNU/Emacs using ~org-todo-keywords~.
+  - First block (open agenda) traces (, in order,) the progression of an open programming task.
+  - Second block holds notes.
+     This block is unnecessary, since
+     - simple notes are in fact /comments/
+     - miscellaneous notes are ambiguous.
+  - Third block (close agenda) marks that the task was closed.
+    It is better, as is triggered by Emacs, to place timestamps while closing agenda.
+
+    #+begin_note
+All keywords are designed to be 4 character long for consistent formatting with monospace fonts.
+=FIXME= is a community convention, which we *have* to use against will.
+    #+end_note
+
+|---------+------------------------------------------------|
+| Keyword | Description                                    |
+|---------+------------------------------------------------|
+| FAIL    | (Something) was found to (certainly) fail      |
+| FIXME   | Needs to be fixed (HERE)                       |
+| TEMP    | A temporary placeholder                        |
+| HACK    | A workaround hack, *NOT* a solution              |
+| TODO    | To do (open agenda)                            |
+| LAZY    | Solve only if needed                           |
+| WAIT    | Wait for results from elsewhere before solving |
+| NEXT    | Next on the anvil                              |
+| ALGO    | Designing algorithm                            |
+| PROG    | Writing program code                           |
+| TEST    | At least 1 test is failing                     |
+| ACTS    | Code is 'acting' on real inputs for results    |
+| SENT    | Sent to *them* for review, follow-up or sleep    |
+| OKAY    | Apparently working, ready to commit            |
+|---------+------------------------------------------------|
+| NOTE    | Note to future self                            |
+| XXXX    | Miscellaneous (Avoid usage of this keyword)    |
+|---------+------------------------------------------------|
+| DONE    | Task done (close agenda)                       |
+| DONT    | Don't try to do this task because …            |
+| CANT    | This task is impossible because …              |
+|---------+------------------------------------------------|
+
 #+begin_src emacs-lisp
   (defun org-cdlatex-pbb (&rest _arg)
     "Execute `cdlatex-pbb' in LaTeX fragments.
@@ -175,18 +216,21 @@
                     (expand-file-name "biblio.bib" x)))
                 (if (file-exists-p bibfile) bibfile)))
             pspmacs/ref-paths)))
-    ;; edit settings
-    (org-special-ctrl-a/e t)
-    (org-ellipsis " ↷")
-    (org-src-fontify-natively t)
-    (org-highlight-latex-and-related '(native))
-    (org-startup-with-inline-images nil)
-    (org-pretty-entities t)
-    (org-return-follows-link t)
-    (org-hide-emphasis-markers t)
-    (org-roam-dailies-directory pspmacs/org-journal-path)
+
+    ;; Startup display
+    (org-startup-with-inline-images t)
     (org-startup-folded t)
     (org-startup-with-latex-preview t)
+
+    ;; Keybindings
+    (org-special-ctrl-a/e t)
+    (org-return-follows-link t)
+
+    ;; Images
+    (org-image-actual-width nil)
+
+    ;; LaTeX
+    (org-highlight-latex-and-related '(native))
     (org-format-latex-options
      (progn (plist-put org-format-latex-options :background "Transparent")
             (plist-put org-format-latex-options :scale 1.5)
@@ -198,6 +242,12 @@
             (plist-put org-latex-preview-options :zoom 1.0)))
     (org-latex-compiler "xelatex")
 
+    ;; Prettify
+    (org-ellipsis " ↷")
+    (org-hide-emphasis-markers t)
+    (org-src-fontify-natively t)
+    (org-pretty-entities t)
+    (org-roam-dailies-directory pspmacs/org-journal-path)
     (org-todo-keywords
      '((sequence
         "FAIL(f)"
@@ -418,7 +468,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
              (append (list class-string) extra article-sections)))))
 #+end_src
 
-* Org-ref
+* jkitchin/org-ref
 - Reference management for LaTeX.
 #+begin_src emacs-lisp
   (use-package org-ref)
@@ -551,26 +601,27 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
        ("DONT" :foreground "#ff6fcf")
        ("CANT" :foreground "#ff3fff")))
     (org-modern-block-name
-     '(("note"    . ("📋" . "⏎"))
-       ("example" . ("🥚" . "⏎"))
-       ("src"     . ("🤖" . "⏎"))
-       ("tip"     . ("💡" . "👍"))
-       ("warn"    . ("⚠" . "⏎"))
-       ("warning" . ("⚠" . "⏎"))
-       ("danger"  . ("🕱" . "⏎"))))
+     '(("note"    "📋" "⏎")
+       ("example" "🥚" "⏎")
+       ("src"     "🤖" "⏎")
+       ("tip"     "💡" "👍")
+       ("warn"    "⚠" "⏎")
+       ("warning" "⚠" "⏎")
+       ("danger"  "🕱" "⏎")))
     (org-modern-keyword
-     '(("setupfile" . "🛒")
-       ("author" . "🖋")
-       ("email" . "✉")
-       ("language" . "🗣")
-       ("options" . "🔘")
-       ("property" . "⚙")
-       ("results" . "📜")
-       ("startup" . "")
-       ("html_head" . "")
+     '(("setupfile"   . "🛒")
+       ("author"      . "🖋")
+       ("email"       . "✉")
+       ("language"    . "🗣")
+       ("options"     . "🔘")
+       ("property"    . "⚙")
+       ("results"     . "📜")
+       ("startup"     . "")
+       ("html_head"   . "")
        ("attr_latex:" . "🖺")
-       ("title" . "§")
+       ("title"       . "§")
        ("auto_tangle" . "🤖🔗")
+       ("html"        . "")
        (t . t)))
     (org-modern-checkbox
      '((88 . "✔")

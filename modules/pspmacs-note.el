@@ -166,18 +166,21 @@
                   (expand-file-name "biblio.bib" x)))
               (if (file-exists-p bibfile) bibfile)))
           pspmacs/ref-paths)))
-  ;; edit settings
-  (org-special-ctrl-a/e t)
-  (org-ellipsis " ↷")
-  (org-src-fontify-natively t)
-  (org-highlight-latex-and-related '(native))
-  (org-startup-with-inline-images nil)
-  (org-pretty-entities t)
-  (org-return-follows-link t)
-  (org-hide-emphasis-markers t)
-  (org-roam-dailies-directory pspmacs/org-journal-path)
+
+  ;; Startup display
+  (org-startup-with-inline-images t)
   (org-startup-folded t)
   (org-startup-with-latex-preview t)
+
+  ;; Keybindings
+  (org-special-ctrl-a/e t)
+  (org-return-follows-link t)
+
+  ;; Images
+  (org-image-actual-width nil)
+
+  ;; LaTeX
+  (org-highlight-latex-and-related '(native))
   (org-format-latex-options
    (progn (plist-put org-format-latex-options :background "Transparent")
           (plist-put org-format-latex-options :scale 1.5)
@@ -189,6 +192,12 @@
           (plist-put org-latex-preview-options :zoom 1.0)))
   (org-latex-compiler "xelatex")
 
+  ;; Prettify
+  (org-ellipsis " ↷")
+  (org-hide-emphasis-markers t)
+  (org-src-fontify-natively t)
+  (org-pretty-entities t)
+  (org-roam-dailies-directory pspmacs/org-journal-path)
   (org-todo-keywords
    '((sequence
       "FAIL(f)"
@@ -503,26 +512,27 @@ parent."
      ("DONT" :foreground "#ff6fcf")
      ("CANT" :foreground "#ff3fff")))
   (org-modern-block-name
-   '(("note"    . ("📋" . "⏎"))
-     ("example" . ("🥚" . "⏎"))
-     ("src"     . ("🤖" . "⏎"))
-     ("tip"     . ("💡" . "👍"))
-     ("warn"    . ("⚠" . "⏎"))
-     ("warning" . ("⚠" . "⏎"))
-     ("danger"  . ("🕱" . "⏎"))))
+   '(("note"    "📋" "⏎")
+     ("example" "🥚" "⏎")
+     ("src"     "🤖" "⏎")
+     ("tip"     "💡" "👍")
+     ("warn"    "⚠" "⏎")
+     ("warning" "⚠" "⏎")
+     ("danger"  "🕱" "⏎")))
   (org-modern-keyword
-   '(("setupfile" . "🛒")
-     ("author" . "🖋")
-     ("email" . "✉")
-     ("language" . "🗣")
-     ("options" . "🔘")
-     ("property" . "⚙")
-     ("results" . "📜")
-     ("startup" . "")
-     ("html_head" . "")
+   '(("setupfile"   . "🛒")
+     ("author"      . "🖋")
+     ("email"       . "✉")
+     ("language"    . "🗣")
+     ("options"     . "🔘")
+     ("property"    . "⚙")
+     ("results"     . "📜")
+     ("startup"     . "")
+     ("html_head"   . "")
      ("attr_latex:" . "🖺")
-     ("title" . "§")
+     ("title"       . "§")
      ("auto_tangle" . "🤖🔗")
+     ("html"        . "")
      (t . t)))
   (org-modern-checkbox
    '((88 . "✔")
