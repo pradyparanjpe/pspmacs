@@ -28,7 +28,7 @@
   "Width of `pspmacs/startpage-banner-image' in pixels
 
 is set as this factor times frame width in columns"
-  :type 'integer
+  :type 'float
   :group 'startpage)
 
 (defcustom pspmacs/startpage-banner-ascii
@@ -132,7 +132,7 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
   :group 'startpage)
 
 (defface pspmacs/startpage-load-time-face
-  '((t (:foreground "#bfdfff" :background "#002040" :italic t)))
+  '((t (:inherit italic :foreground "#bfdfff" :background "#002040")))
   "Load-time information face"
   :group 'startpage)
 
