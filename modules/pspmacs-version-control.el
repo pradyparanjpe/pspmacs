@@ -1,4 +1,4 @@
-;;; pspmacs-version-control.el --- git it -*- lexical-binding: t; -*-
+﻿;;; pspmacs-version-control.el --- git it -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -48,7 +48,11 @@
   :custom
   (magit-display-buffer-function
    #'magit-display-buffer-same-window-except-diff-v1)
-  (magit-log-arguments '("--graph" "--decorate" "--color")))
+  (magit-log-arguments '("--graph" "--decorate" "--color"))
+  :hook
+  ((git-commit-setup . bug-reference-mode)
+   (git-commit-setup . (lambda () (setq-local fill-column 50)))
+   (git-commit-setup . display-fill-column-indicator-mode)))
 ;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
 
 (use-package diff-hl

@@ -240,8 +240,7 @@
 (use-package display-fill-column-indicator
   :demand t
   :hook
-  ((prog-mode . display-fill-column-indicator-mode)
-   (org-mode . display-fill-column-indicator-mode))
+  (prog-mode . display-fill-column-indicator-mode)
   :init
   (customize-set-variable 'fill-column 80))
 

@@ -602,6 +602,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
        ("CANT" :foreground "#ff3fff")))
     (org-modern-block-name
      '(("note"    "📋" "⏎")
+       ("quote"   "🗣"   "🙊")
        ("example" "🥚" "⏎")
        ("src"     "🤖" "⏎")
        ("tip"     "💡" "👍")

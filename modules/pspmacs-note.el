@@ -513,6 +513,7 @@ parent."
      ("CANT" :foreground "#ff3fff")))
   (org-modern-block-name
    '(("note"    "📋" "⏎")
+     ("quote"   "🗣"   "🙊")
      ("example" "🥚" "⏎")
      ("src"     "🤖" "⏎")
      ("tip"     "💡" "👍")
