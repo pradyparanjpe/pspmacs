@@ -24,19 +24,17 @@
 
 (use-package projectile
   :custom
-  ;; Do not include straight repos (emacs packages) to project list
   (projectile-ignored-project-function
    (lambda (project-root)
-     (string-prefix-p
-      (expand-file-name "straight/" user-emacs-directory) project-root)))
+     (string-prefix-p pspmacs/packaging-directory project-root)))
   (projectile-switch-project-action 'projectile-commander)
   (projectile-project-root-files
    '(".envrc" ".projectile" "project.clj" "deps.edn"))
   (projectile-known-projects-file
-    (expand-file-name "projectile-bookmarks.tld" xdg/emacs-cache-directory))
+   (expand-file-name "projectile-bookmarks.tld" xdg/emacs-cache-directory))
   (projectile-commander-methods nil)
-  (projectile-cache-file (expand-file-name "projectile.cache"
-                                           xdg/emacs-cache-directory))
+  (projectile-cache-file
+   (expand-file-name "projectile.cache" xdg/emacs-cache-directory))
 
   :config
   (defadvice projectile-project-root (around ignore-remote first activate)
@@ -45,32 +43,36 @@
 
   ;; projectile commander methods
   (def-projectile-commander-method ??
-    "Commander help buffer."
-    (ignore-errors (kill-buffer projectile-commander-help-buffer))
-    (with-current-buffer
-    (get-buffer-create projectile-commander-help-buffer)
-  (insert "Projectile Commander Methods:\n\n")
-  (dolist (met projectile-commander-methods)
-    (insert (format "%c:\t%s\n" (car met) (cadr met))))
-  (goto-char (point-min))
-  (help-mode)
-  (display-buffer (current-buffer) t))
-    (projectile-commander))
+                                   "Commander help buffer."
+                                   (ignore-errors
+                                     (kill-buffer
+                                      projectile-commander-help-buffer))
+                                   (with-current-buffer
+                                       (get-buffer-create
+                                        projectile-commander-help-buffer)
+                                     (insert "Projectile Commander Methods:\n\n")
+                                     (dolist (met projectile-commander-methods)
+                                       (insert (format "%c:\t%s\n" (car met)
+                                                       (cadr met))))
+                                     (goto-char (point-min))
+                                     (help-mode)
+                                     (display-buffer (current-buffer) t))
+                                   (projectile-commander))
   (def-projectile-commander-method ?t
-    "Open a *shell* buffer for the project."
-    (projectile-run-vterm))
+                                   "Open a *shell* buffer for the project."
+                                   (projectile-run-vterm))
   (def-projectile-commander-method ?\C-? ;; backspace
-    "Go back to project selection."
-    (projectile-switch-project))
+                                   "Go back to project selection."
+                                   (projectile-switch-project))
   (def-projectile-commander-method ?d
-    "Open project root in dired."
-    (projectile-dired))
+                                   "Open project root in dired."
+                                   (projectile-dired))
   (def-projectile-commander-method ?f
-    "Find file in project."
-    (projectile-find-file))
+                                   "Find file in project."
+                                   (projectile-find-file))
   (def-projectile-commander-method ?g
-    "Git status in project."
-    (projectile-vc)))
+                                   "Git status in project."
+                                   (projectile-vc)))
 
 (use-package dired
   :ensure nil

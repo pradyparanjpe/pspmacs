@@ -38,10 +38,11 @@ We want packages to be cloned/downloaded locally.
 #+end_src
 
 ** Package system
-- Load the package-system (=straight.el= or =package.el=).
-  This file is maintained separately.
+- Load the built-in package-system.
+  Optionally, by customizing =pspmacs/packaging-directory= to a different location already in [[file:../early/config.el][early config]], other packaging systems such as  [[https://github.com/radian-software/straight.el][straight.el]] may be bootstrapped in a file name =<pspmacs/packaging-directory>/bootstrap.el=
+  The file for bootstrapping the packaging system is maintained separately.
 #+begin_src emacs-lisp :tangle  package-management.el
-  (load (expand-file-name "bootstrap-builtin.el" pspmacs/packaging-directory)
+  (load (expand-file-name "bootstrap.el" pspmacs/packaging-directory)
         nil 'nomessage)
   (pspmacs/init-package-manager)
 #+end_src

@@ -1,16 +1,12 @@
-;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
+﻿;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 
 (defvar pvt-emacs-dir
-  (condition-case err
-      (file-name-as-directory
-       (if (getenv "PVT_EMACS_HOME")
-           (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
+  (condition-case err (file-name-as-directory
+                       (if (getenv "PVT_EMACS_HOME")
+                           (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
     ((error)
-     (progn
-       (if (string= (format "%s" err)
-                    "(wrong-type-argument stringp nil)")
-           nil
-         (throw 'uncaught err)))))
+     (unless (string= (format "%s" err) "(wrong-type-argument stringp nil)")
+       (throw 'uncaught err))))
   "Private version controlled
 
 privately synchronized configuration directory")

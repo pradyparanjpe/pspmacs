@@ -75,6 +75,9 @@
               (switch-to-buffer (other-buffer (current-buffer) 1)))
             :which-key "last buff"))
 
+  ;; Clear
+  (pspmacs/leader-keys
+    "-" '(:ignore t :wk "Clear"))
 
   ;; Updates
   (pspmacs/leader-keys

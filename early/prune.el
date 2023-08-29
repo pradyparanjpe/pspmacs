@@ -1,4 +1,4 @@
-;;; early/prune.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
+﻿;;; early/prune.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 
 (customize-set-variable 'gc-cons-threshold most-positive-fixnum)
 (customize-set-variable 'gc-cons-percentage 0.6)
@@ -15,13 +15,8 @@
 (customize-set-variable 'byte-compile-warnings
                         '(not free-vars unresolved noruntime lexical make-local))
 
-(dolist
-    (prune-mode
-     '(menu-bar-mode
-       tool-bar-mode
-       scroll-bar-mode
-       blink-cursor-mode)
-     nil)
+(dolist (prune-mode
+         '(menu-bar-mode tool-bar-mode scroll-bar-mode blink-cursor-mode) nil)
   (if (fboundp prune-mode) (funcall prune-mode -1)))
 
 (customize-set-variable 'load-prefer-newer t)

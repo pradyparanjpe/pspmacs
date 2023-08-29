@@ -1,4 +1,4 @@
-;;; late/package-management.el --- initiate package manager -*- lexical-binding: t; -*-
+﻿;;; late/package-management.el --- initiate package manager -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -24,7 +24,7 @@
 (customize-set-variable 'package-user-dir
                         (expand-file-name "packages" local-emacs-dir))
 
-(load (expand-file-name "bootstrap-builtin.el" pspmacs/packaging-directory)
+(load (expand-file-name "bootstrap.el" pspmacs/packaging-directory)
       nil 'nomessage)
 (pspmacs/init-package-manager)
 

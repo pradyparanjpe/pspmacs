@@ -19,7 +19,12 @@
 #+end_src
 
 ** package management
-- We may decide to use =straight.el=. For that to work, Emacs's internal ~package~ shouldn't load early.
+- After GNU/Emacs v29, =use-package= built-in.
+  An add-on '[[https://github.com/slotThe/vc-use-package][vc-use-package]]' extends use-package to install packages from version-control repository.
+  A future release of Emacs [[https://git.savannah.gnu.org/cgit/emacs.git/commit/?id=2ce279680bf9c1964e98e2aa48a03d6675c386fe][shall]] contain this add-on as a built-in.
+  Hence, [[https://github.com/radian-software/straight.el][straight.el]] has become unnecessary.
+  Following code was added to allow hold back built-in package-manager allowing =straight.el=.
+  Nevertheless, they are maintained for better control by [[file:../packaging/bootstrap.org][package-system-bootstrap]].
 #+begin_src emacs-lisp :tangle prune.el
   (customize-set-variable 'package-enable-at-startup nil)
   (customize-set-variable 'package-quickstart nil)
@@ -40,13 +45,8 @@
 ** UI configuration
 - Remove some unnecessary UI elements temporarily
 #+begin_src emacs-lisp :tangle prune.el
-  (dolist
-      (prune-mode
-       '(menu-bar-mode
-         tool-bar-mode
-         scroll-bar-mode
-         blink-cursor-mode)
-       nil)
+  (dolist (prune-mode
+           '(menu-bar-mode tool-bar-mode scroll-bar-mode blink-cursor-mode) nil)
     (if (fboundp prune-mode) (funcall prune-mode -1)))
 #+end_src
 
@@ -68,16 +68,12 @@
 If envrionment variables are not set, ignore
 #+begin_src emacs-lisp :tangle definitions.el
   (defvar pvt-emacs-dir
-    (condition-case err
-        (file-name-as-directory
-         (if (getenv "PVT_EMACS_HOME")
-             (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
+    (condition-case err (file-name-as-directory
+                         (if (getenv "PVT_EMACS_HOME")
+                             (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
       ((error)
-       (progn
-         (if (string= (format "%s" err)
-                      "(wrong-type-argument stringp nil)")
-             nil
-           (throw 'uncaught err)))))
+       (unless (string= (format "%s" err) "(wrong-type-argument stringp nil)")
+         (throw 'uncaught err))))
     "Private version controlled
 
   privately synchronized configuration directory")

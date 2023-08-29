@@ -1,4 +1,4 @@
-;;; bootstrap-builtin.el --- package.el package manager -*- lexical-binding: t; -*-
+﻿;;; bootstrap.el --- bootstrap package manager -*- lexical-binding: t; -*-
 
 ;; package configuration
 ;; Code:
@@ -49,12 +49,11 @@ vc-use-package is included in Emacs 30"
     (require 'vc-use-package)))
 
 (defun pspmacs/init-package-manager ()
-  "Initialize `package.el' as the package manager"
+  "Initialize /=package.el/= as the package manager"
   ;; package should store data locally.
   (customize-set-variable 'package-user-dir
                           (expand-file-name "packages" local-emacs-dir))
   (unless (file-exists-p package-user-dir) (mkdir package-user-dir t))
-
   ;; Paranoia
   ;; (add-to-list 'package-archives
   ;;              '("stable" . "https://stable.melpa.org/packages/"))
@@ -62,7 +61,6 @@ vc-use-package is included in Emacs 30"
 
   ;; Additional package archives
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
   (customize-set-variable 'package-archive-priorities
                           '(("gnu"    . 99)
                             ("nongnu" . 80)
@@ -70,9 +68,9 @@ vc-use-package is included in Emacs 30"
 
   (package-initialize)
   (unless (pspmacs/archives-refreshed-recently-p)
-    (message "Refreshing package archives...")
+    (message "Refreshing package archives…")
     (package-refresh-contents))
   (pspmacs/init-use-package))
 
 (pspmacs/load-inherit)
-;;; bootstrap-builtin.el ends here
+;;; bootstrap.el ends here
