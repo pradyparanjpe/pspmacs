@@ -1,4 +1,4 @@
-;;; javascript.el --- javascript ide -*- lexical-binding: t; -*-
+﻿;;; javascript.el --- javascript ide -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -28,7 +28,8 @@
 Else, offer to trigger initialize."
   (interactive)
   (catch 'abort
-    (let ((default-directory (or projectile-project-root default-directory)))
+    (let ((default-directory
+           (or (project-root (project-current)) default-directory)))
       (when (not (file-exists-p default-directory))
         (if (y-or-n-p
              (format "Directory %s doesn't exist. Create?" default-directory))
@@ -51,7 +52,8 @@ Else, offer to trigger initialize."
 Else, offer to trigger initialize."
   (interactive)
   (catch 'abort
-    (let ((default-directory (or projectile-project-root default-directory)))
+    (let ((default-directory
+           (or (project-root (project-current)) default-directory)))
       (when (not (or (file-exists-p "webpack.config.js")
                      (file-exists-p "src/")))
         (if (y-or-n-p "Webpack not yet initialized. Init?")
@@ -84,19 +86,24 @@ Else, offer to trigger initialize."
     (add-hook
      (intern (format "%s-mode-hook" (symbol-name webmode)))
      (lambda ()
-       (let ((default-directory (or projectile-project-root default-directory)))
+       (let ((default-directory
+              (or (project-root (project-current)) default-directory)))
          (unless (file-exists "tsconfig.json")
            (pspmacs/ensure-tsconfig))))
      nil t))
-  ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
-  ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+  ;; we choose this instead of tsx-mode so that
+  ;; eglot can automatically figure out language for server
+  ;; see https://github.com/joaotavora/eglot/issues/624 and
+  ;; https://github.com/joaotavora/eglot#handling-quirky-servers
   (define-derived-mode typescriptreact-mode typescript-mode "TypeScript TSX")
 
   ;; use our derived mode for tsx files
   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
   ;; by default, typescript-mode is mapped to the treesitter typescript parser
-  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+  ;; use our derived mode to map both .tsx AND
+  ;; .ts -> typescriptreact-mode -> treesitter tsx
+  (add-to-list 'tree-sitter-major-mode-language-alist
+               '(typescriptreact-mode . tsx)))
 
 (use-package tsi
   :after tree-sitter

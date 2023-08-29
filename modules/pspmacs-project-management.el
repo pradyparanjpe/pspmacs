@@ -22,58 +22,6 @@
 
 ;;; Code:
 
-(use-package projectile
-  :custom
-  (projectile-ignored-project-function
-   (lambda (project-root)
-     (string-prefix-p pspmacs/packaging-directory project-root)))
-  (projectile-switch-project-action 'projectile-commander)
-  (projectile-project-root-files
-   '(".envrc" ".projectile" "project.clj" "deps.edn"))
-  (projectile-known-projects-file
-   (expand-file-name "projectile-bookmarks.tld" xdg/emacs-cache-directory))
-  (projectile-commander-methods nil)
-  (projectile-cache-file
-   (expand-file-name "projectile.cache" xdg/emacs-cache-directory))
-
-  :config
-  (defadvice projectile-project-root (around ignore-remote first activate)
-    (unless (file-remote-p default-directory) ad-do-it))
-  (projectile-mode)
-
-  ;; projectile commander methods
-  (def-projectile-commander-method ??
-                                   "Commander help buffer."
-                                   (ignore-errors
-                                     (kill-buffer
-                                      projectile-commander-help-buffer))
-                                   (with-current-buffer
-                                       (get-buffer-create
-                                        projectile-commander-help-buffer)
-                                     (insert "Projectile Commander Methods:\n\n")
-                                     (dolist (met projectile-commander-methods)
-                                       (insert (format "%c:\t%s\n" (car met)
-                                                       (cadr met))))
-                                     (goto-char (point-min))
-                                     (help-mode)
-                                     (display-buffer (current-buffer) t))
-                                   (projectile-commander))
-  (def-projectile-commander-method ?t
-                                   "Open a *shell* buffer for the project."
-                                   (projectile-run-vterm))
-  (def-projectile-commander-method ?\C-? ;; backspace
-                                   "Go back to project selection."
-                                   (projectile-switch-project))
-  (def-projectile-commander-method ?d
-                                   "Open project root in dired."
-                                   (projectile-dired))
-  (def-projectile-commander-method ?f
-                                   "Find file in project."
-                                   (projectile-find-file))
-  (def-projectile-commander-method ?g
-                                   "Git status in project."
-                                   (projectile-vc)))
-
 (use-package dired
   :ensure nil
   :general
@@ -200,6 +148,18 @@
   :init
   (mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
   (mkdir (expand-file-name "auto-saves" xdg/emacs-state-directory) t)
+  (pspmacs/extend-list 'project-vc-extra-root-markers
+                       '(
+                         ;; projectile
+                         ".project.el" ".projectile" "project.clj"
+                         ;; GNU/gcc makefile
+                         "autogen.sh" "Makefile"
+                         ;; python
+                         "setup.py" "setup.cfg"
+                         ;; cargo
+                         "Cargo.toml"
+                         ".envrc"
+                         ))
   :custom
   (dired-listing-switches "-lah")
   (backup-directory-alist

@@ -91,11 +91,10 @@
    consult--source-recent-file consult--source-project-recent-file
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
-  (autoload 'projectile-project-root "projectile")
   (add-to-list 'consult-buffer-filter "\\`\\*epc con [0-9]+\\*\\'")
   :custom
-  (consult-narrow-key "<") ;; "C-+"
-  (consult-project-root-function #'projectile-project-root))
+  ;; "C-+"
+  (consult-narrow-key "<"))
 
 (use-package wgrep)
 

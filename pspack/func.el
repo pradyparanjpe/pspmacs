@@ -231,11 +231,6 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
        `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
        `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))))))
 
-(defun pspmacs/projectile-find-file-all ()
-  (interactive)
-  (let ((projectile-git-command "git ls-files -zco"))
-(projectile-find-file)))
-
 (defun pspmacs/orderless-dispatch-flex-first (_pattern index _total)
   (and (eq index 0) 'orderless-flex))
 

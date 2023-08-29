@@ -525,14 +525,6 @@ Key-bindings to:
          `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))))))
 #+end_src
 
-* Find files in project
-#+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/projectile-find-file-all ()
-    (interactive)
-    (let ((projectile-git-command "git ls-files -zco"))
-  (projectile-find-file)))
-#+end_src
-
 * Use corfu as completion
 - as directed by corfu wiki
 #+begin_src emacs-lisp :tangle func.el
