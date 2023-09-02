@@ -89,6 +89,22 @@
     (pspmacs/init-use-package))
 #+end_src
 
+* Auto-update packages
+Auto-update packages.
+#+begin_src emacs-lisp
+  (use-package auto-package-update
+    :custom
+    (auto-package-update-delete-old-versions t)
+    (auto-package-update-hide-results t)
+    (auto-package-update-prompt-before-update t)
+    (auto-package-update-last-update-day-filename (expand-file-name
+                                                   ".last-package-update-day"
+                                                   xdg/emacs-state-directory))
+    (auto-package-update-show-preview t)
+    :config
+    (auto-package-update-maybe))
+#+end_src
+
 * Inherit
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

@@ -72,5 +72,17 @@ vc-use-package is included in Emacs 30"
     (package-refresh-contents))
   (pspmacs/init-use-package))
 
+(use-package auto-package-update
+  :custom
+  (auto-package-update-delete-old-versions t)
+  (auto-package-update-hide-results t)
+  (auto-package-update-prompt-before-update t)
+  (auto-package-update-last-update-day-filename (expand-file-name
+                                                 ".last-package-update-day"
+                                                 xdg/emacs-state-directory))
+  (auto-package-update-show-preview t)
+  :config
+  (auto-package-update-maybe))
+
 (pspmacs/load-inherit)
 ;;; bootstrap.el ends here
