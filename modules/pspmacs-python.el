@@ -148,5 +148,13 @@ ACTION: action to perform (install, uninstall)"
   :defer t
   :hook (python-mode . yapf-mode))
 
+(use-package pydoc
+  :general
+  (pspmacs/leader-keys :keymap 'python-mode-map
+    "d"  '(:ignore t :wk "describe")
+    "d." '(pydoc-at-point :wk "this")
+    "d$" '(pydoc-browse :wk "browse")
+    "dd" '(pydoc :wk "prompt")))
+
 (pspmacs/load-inherit)
 ;;; pspmacs-python.el ends here

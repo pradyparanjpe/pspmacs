@@ -88,6 +88,10 @@
     "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
     "++" '(pspmacs/git-rebase :wk "PSPMacs Config"))
 
+  ;; debug
+  (pspmacs/leader-keys
+    "!" '(:ignore t :wk "debug"))
+
   ;;smart wrap
   (pspmacs/leader-keys
     "(" '(:ignore t :wk "smart wrap"))
@@ -214,9 +218,9 @@
     "cl" '(comment-line :wk "comment line")
     "cp" '(comment-region :wk "comment paragraph"))
 
-  ;; dired
+  ;; describe
   (pspmacs/leader-keys
-    "d" '(:ignore t :wk "debug"))
+    "d" '(:ignore t :wk "describe"))
 
   ;; errors
   (pspmacs/leader-keys

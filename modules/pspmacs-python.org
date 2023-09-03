@@ -245,6 +245,17 @@
     (py-snippets-initialize))
 #+end_src
 
+* Documentation
+#+begin_src emacs-lisp
+  (use-package pydoc
+    :general
+    (pspmacs/leader-keys :keymap 'python-mode-map
+      "d"  '(:ignore t :wk "describe")
+      "d." '(pydoc-at-point :wk "this")
+      "d$" '(pydoc-browse :wk "browse")
+      "dd" '(pydoc :wk "prompt")))
+#+end_src
+
 * Inherit from private and local
  #+begin_src emacs-lisp
 
