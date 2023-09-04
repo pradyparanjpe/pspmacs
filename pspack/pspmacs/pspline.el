@@ -323,7 +323,7 @@ Customize face with `pspmacs/pspline-buffer-modified-face'.")
   "Buffer-process.")
 
 (defun pspmacs/pspline--win-loc ()
-  "evaluated by `pspmacs/pspline-win-loc'."
+  "Evaluated by `pspmacs/pspline-win-loc'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-win-loc)
       `(,(propertize
           (eval pspmacs/pspline-win-loc-format)
@@ -339,7 +339,7 @@ Customize value with `pspmacs/pspline-win-loc-format'.
 Customize face with `pspmacs/pspline-win-loc-face'.")
 
 (defun pspmacs/pspline--cursor-position ()
-  "evaluated by `pspmacs/pspline-cursor-position'."
+  "Evaluated by `pspmacs/pspline-cursor-position'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-cursor-position)
     `(,(propertize
         (eval pspmacs/pspline-cursor-position-format)
@@ -355,7 +355,7 @@ Customize value with `pspmacs/pspline-cursor-position-format'.
 Customize face with `pspmacs/pspline-cursor-position-face'.")
 
 (defun pspmacs/pspline--evil-state ()
-  "evaluated by `pspmacs/pspline-evil-state'"
+  "Evaluated by `pspmacs/pspline-evil-state'"
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-statr)
     `(,(propertize (eval pspmacs/pspline-evil-state-format)
                    'face
@@ -474,7 +474,7 @@ Customize faces with `pspmacs/pspline-vc-main-face',
   "Version control spec. Customize faces with")
 
 (defun pspmacs/pspline--time ()
-  "evaluated by `pspmacs/pspline-time'."
+  "Evaluated by `pspmacs/pspline-time'."
   (if (pspmacs/pspline--display-segment 'pspmacs/pspline-time)
       `(
         ,(propertize
@@ -514,8 +514,10 @@ PERC > 101 is interpreted as *charging*"
       (color-rgb-to-hex red green blue 2))))
 
 (defun pspmacs/pspline--battery ()
-  "evaluated by `pspmacs/pspline-battery'."
-  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-battery)
+  "Evaluated by `pspmacs/pspline-battery'."
+  (when (and (pspmacs/pspline--display-segment 'pspmacs/pspline-battery)
+             (not (equal
+                   "N/A" (cdr (assq ?p (funcall battery-status-function))))))
     (let* ((battery-info (funcall battery-status-function))
            (hours-remain (concat (cdr (assq ?t battery-info)) "h"))
            (bat-perc (cdr (assq ?p battery-info)))
@@ -528,8 +530,7 @@ PERC > 101 is interpreted as *charging*"
            (bat-string (concat bat-icon
                                (if (string= pspmacs/pspline--show-string "time")
                                    hours-remain
-                                 (format "%s%%" bat-perc-string))
-                               ))
+                                 (format "%s%%" bat-perc-string))))
            (tooltip-string (if (string= pspmacs/pspline--show-string "time")
                                bat-perc-string
                              hours-remain)))

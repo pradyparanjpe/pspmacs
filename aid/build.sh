@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env sh
+#!/usr/bin/env sh
 # -*- coding:utf-8; mode: shell-script; -*-
 #
 # Copyright 2020-2023 Pradyumna Paranjape
@@ -42,7 +42,7 @@ if [ -d ".git" ] && [ -f "configure.ac" ] && [ -f "autogen.sh" ]; then
         --with-gif --with-jpeg --with-png --with-rsvg --with-tiff --with-xft \
         --with-xpm --with-gpm=no --with-modules --with-harfbuzz --with-cairo \
         --with-json --with-native-compilation --with-pgtk --with-mailutils \
-        --with-gnutls --with-tree-sitter"
+        --with-gnutls --with-tree-sitter --with-webp"
 
     # shellcheck disable=SC2034
     clean_cmd="make -j \"\$(nproc)\" clean"
