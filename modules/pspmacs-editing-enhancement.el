@@ -127,7 +127,7 @@
 (use-package smartparens
   :general
   (pspmacs/leader-keys
-    "(" '(:ignore t :wk "smart wrap")
+    "(" '(:ignore t :wk "[ ]")
     "( <backspace>" '(sp-unwrap-sexp :wk "wrap unwrap"))
 
   :custom

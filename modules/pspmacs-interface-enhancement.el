@@ -73,7 +73,7 @@
     "TAB" '((lambda ()
               (interactive)
               (switch-to-buffer (other-buffer (current-buffer) 1)))
-            :which-key "last buff"))
+            :wk "last buff"))
 
   ;; Clear
   (pspmacs/leader-keys
@@ -94,18 +94,18 @@
 
   ;;smart wrap
   (pspmacs/leader-keys
-    "(" '(:ignore t :wk "smart wrap"))
+    "(" '(:ignore t :wk "[ ]"))
 
   ;; Hard Indentation
   (pspmacs/leader-keys
-    ">" '(:ignore t :wk "indent")
-    "> TAB" '(indent-rigidly-right-to-tab-stop :wk "tab right")
-    "> <backtab>" '(indent-rigidly-left-to-tab-stop :wk "tab left")
+    ">" '(:ignore t :wk "———→")
+    "> TAB" '(indent-rigidly-right-to-tab-stop :wk "→→→")
+    "> <backtab>" '(indent-rigidly-left-to-tab-stop :wk "←←←")
     "> >" '(indent-rigidly :wk "manually"))
 
   ;; terminal
   (pspmacs/leader-keys
-    "'" '(:ignore t :wk "terminal"))
+    "'" '(:ignore t :wk "shell"))
 
   ;; Eval expressions, lisp symbols
   (pspmacs/leader-keys
@@ -121,7 +121,7 @@
 
   ;; UTF-8
   (pspmacs/leader-keys
-    "8" '(insert-char :wk "UTF-8 char"))
+    "8" '(insert-char :wk "UTF-8"))
 
   ;; AI
   (pspmacs/leader-keys
@@ -131,7 +131,7 @@
   ;; bookmark
   (pspmacs/leader-keys
     "B" '(:ignore t :wk "Bookmark")
-    "Bd" '(bookmark-delete :wk "delete")
+    "Bd" '(bookmark-delete :wk "del")
     "Bj" '(bookmark-jump :wk "jump")
     "Bl" '(list-bookmarks :wk "list"))
 
@@ -178,23 +178,22 @@
     "b TAB" '((lambda ()
                 (interactive)
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
-              :wk "toggle")
-    "b-" '(pspmacs/switch-to-minibuffer :wk "minibuffer")
-    "bd" '(kill-this-buffer :wk "kill this")
+              :wk "🔀")
+    "b-" '(pspmacs/switch-to-minibuffer :wk "▭")
+    "bd" '(kill-this-buffer :wk "😵")
     "bm" '((lambda () (interactive)
              (switch-to-buffer (get-buffer-create messages-buffer-name)))
-           :wk "messages")
-    "bn" '(next-buffer :wk "next")
-    "bp" '(previous-buffer :wk "previous")
+           :wk "💬")
+    "bn" '(next-buffer :wk "→")
+    "bp" '(previous-buffer :wk "←")
 
-    "br" '(revert-buffer :wk "reload")
+    "br" '(revert-buffer :wk "🔁")
 
-    "bw" '(read-only-mode :wk "read-only")
-    "b C-d" '(pspmacs/kill-other-buffers :wk "delete others")
+    "bw" '(read-only-mode :wk "👁🖉")
+    "b C-d" '(pspmacs/kill-other-buffers :wk "del rest")
 
     ;; scratch
-
-    "bs" '(:ignore t :wk "scratch")
+    "bs"  '(:ignore t :wk "🗒")
     "bsc" '(:ignore t :wk "config")
     "bsm" '(:ignore t :wk "markup")
     "bsp" '(:ignore t :wk "prog")
@@ -233,7 +232,7 @@
     "fD" '((lambda ()
              (interactive)
              (delete-file (buffer-file-name)))
-           :wk "delete File")
+           :wk "delete")
     "fR" '(rename-file :wk "rename")
     "fs" '(save-buffer :wk "save file")
     "fS" '(write-file :wk "save as")
@@ -314,10 +313,10 @@
   ;; Window
   (pspmacs/leader-keys
     "w" '(:ignore t :which-key "window")
-    "w TAB" '(other-window :wk "focus other")
+    "w TAB" '(other-window :wk "◎ that")
     "w=" '(balance-windows-area :wk "balance")
-    "wD" '(kill-buffer-and-window :wk "delete, & buffer")
-    "w C-d" '(delete-other-windows :wk "delete other"))
+    "wD" '(kill-buffer-and-window :wk "& buf: del")
+    "w C-d" '(delete-other-windows :wk "del rest"))
 
   ;; Scratch buffers and mode-toggles
   (let* ((mode-toggle-binding nil)
@@ -345,7 +344,7 @@
   :demand t)
 
 (pspmacs/leader-keys
-  "bh" '(pspmacs/startpage-show :which-key "start page"))
+  "bh" '(pspmacs/startpage-show :which-key "🏠"))
 
 (use-package helpful
   :after evil
@@ -371,19 +370,19 @@
   :general
   ;; window navigations
   (pspmacs/leader-keys
-    "wd" '(evil-window-delete :wk "delete")
-    "wH" '(evil-window-move-far-left :wk "move left")
-    "wh" '(evil-window-left :wk "focus left")
-    "wJ" '(evil-window-move-very-bottom :wk "move down")
-    "wj" '(evil-window-down :wk "focus down")
-    "wK" '(evil-window-move-very-top :wk "move up")
-    "wk" '(evil-window-up :wk "focus up")
-    "wL" '(evil-window-move-far-right :wk "move right")
-    "wl" '(evil-window-right :wk "focus right")
-    "wn" '(evil-window-next :wk "focus next")
-    "wp" '(evil-window-prev :wk "focus previous")
-    "ws" '(evil-window-split :wk "split horizontally")
-    "wv" '(evil-window-vsplit :wk "split vertically"))
+    "wd" '(evil-window-delete :wk "😵")
+    "wH" '(evil-window-move-far-left :wk "←←←")
+    "wh" '(evil-window-left :wk "◎ ←")
+    "wJ" '(evil-window-move-very-bottom :wk "↓↓↓")
+    "wj" '(evil-window-down :wk "◎ ↓")
+    "wK" '(evil-window-move-very-top :wk "↑↑↑")
+    "wk" '(evil-window-up :wk "◎ ↑")
+    "wL" '(evil-window-move-far-right :wk "→→→")
+    "wl" '(evil-window-right :wk "◎ →")
+    "wn" '(evil-window-next :wk "◎ next")
+    "wp" '(evil-window-prev :wk "◎ prev")
+    "ws" '(evil-window-split :wk "-split-")
+    "wv" '(evil-window-vsplit :wk "spl|it"))
   (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
   (general-define-key :keymaps 'evil-insert-state-map "C-k" nil)
   :demand t

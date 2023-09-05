@@ -56,13 +56,13 @@
   :commands (consult-ripgrep)
   :general
   (pspmacs/leader-keys
-    "/" '(consult-ripgrep :wk "find: proj")
+    "/" '(consult-ripgrep :wk "🔍📁")
     "*" '((lambda ()
             (interactive)
             (consult-ripgrep nil (thing-at-point 'symbol)))
           :wk "/'THIS'")
     "Br" '(consult-bookmark :wk "remember")
-    "bb" '(consult-buffer :wk "menu")
+    "bb" '(consult-buffer :wk "𑂼")
     "el" '(consult-flymake :wk "list")
     "fc" '(consult-find :wk "consult")
     "fr" '(consult-recent-file :wk "recent")
