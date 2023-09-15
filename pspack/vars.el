@@ -232,4 +232,10 @@
   :group 'pspack
   :type '(hook :tag "Serve or run project"))
 
+(defcustom pspmacs/duc-watches-list
+  `(,(file-name-as-directory (getenv "HOME")))
+  "List of locations to be auto-indexed by duc"
+  :group 'pspack
+  :type '(repeat directory))
+
 ;;; vars.el ends there

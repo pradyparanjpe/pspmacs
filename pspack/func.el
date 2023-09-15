@@ -560,4 +560,8 @@ VAR must be quoted"
   (interactive)
   (pspmacs/toggle 'org-hide-emphasis-markers))
 
+(defun pspmacs/index-duc ()
+  (dolist (watch pspmacs/duc-watches-list nil)
+    (start-process "duc" nil "duc" "index" watch)))
+
 ;;; func.el ends there

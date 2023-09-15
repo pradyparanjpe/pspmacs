@@ -129,11 +129,7 @@
   :init
   ;; indexing audit
   (when (executable-find "duc")
-    (run-with-timer
-      0
-      3600
-      (defun index-duc ()
-        (start-process "duc" nil "duc" "index" (getenv "HOME")))))
+    (run-with-timer 0 3600 'pspmacs/index-duc))
   :custom
   (dired-du-size-format t)
   :config

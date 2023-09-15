@@ -1008,6 +1008,22 @@ A thin wrapper around macro [[*Toggle emphasis markers][pspmacs/toggle]]
     (pspmacs/toggle 'org-hide-emphasis-markers))
 #+end_src
 
+* Disk usage
+[[https://github.com/zevv/duc][duc]] maintains a list of disk usage index.
+Integrate with =dired= to display directory sizes.
+#+begin_src emacs-lisp :tangle vars.el
+  (defcustom pspmacs/duc-watches-list
+    `(,(file-name-as-directory (getenv "HOME")))
+    "List of locations to be auto-indexed by duc"
+    :group 'pspack
+    :type '(repeat directory))
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/index-duc ()
+    (dolist (watch pspmacs/duc-watches-list nil)
+      (start-process "duc" nil "duc" "index" watch)))
+#+end_src
 * Footers
 #+begin_src emacs-lisp :tangle vars.el
   ;;; vars.el ends there
