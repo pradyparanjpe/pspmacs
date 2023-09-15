@@ -83,6 +83,7 @@ org-persist/
 auto-save-list/
 
 # package.el cache
+elpa
 elpa/
 packages/
 url/

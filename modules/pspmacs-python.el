@@ -23,6 +23,7 @@
 ;;; Code:
 
 (use-package python-mode
+  :after smartparens
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
   :general
@@ -36,55 +37,28 @@
     "gz" nil
     "C-j" nil)
   :init
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-                 '(python-mode . ("pyright-langserver" "--stdio"))))
+  ;; (with-eval-after-load 'eglot
+    ;; (add-to-list 'eglot-server-programs
+                 ;; '(python-mode . ("pyright-langserver" "--stdio"))))
   :custom
   (python-indent-offset 4)
-
-  :config
-  (eval-after-load 'smartparens
-    (progn
-      (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
-      (sp-local-pair 'python-mode "'''" "'''")
-      (sp-local-pair 'python-mode "__" "__")))
+  ;; Global python-lsp-server configuration
+  (eglot-workspace-configuration
+    `(:pylsp .
+        (:plugins
+         (:jedi_completion (:fuzzy t)
+                           :jedi (:environment ,venv-directory)
+                           :rope (:enabled t)
+                           :pyflakes (:enabled t)
+                           :mccabe (:enabled t)
+                           :pycodestyle (:enabled t)
+                           :pydocstyle (:enabled t :convention "google")
+                           :yapf (:enabled t)
+                           :flake8 (:enabled nil)))))
   :hook
   ((python-mode . pspmacs/prefer-interpreter-ipython)
    (python-mode . pspmacs/prettify-python)
    (python-mode . pspmacs/pyfaces)))
-
-(defun pyrightconfig-write (virtualenv)
-  "Taken from https://robbmann.io/posts/emacs-eglot-pyrightconfig/"
-  (interactive "DEnv: ")
-  (let* (;; file-truename and tramp-file-local-name ensure that neither `~'
-         ;; nor the Tramp prefix (e.g. "/ssh:my-host:") wind up in the final
-         ;; absolute directory path.
-         (venv-dir (tramp-file-local-name (file-truename virtualenv)))
-
-         ;; Given something like /path/to/.venv/,
-         ;; this strips off the trailing `/'.
-         (venv-file-name (directory-file-name venv-dir))
-
-         ;; Naming convention for venvPath matches the field
-         ;; for pyrightconfig.json. `file-name-directory' gets us
-         ;; the parent path (one above .venv).
-         (venvPath (file-name-directory venv-file-name))
-
-         ;; Grabs just the `.venv' off the end of the venv-file-name.
-         (venv (file-name-base venv-file-name))
-
-         ;; Eglot demands that `pyrightconfig.json'
-         ;; is in the project root folder.
-         (base-dir (vc-git-root default-directory))
-         (out-file (expand-file-name "pyrightconfig.json" base-dir))
-
-         ;; Finally, get a string with the JSON payload.
-         (out-contents (json-encode `(:venvPath ,venvPath :venv ,venv))))
-
-    ;; Emacs uses buffers for everything.  This creates a temp buffer,
-    ;; inserts the JSON payload, then flushes that content to final
-    ;; `pyrightconfig.json' location
-    (with-temp-file out-file (insert out-contents))))
 
 (use-package ein
   :demand t

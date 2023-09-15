@@ -30,8 +30,17 @@
 #+end_src
 
 * Base package
+** Conventions
+|------------+-------------------|
+| Category   | Convention        |
+|------------+-------------------|
+| LSP Client | Eglot             |
+| LSP Server | python-lsp-server |
+| docstring  | [[https://google.github.io/styleguide/pyguide.html][google]]            |
+|------------+-------------------|
 #+begin_src emacs-lisp
   (use-package python-mode
+    :after smartparens
     :mode ("\\.py\\'" . python-mode)
     :interpreter ("python" . python-mode)
     :general
@@ -45,18 +54,24 @@
       "gz" nil
       "C-j" nil)
     :init
-    (with-eval-after-load 'eglot
-      (add-to-list 'eglot-server-programs
-                   '(python-mode . ("pyright-langserver" "--stdio"))))
+    ;; (with-eval-after-load 'eglot
+      ;; (add-to-list 'eglot-server-programs
+                   ;; '(python-mode . ("pyright-langserver" "--stdio"))))
     :custom
     (python-indent-offset 4)
-
-    :config
-    (eval-after-load 'smartparens
-      (progn
-        (sp-local-pair 'python-mode "\"\"\"" "\"\"\"")
-        (sp-local-pair 'python-mode "'''" "'''")
-        (sp-local-pair 'python-mode "__" "__")))
+    ;; Global python-lsp-server configuration
+    (eglot-workspace-configuration
+      `(:pylsp .
+          (:plugins
+           (:jedi_completion (:fuzzy t)
+                             :jedi (:environment ,venv-directory)
+                             :rope (:enabled t)
+                             :pyflakes (:enabled t)
+                             :mccabe (:enabled t)
+                             :pycodestyle (:enabled t)
+                             :pydocstyle (:enabled t :convention "google")
+                             :yapf (:enabled t)
+                             :flake8 (:enabled nil)))))
     :hook
     ((python-mode . pspmacs/prefer-interpreter-ipython)
      (python-mode . pspmacs/prettify-python)
@@ -65,7 +80,7 @@
 
 * pyright Eglot
 [[https://robbmann.io/posts/emacs-eglot-pyrightconfig/][Robmann's blog]]
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :eval no :tangle no :export no
   (defun pyrightconfig-write (virtualenv)
     "Taken from https://robbmann.io/posts/emacs-eglot-pyrightconfig/"
     (interactive "DEnv: ")

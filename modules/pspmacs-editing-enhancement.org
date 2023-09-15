@@ -198,7 +198,14 @@ Spell-check on-the-fly
             '("(" "[" "{" "\"" "'"))))
       (eval `(pspmacs/leader-keys ,@paren-bindings)))
 
-    (sp-with-modes 'emacs-lisp-mode-map
+    (sp-with-modes 'python-mode
+      ;; multi-line strings
+      (sp-local-pair "'''" "'''" :unless '(sp-point-after-word-p))
+      (sp-local-pair "\"\"\"" "\"\"\"" :unless '(sp-point-after-word-p))
+      ;; dunder
+      (sp-local-pair "__" "__" :unless '(sp-point-after-word-p)))
+
+    (sp-with-modes 'emacs-lisp-mode
       ;; disable ', it's the quote character.
       (sp-local-pair "'" nil :actions nil)
       ;; also only use the pseudo-quote inside strings where it
@@ -230,7 +237,10 @@ Dependencies: [[https://www.gnu.org/software/diction/][Gnu style and diction]]
 #+end_src
 
 * ~manuel-uberti/flycheck-proselint
-#+begin_src emacs-lisp
+Proselint causes hang-ups with python by unnecessarily analysing the code;
+despite being hooked only to text-mode, markdown-mode, org-mode.
+So, this is disabled.
+#+begin_src emacs-lisp :tangle no
   (use-package flymake-proselint
     :hook
     (((markdown-mode text-mode org-mode) . flymake-proselint-setup)

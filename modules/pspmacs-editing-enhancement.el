@@ -149,7 +149,14 @@
           '("(" "[" "{" "\"" "'"))))
     (eval `(pspmacs/leader-keys ,@paren-bindings)))
 
-  (sp-with-modes 'emacs-lisp-mode-map
+  (sp-with-modes 'python-mode
+    ;; multi-line strings
+    (sp-local-pair "'''" "'''" :unless '(sp-point-after-word-p))
+    (sp-local-pair "\"\"\"" "\"\"\"" :unless '(sp-point-after-word-p))
+    ;; dunder
+    (sp-local-pair "__" "__" :unless '(sp-point-after-word-p)))
+
+  (sp-with-modes 'emacs-lisp-mode
     ;; disable ', it's the quote character.
     (sp-local-pair "'" nil :actions nil)
     ;; also only use the pseudo-quote inside strings where it
@@ -173,11 +180,6 @@
     "=rr" '(pspmacs/readability :wk "check region")
     "=rb" '((lambda () (interactive) (pspmacs/readability t))
             :wk "check buffer")))
-
-(use-package flymake-proselint
-  :hook
-  (((markdown-mode text-mode org-mode) . flymake-proselint-setup)
-   ((markdown-mode text-mode org-mode) . flymake-mode)))
 
 (use-package emacs
   :config
