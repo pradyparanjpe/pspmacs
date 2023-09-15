@@ -192,15 +192,16 @@ If window is the only window, it is spared"
            (buffer-list)))
     (message "Deleted all other buffers.")))
 
-(defun pspmacs/extend-list (list-var elements)
-  "Iterative form of ‘add-to-list’.
+(defun pspmacs/extend-list (list-var elements &optional append compare-fn)
+  "Iterative form of `add-to-list'.
 
-Add each element from ELEMENTS to LIST-VAR.
+Add each element from the list of ELEMENTS to LIST-VAR.
+APPEND and COMPARE-FN are passed to `add-to-list'
 Return value is the new value of LIST-VAR."
   (unless (listp elements)
     (user-error "ELEMENTS must be list"))
   (dolist (elem elements)
-    (add-to-list list-var elem))
+    (add-to-list list-var elem append compare-fn))
   (symbol-value list-var))
 
 (defun pspmacs/maj-cond-call (callback maj-modes)
