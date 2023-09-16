@@ -139,7 +139,11 @@ Integration
 
 * unix password-manager
 #+begin_src emacs-lisp
-  (use-package pass)
+  (use-package pass
+    :custom
+    (auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc.gpg" "~/.netrc"))
+    :init
+    (auth-source-pass-enable))
 #+end_src
 
 * native Emacs settings

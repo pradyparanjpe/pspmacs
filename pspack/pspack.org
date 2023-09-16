@@ -423,6 +423,7 @@ Key-bindings to:
   (defcustom pspmacs/mode-keybindings
     '((fundamental-mode . "-")
       (conf-mode . "cc")
+      (mu4e-compose-mode . "<c")
       (js-json-mode . "cj")
       (markdown-mode . "md")
       (lisp-interaction-mode . "i")
@@ -758,10 +759,15 @@ If org-tangle adds BOM, (utf signature), drop it by adding following code to =or
   - Mu and its dependencies
   - mbsync (isync) and its dependencies
 #+begin_src emacs-lisp :tangle vars.el
-  (defcustom pspmacs/set-mailbox nil
-    "Set Emacs Mailbox (Mu4e, mbsync)"
-    :group 'pspmacs
-    :type 'boolean)
+  (defcustom pspmacs/mu4e-load-path nil
+    "Set load-path to mu4e directory
+
+  Usually, the location is /usr/share/emacs/site-lisp/mu4e/
+  Only when this is set to a directory, configuration for mu4e is attempted."
+    :group 'pspack
+    :type '(choice
+            (const :tag "off" nil)
+            (directory)))
 #+end_src
 
 * Org mode scratch buffer

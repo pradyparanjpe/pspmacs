@@ -1,4 +1,4 @@
-;;; internet.el --- internet ide -*- lexical-binding: t; -*-
+﻿;;; internet.el --- internet ide -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -79,14 +79,42 @@
    (eww-after-render . karthink/reader-center-images)))
 
 (use-package org-mime
+  :ensure t
+  :commands (org-mime-confirm-when-no-multipart)
   :custom
+  (org-mime-export-options '(:section-numbers nil
+                                              :with-author nil
+                                              :with-toc nil))
   (org-mime-library 'mml))
 
-(when pspmacs/set-mailbox
+(when pspmacs/mu4e-load-path
   (use-package mu4e
-    :init
-    (setq message-send-mail-function 'smtpmail-send-it)
     :ensure nil
+    :load-path pspmacs/mu4e-load-path
+    :defer 20
+    :after evil-collection
+    :general
+    (pspmacs/leader-keys
+      "<"  '(:ignore t :wk "mail")
+      "<<" '(mu4e :wk "main")
+      "<u" '(mu4e-update-mail-and-index :wk "update")
+      "<c" '(mu4e-compose-new :wk "compose"))
+
+    (pspmacs/leader-keys
+      :keymaps '(org-mode-map mu4e-compose-mode-map)
+      ;; NEXT: add as send-mail hook
+      "<h"  '(:ignore t :wk "htmlize")
+      "<hh" '(org-mime-htmlize :wk "this"))
+
+    (pspmacs/leader-keys
+      :keymaps '(org-mode-map)
+      "<h"  '(:ignore t :wk "htmlize")
+      "<hs" '(org-mime-org-subtree-htmlize :wk "and send"))
+
+    :init
+    (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
+    (customize-set-variable 'smtpmail-servers-requiring-authorization
+                            "smtp\\.gmail\\.com")
     :custom
     (mu4e-account-alist t)
     (mu4e-enable-notifications t)
@@ -102,21 +130,35 @@
     (mu4e-maildir (expand-file-name
                    "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
     (mu4e-change-filenames-when-moving t)
-    (mu4e-update-interval (* 10 60 60))
+    (mu4e-update-interval (* 1 60 60))
     (mu4e-view-show-images t)
     (mu4e-view-show-addresses t)
     :hook
-    ((message-send . mml-secure-message-sign-pgpmime)
+    ((mu4e-compose-mode . display-fill-column-indicator-mode)
+     (message-send . mml-secure-message-sign-pgpmime)
      (message-send . org-mime-confirm-when-no-multipart)
      (org-mime-html . (lambda ()
                         (org-mime-change-element-style
                          "pre"
                          (format
                           "color: %s; background-color: %s; padding: 0.5em;"
-                          "#959a9f" "#000307")))))))
+                          "#959a9f" "#000307")))))
+    :config
+    (mu4e t)
+    (evil-collection-mu4e-setup)))
 
 (use-package emacs
   :custom
+  (mail-source-directory
+   (expand-file-name
+    "Maildir" (or (getenv "XDG_DATA_HOME")
+                  (expand-file-name ".local/share" (getenv "HOME")))))
+  (mail-default-directory (expand-file-name
+    "Maildir/drafts" (or (getenv "XDG_DATA_HOME")
+                         (expand-file-name ".local/share" (getenv "HOME")))))
+  (message-auto-save-directory (expand-file-name
+    "Maildir/drafts" (or (getenv "XDG_DATA_HOME")
+                         (expand-file-name ".local/share" (getenv "HOME")))))
   (browse-url-generic-program (or (executable-find "qutebrowser")
                                   (executable-find "firefox")
                                   (executable-find "chromium-freeworld")

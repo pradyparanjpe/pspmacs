@@ -150,6 +150,7 @@
 (defcustom pspmacs/mode-keybindings
   '((fundamental-mode . "-")
     (conf-mode . "cc")
+    (mu4e-compose-mode . "<c")
     (js-json-mode . "cj")
     (markdown-mode . "md")
     (lisp-interaction-mode . "i")
@@ -202,10 +203,15 @@
   :group 'pspmacs
   :type '(repeat directory))
 
-(defcustom pspmacs/set-mailbox nil
-  "Set Emacs Mailbox (Mu4e, mbsync)"
-  :group 'pspmacs
-  :type 'boolean)
+(defcustom pspmacs/mu4e-load-path nil
+  "Set load-path to mu4e directory
+
+Usually, the location is /usr/share/emacs/site-lisp/mu4e/
+Only when this is set to a directory, configuration for mu4e is attempted."
+  :group 'pspack
+  :type '(choice
+          (const :tag "off" nil)
+          (directory)))
 
 (defcustom pspmacs/after-code-load-hook nil
   "run after the program code file is loaded"

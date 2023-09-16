@@ -96,6 +96,10 @@
   (pspmacs/leader-keys
     "(" '(:ignore t :wk "[ ]"))
 
+  ;; mail using smtpmail and mu4e
+  (pspmacs/leader-keys
+    "<" '(:ignore t :wk "mail"))
+
   ;; Hard Indentation
   (pspmacs/leader-keys
     ">" '(:ignore t :wk "———→")
@@ -138,6 +142,15 @@
   ;; powerthesaurus
   (pspmacs/leader-keys
     "D" '(:ignore t :wk "Diction"))
+
+  (pspmacs/leader-keys
+    :keymaps 'org-mode-map
+    "M"  '(:ignore t :wk "Mode")
+    "M<" '(:ignore t :wk "mail")
+    "Mc" '(:ignore t :wk "config")
+    "Mm" '(:ignore t :wk "markup")
+    "Mp" '(:ignore t :wk "prog")
+    "Mw" '(:ignore t :wk "web"))
 
   ;; FlySpell
   (pspmacs/leader-keys
@@ -194,6 +207,7 @@
 
     ;; scratch
     "bs"  '(:ignore t :wk "🗒")
+    "bs<" '(:ignore t :wk "mail")
     "bsc" '(:ignore t :wk "config")
     "bsm" '(:ignore t :wk "markup")
     "bsp" '(:ignore t :wk "prog")

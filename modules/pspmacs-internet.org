@@ -1,3 +1,4 @@
+
 #+title: pspmacs-internet
 #+PROPERTY: header-args :tangle pspmacs-internet.el :mkdirp t :results no :eval no
 #+auto_tangle: t
@@ -94,20 +95,106 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
 ** Org mime
 #+begin_src emacs-lisp
   (use-package org-mime
+    :ensure t
+    :commands (org-mime-confirm-when-no-multipart)
     :custom
+    (org-mime-export-options '(:section-numbers nil
+                                                :with-author nil
+                                                :with-toc nil))
     (org-mime-library 'mml))
 #+end_src
 
 ** Mu
-- Depends on mu4e, isync (mbsync) and gpg
+- Depends on mu(4e), isync (mbsync) and gpg
 - This requires configuration of =mbsync= to be placed in =${XDG_CONFIG_HOME:-{HOME}/.config/mu4e/mbsyncrc}=.
 - Depending upon the number of mails, this may eat up a lot of storage space.
+
+*** Local/Private configuration
+- Configure remote and local mailbox using =~/.mbsyncrc=.
+- Install mu4e (mu).
+- Initiate mu
+  #+begin_src bash :tangle no
+    $ mu init --my-address <username>@<work-mailbox>.org --my-address <username>@<personal-mailbox>.com --maildir ~/.local/share/Mail
+       #+end_src
+
+- Add mu4e contexts in either of =pvt-emacs-dir= or =local-emacs-dir=.
+  #+begin_src emacs-lisp :tangle no
+    (customize-set-variable
+      'mu4e-contexts
+      (list
+       (make-mu4e-context
+        :name "Work"
+        :enter-func (lambda () (mu4e-message "Entering Work mail"))
+        :leave-func (lambda () (mu4e-message "Leaving Work mail"))
+        :match-func
+        (lambda (msg)
+          (when msg
+            (string-prefix-p "/Work" (mu4e-message-field msg :maildir))))
+        :vars '((user-mail-address . "<username>@<work-mailbox>.org")
+                (user-full-name    . "<Firstname Surname>")
+                (mu4e-drafts-folder  . "/Work/DRAFTS")
+                (mu4e-refile-folder  . "/Work/ARCHIVE")
+                (mu4e-sent-folder  . "/Work/SENT")
+                (mu4e-trash-folder  . "/Work/TRASH")))
+       (make-mu4e-context
+        :name "Personal"
+        :enter-func (lambda () (mu4e-message "Entering Personal mail"))
+        :leave-func (lambda () (mu4e-message "Leaving Personla mail"))
+        :match-func
+        (lambda (msg)
+          (when msg
+            (string-prefix-p "/Personal" (mu4e-message-field msg :maildir))))
+        :vars '((user-mail-address . "<username>@<personal-mailbox>.com")
+                (user-full-name    . "<Firstname>")
+                (mu4e-drafts-folder  . "/Personal/DRAFTS")
+                (mu4e-refile-folder  . "/Personal/ARCHIVE")
+                (mu4e-sent-folder  . "/Personal/SENT")
+                (mu4e-trash-folder  . "/Personal/TRASH")))))
+#+end_src
+
+#+begin_note
+/Personal/ and /Work/ are configured mail directory sub-directories in mbsyncrc.
+#+end_note
+
+- Reference:
+  - Videos Playlist: [[https://www.youtube.com/watch?v=yZRyEhi4y44&list=PLEoMzSkcN8oM-kA19xOQc8s0gr0PpFGJQ][System Crafters]]
+  - Repository: [[https://github.com/daviwil/emacs-from-scratch][emacs-from-scratch]]
+
+- Set path to =pspmacs/mu4e-load-path= in =local-emacs-dir/early/config.el=.
+  #+begin_src emacs-lisp :tangle no
+    (customize-set-variable 'pspmacs/mu4e-load-path "/usr/share/emacs/site-lisp/mu4e/")
+    #+end_src
+
+*** Mu4e global configuration
 #+begin_src emacs-lisp
-  (when pspmacs/set-mailbox
+  (when pspmacs/mu4e-load-path
     (use-package mu4e
-      :init
-      (setq message-send-mail-function 'smtpmail-send-it)
       :ensure nil
+      :load-path pspmacs/mu4e-load-path
+      :defer 20
+      :after evil-collection
+      :general
+      (pspmacs/leader-keys
+        "<"  '(:ignore t :wk "mail")
+        "<<" '(mu4e :wk "main")
+        "<u" '(mu4e-update-mail-and-index :wk "update")
+        "<c" '(mu4e-compose-new :wk "compose"))
+
+      (pspmacs/leader-keys
+        :keymaps '(org-mode-map mu4e-compose-mode-map)
+        ;; NEXT: add as send-mail hook
+        "<h"  '(:ignore t :wk "htmlize")
+        "<hh" '(org-mime-htmlize :wk "this"))
+
+      (pspmacs/leader-keys
+        :keymaps '(org-mode-map)
+        "<h"  '(:ignore t :wk "htmlize")
+        "<hs" '(org-mime-org-subtree-htmlize :wk "and send"))
+
+      :init
+      (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
+      (customize-set-variable 'smtpmail-servers-requiring-authorization
+                              "smtp\\.gmail\\.com")
       :custom
       (mu4e-account-alist t)
       (mu4e-enable-notifications t)
@@ -123,24 +210,38 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
       (mu4e-maildir (expand-file-name
                      "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
       (mu4e-change-filenames-when-moving t)
-      (mu4e-update-interval (* 10 60 60))
+      (mu4e-update-interval (* 1 60 60))
       (mu4e-view-show-images t)
       (mu4e-view-show-addresses t)
       :hook
-      ((message-send . mml-secure-message-sign-pgpmime)
+      ((mu4e-compose-mode . display-fill-column-indicator-mode)
+       (message-send . mml-secure-message-sign-pgpmime)
        (message-send . org-mime-confirm-when-no-multipart)
        (org-mime-html . (lambda ()
                           (org-mime-change-element-style
                            "pre"
                            (format
                             "color: %s; background-color: %s; padding: 0.5em;"
-                            "#959a9f" "#000307")))))))
-#+end_src
+                            "#959a9f" "#000307")))))
+      :config
+      (mu4e t)
+      (evil-collection-mu4e-setup)))
+      #+end_src
 
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
+    (mail-source-directory
+     (expand-file-name
+      "Maildir" (or (getenv "XDG_DATA_HOME")
+                    (expand-file-name ".local/share" (getenv "HOME")))))
+    (mail-default-directory (expand-file-name
+      "Maildir/drafts" (or (getenv "XDG_DATA_HOME")
+                           (expand-file-name ".local/share" (getenv "HOME")))))
+    (message-auto-save-directory (expand-file-name
+      "Maildir/drafts" (or (getenv "XDG_DATA_HOME")
+                           (expand-file-name ".local/share" (getenv "HOME")))))
     (browse-url-generic-program (or (executable-find "qutebrowser")
                                     (executable-find "firefox")
                                     (executable-find "chromium-freeworld")

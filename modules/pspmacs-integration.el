@@ -100,7 +100,11 @@
 
 (use-package systemd)
 
-(use-package pass)
+(use-package pass
+  :custom
+  (auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc.gpg" "~/.netrc"))
+  :init
+  (auth-source-pass-enable))
 
 (use-package emacs
   :custom
