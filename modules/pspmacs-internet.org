@@ -228,6 +228,26 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
       (evil-collection-mu4e-setup)))
       #+end_src
 
+*** Mu4e-org
+Integrate mu4e with org-mode
+#+begin_src emacs-lisp
+  (when pspmacs/mu4e-load-path
+    (use-package mu4e-org
+      :ensure nil
+      :after mu4e
+      :init
+      ;; Ensure File exists
+      (make-directory (file-name-directory pspmacs/org-mail-path) t)
+      (unless (file-exists-p pspmacs/org-mail-path)
+        (write-region "\n* Follow up\n\n* Read later" nil pspmacs/org-mail-path))
+      (pspmacs/extend-list
+       'org-capture-templates
+       `(("m" "Mail")
+         ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
+          "* TODO %a")
+         ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
+          "* TODO %a")))))
+#+end_src
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs

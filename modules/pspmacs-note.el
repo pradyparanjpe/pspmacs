@@ -138,6 +138,8 @@
     "h" '(org-agenda-previous-line))
 
   :custom
+  ;; Base
+  (org-directory pspmacs/org-path)
   ;; Org table
   (org-table-automatic-realign nil)
   (org-table-header-line-p t)

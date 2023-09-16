@@ -183,19 +183,25 @@
   (expand-file-name "org/" xdg/emacs-data-directory)
   "Org mode base"
   :group 'pspmacs
-  :type '(string :tag "Org files base"))
+  :type 'directory)
+
+(defcustom pspmacs/org-mail-path
+  (expand-file-name "mail.org" pspmacs/org-path)
+  "Path to org-mail (mu4e) file"
+  :type 'file
+  :group 'pspmacs)
 
 (defcustom pspmacs/org-template-path
-  (expand-file-name "templates" pspmacs/org-path)
+  (expand-file-name "templates/" pspmacs/org-path)
   "Org mode templates (setupfile)"
   :group 'pspmacs
-  :type '(string :tag "Org templates"))
+  :type 'directory)
 
 (defcustom pspmacs/org-journal-path
-  (expand-file-name "journal" pspmacs/org-path)
+  (expand-file-name "journal/" pspmacs/org-path)
   "Journal entries."
   :group 'pspmacs
-  :type '(string :tag "Org Journal"))
+  :type 'directory)
 
 (defcustom pspmacs/ref-paths
   `(,(expand-file-name "references/" xdg/emacs-data-directory))

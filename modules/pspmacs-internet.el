@@ -147,6 +147,23 @@
     (mu4e t)
     (evil-collection-mu4e-setup)))
 
+(when pspmacs/mu4e-load-path
+  (use-package mu4e-org
+    :ensure nil
+    :after mu4e
+    :init
+    ;; Ensure File exists
+    (make-directory (file-name-directory pspmacs/org-mail-path) t)
+    (unless (file-exists-p pspmacs/org-mail-path)
+      (write-region "\n* Follow up\n\n* Read later" nil pspmacs/org-mail-path))
+    (pspmacs/extend-list
+     'org-capture-templates
+     `(("m" "Mail")
+       ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
+        "* TODO %a")
+       ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
+        "* TODO %a")))))
+
 (use-package emacs
   :custom
   (mail-source-directory
