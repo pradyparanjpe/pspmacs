@@ -445,6 +445,23 @@ parent."
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda))
 
+(use-package org-capture
+  :ensure org
+  :autoload org-capture-templates
+  :general
+  (pspmacs/leader-keys
+    "o" '(:ignore t :wk "org")
+    "oc" '(org-capture :wk "capture"))
+  :init
+  (unless (file-exists-p (expand-file-name "tasks.org" pspmacs/org-path))
+    (write-region "* Misc\n" nil (expand-file-name "tasks.org" pspmacs/org-path)))
+  :custom
+  (org-capture-templates
+   `(("t" "Tasks")
+     ("tt" "Task"
+      entry (file+olp ,(expand-file-name "tasks.org" pspmacs/org-path) "Misc")
+      "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1))))
+
 (use-package emacs
   :custom
   (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))

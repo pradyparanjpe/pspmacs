@@ -152,6 +152,9 @@
     "Mp" '(:ignore t :wk "prog")
     "Mw" '(:ignore t :wk "web"))
 
+  ;; unix password store
+  (pspmacs/leader-keys "P" '(pass :wk "Password"))
+
   ;; FlySpell
   (pspmacs/leader-keys
     "S" '(:ignore t :wk "flySpell"))
@@ -281,11 +284,12 @@
            :wk "set deactivated mark")
     "mx" '(exchange-point-and-mark :wk "x-change"))
 
+  ;; org mode
+  (pspmacs/leader-keys
+    "o" '(:ignore t :wk "org"))
+
   ;; TODO:
   ;; set 'citar' and 'org-roam'
-
-  ;; unix password store
-  (pspmacs/leader-keys "P" '(pass :wk "Password"))
 
   ;; quit
   (pspmacs/leader-keys
