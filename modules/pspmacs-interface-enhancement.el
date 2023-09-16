@@ -47,6 +47,7 @@
     :global-prefix "M-,")
 
   (general-nmap ",," (general-simulate-key "C-c C-c" :which-key "C-c C-c"))
+  (general-nmap ",." (general-simulate-key "C-c C-k" :which-key "C-c C-k"))
 
   (general-imap "j"
     (general-key-dispatch 'self-insert-command
