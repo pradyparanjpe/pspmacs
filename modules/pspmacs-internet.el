@@ -109,7 +109,8 @@
     (pspmacs/leader-keys
       :keymaps '(org-mode-map)
       "<h"  '(:ignore t :wk "htmlize")
-      "<hs" '(org-mime-org-subtree-htmlize :wk "and send"))
+      "<hb" '(org-mime-org-subtree-htmlize :wk "buffer")
+      "<hs" '(org-mime-org-subtree-htmlize :wk "subtree"))
 
     :init
     (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
@@ -160,9 +161,19 @@
      'org-capture-templates
      `(("m" "Mail")
        ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
-        "* TODO %a")
+        ,(string-join
+          '("* About %a"
+            "** With %:fromname"
+            "** Created: %:date-timestamp-inactive"
+            "")
+          "\n"))
        ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
-        "* TODO %a")))))
+        ,(string-join
+          '("* About %a"
+            "** From %:fromname"
+            "** Created: %:date-timestamp-inactive"
+            "")
+         "\n"))))))
 
 (use-package emacs
   :custom
