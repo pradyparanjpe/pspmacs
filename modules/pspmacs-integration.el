@@ -1,4 +1,4 @@
-﻿;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
+;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -66,6 +66,8 @@
     "el" '(consult-flymake :wk "list")
     "fc" '(consult-find :wk "consult")
     "fr" '(consult-recent-file :wk "recent")
+    "js" '(consult-imenu :wk "section")
+    "jS" '(consult-imenu-multi :wk "project section")
     "mj" '(consult-mark :wk "jump")
     "rl" '(consult-register-load t :wk "load")
     "rr" '(consult-register-store :wk "remember")

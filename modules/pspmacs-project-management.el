@@ -1,4 +1,4 @@
-﻿;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
+;;; project-management.el --- filesystem project-managementr -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -156,7 +156,11 @@
                          "Cargo.toml"
                          ".envrc"
                          ))
+  (pspmacs/extend-list 'recentf-exclude
+                       (mapcar (lambda (x) (format "%s.*\\'" x))
+                               pspmacs/worktrees))
   :custom
+  (recentf-max-saved-items 200)
   (dired-listing-switches "-lah")
   (backup-directory-alist
    `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))

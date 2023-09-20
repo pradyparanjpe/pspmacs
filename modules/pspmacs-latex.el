@@ -1,4 +1,4 @@
-﻿;;; pspmacs-latex.el --- LaTeX -*- lexical-binding: t; -*-
+;;; pspmacs-latex.el --- LaTeX -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -254,7 +254,7 @@
     "irl" '(org-ref-insert-link :wk "link")
     "irh" '(org-ref-insert-link-hydra/body :wk "hydra"))
 
-  :init
+  :config
   ;; Initialize components
   (require 'org-ref-arxiv)
   (require 'org-ref-scopus)

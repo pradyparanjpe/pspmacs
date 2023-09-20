@@ -309,7 +309,11 @@ While =projectile= was a great project manager, the built-in /project.el/ serves
                            "Cargo.toml"
                            ".envrc"
                            ))
+    (pspmacs/extend-list 'recentf-exclude
+                         (mapcar (lambda (x) (format "%s.*\\'" x))
+                                 pspmacs/worktrees))
     :custom
+    (recentf-max-saved-items 200)
     (dired-listing-switches "-lah")
     (backup-directory-alist
      `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))
