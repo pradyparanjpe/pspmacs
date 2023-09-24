@@ -447,7 +447,6 @@ parent."
 
 (use-package org-capture
   :ensure org
-  :autoload org-capture-templates
   :general
   (pspmacs/leader-keys
     "o" '(:ignore t :wk "org")

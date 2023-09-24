@@ -151,8 +151,9 @@
 (when pspmacs/mu4e-load-path
   (use-package mu4e-org
     :ensure nil
-    :after mu4e
+    :after (mu4e org)
     :init
+    (require 'org-capture)
     ;; Ensure File exists
     (make-directory (file-name-directory pspmacs/org-mail-path) t)
     (unless (file-exists-p pspmacs/org-mail-path)
