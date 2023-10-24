@@ -160,6 +160,12 @@
     (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
 #+end_src
 
+* JSON
+JavaScript Object notation may be used as direct configurations
+#+begin_src emacs-lisp
+  (use-package json-mode)
+#+end_src
+
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

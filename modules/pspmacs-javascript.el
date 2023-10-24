@@ -127,5 +127,7 @@ Else, offer to trigger initialize."
   :config
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
 
+(use-package json-mode)
+
 (pspmacs/load-inherit)
 ;;; pspmacs-javascript.el ends here
