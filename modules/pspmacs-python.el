@@ -44,21 +44,25 @@
   (python-indent-offset 4)
   ;; Global python-lsp-server configuration
   (eglot-workspace-configuration
-    `(:pylsp .
-        (:plugins
-         (:jedi_completion (:fuzzy t)
-                           :jedi (:environment ,venv-directory)
-                           :rope (:enabled t)
-                           :pyflakes (:enabled t)
-                           :mccabe (:enabled t)
-                           :pycodestyle (:enabled t)
-                           :pydocstyle (:enabled t :convention "google")
-                           :yapf (:enabled t)
-                           :flake8 (:enabled nil)))))
+   `(:pylsp .
+            (:plugins
+             (:jedi_completion (:include_params t :fuzzy t)
+                               :rope (:enabled t  :json-false)
+                               :rope_autoimport (:enabled t)
+                               :pyflakes (:enabled t :json-false)
+                               :mccabe (:enabled t :json-false)
+                               :pycodestyle (:enabled t :json-false)
+                               :pydocstyle (:enabled t :convention "numpy")
+                               :pylint (:enabled :json-false)
+                               :pylsp_mypy (:enabled nil)
+                               :yapf (:enabled t :json-false)
+                               :flake8 (:enabled nil)))))
   :hook
   ((python-mode . pspmacs/prefer-interpreter-ipython)
    (python-mode . pspmacs/prettify-python)
-   (python-mode . pspmacs/pyfaces)))
+   (python-mode . pspmacs/pyfaces))
+  :config
+  (require 'numpydoc))
 
 (use-package ein
   :demand t
@@ -125,10 +129,24 @@ ACTION: action to perform (install, uninstall)"
 (use-package pydoc
   :general
   (pspmacs/leader-keys :keymap 'python-mode-map
-    "d"  '(:ignore t :wk "describe")
-    "d." '(pydoc-at-point :wk "this")
+    "d"  '(:ignore t :wk "documentation")
+    "d." '(pydoc-at-point :wk "point")
     "d$" '(pydoc-browse :wk "browse")
     "dd" '(pydoc :wk "prompt")))
+
+(use-package numpydoc
+  :general
+  (pspmacs/leader-keys :keymap 'python-mode-map
+    "d"  '(:ignore t :wk "documentation")
+    "di" '(numpydoc-generate :wk "insert"))
+  :custom
+  (numpydoc-insertion-style 'yas)
+  (numpydoc-insert-parameter-types t)
+  (numpydoc-insert-examples-block nil))
+
+(use-package flymake-ruff
+  :hook
+  (python-mode . flymake-ruff-load))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-python.el ends here
