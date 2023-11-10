@@ -94,6 +94,7 @@
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
   (add-to-list 'consult-buffer-filter "\\`\\*epc con [0-9]+\\*\\'")
+  (add-to-list 'consult-buffer-filter "\\`\\*EGLOT .+ events\\*\\'")
   :custom
   ;; "C-+"
   (consult-narrow-key "<"))

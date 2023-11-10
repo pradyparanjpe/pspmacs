@@ -112,9 +112,10 @@ ACTION: action to perform (install, uninstall)"
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'importmagic-mode-map
-    "rf" '(importmagic-fix-symbol-at-point :wk "fix at point")
-    "ri" '(importmagic-fix-imports :wk "fix imports")
-    "rI" '(importmagic-fix-symbol :wk "arbitrary import"))
+    "i"  '(:ignore t :wk "import")
+    "if" '(importmagic-fix-symbol-at-point :wk "fix at point")
+    "ii" '(importmagic-fix-imports :wk "fix")
+    "iI" '(importmagic-fix-symbol :wk "manually"))
   :hook
   (python-mode . importmagic-mode))
 
