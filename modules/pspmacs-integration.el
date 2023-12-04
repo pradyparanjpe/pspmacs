@@ -1,4 +1,4 @@
-;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
+﻿;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -46,6 +46,24 @@
   (general-add-hook
      'eat-exit-hook
      '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
+
+(use-package exec-path-from-shell
+
+  :custom
+  (dolist (envvar '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO"
+                    "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"
+                    "PKG_CONFIG_PATH"))
+    (add-to-list 'exec-path-from-shell-variables envvar))
+
+  :init
+  ;; MacOS
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize))
+  (if (string-equal system-type "darwin")
+      (exec-path-from-shell-initialize))
+  ;; Daemon mode
+  (when (daemonp)
+    (exec-path-from-shell-initialize)))
 
 (setq wl-copy-process nil)
 (when (string-collate-equalp (getenv "XDG_SESSION_TYPE") "WAYLAND" nil t)

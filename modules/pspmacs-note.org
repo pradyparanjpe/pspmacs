@@ -526,7 +526,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
        ("title"       . "§")
        ("auto_tangle" . "🤖🔗")
        ("html"        . "")
-       (t . t)))
+       (t . "≡")))
     (org-modern-checkbox
      '((88 . "✔")
        (45 . "⏳")

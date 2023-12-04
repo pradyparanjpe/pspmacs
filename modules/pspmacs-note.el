@@ -1,4 +1,4 @@
-﻿;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
+;;; pspmacs-note.el --- org-mode -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -436,7 +436,7 @@ parent."
      ("title"       . "§")
      ("auto_tangle" . "🤖🔗")
      ("html"        . "")
-     (t . t)))
+     (t . "≡")))
   (org-modern-checkbox
    '((88 . "✔")
      (45 . "⏳")

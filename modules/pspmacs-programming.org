@@ -235,6 +235,7 @@ Tree-sitter should ideally be compiled with Emacs.
       "lss" 'eglot-shutdown-all)
     :custom
     (eglot-extend-to-xref t)
+    (eglot-connect-timeout 60)
     :hook
     (prog-mode . eglot-ensure)
     (eglot-managed-mode . pspmacs/eglot-capf))

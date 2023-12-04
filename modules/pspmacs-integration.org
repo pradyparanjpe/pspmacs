@@ -64,6 +64,27 @@ Integration
        '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 #+end_src
 
+* Copy Environment
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+
+    :custom
+    (dolist (envvar '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO"
+                      "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"
+                      "PKG_CONFIG_PATH"))
+      (add-to-list 'exec-path-from-shell-variables envvar))
+
+    :init
+    ;; MacOS
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize))
+    (if (string-equal system-type "darwin")
+        (exec-path-from-shell-initialize))
+    ;; Daemon mode
+    (when (daemonp)
+      (exec-path-from-shell-initialize)))
+#+end_src
+
 * Clipboard
 - Use wl-copy when =XDG_SESSION_TYPE= is "wayland".
 #+begin_src emacs-lisp
@@ -150,6 +171,13 @@ Integration
     (auth-source-pass-enable))
 #+end_src
 
+* Nginx mode
+Some incompatibility of Nginx with Emacs-29
+#+begin_src emacs-lisp :tangle no :eval no
+  (use-package nginx-mode
+    :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
+#+end_src
+
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs
@@ -158,13 +186,6 @@ Integration
     (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
     :config
     (epa-file-enable))
-#+end_src
-
-* Nginx mode
-Some incompatibility of Nginx with Emacs-29
-#+begin_src emacs-lisp :tangle no :eval no
-  (use-package nginx-mode
-    :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 #+end_src
 
 * Inherit from private and local

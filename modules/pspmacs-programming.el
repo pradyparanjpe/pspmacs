@@ -1,4 +1,4 @@
-;;; programming.el --- common programming config -*- lexical-binding: t; -*-
+﻿;;; programming.el --- common programming config -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -197,6 +197,7 @@
     "lss" 'eglot-shutdown-all)
   :custom
   (eglot-extend-to-xref t)
+  (eglot-connect-timeout 60)
   :hook
   (prog-mode . eglot-ensure)
   (eglot-managed-mode . pspmacs/eglot-capf))
