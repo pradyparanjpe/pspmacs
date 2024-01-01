@@ -237,7 +237,7 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
 
 (defun pspmacs/eglot-capf ()
   (setq-local completion-at-point-functions
-              (list (cape-super-capf
+              (list (cape-capf-super
                      #'eglot-completion-at-point
                      #'tempel-expand
                      #'cape-file))))
@@ -248,7 +248,7 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
 
 (defun pspmacs/setup-elisp ()
   (setq-local completion-at-point-functions
-              `(,(cape-super-capf
+              `(,(cape-capf-super
                   (cape-capf-predicate
                    #'elisp-completion-at-point
                    #'pspmacs/ignore-elisp-keywords)
