@@ -302,6 +302,8 @@ parent."
   :commands org-export-dispatch
   :custom
   (org-html-htmlize-output-type 'css)
+  (org-html-metadata-timestamp-format "%a, %Y-%m-%d %H:%M%z")
+  (org-time-stamp-custom-formats '("<%a, %Y-%m-%d>" . "<%a, %Y-%m-%d %H:%M%z>"))
   :config
   ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
   ;; (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -460,6 +462,11 @@ parent."
      ("tt" "Task"
       entry (file+olp ,(expand-file-name "tasks.org" pspmacs/org-path) "Misc")
       "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1))))
+
+(use-package org-dial
+  :after org
+  :demand t
+  :vc (:fetcher "github" :repo "mistrey/org-dial"))
 
 (use-package emacs
   :custom

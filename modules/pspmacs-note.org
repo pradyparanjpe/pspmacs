@@ -362,6 +362,8 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     :commands org-export-dispatch
     :custom
     (org-html-htmlize-output-type 'css)
+    (org-html-metadata-timestamp-format "%a, %Y-%m-%d %H:%M%z")
+    (org-time-stamp-custom-formats '("<%a, %Y-%m-%d>" . "<%a, %Y-%m-%d %H:%M%z>"))
     :config
     ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
     ;; (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -554,6 +556,16 @@ Capture for future.
        ("tt" "Task"
         entry (file+olp ,(expand-file-name "tasks.org" pspmacs/org-path) "Misc")
         "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1))))
+#+end_src
+
+* Telephone Links
+- Use telephone links of the form [[tel:+91 9988776655]] in org mode.
+- Install directly from [[https://github.com/org-dial][repository]].
+#+begin_src emacs-lisp
+  (use-package org-dial
+    :after org
+    :demand t
+    :vc (:fetcher "github" :repo "mistrey/org-dial"))
 #+end_src
 
 * native Emacs settings
