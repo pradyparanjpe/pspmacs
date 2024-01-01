@@ -282,8 +282,10 @@ This requires us to reset various regular expressions."
 
 Also, display file name in echo area"
   (interactive)
-  (kill-new buffer-file-name)
-  (message (format "Copied: %s" buffer-file-name)))
+  (let ((current-focus
+         (expand-file-name
+          (or buffer-file-name dired-directory default-directory))))
+    (kill-new current-focus) (message (format "Copied: %s" current-focus))))
 
 (defun wl-copy (text)
   "Copy to wayland clipboard.
