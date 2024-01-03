@@ -364,6 +364,8 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     (org-html-htmlize-output-type 'css)
     (org-html-metadata-timestamp-format "%a, %Y-%m-%d %H:%M%z")
     (org-time-stamp-custom-formats '("<%a, %Y-%m-%d>" . "<%a, %Y-%m-%d %H:%M%z>"))
+    (org-latex-to-mathml-convert-command
+     "latexmlmath '%i' --presentationmathml=%o")
     :config
     ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
     ;; (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -374,6 +376,48 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
 ** Org export latex
 - Org exports for $\LaTeX$.
   This is configured with $\TeX$ in the section [[file:pspmacs-latex.org::*Org-export LaTeX][Org-export LaTeX]].
+
+** Org export to OpenDocument text format
+- Export using /The Authoritative fork of Org mode's ODT exporter/.
+  #+begin_src emacs-lisp
+    (use-package ox-odt
+      :after org
+      :vc (ox-odt
+           :fetcher "github"
+           :repo "kjambunathan/org-mode-ox-odt"
+           :files ("lisp/ox-odt.el"
+                   "lisp/odt.el"
+                   "etc"
+                   "docs"
+                   "contrib/odt/LibreOffice"))
+      :general
+      (pspmacs/local-leader-keys
+        :keymaps 'org-mode-map
+        "xo" '(org-odt-export-to-odt :wk "odt"))
+      :custom
+      ;; (org-odt-preferred-output-format "docx")
+      (org-odt-transform-processes
+       '(("Optimize Column Width of all Tables"
+          "soffice" "--norestore" "--invisible" "--headless"
+          "macro:///OrgMode.Utilities.OptimizeColumnWidth(%I)")
+         ("Update All"
+          "soffice" "--norestore" "--invisible" "--headless"
+          "macro:///OrgMode.Utilities.UpdateAll(%I)")
+         ("Reload"
+          "soffice" "--norestore" "--invisible" "--headless"
+          "macro:///OrgMode.Utilities.Reload(%I)")))
+
+      :config
+      (add-to-list 'auto-mode-alist
+                   '("\\.\\(?:OD[CFIGPST]\\|od[cfigpst]\\)\\'"
+                     . doc-view-mode-maybe))
+      (setcdr (assq 'system org-file-apps-gnu) "xdg-open %s")
+      (advice-add 'org-open-file :around
+                  (lambda (orig-fun &rest args)
+                    ;; Work around a weird problem with xdg-open.
+                    (let ((process-connection-type nil))
+                      (apply orig-fun args)))))
+  #+end_src
 
 * jkitchin/org-ref
 - Reference management for $\LaTeX$.
