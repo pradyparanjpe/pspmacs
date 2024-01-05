@@ -314,14 +314,8 @@ parent."
 
 (use-package ox-odt
   :after org
-  :vc (ox-odt
-       :fetcher "github"
-       :repo "kjambunathan/org-mode-ox-odt"
-       :files ("lisp/ox-odt.el"
-               "lisp/odt.el"
-               "etc"
-               "docs"
-               "contrib/odt/LibreOffice"))
+  :vc (:fetcher "github"
+                :repo "kjambunathan/org-mode-ox-odt")
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
