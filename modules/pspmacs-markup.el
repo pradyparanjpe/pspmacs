@@ -41,7 +41,7 @@
 (customize-set-variable 'oer-reveal-org-includes-dir local-emacs-dir)
 (use-package emacs-reveal
   :ensure nil
-  :vc (:fetcher "gitlab" :repo "oer/emacs-reveal")
+  :vc (emacs-reveal :url "https://gitlab.com/oer/emacs-reveal")
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map

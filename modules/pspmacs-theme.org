@@ -35,7 +35,7 @@ built-in ones.
 #+begin_src emacs-lisp
   (use-package modus-themes
     :demand t
-    :vc (modus-themes . (:url "https://www.github.com/protesilaos/modus-themes"))
+    :vc (modus-themes :url "https://www.github.com/protesilaos/modus-themes")
     :general (pspmacs/leader-keys
                "t" '(:ignore t :wk "Theme")
                "tT" 'modus-themes-toggle)

@@ -1,4 +1,4 @@
-﻿;;; javascript.el --- javascript ide -*- lexical-binding: t; -*-
+;;; javascript.el --- javascript ide -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -107,7 +107,7 @@ Else, offer to trigger initialize."
 
 (use-package tsi
   :after tree-sitter
-  :vc (:fetcher github :repo "orzechowskid/tsi.el")
+  :vc (tsi :url "https://github.com/orzechowskid/tsi.el")
   :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
   :init
   (add-hook 'typescript-mode-hook (lambda () (tsi-typescript-mode 1)))

@@ -1,4 +1,4 @@
-﻿;;; pspmacs-theme.el --- Emacs themes -*- lexical-binding: t; -*-
+;;; pspmacs-theme.el --- Emacs themes -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -24,7 +24,7 @@
 
 (use-package modus-themes
   :demand t
-  :vc (modus-themes . (:url "https://www.github.com/protesilaos/modus-themes"))
+  :vc (modus-themes :url "https://www.github.com/protesilaos/modus-themes")
   :general (pspmacs/leader-keys
              "t" '(:ignore t :wk "Theme")
              "tT" 'modus-themes-toggle)

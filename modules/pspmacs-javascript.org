@@ -133,7 +133,7 @@
 #+begin_src emacs-lisp
   (use-package tsi
     :after tree-sitter
-    :vc (:fetcher github :repo "orzechowskid/tsi.el")
+    :vc (tsi :url "https://github.com/orzechowskid/tsi.el")
     :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
     :init
     (add-hook 'typescript-mode-hook (lambda () (tsi-typescript-mode 1)))

@@ -314,8 +314,7 @@ parent."
 
 (use-package ox-odt
   :after org
-  :vc (:fetcher "github"
-                :repo "kjambunathan/org-mode-ox-odt")
+  :vc (ox-odt :url "https://github.com/kjambunathan/org-mode-ox-odt")
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
@@ -500,7 +499,7 @@ parent."
 (use-package org-dial
   :after org
   :demand t
-  :vc (:fetcher "github" :repo "mistrey/org-dial"))
+  :vc (org-dial :url "https://github.com/mistrey/org-dial"))
 
 (use-package emacs
   :custom

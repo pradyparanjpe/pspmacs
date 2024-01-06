@@ -1,4 +1,4 @@
-﻿;;; programming.el --- common programming config -*- lexical-binding: t; -*-
+;;; programming.el --- common programming config -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -74,7 +74,7 @@
 (use-package corfu-doc-terminal
   :after corfu-terminal
   :ensure nil
-  :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-doc-terminal")
+  :vc (corfu-doc-terminal :url "https://codeberg.org/akib/emacs-corfu-doc-terminal")
   :config
   (unless (display-graphic-p)
     (corfu-doc-terminal-mode t)))
@@ -82,7 +82,7 @@
 (use-package corfu-terminal
   :after corfu
   :ensure nil
-  :vc (:fetcher "codeberg" :repo "akib/emacs-corfu-terminal")
+  :vc (corfu-terminal :url "https://codeberg.org/akib/emacs-corfu-terminal")
   :config
   (unless (display-graphic-p)
     (corfu-terminal-mode t)))
@@ -246,7 +246,7 @@
   (customize-set-variable 'fill-column 80))
 
 (use-package color-fci
-  :vc (:fetcher "gitlab" :repo "pradyparanjpe/color-fci")
+  :vc (color-fci :url "https://gitlab.com/pradyparanjpe/color-fci")
   :custom
   (color-fci-overflow-color "#ffffff")
   :hook
