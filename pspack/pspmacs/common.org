@@ -54,6 +54,99 @@
                      long-str)))))
 #+end_src
 
+* Pspmacs/Fill-Colors
+#+begin_src emacs-lisp
+  (defcustom pspmacs/fill-color-overflow-color "#ff00ff"
+    "Color of indicator when line overflows `fill-column'"
+    :type 'color
+    :group 'pspmacs/fill-color)
+
+  (defun pspmacs/invert-color (rgb)
+    "Return a list of (1-R 1-G 1-B) from RGB."
+    (mapcar (lambda (p) (- 1 p)) rgb))
+
+  (defun pspmacs/fill-color-cap (frac &optional bright invert overflow)
+    "Color based on filled capacity fraction FRAC.
+
+  \=0\= is empty (good = cyan), \=1\= is filled (bad = red)
+  Fraction of brightness is provided through BRIGHT, else assumed as 1.0
+  FRAC > 1.0 is interpreted as *overfilled* and returns
+  BRIGHT-scaled `pspmacs/fill-color-overflow-color')
+  If OVERFLOW is non-nil, return that color for overflow instead.
+  If INVERT is not-nil, return inverted pallet, i.e.
+  \=0\= is empty (bad = red), \=1\= is filled (good = cyan)"
+    (let* ((bright (max 0 (min (or bright 1) 1)))
+           (frac (if invert (- 1.0 frac) frac))
+           (rgb (if (or (> frac 1.0) (< frac 0.0))
+                (color-name-to-rgb
+                 (or overflow pspmacs/fill-color-overflow-color))
+                (let* ((red (min 1.0 (* 2.0 frac)))
+                       (green (min 1.0 (* 2.0 (- 1.0 frac))))
+                       (blue (max 0 (- 1.0 (* 10 frac)))))
+                  `(,red ,green ,blue))))
+      (col-vals (mapcar (lambda (x) (* bright x)) rgb)))
+    (apply #'color-rgb-to-hex `(,@col-vals 2))))
+#+end_src
+
+* Point is at
+#+begin_src emacs-lisp
+  (defun pspmacs/in-text-p ()
+    "Return non-nil if the point is in text.
+
+  Check for:
+  - comment
+  - org comment
+  - org keyword
+  - org table
+  - org TBLFM
+  - org heading
+  - org property
+  - any org block
+
+  The Org block can be *any*: src, example, verse, etc., even any
+  Org Special block.
+
+  This function is heavily adapted from `org-between-regexps-p'.
+  https://scripter.co/splitting-an-org-block-into-two/"
+    (not
+     (or
+      ;; comment
+      (nth 4 (syntax-ppss))
+      ;; org-comment
+      (org-at-comment-p)
+      (org-at-keyword-p)
+      (org-at-table-p)
+      (org-at-TBLFM-p)
+      (org-at-heading-p)
+      (org-at-property-p)
+      (looking-at (format "%s%s" " *" comment-start-skip))
+      (save-match-data
+        (let ((pos (point))
+              (case-fold-search t)
+              (block-begin-re "^[[:blank:]]*#\\+begin_\\(?1:.+?\\)\\(?: .*\\)*$")
+              (limit-up (save-excursion (outline-previous-heading)))
+              (limit-down (save-excursion (outline-next-heading)))
+              beg end)
+          (save-excursion
+            ;; Point is on a block when on BLOCK-BEGIN-RE or if
+            ;; BLOCK-BEGIN-RE can be found before it...
+            (and (or (org-in-regexp block-begin-re)
+                     (re-search-backward block-begin-re limit-up :noerror))
+                 (setq beg (match-beginning 0))
+                 ;; ... and BLOCK-END-RE after it...
+                 (let ((block-end-re (concat "^[[:blank:]]*#\\+end_"
+                                             (match-string-no-properties 1)
+                                             "\\( .*\\)*$")))
+                   (goto-char (match-end 0))
+                   (re-search-forward block-end-re limit-down :noerror))
+                 (> (setq end (match-end 0)) pos)
+                 ;; ... without another BLOCK-BEGIN-RE in-between.
+                 (goto-char (match-beginning 0))
+                 (not (re-search-backward block-begin-re (1+ beg) :noerror))
+                 ;; Return value.
+                 (cons beg end))))))))
+#+end_src
+
 * Footer
 #+begin_src emacs-lisp
   (provide 'pspmacs/common)

@@ -1,4 +1,4 @@
-﻿;;; pspline.el --- pspline modeline -*- lexical-binding: t; -*-
+;;; pspline.el --- pspline modeline -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; PSPLINE ModeLine for Emacs
@@ -44,6 +44,28 @@
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
+(defcustom pspmacs/pspline-wc-modes
+  '(text-mode)
+  "Modes and their derivatives, in which, word-count is displayed.
+
+`pspmacs/pspline-anti-wc-modes' overrides this list."
+  :type '(repeat (symbol :tag "Major Mode in which, word count is active"))
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-wc-anti-modes
+  '(prog-mode dired-mode special-mode)
+  "Major modes and their derivatives, in which, word-count is not displayed.
+
+ This list overrides `pspmacs/pspline-wc-modes'."
+  :type '(repeat (symbol :tag "Mode in which, word count is inactivated"))
+  :group 'pspline)
+
+(defcustom pspmacs/pspline-wc-max-buffer-size
+  10240
+  "Maximum size of buffer beyond which, word count is inactive."
+  :type 'number
+  :group 'pspline)
+
 (defcustom pspmacs/pspline-evil-state-format
   ""
 
@@ -55,7 +77,7 @@
 
 (defcustom pspmacs/pspline-buffer-name-length
   20
-  "Length of buffer beyond which, name is trimmed"
+  "Length of buffer name beyond which, it is trimmed"
   :type 'number
   :group 'pspline)
 
@@ -110,6 +132,7 @@
 (defcustom pspmacs/pspline-segments-plist
   '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
     (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
+    (pspmacs/pspline-word-count . (:display t :right nil :inactive t))
     (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
     (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
     (pspmacs/pspline-version-control . (:display t :right nil :inactive nil))
@@ -353,6 +376,89 @@ Customize face with `pspmacs/pspline-win-loc-face'.")
   "Cursor position indicator <row:col>.
 Customize value with `pspmacs/pspline-cursor-position-format'.
 Customize face with `pspmacs/pspline-cursor-position-face'.")
+
+(defvar-local pspmacs/pspline-wc-target nil
+  "Targetted number of (text) words to write in buffer
+
+If supplied, `pspmacs/pspline--count-text-words'
+will use this as default for TARGET.")
+
+(defvar-local pspmacs/pspline-wc-reverse-color nil
+  "Reverse colors of pspline-text-words colors (=> filled is good)")
+
+(defvar-local pspmacs/pspline-wc-cap nil
+  "Set value for `pspmacs/pspline-wc-target' and
+set-default `pspmacs/pspline-wc-reverse-color' to t")
+
+(defun pspmacs/pspline--set-wc-target (&optional _button)
+  "Set value for `pspmacs/pspline-wc-target'.
+
+0 sets to nil.
+negative value sets `pspmacs/pspline-wc-cap' instead."
+  (interactive)
+  (let ((wc-target (read-number "set word count target (negative sets cap, 0 unsets):\t")))
+    (progn
+      (setq-local pspmacs/pspline-wc-reverse-color nil)
+      (setq-local pspmacs/pspline-wc-cap nil)
+      (setq-local pspmacs/pspline-wc-target nil))
+    (cond
+     ((< wc-target 0) (setq-local pspmacs/pspline-wc-cap (- wc-target)))
+     ((> wc-target 0) (setq-local pspmacs/pspline-wc-target wc-target)))))
+
+(defun pspmacs/pspline--count-text-words (&optional target)
+  "Return number of buffers in the buffer."
+  (interactive)
+  (let ((num-words 0))
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        ;; (beginning-of-line)
+        (when (pspmacs/in-text-p)
+          (cl-incf num-words (count-words (line-beginning-position)
+                                          (line-end-position))))
+        (forward-line 1)))
+    num-words))
+
+(defun pspmacs/pspline--word-count ()
+  "Evaluated by `pspmacs/pspline-word-count'.
+
+If TARGET is provided, return fraction of target (in percentage).
+Else, use value of `pspmacs/pspline--wc-target'"
+  (when (and
+         (pspmacs/pspline--display-segment 'pspmacs/pspline-word-count)
+         (< (buffer-size) pspmacs/pspline-wc-max-buffer-size)
+         (cl-notany (lambda (x) (derived-mode-p x)) pspmacs/pspline-wc-anti-modes)
+         (cl-some (lambda (x) (derived-mode-p x)) pspmacs/pspline-wc-modes))
+    `(,(let* ((num-words (pspmacs/pspline--count-text-words))
+              (disp-text (setq disp-text (format "¶:%d" num-words)))
+              (disp-face 'mode-line-inactive)
+              (hint (format "Words: %d" num-words))
+              (target (or pspmacs/pspline-wc-target pspmacs/pspline-wc-cap))
+              (frac (when target (/ (float num-words) target))))
+         (when frac
+           (setq disp-text (format "¶:%2.2f%%%%" (* 100 frac) target))
+           (setq hint (concat hint (format " / %d" target)))
+           (if (mode-line-window-selected-p)
+               (let ((disp-color (pspmacs/fill-color-cap
+                                  frac
+                                  1.0
+                                  (or pspmacs/pspline-wc-reverse-color
+                                      pspmacs/pspline-wc-cap))))
+                 (if (> frac 1.0)
+                     (setq disp-face
+                           `(:foreground ,(pspmacs/invert-color disp-color)
+                                         :background ,disp-color))
+                   (setq disp-face `(:foreground ,disp-color))))))
+         (propertize (buttonize disp-text
+                                #'pspmacs/pspline--set-wc-target)
+                     'face disp-face
+                     'help-echo (concat hint "\nClick to set target")))
+      " ")))
+
+(defvar-local pspmacs/pspline-word-count
+    '(:eval (pspmacs/pspline--word-count))
+  "Cursor position indicator <row:col>.
+  Customize value with `pspmacs/pspline-word-count-format'.")
 
 (defun pspmacs/pspline--evil-state ()
   "Evaluated by `pspmacs/pspline-evil-state'"
