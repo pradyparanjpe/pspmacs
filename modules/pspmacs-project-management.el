@@ -156,6 +156,7 @@
                          "Cargo.toml"
                          ".envrc"
                          ))
+  (require 'recentf)
   (pspmacs/extend-list 'recentf-exclude
                        (mapcar (lambda (x) (format "%s.*\\'" x))
                                pspmacs/worktrees))

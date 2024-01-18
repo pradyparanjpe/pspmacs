@@ -49,6 +49,10 @@ Default ellipses are customized using `pspmacs/long-str-ellipses'"
   :type 'color
   :group 'pspmacs/fill-color)
 
+(defun pspmacs/invert-color-hex (hex)
+  "Return a color hex-string #(0xff-R) (0xff-G) (0xff-B) from HEX."
+  (apply #'color-rgb-to-hex `(,@(pspmacs/invert-color (color-name-to-rgb hex)) 2)))
+
 (defun pspmacs/invert-color (rgb)
   "Return a list of (1-R 1-G 1-B) from RGB."
   (mapcar (lambda (p) (- 1 p)) rgb))

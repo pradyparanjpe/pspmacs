@@ -392,8 +392,14 @@ Hydra Keybindings
 * Pspmacs startpage
 - Better splash [[file:../pspack/pspmacs/startpage.org][StartPage]]
 #+begin_src emacs-lisp
-  (pspmacs/leader-keys
-    "bh" '(pspmacs/startpage-show :which-key "🏠"))
+  (use-package pspmacs/startpage
+    :ensure nil
+    :commands pspmacs/startpage-set-up
+    :config
+    :general
+    (pspmacs/leader-keys
+      "bh" '(pspmacs/startpage-show :which-key "🏠")))
+  (pspmacs/startpage-set-up)
 #+end_src
 
 * Wilfred/helpful
@@ -665,11 +671,11 @@ Auto-hiding text-based scroll bar
 - Interactive function ~(battery)~ needs to be called,
   to load ~(battery-status-function)~
 #+begin_src emacs-lisp
-  (battery)
-#+end_src
-
-** Mode-line format
-#+begin_src emacs-lisp
+  (use-package pspmacs/pspline
+    :ensure nil
+    :commands pspmacs/pspline-set-up
+    :config
+    (battery))
   (pspmacs/pspline-set-up)
 #+end_src
 

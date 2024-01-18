@@ -70,31 +70,6 @@
     :group 'pspline)
 #+end_src
 
-** word-count
-#+begin_src emacs-lisp
-  (defcustom pspmacs/pspline-wc-modes
-    '(text-mode)
-    "Modes and their derivatives, in which, word-count is displayed.
-
-  `pspmacs/pspline-anti-wc-modes' overrides this list."
-    :type '(repeat (symbol :tag "Major Mode in which, word count is active"))
-    :group 'pspline)
-
-  (defcustom pspmacs/pspline-wc-anti-modes
-    '(prog-mode dired-mode special-mode)
-    "Major modes and their derivatives, in which, word-count is not displayed.
-
-   This list overrides `pspmacs/pspline-wc-modes'."
-    :type '(repeat (symbol :tag "Mode in which, word count is inactivated"))
-    :group 'pspline)
-
-  (defcustom pspmacs/pspline-wc-max-buffer-size
-    10240
-    "Maximum size of buffer beyond which, word count is inactive."
-    :type 'number
-    :group 'pspline)
-#+end_src
-
 ** evil state format
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline-evil-state-format
@@ -167,6 +142,7 @@
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline--show-string
     "percent"
+
     "Type of information to show as battery"
     :type '(string :options ("time" "percent"))
     :group 'pspline)
@@ -188,7 +164,6 @@
   (defcustom pspmacs/pspline-segments-plist
     '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
       (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
-      (pspmacs/pspline-word-count . (:display t :right nil :inactive t))
       (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
       (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
       (pspmacs/pspline-version-control . (:display t :right nil :inactive nil))
@@ -430,7 +405,8 @@
                         buffer-string pspmacs/pspline-buffer-name-length)
                        #'pspmacs/pspline--toggle-read-only)
             'face `(,base ,box)
-            'help-echo "mouse-1 toggle read-only")
+            'help-echo (format "Click to make buffer %s"
+                               (if buffer-read-only "writable" "read-only")))
           " "))))
 
   (defvar-local pspmacs/pspline-buffer-name
@@ -446,7 +422,8 @@
     (when (pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-process)
       (let ((proc-string (cl-case (type-of mode-line-process)
                            (string mode-line-process)
-                           (list (remq nil (mapconcat (lambda (x) (eval x)) mode-line-process)))
+                           (list (remq nil (mapconcat (lambda (x) (eval x))
+                                                      mode-line-process)))
                            (symbol (if mode-line-process
                                          (symbol-name mode-line-process))))))
         (when proc-string
@@ -501,94 +478,56 @@
   Customize face with `pspmacs/pspline-cursor-position-face'.")
 #+end_src
 
-** Word-count
-#+begin_src emacs-lisp
-  (defvar-local pspmacs/pspline-wc-target nil
-    "Targetted number of (text) words to write in buffer
-
-  If supplied, `pspmacs/pspline--count-text-words'
-  will use this as default for TARGET.")
-
-  (defvar-local pspmacs/pspline-wc-reverse-color nil
-    "Reverse colors of pspline-text-words colors (=> filled is good)")
-
-  (defvar-local pspmacs/pspline-wc-cap nil
-    "Set value for `pspmacs/pspline-wc-target' and
-  set-default `pspmacs/pspline-wc-reverse-color' to t")
-
-  (defun pspmacs/pspline--set-wc-target (&optional _button)
-    "Set value for `pspmacs/pspline-wc-target'.
-
-  0 sets to nil.
-  negative value sets `pspmacs/pspline-wc-cap' instead."
-    (interactive)
-    (let ((wc-target (read-number "set word count target (negative sets cap, 0 unsets):\t")))
-      (progn
-        (setq-local pspmacs/pspline-wc-reverse-color nil)
-        (setq-local pspmacs/pspline-wc-cap nil)
-        (setq-local pspmacs/pspline-wc-target nil))
-      (cond
-       ((< wc-target 0) (setq-local pspmacs/pspline-wc-cap (- wc-target)))
-       ((> wc-target 0) (setq-local pspmacs/pspline-wc-target wc-target)))))
-
-  (defun pspmacs/pspline--count-text-words (&optional target)
-    "Return number of buffers in the buffer."
-    (interactive)
-    (let ((num-words 0))
-      (save-excursion
-        (goto-char (point-min))
-        (while (not (eobp))
-          ;; (beginning-of-line)
-          (when (pspmacs/in-text-p)
-            (cl-incf num-words (count-words (line-beginning-position)
-                                            (line-end-position))))
-          (forward-line 1)))
-      num-words))
-
-  (defun pspmacs/pspline--word-count ()
-    "Evaluated by `pspmacs/pspline-word-count'.
-
-  If TARGET is provided, return fraction of target (in percentage).
-  Else, use value of `pspmacs/pspline--wc-target'"
-    (when (and
-           (pspmacs/pspline--display-segment 'pspmacs/pspline-word-count)
-           (< (buffer-size) pspmacs/pspline-wc-max-buffer-size)
-           (cl-notany (lambda (x) (derived-mode-p x)) pspmacs/pspline-wc-anti-modes)
-           (cl-some (lambda (x) (derived-mode-p x)) pspmacs/pspline-wc-modes))
-      `(,(let* ((num-words (pspmacs/pspline--count-text-words))
-                (disp-text (setq disp-text (format "¶:%d" num-words)))
-                (disp-face 'mode-line-inactive)
-                (hint (format "Words: %d" num-words))
-                (target (or pspmacs/pspline-wc-target pspmacs/pspline-wc-cap))
-                (frac (when target (/ (float num-words) target))))
-           (when frac
-             (setq disp-text (format "¶:%2.2f%%%%" (* 100 frac) target))
-             (setq hint (concat hint (format " / %d" target)))
-             (if (mode-line-window-selected-p)
-                 (let ((disp-color (pspmacs/fill-color-cap
-                                    frac
-                                    1.0
-                                    (or pspmacs/pspline-wc-reverse-color
-                                        pspmacs/pspline-wc-cap))))
-                   (if (> frac 1.0)
-                       (setq disp-face
-                             `(:foreground ,(pspmacs/invert-color disp-color)
-                                           :background ,disp-color))
-                     (setq disp-face `(:foreground ,disp-color))))))
-           (propertize (buttonize disp-text
-                                  #'pspmacs/pspline--set-wc-target)
-                       'face disp-face
-                       'help-echo (concat hint "\nClick to set target")))
-        " ")))
-
-  (defvar-local pspmacs/pspline-word-count
-      '(:eval (pspmacs/pspline--word-count))
-    "Cursor position indicator <row:col>.
-    Customize value with `pspmacs/pspline-word-count-format'.")
-#+end_src
-
 ** Evil state
 #+begin_src emacs-lisp
+  (defun pspmacs/pspline--cycle-evil-state (&optional back)
+    "Cycle between evil states.
+
+  If BACK is non-nil, switch to previous state.
+  If current state is unidentifyable, switch to normal state by default.
+
+  Order of states:
+  - normal
+  - insert
+  - visual
+  - replace
+  - operator
+  - motion
+  - emacs"
+    (let* ((evil-states-order
+            '(evil-normal-state
+              evil-insert-state
+              evil-visual-state
+              evil-replace-state
+              evil-operator-state
+              evil-motion-state
+              evil-emacs-state))
+           (current-position
+            (cl-position (intern (format "evil-%s-state" evil-state))
+                         evil-states-order)))
+      (if (not current-position)
+          (evil-normal-state)
+        (funcall (nth (mod (+ current-position (if back -1 1))
+                           (length evil-states-order))
+                      evil-states-order)))))
+
+  (defun pspmacs/pspline--next-evil-state ()
+    "Push evil-state in `pspmacs/pspline--cycle-evil-state'"
+    (interactive)
+    (pspmacs/pspline--cycle-evil-state))
+
+  (defun pspmacs/pspline--prev-evil-state ()
+    "Pull back evil-state in `pspmacs/pspline--cycle-evil-state'"
+    (interactive)
+    (pspmacs/pspline--cycle-evil-state t))
+
+  (defvar pspmacs/pspline-evil-state-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map [mode-line down-mouse-1] #'pspmacs/pspline--next-evil-state)
+      (define-key map [mode-line down-mouse-3] #'pspmacs/pspline--prev-evil-state)
+      map)
+    "Keymap to display on Flymake indicator.")
+
   (defun pspmacs/pspline--evil-state ()
     "Evaluated by `pspmacs/pspline-evil-state'"
     (when (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-statr)
@@ -605,6 +544,7 @@
                            (emacs 'pspmacs/pspline-evil-emacs-face)
                            (_ 'pspmacs/pspline-evil-emacs-face))
                        'mode-line-inactive)
+                     'local-map pspmacs/pspline-evil-state-map
                      'help-echo
                      (symbol-name evil-state))
         " ")))
@@ -752,16 +692,6 @@
                (if (> perc (car x)) (cdr x)))
              pspmacs/pspline-battery-icon-plist))
 
-  (defun pspmacs/pspline--battery-color (perc)
-    "Battery color based on current battery percentage PERC
-
-  PERC > 101 is interpreted as *charging*"
-    (when perc
-      (let* ((red (* 0.008125 (* 2 (- 50 (max 0 (- perc 50))))))
-             (green (* 0.008125 (* 2 (- 50 (max 0 (- 50 perc))))))
-             (blue (* 0.008125 (* 10 (max 0 (- perc 90))))))
-        (color-rgb-to-hex red green blue 2))))
-
   (defun pspmacs/pspline--battery ()
     "Evaluated by `pspmacs/pspline-battery'."
     (when (and (pspmacs/pspline--display-segment 'pspmacs/pspline-battery)
@@ -775,25 +705,23 @@
                              bat-perc))
              (bat-perc-string (format "%s%%" bat-perc-num))
              (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
-             (bat-color (pspmacs/pspline--battery-color bat-perc-num))
-             (bat-string (concat bat-icon
-                                 (if (string= pspmacs/pspline--show-string "time")
-                                     hours-remain
-                                   (format "%s%%" bat-perc-string))))
+             (bat-color (pspmacs/fill-color-cap bat-perc-num 1.0 t "#00ffff"))
+             (bat-string
+              (concat
+               bat-icon (if (string= pspmacs/pspline--show-string "time")
+                            hours-remain (format "%s%%" bat-perc-string))))
              (tooltip-string (if (string= pspmacs/pspline--show-string "time")
                                  bat-perc-string
                                hours-remain)))
         (when bat-color
-          `(,(propertize (buttonize bat-string
-                                    #'pspmacs/pspline--battery-toggle-show-string)
-                         'face
-                         (if (string= (cdr (assq ?b battery-info)) "+")
-                             `(:background ,bat-color :foreground ,"#000000")
-                           `(:foreground ,bat-color))
-                         'help-echo
-                         tooltip-string
-                         'mouse-face
-                         `(:foreground "#000000" :background ,bat-color))
+          `(,(propertize
+              (buttonize bat-string
+                         #'pspmacs/pspline--battery-toggle-show-string)
+              'face (if (string= (cdr (assq ?b battery-info)) "+")
+                        `(:background ,bat-color :foreground ,"#000000")
+                      `(:foreground ,bat-color))
+              'help-echo tooltip-string
+              'mouse-face `(:foreground "#000000" :background ,bat-color))
             " ")))))
 
   (defvar-local pspmacs/pspline-battery
@@ -886,6 +814,7 @@
           (setq mode-line-format (pspmacs/pspline-generate)))))
     (pspmacs/pspline--assert-all-the-icons))
 
+  ;;;###autoload
   (defun pspmacs/pspline-set-up ()
     "Set up pspline as mode-line
 

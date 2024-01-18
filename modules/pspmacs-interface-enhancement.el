@@ -1,4 +1,4 @@
-﻿;;; pspmacs-interface-enhancement.el --- User experience/interface -*- lexical-binding: t; -*-
+;;; pspmacs-interface-enhancement.el --- User experience/interface -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -362,8 +362,14 @@
 (use-package hydra
   :demand t)
 
-(pspmacs/leader-keys
-  "bh" '(pspmacs/startpage-show :which-key "🏠"))
+(use-package pspmacs/startpage
+  :ensure nil
+  :commands pspmacs/startpage-set-up
+  :config
+  :general
+  (pspmacs/leader-keys
+    "bh" '(pspmacs/startpage-show :which-key "🏠")))
+(pspmacs/startpage-set-up)
 
 (use-package helpful
   :after evil
@@ -572,8 +578,11 @@
   (set-face-attribute 'yascroll:thumb-text-area nil
                       :background "#7f7f99"))
 
-(battery)
-
+(use-package pspmacs/pspline
+  :ensure nil
+  :commands pspmacs/pspline-set-up
+  :config
+  (battery))
 (pspmacs/pspline-set-up)
 
 (use-package solaire-mode

@@ -1,4 +1,4 @@
-﻿;;; startpage.el --- startpage modeline -*- lexical-binding: t; -*-
+;;; startpage.el --- startpage modeline -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; STARTPAGE file-system awareness for pspmacs
@@ -404,6 +404,7 @@ Returns buffer handle"
       (forward-button 1))
     startpage-buffer))
 
+;;;###autoload
 (defun pspmacs/startpage-show ()
   "Switch to existing OR new startpage buffer
 
@@ -415,6 +416,7 @@ Returns buffer handle"
       (setq startpage-buffer (pspmacs/startpage-refresh)))
     startpage-buffer))
 
+;;;###autoload
 (defun pspmacs/startpage-display ()
   "Switch to existing OR new startpage buffer
 
@@ -423,10 +425,15 @@ And then, forcefully run `pspmacs/startpage-refresh'"
   (pspmacs/startpage-show)
   (pspmacs/startpage-refresh))
 
-(customize-set-variable 'inhibit-startpage-screen t)
-(customize-set-variable 'initial-buffer-choice #'pspmacs/startpage-show)
-(if (daemonp)
-    (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display))
+;;;###autoload
+(defun pspmacs/startpage-set-up ()
+  "Set up pspmacs startpage.
+
+Call to initialize i.e. after `use-package'"
+  (interactive)
+  (customize-set-variable 'initial-buffer-choice #'pspmacs/startpage-show)
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display)))
 
 (provide 'pspmacs/startpage)
 ;;; startpage.el ends there

@@ -470,6 +470,7 @@ Refresh buffer
 *** Show
 Switch startpage if it exists, else create one.
 #+begin_src emacs-lisp
+  ;;;###autoload
   (defun pspmacs/startpage-show ()
     "Switch to existing OR new startpage buffer
 
@@ -485,6 +486,7 @@ Switch startpage if it exists, else create one.
 *** Display
 Show startpage and refresh (re-display) it.
 #+begin_src emacs-lisp
+  ;;;###autoload
   (defun pspmacs/startpage-display ()
     "Switch to existing OR new startpage buffer
 
@@ -494,12 +496,18 @@ Show startpage and refresh (re-display) it.
     (pspmacs/startpage-refresh))
 #+end_src
 
-* Hooks
+* Set-up
+- Set startup screen
 #+begin_src emacs-lisp
-  (customize-set-variable 'inhibit-startpage-screen t)
-  (customize-set-variable 'initial-buffer-choice #'pspmacs/startpage-show)
-  (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display))
+  ;;;###autoload
+  (defun pspmacs/startpage-set-up ()
+    "Set up pspmacs startpage.
+
+  Call to initialize i.e. after `use-package'"
+    (interactive)
+    (customize-set-variable 'initial-buffer-choice #'pspmacs/startpage-show)
+    (if (daemonp)
+        (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display)))
 #+end_src
 
 * Footer

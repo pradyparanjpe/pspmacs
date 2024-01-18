@@ -1,4 +1,4 @@
-﻿;;; pspmacs-editing-enhancement.el --- writing aid -*- lexical-binding: t; -*-
+;;; pspmacs-editing-enhancement.el --- writing aid -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -180,6 +180,17 @@
     "=rr" '(pspmacs/readability :wk "check region")
     "=rb" '((lambda () (interactive) (pspmacs/readability t))
             :wk "check buffer")))
+
+(use-package pspmacs/live-word-count
+  :ensure nil
+  :commands live-wc-set-pspline-seg
+  :custom
+  (live-wc-max-buffer-size 15360)
+  (live-wc-fraction t)
+  :config
+  (live-wc-set-pspline-seg 3)
+  :hook
+  ((text-mode . live-word-count-mode)))
 
 (use-package emacs
   :config
