@@ -36,7 +36,7 @@
 (require 'pspmacs/common)
 
 (defgroup live-word-count nil
-  "Paint fill-column by changing face background"
+  "Colored display segment of word counts on mode line."
   :group 'convenience
   :group 'display
   :prefix "live-word-count")
@@ -183,10 +183,10 @@ Non-nil SWAP swaps :background and :foreground."
 
 (defvar-local live-wc-eval-str
     nil
-  "Cursor position indicator <row:col>.
+  "Live word count in mode-line.
 
-Customize-Save-Variable value with `live-wc-target',
-`live-wc-target', and `live-wc-target'.")
+Customize-Save-Variable value with `live-wc-max-buffer-size',
+`live-wc-unbind-modes'")
 
 (put 'live-wc-eval-str 'risky-local-variable t)
 
@@ -203,10 +203,15 @@ displays current wc value, nil otherwise."
                                     live-wc-unbind-modes))
                 '(:eval (live-wc-do-count)))))
 
+
+
+(require 'pspmacs/pspline)
 (defvar-local pspmacs/pspline-word-count
-    '(:eval (when (pspmacs/pspline--display-segment 'pspmacs/pspline-word-count)
+    '(:eval (when (pspmacs/pspline--display-segment
+                   'pspmacs/pspline-word-count)
               live-wc-eval-str))
   "Display live word count from `live-word-count-mode'")
+
 (put 'pspmacs/pspline-word-count 'risky-local-variable t)
 
 ;;;###autoload
