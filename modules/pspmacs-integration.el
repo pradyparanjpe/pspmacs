@@ -1,4 +1,4 @@
-﻿;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
+;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -131,6 +131,7 @@
   :custom
   (epg-pinentry-mode 'loopback)
   (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
+  (async-byte-compile-log-file (expand-file-name "async-bytecomp.log" xdg/emacs-state-directory))
   :config
   (epa-file-enable))
 
