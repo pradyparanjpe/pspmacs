@@ -1,4 +1,4 @@
-﻿;;; python.el --- python ide -*- lexical-binding: t; -*-
+;;; python.el --- python ide -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -30,7 +30,7 @@
   (pspmacs/local-leader-keys
     :keymaps 'python-mode-map
     "'" '((lambda () (interactive)
-            (pspmacs/inferior-interpreter 'run-python))
+            (pspmacs/inferior-interpreter #'run-python))
           :wk "python"))
   (general-def 'normal
     python-mode-map
@@ -64,10 +64,22 @@
   :config
   (require 'numpydoc))
 
-(use-package ein
-  :demand t
+(use-package jupyter
+  :general
+  (pspmacs/leader-keys
+    "'i" '((lambda () (interactive)
+             (pspmacs/inferior-interpreter #'jupyter-run-repl))
+           :wk "ipy"))
+  :custom
+  (org-babel-default-header-args:jupyter-python '((:pandoc . t)
+                                                  (:async . "yes")
+                                                  (:session . "py")
+                                                  (:kernel . "python3")))
   :config
-  (add-to-list 'org-babel-load-languages '(ein . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   (add-to-list 'org-babel-load-languages '(jupyter . t)))
+  (org-babel-jupyter-override-src-block "python"))
 
 (use-package pyvenv-auto
   :defer t
