@@ -49,6 +49,27 @@
   :type '(repeat (symbol :tag "Mode in which, word count is inactivated"))
   :group 'live-word-count)
 
+(defcustom live-wc-ignore-if
+  '((:ignore (lambda () (nth 4 (syntax-ppss))) :desc "comment (by property)")
+    (:ignore (lambda () (looking-at (format " *%s" comment-start-skip)))
+             :desc "comment (by marker)")
+    (:ignore org-at-comment-p :desc "org comment")
+    (:ignore org-at-keyword-p :desc "org keyword")
+    (:ignore org-at-table-p :desc "org table")
+    (:ignore org-at-TBLFM-p :desc "org table formula")
+    (:ignore org-at-table.el-p :desc "table.el")
+    (:ignore org-at-heading-p :desc "org heading")
+    (:ignore org-at-property-p :desc "org property")
+    (:ignore org-at-drawer-p :desc "org drawer")
+    (:ignore org-at-property-drawer-p :desc "property drawer's first line")
+    (:ignore pspmacs/in-org-block-p :desc "any org block"))
+
+  "Where any of the functions returns non-nil, ignore the line."
+  :type '(repeat (choice (function :tag "predicate")
+                         (plist ((const :ignore) (function :tag "predicate"))
+                                ((const :desc) (string :tag "description")))))
+  :group 'live-word-count)
+
 (defcustom live-wc-max-buffer-size
   15360
   "Maximum size of buffer beyond which, word count is inactive."
@@ -62,16 +83,12 @@ If non-nil, `live-wc-do-count' will use this as the \=TARGET\=.
 Value \=0\= is interpreted as nil.
 If the value is negative, it is interpreted as \=CAP\= (upper limit).")
 
-(put 'live-wc-target 'safe-local-variable #'numberp)
-
 (defvar-local live-wc-fraction t
   "If non-nil and if possible, show value as a fraction.
 
 If region is selected, display fraction of all the text.
 Else, display fraction of `live-wc-target' if set.
 Else, fallback to absolute.")
-
-(put 'live-wc-fraction 'safe-local-variable #'booleanp)
 
 (defvar live-wc-map
   (let ((map (make-sparse-keymap)))
@@ -80,7 +97,11 @@ Else, fallback to absolute.")
     map)
   "Keymap to display on word-count indicator.")
 
-(defun live-wc--set-target (&optional _button)
+(defvar-local live-wc-mem
+    nil
+  "Memory of displayed value for reuse (esp. while nothing changes)")
+
+(defun live-wc--set-target ()
   "Set value for `live-wc-target'."
   (interactive)
   (let ((wc-target (read-number
@@ -88,7 +109,7 @@ Else, fallback to absolute.")
                     (if live-wc-target (- live-wc-target) 0))))
     (setq-local live-wc-target (if (= 0 wc-target) nil wc-target))))
 
-(defun live-wc--toggle-format (&optional _button)
+(defun live-wc--toggle-format ()
   "Toggle `live-wc-fraction'."
   (interactive)
   (setq-local live-wc-fraction (not live-wc-fraction)))
@@ -108,7 +129,9 @@ If a region is selected and COMPLETE-BUFFER is nil, restrict to that region."
       (goto-char reg-beg)
       (while (< (point) reg-end)
         ;; (beginning-of-line)
-        (when (pspmacs/in-text-p)
+        (when (cl-notany
+               (lambda (x) (funcall (or (plist-get x :ignore) x)))
+               live-wc-ignore-if)
           (let ((line-beg (line-beginning-position))
                 (line-end (min (line-end-position) reg-end)))
             (cl-incf num-lines)
@@ -150,36 +173,35 @@ Non-nil SWAP swaps :background and :foreground."
               (hint (mapconcat (lambda (x)
                                  (format "%d %s\n" (nth 1 x) (car x)))
                                counts))
-              (target (when (and live-wc-target
-                                 (/= live-wc-target 0))
+              (target (when (and live-wc-target (/= live-wc-target 0))
                         (abs live-wc-target)))
               (disp-text
                (cond
-                ((not (and (or (use-region-p)
-                               live-wc-target)
+                ((not (and (or (use-region-p) live-wc-target)
                            live-wc-fraction))
                  (number-to-string num-words))
                 ((use-region-p)
                  (format "%2.2f%%%%"
-                         (* 100 (/ (float num-words)
-                                   (nth 0
-                                        (alist-get
-                                         'words
-                                         (live-wc--count-text-words t)))))))
+                         (* 100
+                            (/ (float num-words)
+                               (nth 0 (alist-get
+                                       'words
+                                       (live-wc--count-text-words t)))))))
                 (t (format "%2.2f%%%%"
                            (* 100 (/ (float num-words) target))))))
               (disp-face (live-wc--color
                           disp-text
-                          (when (and target
-                                     (> 0 live-wc-target))
-                            t))))
-         (propertize (format "¶:%s" disp-text)
-                     'local-map live-wc-map
-                     'face disp-face
-                     'mouse-face disp-face
-                     'help-echo
-                     (concat hint (when target (format "of %d" target)))))
-    " ")))
+                          (when (and target (> 0 live-wc-target)) t)))
+              (mem (propertize (format "¶:%s" disp-text)
+                               'local-map live-wc-map
+                               'face disp-face
+                               'mouse-face disp-face
+                               'help-echo
+                               (concat hint (when target
+                                              (format "of %d" target))))))
+         (setq-local live-wc-mem mem)
+         mem)
+      " ")))
 
 (defvar-local live-wc-eval-str
     nil
@@ -188,8 +210,6 @@ Non-nil SWAP swaps :background and :foreground."
 Customize-Save-Variable value with `live-wc-max-buffer-size',
 `live-wc-unbind-modes'")
 
-(put 'live-wc-eval-str 'risky-local-variable t)
-
 ;;;###autoload
 (define-minor-mode live-word-count-mode
   "Toggle live-word-count-mode.
@@ -197,13 +217,13 @@ Customize-Save-Variable value with `live-wc-max-buffer-size',
 When live-word-count-mode is ON, `live-wc-eval-str'
 displays current wc value, nil otherwise."
   :lighter nil
-  (setq-local live-wc-eval-str
-              (when (and live-word-count-mode
-                         (cl-notany (lambda (x) (derived-mode-p x))
-                                    live-wc-unbind-modes))
-                '(:eval (live-wc-do-count)))))
-
-
+  (setq-local
+   live-wc-eval-str
+   (when (and live-word-count-mode
+              (cl-notany (lambda (x) (derived-mode-p x)) live-wc-unbind-modes))
+     '(:eval (progn (when (buffer-modified-p)
+                      (setq-local live-wc-mem nil))
+                    (or live-wc-mem (live-wc-do-count)))))))
 
 (require 'pspmacs/pspline)
 (defvar-local pspmacs/pspline-word-count
@@ -211,8 +231,6 @@ displays current wc value, nil otherwise."
                    'pspmacs/pspline-word-count)
               live-wc-eval-str))
   "Display live word count from `live-word-count-mode'")
-
-(put 'pspmacs/pspline-word-count 'risky-local-variable t)
 
 ;;;###autoload
 (defun live-wc-set-pspline-seg (&optional pos inactive)
@@ -232,6 +250,12 @@ If INACTIVE is non-nil, show segment even when buffer is inactive"
                   . (:display t :right nil :inactive inactive)))
                (subseq pspmacs/pspline-segments-plist insert-at)))
       (pspmacs/pspline-reset))))
+
+(put 'live-wc-target 'safe-local-variable #'numberp)
+(put 'live-wc-fraction 'safe-local-variable #'booleanp)
+(put 'live-wc-mem 'risky-local-variable t)
+(put 'live-wc-eval-str 'risky-local-variable t)
+(put 'pspmacs/pspline-word-count 'risky-local-variable t)
 
 (provide 'pspmacs/live-word-count)
 ;;; live-word-count.el ends here
