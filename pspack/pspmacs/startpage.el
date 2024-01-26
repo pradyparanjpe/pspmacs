@@ -181,10 +181,11 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
 
 (defun pspmacs/startpage--evil-bind-jumps ()
   "Bind following keys (evil):
+
 tab: next button
 r: RECENT point
 p: PROJECT point
-R: `pspmacs/startpage-refresh'"
+`revert-buffer-function' set to `pspmacs/startpage-refresh'"
   (keymap-set evil-normal-state-local-map
               "TAB" (lambda () (interactive)
                       (forward-button 1)))
@@ -194,24 +195,25 @@ R: `pspmacs/startpage-refresh'"
   (keymap-set evil-normal-state-local-map
               (kbd "p") (lambda () (interactive)
                           (goto-char pspmacs/startpage-projects-point)))
-  (keymap-set evil-normal-state-local-map
-              (kbd "R") 'pspmacs/startpage-refresh))
+  (setq revert-buffer-function #'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--native-bind-jumps ()
     "Bind following keys (native):
+
 r: RECENT point
 p: PROJECT point
-R: `pspmacs/startpage-refresh'"
+`revert-buffer-function' set to `pspmacs/startpage-refresh'"
     (use-local-map (copy-keymap text-mode-map))
     (local-set-key (kbd "<tab>")
-                   (lambda () (interactive) (forward-button 1)))
+                   (lambda () (interactive)
+                     (forward-button 1)))
     (local-set-key (kbd "r")
                    (lambda () (interactive)
                      (goto-char pspmacs/startpage-recent-files-point)))
     (local-set-key (kbd "p")
                    (lambda () (interactive)
                      (goto-char pspmacs/startpage-projects-point)))
-    (local-set-key (kbd "R") 'pspmacs/startpage-refresh))
+    (setq revert-buffer-function #'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--center-pad-string (display-width)
   "Left padding to center text if DISPLAY-WIDTH size"
@@ -374,21 +376,20 @@ else, use `pspmacs/startpage-banner-ascii'"
                              pspmacs/startpage-url-links)))
     (eval `(insert ,@links-text))))
 
-(defun pspmacs/startpage-refresh ()
+(defun pspmacs/startpage-refresh (&optional _IGNORE-AUTO NOCONFIRM)
   "Refresh start-page
 
-Returns buffer handle"
+To be in line with arguments passed by `revert-buffer-function',
+_IGNORE-AUTO is outright ignored.
+When NOCONFIRM is non-nil, do not confirm to revert.
+
+Returns buffer handle."
   (interactive)
-  (let ((startpage-buffer (get-buffer-create pspmacs/startpage-buffer-name)))
-    (with-current-buffer startpage-buffer
-      (special-mode)
-      (when (featurep 'whitespace) (whitespace-mode -1))
-      (when (featurep 'linum) (linum-mode -1))
-      (when (featurep 'display-line-numbers) (display-line-numbers-mode -1))
-      (when (featurep 'page-break-lines) (page-break-lines-mode 1))
-      (read-only-mode -1)
-      (erase-buffer)
-      (save-excursion
+  (when (or NOCONFIRM (y-or-n-p "Refresh?"))
+    (let ((startpage-buffer (get-buffer-create pspmacs/startpage-buffer-name)))
+      (with-current-buffer startpage-buffer
+        (read-only-mode -1)
+        (erase-buffer)
         (pspmacs/startpage-put-banner)
         (pspmacs/startpage-put-load-time)
         (insert "\n\n")
@@ -400,9 +401,15 @@ Returns buffer handle"
         (insert "\n")
         (switch-to-buffer startpage-buffer)
         (read-only-mode 1)
-        (pspmacs/startpage-bind-jumps))
-      (forward-button 1))
-    startpage-buffer))
+        (pspmacs/startpage-bind-jumps)
+        (goto-char (point-min))
+        (forward-button 1)
+        (special-mode)
+        (when (featurep 'whitespace) (whitespace-mode -1))
+        (when (featurep 'linum) (linum-mode -1))
+        (when (featurep 'display-line-numbers) (display-line-numbers-mode -1))
+        (when (featurep 'page-break-lines) (page-break-lines-mode 1)))
+      startpage-buffer)))
 
 ;;;###autoload
 (defun pspmacs/startpage-show ()
@@ -413,7 +420,7 @@ Returns buffer handle"
   (let ((startpage-buffer (get-buffer pspmacs/startpage-buffer-name)))
     (if startpage-buffer
         (switch-to-buffer startpage-buffer)
-      (setq startpage-buffer (pspmacs/startpage-refresh)))
+      (setq startpage-buffer (pspmacs/startpage-refresh nil t)))
     startpage-buffer))
 
 ;;;###autoload
@@ -423,7 +430,7 @@ Returns buffer handle"
 And then, forcefully run `pspmacs/startpage-refresh'"
   (interactive)
   (pspmacs/startpage-show)
-  (pspmacs/startpage-refresh))
+  (pspmacs/startpage-refresh nil t))
 
 ;;;###autoload
 (defun pspmacs/startpage-set-up ()
