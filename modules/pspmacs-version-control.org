@@ -68,7 +68,26 @@
 * diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
+    :demand t
+    :general
+    (pspmacs/leader-keys
+      "gd" '(:ignore t :wk "diff")
+      "gd<" '(diff-hl-revert-hunk :wk "revert")
+      "gd>" '(diff-hl-stage-current-hunk :wk "stage")
+      "gdd" '(diff-hl-show-hunk :wk "see")
+      "gdn" '(diff-hl-next-hunk :wk "next")
+      "gdN" '(diff-hl-show-hunk-next :wk "next & see")
+      "gdp" '(diff-hl-previous-hunk :wk "prev")
+      "gdP" '(diff-hl-show-hunk-previous :wk "prev & see"))
+    :custom
+    (diff-hl-disable-on-remote t)
+    :hook
+    (magit-pre-refresh . diff-hl-magit-pre-refresh)
+    (magit-post-refresh . diff-hl-magit-post-refresh)
     :config
+    (unless (display-graphic-p)
+      (diff-hl-margin-mode))
+    (diff-hl-flydiff-mode)
     (global-diff-hl-mode))
 #+end_src
 

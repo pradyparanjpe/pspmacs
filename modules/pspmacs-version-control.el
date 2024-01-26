@@ -1,4 +1,4 @@
-﻿;;; pspmacs-version-control.el --- git it -*- lexical-binding: t; -*-
+;;; pspmacs-version-control.el --- git it -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -56,7 +56,26 @@
 ;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
 
 (use-package diff-hl
+  :demand t
+  :general
+  (pspmacs/leader-keys
+    "gd" '(:ignore t :wk "diff")
+    "gd<" '(diff-hl-revert-hunk :wk "revert")
+    "gd>" '(diff-hl-stage-current-hunk :wk "stage")
+    "gdd" '(diff-hl-show-hunk :wk "see")
+    "gdn" '(diff-hl-next-hunk :wk "next")
+    "gdN" '(diff-hl-show-hunk-next :wk "next & see")
+    "gdp" '(diff-hl-previous-hunk :wk "prev")
+    "gdP" '(diff-hl-show-hunk-previous :wk "prev & see"))
+  :custom
+  (diff-hl-disable-on-remote t)
+  :hook
+  (magit-pre-refresh . diff-hl-magit-pre-refresh)
+  (magit-post-refresh . diff-hl-magit-post-refresh)
   :config
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode))
+  (diff-hl-flydiff-mode)
   (global-diff-hl-mode))
 
 (use-package emacs
