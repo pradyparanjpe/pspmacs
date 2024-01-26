@@ -1,4 +1,4 @@
-﻿;;; pspack/func.el --- common pspmacs functions -*- lexical-binding: t; -*-
+;;; pspack/func.el --- common pspmacs functions -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; Functions used by pspmacs configuration
@@ -58,6 +58,31 @@ PERC > 101 is interpreted as *overfilled* (returns BRIGHT magenta)"
            (green (* bright (* 2 (- 0.5 (max 0 (- 0.5 frac))))))
            (blue (* bright (* 10 (max 0 (- frac 0.9))))))
       (color-rgb-to-hex red green blue 2))))
+
+(defun pspmacs/csv-highlight ()
+  (interactive)
+  (font-lock-mode 1)
+  (let* ((skip-regexp (concat "[^" (apply 'concat csv-separators) "\n]"))
+         (num-col (count-matches csv-separator-regexp
+                                 (point-at-bol)
+                                 (point-at-eol)))
+         (colors
+          (butlast
+           (cl-loop for i from 0.0 below 2.0 by (/ 2.0 7)
+                    collect (apply
+                             #'color-rgb-to-hex
+                             (color-hsl-to-rgb (mod i 1) 0.3 0.5))))))
+
+    (cl-loop for rep from 0 to (ceiling (/ num-col 7))
+             collect (cl-loop for col from 1 to 7
+                              for farb in colors
+                              for reg = (format "^\\(%s*%s\\)\\{%d\\}"
+                                                skip-regexp
+                                                csv-separator-regexp
+                                                (+ 1 (* rep 7) col))
+                              do (font-lock-add-keywords
+                                  nil `((,reg
+                                         (1 '(face (:foreground ,farb))))))))))
 
 (defun pspmacs/mode-prettify (sub-modes)
   "Apply pretiffy mode alist according to active-mode.

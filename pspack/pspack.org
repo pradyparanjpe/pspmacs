@@ -109,6 +109,50 @@
         (color-rgb-to-hex red green blue 2))))
 #+end_src
 
+** TODO CSV colors
+Inspired from a [[https://www.reddit.com/r/emacs/comments/26c71k/csv_column_highlighting/][reddit]] post.
+Color each column with a distinct color.
+Leave first and last columns uncolored.
+Order of colors:
+|---------------+---------------|
+| Column        | Color         |
+|---------------+---------------|
+| 7  *  N  +  1 | #a66559995999 |
+| 7  *  N  +  2 | #6f8aa6655999 |
+| 7  *  N  +  3 | #5999857ba665 |
+| 7  *  N  +  4 | #a66559999b6d |
+| 7  *  N  +  5 | #a6659b6d5999 |
+| 7  *  N  +  6 | #5999a665857b |
+| 7  *  N  +  0 | #6f8a5999a665 |
+|---------------+---------------|
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/csv-highlight ()
+    (interactive)
+    (font-lock-mode 1)
+    (let* ((skip-regexp (concat "[^" (apply 'concat csv-separators) "\n]"))
+           (num-col (count-matches csv-separator-regexp
+                                   (point-at-bol)
+                                   (point-at-eol)))
+           (colors
+            (butlast
+             (cl-loop for i from 0.0 below 2.0 by (/ 2.0 7)
+                      collect (apply
+                               #'color-rgb-to-hex
+                               (color-hsl-to-rgb (mod i 1) 0.3 0.5))))))
+
+      (cl-loop for rep from 0 to (ceiling (/ num-col 7))
+               collect (cl-loop for col from 1 to 7
+                                for farb in colors
+                                for reg = (format "^\\(%s*%s\\)\\{%d\\}"
+                                                  skip-regexp
+                                                  csv-separator-regexp
+                                                  (+ 1 (* rep 7) col))
+                                do (font-lock-add-keywords
+                                    nil `((,reg
+                                           (1 '(face (:foreground ,farb))))))))))
+#+end_src
+
 * Prettify data
 - Prettify modes with emoji
 #+begin_src emacs-lisp :tangle vars.el
@@ -891,6 +935,11 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
           nil
           'tree)))
       (org-update-statistics-cookies nil)))
+#+end_src
+
+* TODO Org split block
+https://scripter.co/splitting-an-org-block-into-two/
+#+begin_src emacs-lisp :tangle no
 #+end_src
 
 * Programming language hooks

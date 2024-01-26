@@ -48,6 +48,8 @@
   (csv-comment-start "#")
   :config
   :hook
+  (csv-mode . csv-align-mode)
+  (csv-mode . pspmacs/csv-highlight)
   (csv-mode . csv-guess-set-separator)
   (csv-mode . csv-header-line))
 
