@@ -594,6 +594,19 @@
   ("g" text-scale-increase "in")
   ("l" text-scale-decrease "out"))
 
+(use-package hyperbole
+  :demand t
+  :general
+  (pspmacs/leader-keys :keymaps 'hyperbole-mode-map
+    "RET" '(hkey-either :wc "Hypb Act"))
+  :custom
+  (hbmap:dir-user (expand-file-name "hyperb" xdg/emacs-data-directory))
+  (hbmap:dir-filename
+   (expand-file-name "hyperb/HBMAP" xdg/emacs-data-directory))
+  (hyrolo-file-list `(,(expand-file-name "rolo.otl" xdg/emacs-data-directory)))
+  :config
+  (hyperbole-mode 1))
+
 (use-package emacs
   :init
   ;; Vertico suggestions
