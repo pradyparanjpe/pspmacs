@@ -845,10 +845,12 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
       (with-current-buffer scratch-name
         (funcall-interactively buffer-mode)
         (when (= (buffer-size) 0)
+          (buffer-disable-undo scratch-name)
           (insert (substitute-command-keys scratch-notice))
           (goto-char (point-min))
           (comment-line 2)
-          (goto-char (point-max))))))
+          (goto-char (point-max))
+          (buffer-disable-undo scratch-name)))))
 #+end_src
 
 * Org insert check-boxes and cookies

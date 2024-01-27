@@ -433,10 +433,12 @@ to publish orgmode files to html."
     (with-current-buffer scratch-name
       (funcall-interactively buffer-mode)
       (when (= (buffer-size) 0)
+        (buffer-disable-undo scratch-name)
         (insert (substitute-command-keys scratch-notice))
         (goto-char (point-min))
         (comment-line 2)
-        (goto-char (point-max))))))
+        (goto-char (point-max))
+        (buffer-disable-undo scratch-name)))))
 
 (defun pspmacs--org-pop-cookie (heading-cookie-re)
   "PRIVATE: used by `pspmacs/org-put-checkboxes'.
