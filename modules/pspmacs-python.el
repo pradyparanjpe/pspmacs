@@ -141,7 +141,7 @@ ACTION: action to perform (install, uninstall)"
 
 (use-package pydoc
   :general
-  (pspmacs/leader-keys :keymap 'python-mode-map
+  (pspmacs/leader-keys :keymaps 'python-mode-map
     "d"  '(:ignore t :wk "documentation")
     "d." '(pydoc-at-point :wk "point")
     "d$" '(pydoc-browse :wk "browse")
@@ -149,7 +149,7 @@ ACTION: action to perform (install, uninstall)"
 
 (use-package numpydoc
   :general
-  (pspmacs/leader-keys :keymap 'python-mode-map
+  (pspmacs/leader-keys :keymaps 'python-mode-map
     "d"  '(:ignore t :wk "documentation")
     "di" '(numpydoc-generate :wk "insert"))
   :custom

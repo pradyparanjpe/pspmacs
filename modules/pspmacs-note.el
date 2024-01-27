@@ -101,7 +101,7 @@
     "Sx"  '(org-cut-special :wk "org cut special")
     "Se"  '(org-edit-special :wk "edit")
 
-    "b"   '(:keymap org-babel-map :wk "babel")
+    "b"   '(:keymaps 'org-babel-map :wk "babel")
 
     "d"   '(:ignore t :wk "date-time")
     "dd"  '(org-deadline :wk "date-time")
