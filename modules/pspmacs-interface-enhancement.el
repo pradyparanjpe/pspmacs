@@ -440,6 +440,13 @@
   (evil-set-initial-state 'eshell-mode 'insert)
   (evil-set-initial-state 'magit-diff-mode 'insert))
 
+(use-package ace-window
+  :general
+  (pspmacs/leader-keys
+    "wf" '(ace-window :wk "hint"))
+  :config
+  (ace-window-display-mode -1))
+
 (use-package evil-collection ;; evilifies a bunch of things
   :after evil
   :demand t
@@ -595,17 +602,22 @@
   ("l" text-scale-decrease "out"))
 
 (use-package hyperbole
+  :after ace-window
   :demand t
   :general
   (pspmacs/leader-keys :keymaps 'hyperbole-mode-map
-    "RET" '(hkey-either :wc "Hypb Act"))
+    "RET" '(hkey-either :wk "hyper")
+    "wg" '(hycontrol-windows-grid :wk "grid")
+    "wg" '(hycontrol-make-windows-grid :wk "grid"))
   :custom
+  (hsys-org-enable-smart-keys t)
   (hbmap:dir-user (expand-file-name "hyperb" xdg/emacs-data-directory))
   (hbmap:dir-filename
    (expand-file-name "hyperb/HBMAP" xdg/emacs-data-directory))
   (hyrolo-file-list `(,(expand-file-name "rolo.otl" xdg/emacs-data-directory)))
   :config
-  (hyperbole-mode 1))
+  (hyperbole-mode 1)
+  (hkey-ace-window-setup))
 
 (use-package emacs
   :init
