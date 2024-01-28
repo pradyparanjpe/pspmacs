@@ -435,6 +435,17 @@ Jump by word hints
       "jj" '(avy-goto-char-timer :wk "search")))
  #+end_src
 
+* ace-window
+#+begin_src emacs-lisp
+  (use-package ace-window
+    :demand t
+    :general
+    (pspmacs/leader-keys
+      "wf" '(ace-window :wk "hint"))
+    :config
+    (ace-window-display-mode -1))
+#+end_src
+
 * emacs-evil/evil
 - Use vi keybindings for emacs
 #+begin_src emacs-lisp
@@ -486,16 +497,6 @@ Jump by word hints
     ;; default mode: insert
     (evil-set-initial-state 'eshell-mode 'insert)
     (evil-set-initial-state 'magit-diff-mode 'insert))
-#+end_src
-
-* ace-window
-#+begin_src emacs-lisp
-  (use-package ace-window
-    :general
-    (pspmacs/leader-keys
-      "wf" '(ace-window :wk "hint"))
-    :config
-    (ace-window-display-mode -1))
 #+end_src
 
 * emacs-evil/evil-collection
@@ -706,6 +707,22 @@ Auto-hiding text-based scroll bar
 #+end_src
 
 * GNU/Hyperbole
+Hyperbole breaks the thumb-rule by affecting system merely upon installation.
+
+#+begin_warning
+👎 HYPERBOLE internally "takes care of" many variables, resetting it according to what its author feels is best.
+I viscerally /hate/ this behaviour.
+This, among others, is a reason why I am more likely to drop Hyperbole in future.
+ #+end_warning
+
+Variables, which I have discovered, that Hyperbole sets according to its own liking.
+- =hyperbole-mode= (itself)
+- =ace-window-display-mode= (Disable =ace-window-display-mode= again after =hkey-ace-window-setup=).
+- =outline-minor-mode=
+- =vertico-mouse-mode=
+- =xref-etags-mode=
+
+
 #+begin_src emacs-lisp
   (use-package hyperbole
     :after ace-window
@@ -722,7 +739,9 @@ Auto-hiding text-based scroll bar
     (hyrolo-file-list `(,(xdg/make-path "rolo.otl")))
     :config
     (hyperbole-mode 1)
-    (hkey-ace-window-setup))
+    (hkey-ace-window-setup)
+    ;; `hkey-ace-window-setup' turns `ace-window-display-mode' back on.
+    (ace-window-display-mode -1))
 #+end_src
 
 * native emacs-settings

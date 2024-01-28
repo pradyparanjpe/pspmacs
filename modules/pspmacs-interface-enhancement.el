@@ -391,6 +391,14 @@
   (pspmacs/leader-keys
     "jj" '(avy-goto-char-timer :wk "search")))
 
+(use-package ace-window
+  :demand t
+  :general
+  (pspmacs/leader-keys
+    "wf" '(ace-window :wk "hint"))
+  :config
+  (ace-window-display-mode -1))
+
 (use-package evil
   :general
   ;; window navigations
@@ -439,13 +447,6 @@
   ;; default mode: insert
   (evil-set-initial-state 'eshell-mode 'insert)
   (evil-set-initial-state 'magit-diff-mode 'insert))
-
-(use-package ace-window
-  :general
-  (pspmacs/leader-keys
-    "wf" '(ace-window :wk "hint"))
-  :config
-  (ace-window-display-mode -1))
 
 (use-package evil-collection ;; evilifies a bunch of things
   :after evil
@@ -616,7 +617,9 @@
   (hyrolo-file-list `(,(xdg/make-path "rolo.otl")))
   :config
   (hyperbole-mode 1)
-  (hkey-ace-window-setup))
+  (hkey-ace-window-setup)
+  ;; `hkey-ace-window-setup' turns `ace-window-display-mode' back on.
+  (ace-window-display-mode -1))
 
 (use-package emacs
   :init
