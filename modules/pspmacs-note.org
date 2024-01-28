@@ -596,7 +596,7 @@ Capture for future.
 #+end_src
 
 * Telephone Links
-- Use telephone links of the form [[tel:+91 9988776655]] in org mode.
+- Use telephone links of the form tel:+919988776655 in org mode.
 - Install directly from [[https://github.com/org-dial][repository]].
 #+begin_src emacs-lisp
   (use-package org-dial
