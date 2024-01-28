@@ -503,6 +503,6 @@ parent."
 
 (use-package emacs
   :custom
-  (diary-file (expand-file-name "diary" xdg/emacs-data-directory)))
+  (diary-file (xdg/make-path "diary" 'cache)))
 
 (pspmacs/load-inherit)

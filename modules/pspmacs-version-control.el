@@ -22,7 +22,14 @@
 
 ;;; Code:
 
+(use-package transient
+  :custom
+  (transient-history-file (xdg/make-path "transient/history.el" 'cache))
+  (transient-values-file (xdg/make-path "transient/values.el" 'cache))
+  (transient-levels-file (xdg/make-path "transient/levels.el" 'cache)))
+
 (use-package magit
+  :after transient
   :general
   (pspmacs/leader-keys
    "g" '(:ignore t :wk "git")
@@ -38,13 +45,6 @@
                magit-diff-mode-map)
     "TAB" #'magit-section-toggle
     "<escape>" #'transient-quit-one)
-  :init
-  (setq transient-history-file
-        (expand-file-name "transient/history.el" xdg/emacs-cache-directory))
-  (setq transient-values-file
-        (expand-file-name "transient/values.el" xdg/emacs-cache-directory))
-  (setq transient-levels-file
-        (expand-file-name "transient/levels.el" xdg/emacs-cache-directory))
   :custom
   (magit-display-buffer-function
    #'magit-display-buffer-same-window-except-diff-v1)

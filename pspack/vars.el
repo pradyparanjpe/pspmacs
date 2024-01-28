@@ -1,4 +1,4 @@
-﻿;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
+;;; pspack/vars.el --- common pspmacs variables -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
 ;; Custom variables for pspmacs config.
@@ -180,7 +180,7 @@
 
 (require 'pspmacs/xdg)
 (defcustom pspmacs/org-path
-  (expand-file-name "org/" xdg/emacs-data-directory)
+  (xdg/make-path "org/")
   "Org mode base"
   :group 'pspmacs
   :type 'directory)
@@ -204,7 +204,7 @@
   :type 'directory)
 
 (defcustom pspmacs/ref-paths
-  `(,(expand-file-name "references/" xdg/emacs-data-directory))
+  `(,(xdg/make-path "references/"))
   "Reference base paths order"
   :group 'pspmacs
   :type '(repeat directory))

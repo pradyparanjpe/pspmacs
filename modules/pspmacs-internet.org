@@ -82,8 +82,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     (eww-browse-url-new-window-is-tab nil)
     (shr-width fill-column)
     (url-configuration-directory
-     (file-name-as-directory
-      (expand-file-name "url" xdg/emacs-cache-directory)))
+     (file-name-as-directory (xdg/make-path "url" 'cache)))
     (url-cookie-file (expand-file-name "cookies" url-configuration-directory))
 
     :hook

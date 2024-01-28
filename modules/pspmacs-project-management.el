@@ -142,8 +142,8 @@
 
 (use-package emacs
   :init
-  (mkdir (expand-file-name "backups" xdg/emacs-data-directory) t)
-  (mkdir (expand-file-name "auto-saves" xdg/emacs-state-directory) t)
+  (mkdir (xdg/make-path "backups") t)
+  (mkdir (xdg/make-path "auto-saves" 'state) t)
   (pspmacs/extend-list 'project-vc-extra-root-markers
                        '(
                          ;; projectile
@@ -163,14 +163,9 @@
   :custom
   (recentf-max-saved-items 200)
   (dired-listing-switches "-lah")
-  (backup-directory-alist
-   `((".*" . ,(expand-file-name "backups" xdg/emacs-data-directory))))
+  (backup-directory-alist `((".*" . ,(xdg/make-path "backups"))))
   (auto-save-file-name-transforms
-   `((".*" ,(file-name-directory
-             (expand-file-name "auto-saves/" xdg/emacs-state-directory))
-      t)))
-  (auto-save-list-file-prefix (expand-file-name
-                               "auto-saves/sessions"
-                               xdg/emacs-state-directory)))
+   `((".*" ,(file-name-directory (xdg/make-path "auto-saves/" 'state)) t)))
+  (auto-save-list-file-prefix (xdg/make-path "auto-saves/sessions" 'state)))
 
 (pspmacs/load-inherit)

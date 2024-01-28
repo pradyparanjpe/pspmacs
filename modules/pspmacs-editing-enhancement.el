@@ -84,11 +84,11 @@
   :init
   (global-undo-tree-mode)
   :config
-  (mkdir (expand-file-name "undo-tree/" xdg/emacs-cache-directory) t)
+  (mkdir (xdg/make-path "undo-tree/" 'cache) t)
   :custom
   (undo-tree-auto-save-history t)
   (undo-tree-history-directory-alist
-   `((".*" . ,(expand-file-name "undo-tree/" xdg/emacs-cache-directory))))
+   `((".*" . ,(xdg/make-path "undo-tree/" 'cache))))
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t))
 

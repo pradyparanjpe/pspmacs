@@ -131,7 +131,7 @@
   :custom
   (epg-pinentry-mode 'loopback)
   (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
-  (async-byte-compile-log-file (expand-file-name "async-bytecomp.log" xdg/emacs-state-directory))
+  (async-byte-compile-log-file (xdg/make-path "async-bytecomp.log" 'state))
   :config
   (epa-file-enable))
 

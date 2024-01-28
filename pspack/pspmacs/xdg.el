@@ -14,12 +14,12 @@
 If xdg's variable is defined by system, use it, else return default
 If XDG-VAR is defined in the environment, use XDG-VAR/emacs,
 else use DEFAULT-PATH/emacs"
-  (directory-file-name (expand-file-name "emacs" (or (getenv xdg-var)
-                                                     default-path))))
+  (directory-file-name
+   (expand-file-name "emacs" (or (getenv xdg-var) default-path))))
 
 (defcustom xdg/emacs-config-directory
-  'user-emacs-directory
-  "Location of local machine-specific Emacs-configuration files
+  (eval user-emacs-directory)
+  "Location of local machine-specific Emacs-configuration files.
 
 alias of USER_EMACS_DIRECTORY"
   :group 'xdg
@@ -57,6 +57,18 @@ ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
                     xdg/emacs-state-directory))
   (make-directory (eval xdg-base) t))
 
+(defun xdg/make-path (var &optional base)
+  "Generate xdg/emacs path.
+
+Return path for VAR relative to xdg/emacs-BASE-directory.
+BASE can be 'cache 'data 'state 'config
+If BASE is nil, assume \=data\=."
+  (convert-standard-filename
+   (let ((base (or base "data")))
+     (expand-file-name
+      var
+      (eval (intern (format "xdg/emacs-%s-directory" base)))))))
+
 (defun locate-user-emacs-file (new-name &optional old-name)
   "This function supersedes Emacs-native function.
 
@@ -69,7 +81,7 @@ directory if it does not exist."
    (let* ((home (concat "~" (or init-file-user "")))
           (at-home (and old-name (expand-file-name old-name home)))
           (bestname (abbreviate-file-name
-                     (expand-file-name new-name xdg/emacs-cache-directory))))
+                     (xdg/make-path new-name 'cache))))
      (if (and at-home (not (file-readable-p bestname))
               (file-readable-p at-home))
          at-home
@@ -87,7 +99,8 @@ directory if it does not exist."
                    (error (setq errtype "create")))))
              (when (and errtype
                         xdg/emacs-cache-directory-warning
-                        (not (get 'xdg/emacs-cache-directory-warning 'this-session)))
+                        (not (get 'xdg/emacs-cache-directory-warning
+                                  'this-session)))
                ;; Warn only once per Emacs session.
                (put 'xdg/emacs-cache-directory-warning 'this-session t)
                (display-warning 'initialization

@@ -356,8 +356,7 @@ Color it
     (dap-python-debugger 'debugpy)
     ;; show stdout
     (dap-auto-show-output t)
-    (dap-ui-repl-history-dir
-     (expand-file-name "dap-ui-history" xdg/emacs-state-directory)))
+    (dap-ui-repl-history-dir (xdg/make-path "dap-ui-history" 'state)))
 #+end_example
 
 * pspmacs bindings

@@ -669,7 +669,7 @@ Key-bindings to:
 #+begin_src emacs-lisp :tangle vars.el
   (require 'pspmacs/xdg)
   (defcustom pspmacs/org-path
-    (expand-file-name "org/" xdg/emacs-data-directory)
+    (xdg/make-path "org/")
     "Org mode base"
     :group 'pspmacs
     :type 'directory)
@@ -718,7 +718,7 @@ If org-tangle adds BOM, (utf signature), drop it by adding following code to =or
 - pspmacs/ref-paths: paths to bibliography
 #+begin_src emacs-lisp :tangle vars.el
   (defcustom pspmacs/ref-paths
-    `(,(expand-file-name "references/" xdg/emacs-data-directory))
+    `(,(xdg/make-path "references/"))
     "Reference base paths order"
     :group 'pspmacs
     :type '(repeat directory))

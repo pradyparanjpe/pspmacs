@@ -611,10 +611,9 @@
     "wg" '(hycontrol-make-windows-grid :wk "grid"))
   :custom
   (hsys-org-enable-smart-keys t)
-  (hbmap:dir-user (expand-file-name "hyperb" xdg/emacs-data-directory))
-  (hbmap:dir-filename
-   (expand-file-name "hyperb/HBMAP" xdg/emacs-data-directory))
-  (hyrolo-file-list `(,(expand-file-name "rolo.otl" xdg/emacs-data-directory)))
+  (hbmap:dir-user (xdg/make-path "hyperb"))
+  (hbmap:dir-filename (xdg/make-path "hyperb/HBMAP"))
+  (hyrolo-file-list `(,(xdg/make-path "rolo.otl")))
   :config
   (hyperbole-mode 1)
   (hkey-ace-window-setup))
@@ -651,7 +650,7 @@
   (scroll-margin 5)
   (indent-tabs-mode nil)
   (tab-width 4)
-  (svg-lib-icons-dir (expand-file-name "svg-lib" xdg/emacs-cache-directory))
+  (svg-lib-icons-dir (xdg/make-path "svg-lib" 'cache))
   (use-dialog-box nil)
   ;; Vertico suggestions
   ;; Do not allow the cursor in the minibuffer prompt
@@ -660,7 +659,7 @@
   ;; Vertico suggestions
   ;; Enable recursive minibuffers
   (enable-recursive-minibuffers t)
-  (abbrev-file-name (expand-file-name "abbrev_defs" xdg/emacs-state-directory))
+  (abbrev-file-name (xdg/make-path "abbrev_defs" 'state))
   :hook
   (minibuffer-setup . cursor-intangible-mode)
 

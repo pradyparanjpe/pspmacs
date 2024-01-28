@@ -1,4 +1,4 @@
-﻿;;; internet.el --- internet ide -*- lexical-binding: t; -*-
+;;; internet.el --- internet ide -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -70,8 +70,7 @@
   (eww-browse-url-new-window-is-tab nil)
   (shr-width fill-column)
   (url-configuration-directory
-   (file-name-as-directory
-    (expand-file-name "url" xdg/emacs-cache-directory)))
+   (file-name-as-directory (xdg/make-path "url" 'cache)))
   (url-cookie-file (expand-file-name "cookies" url-configuration-directory))
 
   :hook
