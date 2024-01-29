@@ -178,17 +178,32 @@ Some incompatibility of Nginx with Emacs-29
     :mode ("/nginx/sites-\\(?:available\\|enabled\\)/" . nginx-mode))
 #+end_src
 
+* Pinentry
+Necessary [[https://www.gnu.org/software/emacs/manual/html_node/epa/GnuPG-Pinentry.html][corresponding configuration]] in =${GNUPGHOME:-${HOME}/.gnupg/}=.
+#+begin_src conf :tangle no
+allow-loopback-pinentry
+allow-emacs-pinentry
+#+end_src
+
+
+#+begin_src emacs-lisp
+  (use-package pinentry
+    :custom
+    (epg-pinentry-mode 'loopback)
+    (package-gnupghome-dir (or (getenv "GNUPGHOME") package-gnupghome-dir))
+    (pinentry--socket-dir (xdg/make-path (format "pinentry") 'state))
+    :config
+    (epa-file-enable)
+    (unless pinentry--server-process
+      (pinentry-start)))
+#+end_src
+
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
-    (epg-pinentry-mode 'loopback)
-    (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
-    (async-byte-compile-log-file (xdg/make-path "async-bytecomp.log" 'state))
-    :config
-    (epa-file-enable))
+    (async-byte-compile-log-file (xdg/make-path "async-bytecomp.log" 'state)))
 #+end_src
-
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

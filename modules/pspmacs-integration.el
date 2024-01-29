@@ -127,13 +127,19 @@
   :init
   (auth-source-pass-enable))
 
-(use-package emacs
+(use-package pinentry
   :custom
   (epg-pinentry-mode 'loopback)
-  (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
-  (async-byte-compile-log-file (xdg/make-path "async-bytecomp.log" 'state))
+  (package-gnupghome-dir (or (getenv "GNUPGHOME") package-gnupghome-dir))
+  (pinentry--socket-dir (xdg/make-path (format "pinentry") 'state))
   :config
-  (epa-file-enable))
+  (epa-file-enable)
+  (unless pinentry--server-process
+    (pinentry-start)))
+
+(use-package emacs
+  :custom
+  (async-byte-compile-log-file (xdg/make-path "async-bytecomp.log" 'state)))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-os.el ends here
