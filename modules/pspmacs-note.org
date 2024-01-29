@@ -519,6 +519,8 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
 - A large chunk of pspack code is obviated by org-modern, hence, I've dropped it here.
 - Otherwise all of this was achieved using ~prettify-symbols-alist~.
 - Also, =org-bullets= and =hl-todo= is subsumed here.
+- Due to [[https://github.com/minad/org-modern/issues/5][a conflict]], tables are not well-rendered with variable font with org-modern.
+  Till this gets resolved, use a [[https://github.com/minad/org-modern/issues/5#issuecomment-1318003940][work-around]], and use valign although, this is [[https://github.com/minad/org-modern/issues/5#issuecomment-1049756186][not recommended]].
 #+begin_src emacs-lisp
   (use-package org-modern
     :custom
@@ -573,6 +575,18 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     :hook
     (org-mode . org-modern-mode)
     (org-agenda-finalize . org-modern-agenda))
+#+end_src
+
+** HACK valign
+For org table with variable font.
+This should be subsumed inside org-modern, after the [[https://github.com/minad/org-modern/issues/5][issue]] gets fixed.
+#+begin_src emacs-lisp
+  (use-package valign
+    :after org-modern
+    :custom
+    (org-modern-table nil)
+    :hook
+    (org-modern-mode . valign-mode))
 #+end_src
 
 * Org capture templates

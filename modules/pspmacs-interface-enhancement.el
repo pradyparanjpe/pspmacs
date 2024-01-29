@@ -144,6 +144,10 @@
   (pspmacs/leader-keys
     "D" '(:ignore t :wk "Diction"))
 
+  ;; font
+  (pspmacs/leader-keys
+    "F" '(:ignore t :wk "Font"))
+
   (pspmacs/leader-keys
     :keymaps 'org-mode-map
     "M"  '(:ignore t :wk "Mode")
@@ -633,18 +637,6 @@
                    crm-separator)
                   (car args))
           (cdr args)))
-
-  ;;; Font
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (with-selected-frame frame
-                    (pspmacs/set-font-faces))))
-    (pspmacs/set-font-faces))
-
-  (global-set-key (kbd "C-=") 'text-scale-increase)
-  (global-set-key (kbd "C--") 'text-scale-decrease)
-
   :custom
   ;; Vertico suggestions
   ;; Emacs 28: Hide commands in M-x which do not work in the current mode.

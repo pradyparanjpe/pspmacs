@@ -206,8 +206,6 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 ** Set theme
 #+begin_src emacs-lisp :tangle config.el
   (load-theme 'modus-vivendi :no-confirm)
-  ;; Somehow, the hook isn't getting evaluated automatically
-  (eval modus-themes-after-load-theme-hook)
 #+end_src
 
 ** Inherit

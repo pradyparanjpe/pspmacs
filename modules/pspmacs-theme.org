@@ -35,6 +35,7 @@ built-in ones.
 #+begin_src emacs-lisp
   (use-package modus-themes
     :demand t
+    :after fontaine
     :vc (modus-themes :url "https://www.github.com/protesilaos/modus-themes")
     :general (pspmacs/leader-keys
                "t" '(:ignore t :wk "Theme")
@@ -50,7 +51,7 @@ built-in ones.
     (modus-themes-italic-constructs t)
     (modus-themes-bold-constructs t)
     (modus-themes-mixed-fonts t)
-    (modus-themes-variable-pitch-ui nil)
+    (modus-themes-variable-pitch-ui t)
 
     ;; Maybe define some palette overrides, such as by using our presets
     (modus-vivendi-palette-overrides
@@ -77,14 +78,78 @@ built-in ones.
     ;; Load the theme of your choice.
     ;; (load-theme 'modus-operandi :no-confirm)
     :hook
-    (modus-themes-after-load-theme . pspmacs/modus-themes-custom-faces))
+    (pspmacs/after-enable-theme . pspmacs/modus-themes-custom-faces))
+#+end_src
+
+* Fontaine
+#+begin_src emacs-lisp
+  (use-package fontaine
+    :demand t
+    :general
+    (pspmacs/leader-keys
+      "Ff" '(fontaine-set-preset :wk "set")
+      "FF" '(fontaine-set-face-font :wk "face"))
+    :custom
+    (fontaine-latest-state-file
+     (xdg/make-path "fontaine-latest-state.eld" 'state))
+    (fontaine-presets
+     `((tiny
+        :default-height ,(round (* pspmacs/font-height 0.7)))
+       (small
+        :default-height ,(round (* pspmacs/font-height 0.9)))
+       (regular
+        :default-height ,(round (* pspmacs/font-height 1)))
+       (medium
+        :default-height ,(round (* pspmacs/font-height 1.1)))
+       (large
+        :default-weight light
+        :default-height ,(round (* pspmacs/font-height 1.4))
+        :bold-weight bold)
+       (presentation
+        :default-weight light
+        :default-height ,(round (* pspmacs/font-height 1.7))
+        :bold-weight bold)
+       (jumbo
+        :default-weight light
+        :default-height ,(round (* pspmacs/font-height 2.2))
+        :bold-weight bold)
+       (t
+        :default-family "Fira Code Nerd Font"
+        :default-weight regular
+        :default-height ,pspmacs/font-height
+        :fixed-pitch-family "Fira Code Nerd Font"
+        :fixed-pitch-weight regular
+        :fixed-pitch-height 1.0
+        :fixed-pitch-serif-family nil
+        :fixed-pitch-serif-weight nil
+        :fixed-pitch-serif-height 1.0
+        :variable-pitch-family "Cantarell Nerd Font"
+        :variable-pitch-weight regular
+        :variable-pitch-height 1.0
+        :bold-family nil
+        :bold-weight bold
+        :italic-family "VictorMono"
+        :italic-slant italic
+        :line-spacing nil)))
+    :hook
+    (kill-emacs-hook . fontaine-store-latest-preset)
+    (pspmacs/after-enable-theme . fontaine-apply-current-preset)
+    :config
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame
+                      (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+      (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))))
 #+end_src
 
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
-    (custom-theme-directory xdg/emacs-cache-directory))
+    (custom-theme-directory xdg/emacs-cache-directory)
+    :hook
+    (text-mode . variable-pitch-mode))
 #+end_src
 
 * Inherit from private and local

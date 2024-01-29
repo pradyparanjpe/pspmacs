@@ -133,7 +133,9 @@ Organize command-line calls.
   /download/5.2/Fira_Code_v5.2.zip
   victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip
   fira-code-nerd=https://github.com/ryanoasis/nerd-fonts/releases\
-  /download/v3.0.2/FiraCode.zip"
+  /download/v3.0.2/FiraCode.zip
+  cantarell:https://github.com/s373r/cantarell-nerd-font/releases\
+  /download/v1.1/cantarell-nerd-fonts-complete-release.zip"
 
       # variables to unset
       global_vars="help_msg usage manager include_deps include_fonts emacs_cache\

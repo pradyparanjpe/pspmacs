@@ -480,6 +480,13 @@ parent."
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda))
 
+(use-package valign
+  :after org-modern
+  :custom
+  (org-modern-table nil)
+  :hook
+  (org-modern-mode . valign-mode))
+
 (use-package org-capture
   :ensure org
   :general

@@ -127,29 +127,6 @@ Load prettify-symbols from Each of SUB-MODES."
 (defun pspmacs/prettify-rust ()
   (pspmacs/mode-prettify '("code" "rust")))
 
-(defun pspmacs/set-font-faces ()
-  (set-face-attribute 'default nil
-                      :font "Fira Code"
-                      :height pspmacs/font-height)
-
-  ;; Set the fixed pitch face
-  (set-face-attribute 'fixed-pitch nil
-                      :font "Fira Code"
-                      :height pspmacs/font-height)
-
-  ;; Set italic font face if available
-  (ignore-errors
-    (set-face-attribute 'italic nil
-                        :font "VictorMono"
-                        :slant 'italic
-                        :height pspmacs/font-height)
-
-    ;; Set the variable pitch face
-    (set-face-attribute 'variable-pitch nil
-                        :font "Cantarell"
-                        :height pspmacs/font-height
-                        :weight 'regular)))
-
 (defun pspmacs/load-modules (&optional modules-order)
   "Load modules in order.
 
@@ -238,24 +215,39 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
     (unless (member major-mode maj-modes-list)
       (call-interactively callback))))
 
+(defvar pspmacs/after-enable-theme-hook nil
+  "Normal hook run after enabling a theme.")
+
+(defun pspmacs/run-after-enable-theme-hook (&rest _args)
+  "Run `after-enable-theme-hook'."
+  (run-hooks 'pspmacs/after-enable-theme-hook))
+
+(advice-add 'enable-theme :after #'pspmacs/run-after-enable-theme-hook)
+
+;;;###autoload
 (defun pspmacs/modus-themes-custom-faces ()
   "Customize modus theme faces."
+
+  ;; Org-modern might be defered
   (modus-themes-with-colors
-    (progn
-      (custom-set-faces
-       ;; Add "padding" to the mode lines
-       `(hl-line ((,c :slant italic)))
-       `(org-document-title ((,c :foreground "#ffff9f")))
-       `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
-       `(font-lock-comment-face ((,c :foreground "#bfdfff"
-                                     :background "#003050"
-                                     :slant italic)))
-       `(font-lock-doc-face ((,c :foreground "#ffdfbf"
-                                 :background "#503000"
-                                 :slant italic)))
-       `(mode-line-buffer-id ((,c :foreground "#009f9f")))
-       `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
-       `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))))))
+    (custom-set-faces
+     ;; Add "padding" to the mode lines
+     `(hl-line ((,c :slant italic)))
+
+     ;; Custom colors
+     `(font-function-name-face ((,c :foreground "#9f5f9f" :weight bold)))
+     `(font-lock-comment-face ((,c :foreground "#bfdfff"
+                                   :background "#003050"
+                                   :slant italic)))
+     `(font-lock-doc-face ((,c :foreground "#ffdfbf"
+                               :background "#503000"
+                               :slant italic)))
+     `(mode-line-buffer-id ((,c :foreground "#009f9f")))
+     `(line-number ((,c :foreground "#4f5f7f" :background "#000000")))
+     `(font-lock-type-face ((,c :foreground "#ff3f5f" :weight bold)))
+
+     ;; org
+     `(org-document-title ((,c :foreground "#ffff9f"))))))
 
 (defun pspmacs/orderless-dispatch-flex-first (_pattern index _total)
   (and (eq index 0) 'orderless-flex))
