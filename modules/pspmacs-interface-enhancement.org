@@ -688,6 +688,11 @@ Auto-hiding text-based scroll bar
 #+begin_src emacs-lisp
   (use-package pspmacs/pspline
     :ensure nil
+    :general
+    (pspmacs/leader-keys
+      "\\" '(:ignore t :wk "Input method")
+      "\\\\" '(toggle-input-method :wk "toggle")
+      "\\\|" '(set-input-method :wk "interactive"))
     :commands pspmacs/pspline-set-up
     :config
     (battery))
@@ -711,12 +716,12 @@ Auto-hiding text-based scroll bar
 #+end_src
 
 * GNU/Hyperbole
-Hyperbole breaks the thumb-rule by affecting system merely upon installation.
+Hyperbole breaks a thumb-rule as it affects the system merely upon installation.
 
 #+begin_warning
-👎 HYPERBOLE internally "takes care of" many variables, resetting it according to what its author feels is best.
+👎 HYPERBOLE internally "takes care of" many variables, resetting them according to what its author feels is best.
 I viscerally /hate/ this behaviour.
-This, among others, is a reason why I am more likely to drop Hyperbole in future.
+This, among others, is a reason why I am more likely to drop =GNU Hyperbole= in future.
  #+end_warning
 
 Variables, which I have discovered, that Hyperbole sets according to its own liking.
@@ -725,7 +730,6 @@ Variables, which I have discovered, that Hyperbole sets according to its own lik
 - =outline-minor-mode=
 - =vertico-mouse-mode=
 - =xref-etags-mode=
-
 
 #+begin_src emacs-lisp
   (use-package hyperbole

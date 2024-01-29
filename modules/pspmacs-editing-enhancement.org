@@ -127,6 +127,7 @@ Default keymap-bindings: "=g .=".
     (undo-tree-visualizer-diff t)
     (undo-tree-visualizer-timestamps t))
 #+end_src
+
 * AndreaCrotti/yasnippet-snippets
 #+begin_src emacs-lisp
   (use-package yasnippet-snippets

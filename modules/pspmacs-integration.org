@@ -204,6 +204,7 @@ allow-emacs-pinentry
     :custom
     (async-byte-compile-log-file (xdg/make-path "async-bytecomp.log" 'state)))
 #+end_src
+
 * Inherit from private and local
  #+begin_src emacs-lisp
    (pspmacs/load-inherit)

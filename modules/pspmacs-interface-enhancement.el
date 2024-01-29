@@ -592,6 +592,11 @@
 
 (use-package pspmacs/pspline
   :ensure nil
+  :general
+  (pspmacs/leader-keys
+    "\\" '(:ignore t :wk "Input method")
+    "\\\\" '(toggle-input-method :wk "toggle")
+    "\\\|" '(set-input-method :wk "interactive"))
   :commands pspmacs/pspline-set-up
   :config
   (battery))

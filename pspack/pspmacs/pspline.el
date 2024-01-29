@@ -53,6 +53,13 @@
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
+(defcustom pspmacs/pspline-input-method-replace-alist
+  nil
+  "Replace window-location mode-line indicator string with custom string."
+  :type '(alist (cons (string :tag "mode-line indicator string")
+                      (string :tag "replacement")))
+  :group 'pspline)
+
 (defcustom pspmacs/pspline-buffer-name-length
   20
   "Length of buffer name beyond which, it is trimmed"
@@ -112,6 +119,7 @@
   '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
     (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
     (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
+    (pspmacs/pspline-input-method . (:display t :right nil :inactive nil))
     (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
     (pspmacs/pspline-version-control . (:display t :right nil :inactive nil))
     (pspmacs/pspline-buffer-name . (:display t :right nil :inactive t))
@@ -216,6 +224,12 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
   '((t (:foreground "#000000")))
 
   "Unknown evil state"
+  :group 'pspline)
+
+(defface pspmacs/pspline-input-method-face
+  '((t (:foreground "#af5fff")))
+
+  "Face of input-method indicator"
   :group 'pspline)
 
 (defface pspmacs/pspline-flymake-error-face
@@ -440,6 +454,38 @@ Customize faces with `pspmacs/pspline-evil-state-format',
 `pspmacs/pspline-evil-emacs-face',
 `pspmacs/pspline-evil-unknown-face'.")
 
+(defun pspmacs/pspline--input-method ()
+  "Evaluated by `pspmacs/pspline-input-method'."
+  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-input-method)
+    (when-let*
+        ((input-method (or (when (featurep 'evil) evil-input-method)
+                           current-input-method))
+         ;; '(INPUT-METHOD LANGUAGE-ENV ACTIVATE-FUNC TITLE DESCRIPTION)
+         (input-info (assoc input-method input-method-alist))
+         (lang-env (nth 1 input-info))
+         (title (nth 3 input-info))
+         (indicator
+          (or (cdr (assoc title pspmacs/pspline-input-method-replace-alist))
+              title))
+         (click-map (make-sparse-keymap)))
+      (define-key click-map [mode-line down-mouse-1] #'toggle-input-method)
+      (define-key click-map [mode-line down-mouse-3] #'set-input-method)
+
+      `(,(propertize
+          indicator
+          'keymap click-map
+          'help-echo (format "%s ❌" lang-env)
+          'face (if (mode-line-window-selected-p)
+                    'pspmacs/pspline-input-method-face
+                  'mode-line-inactive))
+        " "))))
+
+(defvar-local pspmacs/pspline-input-method
+    '(:eval (pspmacs/pspline--input-method))
+  "Cursor position indicator <row:col>.
+Customize value with `pspmacs/pspline-input-method-replace-alist'.
+Customize face with `pspmacs/pspline-input-method-face'.")
+
 (defun pspmacs/pspline--info ()
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-info)
     mode-line-misc-info))
@@ -487,8 +533,10 @@ Customize faces with `pspmacs/pspline-vc-main-face',
 
 (defvar pspmacs/pspline-flymake-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [mode-line down-mouse-1] 'flymake-show-buffer-diagnostics)
-    (define-key map [mode-line down-mouse-3] 'flymake-show-project-diagnostics)
+    (define-key map [mode-line down-mouse-1]
+                #'flymake-show-buffer-diagnostics)
+    (define-key map [mode-line down-mouse-3]
+                #'flymake-show-project-diagnostics)
     map)
   "Keymap to display on Flymake indicator.")
 
