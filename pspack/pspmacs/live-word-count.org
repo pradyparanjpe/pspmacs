@@ -98,6 +98,16 @@
     "Maximum size of buffer beyond which, word count is inactive."
     :type 'number
     :group 'live-word-count)
+
+  (defcustom live-wc-line-pos most-positive-fixnum
+    "Insert live-wc count at this position by default.
+
+  Use this if `live-wc-set-pspline-seg' is called without optional POS argument.
+  The default value `most-positive-fixnum' puts the segment at the end of existing.
+  This takes effect only during `pspmacs/pspline-reset'"
+    :type 'number
+    :group 'live-word-count)
+
 #+end_src
 
 ** Buffer Local
@@ -275,10 +285,15 @@ Insert in =pspline= at position
   (defun live-wc-set-pspline-seg (&optional pos inactive)
     "Insert segment in `pspmacs/pspline-segments-plist'
 
-  If POS is non-nil, insert segment at that position (x2 for p-list)
-  If POS > number of existing segments, or nil, insert at end.
-  If INACTIVE is non-nil, show segment even when buffer is inactive"
-    (let ((insert-at (min (or pos most-positive-fixnum)
+  POS can optionally take following values.
+      non-nil: insert segment at that position (x2 for p-list)
+      nil, use default value from `live-wc-line-pos'.
+      POS > number of existing segments: insert at the end.
+          (suggestion: `most-positive-fixnum').
+
+  If INACTIVE is non-nil, show segment even when buffer is inactive.
+  Set with `pspmacs/pspline-after-reset-hook'"
+    (let ((insert-at (min (or pos live-wc-line-pos)
                           (length pspmacs/pspline-segments-plist))))
       (unless (string= (car (nth insert-at pspmacs/pspline-segments-plist))
                        'pspmacs/pspline-word-count)

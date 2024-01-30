@@ -693,10 +693,18 @@ only display segments meant for inactive buffer"
       " "
       mode-line-end-spaces)))
 
+(defvar pspmacs/pspline-after-reset-hook nil
+  "Normal hook run after enabling a theme.")
+
+(defun pspmacs/pspline-run-after-reset-hook (&rest _args)
+  "Run `pspmacs/pspline-after-reset-hook'."
+  (run-hooks 'pspmacs/pspline-after-reset-hook))
+
 (defun pspmacs/pspline-reset ()
   "Reset pspline as default mode-line
 
 When setting for first time, use `pspmacs/pspline-set-up'.
+Hooks: `pspmacs/pspline-after-reset-hook'.
 "
   (interactive)
   (let ((pspline-format (pspmacs/pspline-generate)))
@@ -705,6 +713,9 @@ When setting for first time, use `pspmacs/pspline-set-up'.
       (with-current-buffer open-buff
         (setq mode-line-format (pspmacs/pspline-generate)))))
   (pspmacs/pspline--assert-all-the-icons))
+
+(advice-add 'pspmacs/pspline-reset
+            :after #'pspmacs/pspline-run-after-reset-hook)
 
 ;;;###autoload
 (defun pspmacs/pspline-set-up ()

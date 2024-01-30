@@ -187,10 +187,12 @@
   :custom
   (live-wc-max-buffer-size 15360)
   (live-wc-fraction t)
+  (live-wc-line-pos 3)
   :config
-  (live-wc-set-pspline-seg 3)
+  (live-wc-set-pspline-seg)
   :hook
-  ((text-mode . live-word-count-mode)))
+  (pspmacs/pspline-after-reset . live-wc-set-pspline-seg)
+  (text-mode . live-word-count-mode))
 
 (use-package emacs
   :config
