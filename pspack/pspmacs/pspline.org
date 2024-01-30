@@ -857,10 +857,18 @@
 
 ** Set up / tear down pspline
 #+begin_src emacs-lisp
+  (defvar pspmacs/pspline-after-reset-hook nil
+    "Normal hook run after enabling a theme.")
+
+  (defun pspmacs/pspline-run-after-reset-hook (&rest _args)
+    "Run `pspmacs/pspline-after-reset-hook'."
+    (run-hooks 'pspmacs/pspline-after-reset-hook))
+
   (defun pspmacs/pspline-reset ()
     "Reset pspline as default mode-line
 
   When setting for first time, use `pspmacs/pspline-set-up'.
+  Hooks: `pspmacs/pspline-after-reset-hook'.
   "
     (interactive)
     (let ((pspline-format (pspmacs/pspline-generate)))
@@ -869,6 +877,9 @@
         (with-current-buffer open-buff
           (setq mode-line-format (pspmacs/pspline-generate)))))
     (pspmacs/pspline--assert-all-the-icons))
+
+  (advice-add 'pspmacs/pspline-reset
+              :after #'pspmacs/pspline-run-after-reset-hook)
 
   ;;;###autoload
   (defun pspmacs/pspline-set-up ()
@@ -891,8 +902,8 @@
         (setq mode-line-format pspmacs/pspline--original-format))))
 #+end_src
 
-** TEMP Compatibility for Emacs-29
-- GNU/Emacs ~master~ branch includes ~mode-line-format-right-align~.
+** TEMP Back-Port
+- GNU/Emacs ~master~ branch includes the function ~mode-line-format-right-align~.
   #+begin_src emacs-lisp
     (when (version< emacs-version "30")
       (defcustom mode-line-right-align-edge 'window
