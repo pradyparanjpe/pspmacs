@@ -130,7 +130,7 @@
 (use-package pinentry
   :custom
   (epg-pinentry-mode 'loopback)
-  (package-gnupghome-dir (or (getenv "GNUPGHOME") package-gnupghome-dir))
+  (package-gnupghome-dir (expand-file-name "packages/gnupg" local-emacs-dir))
   (pinentry--socket-dir (xdg/make-path (format "pinentry") 'state))
   :config
   (epa-file-enable)
