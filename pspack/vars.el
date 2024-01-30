@@ -178,6 +178,9 @@
   :type '(repeat (cons (symbol :tag "mode")
                        (string :tag "key-sequence"))))
 
+(defvar pspmacs/after-enable-theme-hook nil
+  "Normal hook run after enabling a theme.")
+
 (require 'pspmacs/xdg)
 (defcustom pspmacs/org-path
   (xdg/make-path "org/")

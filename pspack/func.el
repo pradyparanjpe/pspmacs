@@ -215,9 +215,6 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
     (unless (member major-mode maj-modes-list)
       (call-interactively callback))))
 
-(defvar pspmacs/after-enable-theme-hook nil
-  "Normal hook run after enabling a theme.")
-
 (defun pspmacs/run-after-enable-theme-hook (&rest _args)
   "Run `after-enable-theme-hook'."
   (run-hooks 'pspmacs/after-enable-theme-hook))

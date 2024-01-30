@@ -526,10 +526,12 @@ Key-bindings to:
 
 * Theme customizations
 ** After load theme hook
-#+begin_src emacs-lisp :tangle func.el
+#+begin_src emacs-lisp :tangle vars.el
   (defvar pspmacs/after-enable-theme-hook nil
     "Normal hook run after enabling a theme.")
+#+end_src
 
+#+begin_src emacs-lisp :tangle func.el
   (defun pspmacs/run-after-enable-theme-hook (&rest _args)
     "Run `after-enable-theme-hook'."
     (run-hooks 'pspmacs/after-enable-theme-hook))
