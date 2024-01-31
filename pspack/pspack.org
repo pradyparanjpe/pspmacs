@@ -936,9 +936,85 @@ With motivation from [[https://emacs.stackexchange.com/questions/16492/is-it-pos
       (org-update-statistics-cookies nil)))
 #+end_src
 
-* TODO Org split block
-https://scripter.co/splitting-an-org-block-into-two/
-#+begin_src emacs-lisp :tangle no
+* Org mode presentation
+#+begin_src emacs-lisp :tangle vars.el
+  (defvar-local pspmacs/present-end-callbacks
+      nil
+    "Temporary storage for orignial values during presentation.
+     Value is set by `pspmacs/present-start' and unset by `pspmacs/present-end'.
+     This is risky if manually set.")
+
+  (put pspmacs/present-end-callbacks 'risky-local-variable t)
+
+  (defcustom pspmacs/present-settings
+    nil
+    "Org-Presentation settings.
+
+  Each entry should be a cons cell, whose,
+    CAR should be a symbol (variable, function).
+    If CAR ends with \=-mode\=, the corresponding mode is suitably (un)set.
+    CDR should be its value in `org-present-mode' for variable
+    and a reciprocal function if CAR is a function.
+
+  These are set by `pspmacs/present-start' which is hooked to `org-present'.
+  Original values are restored by `pspmacs/present-end' which is hooked to
+  `org-present-quit'."
+    :type '(repeat (cons (symbol :tag "Variable")
+                         (sexp :tag "value in present mode")))
+    :group 'pspack)
+#+end_src
+
+#+begin_src emacs-lisp :tangle func.el
+  (defun pspmacs/next-slide (buffer-name heading)
+    "Run with /=next-slide-please/=
+
+   Added to abnormal hook `org-present-after-navigate-functions'"
+    (org-overview)
+    (org-show-entry)
+    (org-show-children))
+
+  (defun pspmacs/present-start ()
+    "Set variables locally during presentation.
+
+  Call at the start of presentations.
+
+  Original values are saved as callbacks in local variable
+  `pspmacs/present-end-callbacks'.
+
+  Call `pspmacs/present-end' to reset."
+    (interactive)
+    (dolist (pres-pair pspmacs/present-settings)
+      (let ((set-var (car pres-pair))
+            (pres-val (cdr pres-pair)))
+        (cond
+         ;; mode
+         ((and (symbolp set-var) (string-match "-mode$" (symbol-name set-var)))
+          (push `(,set-var ,(if (eval set-var) 1 -1))
+                pspmacs/present-end-callbacks)
+          (funcall set-var pres-val))
+         ;; function
+         ((or (functionp set-var) (consp set-var)) ;; function or lambda
+          (push `(funcall (quote ,pres-val)) pspmacs/present-end-callbacks)
+          (funcall set-var))
+         ;; regular variable
+         (t (let ((orig-val (eval set-var)))
+              (push `(setq-local ,set-var
+                                 ,(if (listp orig-val)
+                                      `(quote ,orig-val)
+                                    orig-val))
+                    pspmacs/present-end-callbacks))
+            (eval `(setq-local ,set-var ,pres-val)))))))
+
+  (defun pspmacs/present-end ()
+    "Call at the start of presentations.
+
+  reset values from `pspmacs/present-orig-modes'
+  and `pspmacs/preset-orig-vars' if they exists."
+    (interactive)
+    (dolist (callback pspmacs/present-end-callbacks)
+      (eval callback))
+    (setq-local pspmacs/present-end-callbacks nil))
+
 #+end_src
 
 * Programming language hooks

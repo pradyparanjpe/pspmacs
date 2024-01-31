@@ -512,6 +512,56 @@ only at the end of recursion by the caller function.
         'tree)))
     (org-update-statistics-cookies nil)))
 
+(defun pspmacs/next-slide (buffer-name heading)
+  "Run with /=next-slide-please/=
+
+ Added to abnormal hook `org-present-after-navigate-functions'"
+  (org-overview)
+  (org-show-entry)
+  (org-show-children))
+
+(defun pspmacs/present-start ()
+  "Set variables locally during presentation.
+
+Call at the start of presentations.
+
+Original values are saved as callbacks in local variable
+`pspmacs/present-end-callbacks'.
+
+Call `pspmacs/present-end' to reset."
+  (interactive)
+  (dolist (pres-pair pspmacs/present-settings)
+    (let ((set-var (car pres-pair))
+          (pres-val (cdr pres-pair)))
+      (cond
+       ;; mode
+       ((and (symbolp set-var) (string-match "-mode$" (symbol-name set-var)))
+        (push `(,set-var ,(if (eval set-var) 1 -1))
+              pspmacs/present-end-callbacks)
+        (funcall set-var pres-val))
+       ;; function
+       ((or (functionp set-var) (consp set-var)) ;; function or lambda
+        (push `(funcall (quote ,pres-val)) pspmacs/present-end-callbacks)
+        (funcall set-var))
+       ;; regular variable
+       (t (let ((orig-val (eval set-var)))
+            (push `(setq-local ,set-var
+                               ,(if (listp orig-val)
+                                    `(quote ,orig-val)
+                                  orig-val))
+                  pspmacs/present-end-callbacks))
+          (eval `(setq-local ,set-var ,pres-val)))))))
+
+(defun pspmacs/present-end ()
+  "Call at the start of presentations.
+
+reset values from `pspmacs/present-orig-modes'
+and `pspmacs/preset-orig-vars' if they exists."
+  (interactive)
+  (dolist (callback pspmacs/present-end-callbacks)
+    (eval callback))
+  (setq-local pspmacs/present-end-callbacks nil))
+
 (defun pspmacs/after-code-load (&rest _)
   "run after the program code file is loaded"
   (run-hooks 'pspmacs/after-code-load-hook))

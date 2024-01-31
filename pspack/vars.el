@@ -222,6 +222,31 @@ Only when this is set to a directory, configuration for mu4e is attempted."
           (const :tag "off" nil)
           (directory)))
 
+(defvar-local pspmacs/present-end-callbacks
+    nil
+  "Temporary storage for orignial values during presentation.
+   Value is set by `pspmacs/present-start' and unset by `pspmacs/present-end'.
+   This is risky if manually set.")
+
+(put pspmacs/present-end-callbacks 'risky-local-variable t)
+
+(defcustom pspmacs/present-settings
+  nil
+  "Org-Presentation settings.
+
+Each entry should be a cons cell, whose,
+  CAR should be a symbol (variable, function).
+  If CAR ends with \=-mode\=, the corresponding mode is suitably (un)set.
+  CDR should be its value in `org-present-mode' for variable
+  and a reciprocal function if CAR is a function.
+
+These are set by `pspmacs/present-start' which is hooked to `org-present'.
+Original values are restored by `pspmacs/present-end' which is hooked to
+`org-present-quit'."
+  :type '(repeat (cons (symbol :tag "Variable")
+                       (sexp :tag "value in present mode")))
+  :group 'pspack)
+
 (defcustom pspmacs/after-code-load-hook nil
   "run after the program code file is loaded"
   :group 'pspack
