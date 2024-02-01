@@ -632,10 +632,16 @@ Capture for future.
     :general
     (pspmacs/local-leader-keys :keymaps 'org-mode-map
       "P" '(:ignore t :wk "Present")
-      "PP" '(org-present :wk "Start"))
+      "PP" '(org-present :wk "here")
+      "P0" '((lambda () (interactive)
+               (beginning-of-buffer)
+               (org-present))
+             :wk "afresh"))
+
     (pspmacs/local-leader-keys :keymaps 'org-present-mode-keymap
       "q" '(org-present-quit :wk "Quit")
       "]" '(hydra-curtains/body :wk "Widen"))
+
     :custom
     (org-present-text-scale 3)
     (pspmacs/present-settings
@@ -645,7 +651,8 @@ Capture for future.
        (visual-fill-column-width . 80)
        (visual-fill-column-mode . 1)
        (buffer-read-only . 1)
-       (header-line-format . "")
+       (header-line-format . "")  ;; blank head-space place holder
+       (mode-line-format . "")  ;; blank foot-space place holder
        ((lambda ()) . org-cycle-set-startup-visibility)
        ;; display images
        (org-display-inline-images
