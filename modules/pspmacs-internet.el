@@ -35,11 +35,6 @@
     "io" '(eww t :wk "open")
     "is" '(:ignore t :wk "search")
     "isw" '(eww-search-words :wk "words"))
-  (pspmacs/leader-keys
-    :states 'normal
-    ;; FIXME :keymaps 'eww-mode-map
-    "iu"  '(:ignore t :wk "url")
-    "iuy" '(eww-copy-page-url :wk "copy"))
 
   :init
   (defun karthink/reader-center-images ()

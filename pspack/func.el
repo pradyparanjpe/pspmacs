@@ -292,14 +292,20 @@ This requires us to reset various regular expressions."
           "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")))
 
 (defun pspmacs/yank-file-name ()
-  "Yank file-name to clipboard
+  "Yank file-name to clipboard.
 
-Also, display file name in echo area"
+If buffer is not associated with a file, copy directory name.
+If in `eww-mode', copy url.
+
+Also, display it in echo area."
   (interactive)
-  (let ((current-focus
-         (expand-file-name
-          (or buffer-file-name dired-directory default-directory))))
-    (kill-new current-focus) (message (format "Copied: %s" current-focus))))
+  (cond
+   ((eq major-mode 'eww-mode) (eww-copy-page-url))
+   (t (let ((current-focus
+             (expand-file-name
+              (or buffer-file-name dired-directory default-directory))))
+        (kill-new current-focus)
+        (message (format "Copied: %s" current-focus))))))
 
 (defun wl-copy (text)
   "Copy to wayland clipboard.
