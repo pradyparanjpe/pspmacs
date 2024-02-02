@@ -53,5 +53,12 @@
   (csv-mode . csv-guess-set-separator)
   (csv-mode . csv-header-line))
 
+(use-package doc-view
+  :custom
+  (doc-view-cache-directory
+   (file-name-as-directory (xdg/make-path "doc-view" 'state)))
+  :hook
+  (doc-view-minor-mode . auto-revert-mode))
+
 (pspmacs/load-inherit)
 ;;; pspmacs-editing-enhancement.el ends here

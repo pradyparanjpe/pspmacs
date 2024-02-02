@@ -1,4 +1,4 @@
-﻿;;; pspmacs-latex.el --- LaTeX -*- lexical-binding: t; -*-
+;;; pspmacs-latex.el --- LaTeX -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -70,6 +70,7 @@
   (TeX-electric-sub-and-superscript t)
   (TeX-PDF-from-DVI "Dvips")
   (TeX-save-query nil)
+
   :config
   (add-to-list 'TeX-view-program-selection '(output-pdf "pdf-tools"))
   (add-to-list 'TeX-view-program-selection '(output-pdf "zathura"))
@@ -108,6 +109,12 @@
 (use-package ox-latex
  :ensure org
  :after ox
+ :general
+ (pspmacs/local-leader-keys
+   :keymaps 'org-mode-map
+   "xp"  '(org-latex-export-to-pdf :wk "pdf")
+   "xb" '(org-beamer-export-to-pdf :wk "beamer"))
+
  :custom
  (org-export-with-LaTeX-fragments t)
  (org-export-with-smart-quotes t)
@@ -116,6 +123,9 @@
  (org-latex-prefer-user-labels t)
  (org-latex-reference-command "\\cref{%s}")
  (org-latex-compiler "xelatex")
+ (org-latex-src-block-backend 'listings)
+  (org-latex-to-mathml-convert-command
+   "latexmlmath '%i' --presentationmathml=%o")
  (org-latex-pdf-process
   '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
 
@@ -145,12 +155,22 @@
 \\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}
 ")
 
+ (org-startup-with-latex-preview t)
+ (org-highlight-latex-and-related '(native))
+ (org-preview-latex-default-process 'dvisvgm)
+
  :hook
  (org-mode . karthink/add-latex-in-org-mode-expansions)
 
  :config
+ (plist-put org-format-latex-options :background "Transparent")
+ (plist-put org-format-latex-options :scale 1.5)
+ (plist-put org-format-latex-options :zoom 1.0)
+
  (dolist (package '(("" "longtable" nil)
                     ("" "booktabs"  nil)
+                    ("" "listings"  nil)
+                    ("" "minted"    nil)
                     ("" "color"     nil)
                     ("" "cancel"    t)))
    ;; ;FIXME: Some documentclasses load these themselves,
@@ -171,6 +191,11 @@
                      ("apa6" "\\documentclass{apa6}")
                      ("report" "\\documentclass{scrreprt}")
                      ("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
+                     ("beamer"
+                      ,(concat "\\documentclass[presentation]{beamer}\n"
+                               "[DEFAULT-PACKAGES]"
+                               "[PACKAGES]"
+                               "[EXTRA]\n"))
                      ("book" "\\documentclass[twoside=false]{scrbook}"
                       ("\\chapter{%s}" . "\\chapter*{%s}"))))
      (setf (alist-get name org-latex-classes nil nil #'equal)
@@ -346,7 +371,9 @@
     (kbd "C-s") 'isearch-forward)
   :custom
   (pdf-view-display-size 'fit-width)
-  (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+  (pdf-annot-activate-created-annotations t "automatically annotate highlights")
+  :hook
+  (pdf-view-mode . auto-revert-mode))
 
 (use-package nov)
 (use-package djvu)

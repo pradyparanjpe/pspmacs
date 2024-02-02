@@ -64,6 +64,17 @@ Character (comma) Separated values
     (csv-mode . csv-header-line))
 #+end_src
 
+* Document visualization
+Doc-view: PDF, ODT, DOC-XML documents.
+#+begin_src emacs-lisp
+    (use-package doc-view
+      :custom
+      (doc-view-cache-directory
+       (file-name-as-directory (xdg/make-path "doc-view" 'state)))
+      :hook
+      (doc-view-minor-mode . auto-revert-mode))
+#+end_src
+
 * Inherit from private and local
 #+begin_src emacs-lisp
   (pspmacs/load-inherit)

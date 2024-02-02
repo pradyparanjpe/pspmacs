@@ -126,10 +126,9 @@
     "t"   '(org-todo :wk "todo")
 
     "x"   '(:ignore t :wk "export")
-    "xm"  '(org-export-dispatch :wk "dispatch menu")
+    "xm"  '(org-export-dispatch :wk "menu")
     "xh"  '(org-html-export-to-html :wk "html")
-    "xp"  '(org-latex-export-to-pdf :wk "pdf")
-    "xw"  '(org-pandoc-export-to-docs :wk "windows docx")
+
     "y"   '(org-copy-special :wk "org copy special"))
 
   (general-def
@@ -156,7 +155,6 @@
   ;; Startup display
   (org-startup-with-inline-images t)
   (org-startup-folded t)
-  (org-startup-with-latex-preview t)
 
   ;; Keybindings
   (org-special-ctrl-a/e t)
@@ -164,10 +162,6 @@
 
   ;; Images
   (org-image-actual-width nil)
-
-  ;; LaTeX
-  (org-highlight-latex-and-related '(native))
-  (org-preview-latex-default-process 'dvipng)
 
   ;; Prettify
   (org-ellipsis " ↷")
@@ -197,12 +191,10 @@
       "DONE(d)"
       "DONT(!)"
       "CANT(c)")))
+  (org-use-sub-super-scripts '{})
 
   :config
   ;; TeX
-  (plist-put org-format-latex-options :background "Transparent")
-  (plist-put org-format-latex-options :scale 1.5)
-  (plist-put org-format-latex-options :zoom 1.0)
 
   ;; smart-parentheses
   (mapc (lambda (wrap)
@@ -304,8 +296,6 @@ parent."
   (org-html-htmlize-output-type 'css)
   (org-html-metadata-timestamp-format "%a, %Y-%m-%d %H:%M%z")
   (org-time-stamp-custom-formats '("<%a, %Y-%m-%d>" . "<%a, %Y-%m-%d %H:%M%z>"))
-  (org-latex-to-mathml-convert-command
-   "latexmlmath '%i' --presentationmathml=%o")
   :config
   ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
   ;; (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -318,7 +308,9 @@ parent."
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
-    "xo" '(org-odt-export-to-odt :wk "odt"))
+    "xo" '(org-odt-export-to-odt :wk "odt")
+    "xw"  '(org-pandoc-export-to-docs :wk "MSdocx"))
+
   :custom
   ;; (org-odt-preferred-output-format "docx")
   (org-odt-transform-processes
