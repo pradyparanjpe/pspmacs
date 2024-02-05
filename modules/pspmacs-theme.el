@@ -74,7 +74,10 @@
   :general
   (pspmacs/leader-keys
     "Ff" '(fontaine-set-preset :wk "set")
-    "FF" '(fontaine-set-face-font :wk "face"))
+    "FF" '(fontaine-set-face-font :wk "face")
+    "F=" '(text-scale-adjust :wk "🔍")
+    "F-" '(text-scale-adjust :wk "🔍")
+    "F0" '(text-scale-adjust :wk "🔍"))
   :custom
   (fontaine-latest-state-file
    (xdg/make-path "fontaine-latest-state.eld" 'state))

@@ -707,12 +707,12 @@ Auto-hiding text-based scroll bar
     (solaire-global-mode +1))
 #+end_src
 
-* hydras
-#+begin_src emacs-lisp
-  (defhydra hydra-zoom (global-map "<f8>")
-    "zoom"
-    ("g" text-scale-increase "in")
-    ("l" text-scale-decrease "out"))
+* hydras                                                           :noexport:
+#+begin_src emacs-lisp :tangle no :export no
+  ;; (defhydra hydra-zoom (global-map "<f8>")
+    ;; "zoom"
+    ;; ("=" text-scale-increase "in")
+    ;; ("-" text-scale-decrease "out"))
 #+end_src
 
 * GNU/Hyperbole

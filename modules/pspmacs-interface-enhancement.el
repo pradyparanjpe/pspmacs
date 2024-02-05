@@ -606,11 +606,6 @@
   :config
   (solaire-global-mode +1))
 
-(defhydra hydra-zoom (global-map "<f8>")
-  "zoom"
-  ("g" text-scale-increase "in")
-  ("l" text-scale-decrease "out"))
-
 (use-package hyperbole
   :after ace-window
   :demand t
