@@ -201,6 +201,45 @@
      (setf (alist-get name org-latex-classes nil nil #'equal)
            (append (list class-string) extra article-sections)))))
 
+(defun pspmacs/rename-beamer-export (export-command &rest r)
+  "Intended as advice around `org-beamer-export-to-pdf'.
+
+Back up already existing files by the extensions
+\=.tex\= \=.aux\= \=.log\= \=.pdf\= by adding \=.bak\=.
+
+Call the wrapped function. Catch any error thrown.
+
+Restore backed up files."
+  (let ((file-exts '(".tex" ".aux" ".log" ".pdf")))
+    ;; Back up old files
+    (seq-doseq (ext file-exts)
+      (let ((old-name (org-export-output-file-name ext)))
+        (when (file-exists-p old-name)
+          (rename-file
+           old-name (concat (file-name-sans-extension old-name) ext ".bak")
+           t))))
+
+    ;; Call wrapped function
+    (condition-case nil
+        (apply export-command r)
+      (error (message "Error while calling command %s." export-command)))
+
+    ;; Restore backed up files
+    (seq-doseq (ext file-exts)
+      (let ((export-name (org-export-output-file-name ext))
+            (backup-name (org-export-output-file-name (concat ext ".bak"))))
+        (when (file-exists-p export-name)
+          (rename-file
+           export-name (concat (file-name-sans-extension export-name)
+                               "_present" ext)
+           t))
+        (when (file-exists-p backup-name)
+          (rename-file
+           backup-name (file-name-sans-extension backup-name)
+           t))))))
+
+(advice-add 'org-beamer-export-to-pdf :around #'pspmacs/rename-beamer-export)
+
 (defun karthink/preview-scale-larger ()
   "Increase the size of `preview-latex' images"
   (setq preview-scale-function
