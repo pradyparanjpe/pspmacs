@@ -264,6 +264,20 @@ So, this is disabled.
     (text-mode . live-word-count-mode))
 #+end_src
 
+* Global abbreviations
+Enable abbreviations in text- and derived modes.
+#+begin_src emacs-lisp
+  ;; All (global) abbreviations must start with a <comma> ','.
+  (abbrev-table-put global-abbrev-table
+                    :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,.*\\)")
+  ;; Insert user's name
+  (define-abbrev global-abbrev-table ",myname" ""
+    (lambda () (insert (format "%s " user-full-name))))
+  (define-abbrev global-abbrev-table ",nowdt" ""
+    (lambda () (insert (format-time-string "%F %T"))))
+  (add-hook 'text-mode-hook 'abbrev-mode)
+#+end_src
+
 * native emacs-settings
 - Display line numbers
 #+begin_src emacs-lisp

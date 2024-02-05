@@ -194,6 +194,16 @@
   (pspmacs/pspline-after-reset . live-wc-set-pspline-seg)
   (text-mode . live-word-count-mode))
 
+;; All (global) abbreviations must start with a <comma> ','.
+(abbrev-table-put global-abbrev-table
+                  :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,.*\\)")
+;; Insert user's name
+(define-abbrev global-abbrev-table ",myname" ""
+  (lambda () (insert (format "%s " user-full-name))))
+(define-abbrev global-abbrev-table ",nowdt" ""
+  (lambda () (insert (format-time-string "%F %T"))))
+(add-hook 'text-mode-hook 'abbrev-mode)
+
 (use-package emacs
   :config
   (setq-default display-line-numbers-type 'relative)

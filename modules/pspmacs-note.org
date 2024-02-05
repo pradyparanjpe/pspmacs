@@ -684,6 +684,12 @@ Capture for future.
     (org-present-mode-quit . pspmacs/present-end))
 #+end_src
 
+* Org mode abbrev
+#+begin_src emacs-lisp
+  (abbrev-table-put org-mode-abbrev-table
+                    :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,?.*\\)")
+#+end_src
+
 * native Emacs settings
 #+begin_src emacs-lisp
   (use-package emacs
