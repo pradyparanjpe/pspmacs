@@ -194,15 +194,32 @@
   (pspmacs/pspline-after-reset . live-wc-set-pspline-seg)
   (text-mode . live-word-count-mode))
 
-;; All (global) abbreviations must start with a <comma> ','.
-(abbrev-table-put global-abbrev-table
-                  :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,.*\\)")
-;; Insert user's name
-(define-abbrev global-abbrev-table ",myname" ""
-  (lambda () (insert (format "%s " user-full-name))))
-(define-abbrev global-abbrev-table ",nowdt" ""
-  (lambda () (insert (format-time-string "%F %T"))))
-(add-hook 'text-mode-hook 'abbrev-mode)
+(use-package abbrev
+  :ensure nil
+  :custom
+
+  (save-abbrevs 'silently)
+  (abbrev-suggest t)
+  (abbrev-file-name (xdg/make-path "abbrev_defs" 'state))
+
+  :config
+  ;; (quietly-read-abbrev-file)  ; shouldn't be necessary
+  ;; For safety, global abbreviations must preferably start with a <comma> ','
+  (abbrev-table-put global-abbrev-table
+                    :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,?.*\\)")
+  ;; Insert user's name
+  (define-abbrev global-abbrev-table ",myname" ""
+    (lambda () (insert (format "%s " user-full-name))))
+  (define-abbrev global-abbrev-table ",nowdt" ""
+    (lambda () (insert (format-time-string "%F %T"))))
+
+  :hook
+  (text-mode . abbrev-mode))
+
+(use-package wiki-abbrev
+  :commands wiki-abbrev-mode
+  :after abbrev
+  :vc (wiki-abbrev :url "https://codeberg.org/pradyparanjpe/wiki-abbrev.el"))
 
 (use-package emacs
   :config

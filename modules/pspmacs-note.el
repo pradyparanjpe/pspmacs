@@ -567,6 +567,9 @@ parent."
   (org-present-mode . pspmacs/present-start)
   (org-present-mode-quit . pspmacs/present-end))
 
+(abbrev-table-put org-mode-abbrev-table
+                  :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,?.*\\)")
+
 (use-package emacs
   :custom
   (diary-file (xdg/make-path "diary" 'cache)))

@@ -264,18 +264,40 @@ So, this is disabled.
     (text-mode . live-word-count-mode))
 #+end_src
 
-* Global abbreviations
+* Abbreviations
 Enable abbreviations in text- and derived modes.
 #+begin_src emacs-lisp
-  ;; All (global) abbreviations must start with a <comma> ','.
-  (abbrev-table-put global-abbrev-table
-                    :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,.*\\)")
-  ;; Insert user's name
-  (define-abbrev global-abbrev-table ",myname" ""
-    (lambda () (insert (format "%s " user-full-name))))
-  (define-abbrev global-abbrev-table ",nowdt" ""
-    (lambda () (insert (format-time-string "%F %T"))))
-  (add-hook 'text-mode-hook 'abbrev-mode)
+  (use-package abbrev
+    :ensure nil
+    :custom
+
+    (save-abbrevs 'silently)
+    (abbrev-suggest t)
+    (abbrev-file-name (xdg/make-path "abbrev_defs" 'state))
+
+    :config
+    ;; (quietly-read-abbrev-file)  ; shouldn't be necessary
+    ;; For safety, global abbreviations must preferably start with a <comma> ','
+    (abbrev-table-put global-abbrev-table
+                      :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,?.*\\)")
+    ;; Insert user's name
+    (define-abbrev global-abbrev-table ",myname" ""
+      (lambda () (insert (format "%s " user-full-name))))
+    (define-abbrev global-abbrev-table ",nowdt" ""
+      (lambda () (insert (format-time-string "%F %T"))))
+
+    :hook
+    (text-mode . abbrev-mode))
+#+end_src
+
+** Abbrev mode for autocorrect                                      :noexport:
+Motivated by [[https://www.masteringemacs.org/article/correcting-typos-misspellings-abbrev][this]], [[https://codeberg.org/acdw/][Case Duckworth]] has written an auto-correction script.
+He advertises it in a comment below the referred article.
+#+begin_src emacs-lisp
+  (use-package wiki-abbrev
+    :commands wiki-abbrev-mode
+    :after abbrev
+    :vc (wiki-abbrev :url "https://codeberg.org/pradyparanjpe/wiki-abbrev.el"))
 #+end_src
 
 * native emacs-settings
