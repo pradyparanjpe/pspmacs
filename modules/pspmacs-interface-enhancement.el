@@ -193,7 +193,7 @@
     "a"   '(:ignore t :wk "agenda"))
 
   ;; buffer
-  ;; see 'bufler' and 'popper'
+  ;; see 'bufler'
   (pspmacs/leader-keys
     "b" '(:ignore t :wk "buffer")
     "b TAB" '((lambda ()
@@ -295,6 +295,9 @@
 
   ;; TODO:
   ;; set 'citar' and 'org-roam'
+
+  (pspmacs/leader-keys
+    "p" '(:ignore t :wk "pop"))
 
   ;; quit
   (pspmacs/leader-keys
@@ -402,6 +405,52 @@
     "wf" '(ace-window :wk "hint"))
   :config
   (ace-window-display-mode -1))
+
+(use-package popper
+  :general
+  (pspmacs/leader-keys
+    "p TAB" '(popper-toggle :wk "toggle")
+    "p \\" '(popper-toggle :wk "cycle")
+    "p t" '(popper-toggle-type :wk "type")
+    "p x" '(popper-kill-latest-popup :wk "kill"))
+
+  :init
+  (popper-mode 1)
+  (popper-echo-mode 1)
+
+  :custom
+  ;; (popper-group-function #'popper-group-by-project)  ; configure project.el
+  (popper-display-control t)  ; replace this with shackle.el if necessary
+  (popper-mode-line "🫣")
+  (popper-reference-buffers
+   '("\\*Messages\\*"
+     "Output\\*$"
+     "\\*Async Shell Command\\*"
+
+     help-mode
+     helpful-mode
+     compilation-mode
+
+     ;; shells
+     ;; eshell as a popup
+     "^\\*eshell.*\\*$"
+     eshell-mode
+
+     ;; shell as a popup
+     "^\\*shell.*\\*$"
+     shell-mode
+
+     ;; term as a popup
+     "^\\*term.*\\*$"
+     term-mode
+
+     ;; vterm as a popup
+     "^\\*vterm.*\\*$"
+     vterm-mode
+
+     ;; eat as a popup
+     "^\\*eat.*\\*$"
+     eat-mode)))
 
 (use-package evil
   :general
