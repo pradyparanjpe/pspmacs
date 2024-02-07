@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 ;;
-;; Count text words (excluding code, properties, comments) on the fly.
+;; Count text words (excluding code, properties, comments, ...) on the fly.
 ;; Set target for the buffer, display as absolute words, fraction of target.
 ;; Restrict word count to region if selected, show as fraction of total.
 ;; Minor mode: provides a mode-line eval string.
@@ -39,7 +39,7 @@
   "Colored display segment of word counts on mode line."
   :group 'convenience
   :group 'display
-  :prefix "live-word-count")
+  :prefix "live-wc")
 
 (defcustom live-wc-unbind-modes
   '(prog-mode dired-mode special-mode)
@@ -99,14 +99,14 @@ If region is selected, display fraction of all the text.
 Else, display fraction of `live-wc-target' if set.
 Else, fallback to absolute.")
 
-(defvar live-wc-map
+(defvar live-wc--map
   (let ((map (make-sparse-keymap)))
     (define-key map [mode-line down-mouse-1] #'live-wc--set-target)
     (define-key map [mode-line down-mouse-3] #'live-wc--toggle-format)
     map)
   "Keymap to display on word-count indicator.")
 
-(defvar-local live-wc-mem
+(defvar-local live-wc--mem
     nil
   "Memory of displayed value for reuse (esp. while nothing changes)")
 
@@ -124,7 +124,7 @@ Else, fallback to absolute.")
   (setq-local live-wc-fraction (not live-wc-fraction)))
 
 (defun live-wc--count-text-words (&optional complete-buffer)
-  "Return a p-list of number of buffers in the buffer.
+  "Return a p-list of statistics of words in the buffer.
 
 If a region is selected and COMPLETE-BUFFER is nil, restrict to that region."
   (interactive)
@@ -174,9 +174,10 @@ Non-nil SWAP swaps :background and :foreground."
 (defun live-wc-do-count ()
   "Evaluated by `live-wc-eval-str'.
 
- If `live-wc--target' is non nil, display as percent of target."
-  (when (or (use-region-p)
-            (< (buffer-size) live-wc-max-buffer-size))
+If `live-wc--target' is non nil, display as percent of target."
+  (when (or (< (buffer-size) live-wc-max-buffer-size)
+            (and (use-region-p)
+                 (> (* 10 live-wc-max-buffer-size) (buffer-size))))
     `(,(let* ((counts (live-wc--count-text-words))
               (num-words (nth 0 (alist-get 'words counts)))
               (hint (mapconcat (lambda (x)
@@ -202,22 +203,19 @@ Non-nil SWAP swaps :background and :foreground."
                           disp-text
                           (when (and target (> 0 live-wc-target)) t)))
               (mem (propertize (format "¶:%s" disp-text)
-                               'local-map live-wc-map
+                               'local-map live-wc--map
                                'face disp-face
                                'mouse-face disp-face
                                'help-echo
                                (concat hint (when target
                                               (format "of %d" target))))))
-         (setq-local live-wc-mem mem)
+         (setq-local live-wc--mem mem)
          mem)
       " ")))
 
 (defvar-local live-wc-eval-str
     nil
-  "Live word count in mode-line.
-
-Customize-Save-Variable value with `live-wc-max-buffer-size',
-`live-wc-unbind-modes'")
+  "Live word count in mode-line.")
 
 ;;;###autoload
 (define-minor-mode live-word-count-mode
@@ -230,9 +228,13 @@ displays current wc value, nil otherwise."
    live-wc-eval-str
    (when (and live-word-count-mode
               (cl-notany (lambda (x) (derived-mode-p x)) live-wc-unbind-modes))
-     '(:eval (progn (when (buffer-modified-p)
-                      (setq-local live-wc-mem nil))
-                    (or live-wc-mem (live-wc-do-count)))))))
+     '(:eval (progn (when (and (buffer-modified-p)
+                               (or (not (featurep 'evil))
+                                   (not evil-mode)
+                                   (member evil-state
+                                           '(insert visual replace))))
+                      (setq-local live-wc--mem nil))
+                    (or live-wc--mem (live-wc-do-count)))))))
 
 (require 'pspmacs/pspline)
 (defvar-local pspmacs/pspline-word-count
@@ -265,9 +267,12 @@ Set with `pspmacs/pspline-after-reset-hook'"
                (subseq pspmacs/pspline-segments-plist insert-at)))
       (pspmacs/pspline-reset))))
 
+;; safe
 (put 'live-wc-target 'safe-local-variable #'numberp)
 (put 'live-wc-fraction 'safe-local-variable #'booleanp)
-(put 'live-wc-mem 'risky-local-variable t)
+
+;; risky
+(put 'live-wc--mem 'risky-local-variable t)
 (put 'live-wc-eval-str 'risky-local-variable t)
 (put 'pspmacs/pspline-word-count 'risky-local-variable t)
 
