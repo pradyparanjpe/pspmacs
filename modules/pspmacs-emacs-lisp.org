@@ -38,6 +38,15 @@
   ;;; pspmacs-emacs-lisp.el ends here
 #+end_src
 
+* Provide Emacs-lisp package
+#+begin_src emacs-lisp
+  (defun pspmacs/el-package-provide ()
+    (interactive)
+    (let ((base (file-name-sans-extension
+                 (file-name-nondirectory (buffer-file-name)))))
+      (insert (format "(provide '%s)\n;;; %s.el ends here" base base))))
+#+end_src
+
 * Load-file
 - Load current file
 #+begin_src emacs-lisp

@@ -26,6 +26,12 @@
 (add-hook 'emacs-lisp-mode-hook #'pspmacs/setup-elisp)
 ;;; pspmacs-emacs-lisp.el ends here
 
+(defun pspmacs/el-package-provide ()
+  (interactive)
+  (let ((base (file-name-sans-extension
+               (file-name-nondirectory (buffer-file-name)))))
+    (insert (format "(provide '%s)\n;;; %s.el ends here" base base))))
+
 (pspmacs/local-leader-keys
   :keymaps 'emacs-lisp-mode-map
   "TAB" '(indent-sexp)
