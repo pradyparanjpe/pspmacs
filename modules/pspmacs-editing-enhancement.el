@@ -181,18 +181,15 @@
     "=rb" '((lambda () (interactive) (pspmacs/readability t))
             :wk "check buffer")))
 
-(use-package pspmacs/live-word-count
-  :ensure nil
-  :commands live-wc-set-pspline-seg
+(use-package live-wc
+  :demand t
+  :vc (live-wc :url "https://gitlab.com/pradyparanjpe/live-wc.git")
+  :init
+  (global-live-wc-mode)
   :custom
-  (live-wc-max-buffer-size 15360)
+  (live-wc-max-buffer-size 1048576)  ; 1mB
   (live-wc-fraction t)
-  (live-wc-line-pos 3)
-  :config
-  (live-wc-set-pspline-seg)
-  :hook
-  (pspmacs/pspline-after-reset . live-wc-set-pspline-seg)
-  (text-mode . live-word-count-mode))
+  (live-wc-line-pos 5))
 
 (use-package abbrev
   :ensure nil
