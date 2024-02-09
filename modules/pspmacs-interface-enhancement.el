@@ -408,11 +408,13 @@
 
 (use-package popper
   :general
+  (general-define-key
+   "C-<tab>" '(popper-toggle :wk "toggle")
+   "C-<iso-lefttab>" '(popper-toggle :wk "cycle"))
+
   (pspmacs/leader-keys
-    "p TAB" '(popper-toggle :wk "toggle")
-    "p \\" '(popper-toggle :wk "cycle")
-    "p t" '(popper-toggle-type :wk "type")
-    "p x" '(popper-kill-latest-popup :wk "kill"))
+    "w t" '(popper-toggle-type :wk "type")
+    "w x" '(popper-kill-latest-popup :wk "kill"))
 
   :init
   (popper-mode 1)
@@ -426,6 +428,7 @@
    '("\\*Messages\\*"
      "Output\\*$"
      "\\*Async Shell Command\\*"
+     "\\*Edit Annotation .*\\.pdf\\*$"
 
      help-mode
      helpful-mode
