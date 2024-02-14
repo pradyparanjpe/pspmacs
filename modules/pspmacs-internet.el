@@ -72,6 +72,21 @@
   ((eww-after-render . (lambda () (setq line-spacing 0.1)))
    (eww-after-render . karthink/reader-center-images)))
 
+(use-package gptel
+  :demand t
+  :general
+  (pspmacs/leader-keys
+    "A"     '(:ignore t :wk "AI")
+    "A g"   '(:ignore t :wk "GPT")
+    "A g l" '(gptel :wk "Launch")
+    "A g m" '(gptel-menu :wk "menu"))
+  :custom
+  (gptel-default-mode 'org-mode)
+  :hook
+  (gptel-post-stream . gptel-auto-scroll)
+  :config
+  (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
+
 (use-package org-mime
   :ensure t
   :commands (org-mime-confirm-when-no-multipart)

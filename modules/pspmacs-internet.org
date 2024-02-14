@@ -85,6 +85,25 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
      (eww-after-render . karthink/reader-center-images)))
 #+end_src
 
+* GPTel
+GPTel supports Gemini (google service)
+#+begin_src emacs-lisp
+  (use-package gptel
+    :demand t
+    :general
+    (pspmacs/leader-keys
+      "A"     '(:ignore t :wk "AI")
+      "A g"   '(:ignore t :wk "GPT")
+      "A g l" '(gptel :wk "Launch")
+      "A g m" '(gptel-menu :wk "menu"))
+    :custom
+    (gptel-default-mode 'org-mode)
+    :hook
+    (gptel-post-stream . gptel-auto-scroll)
+    :config
+    (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
+#+end_src
+
 * Mail
 ** Org mime
 #+begin_src emacs-lisp

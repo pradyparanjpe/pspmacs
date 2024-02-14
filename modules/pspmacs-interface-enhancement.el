@@ -130,7 +130,6 @@
 
   ;; AI
   (pspmacs/leader-keys
-    :keymaps 'org-mode-map
     "A"   '(:ignore t :wk "AI"))
 
   ;; bookmark
