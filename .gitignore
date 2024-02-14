@@ -111,3 +111,6 @@ multisession/
 
 # emojis are added to directory 'auto'
 auto/
+
+# Emacs local settings
+.dir-locals.el
