@@ -55,6 +55,13 @@
    (git-commit-setup . display-fill-column-indicator-mode)))
 ;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
 
+(use-package ediff
+  :custom
+  (ediff-keep-variants nil)
+  (ediff-make-buffers-readonly-at-startup nil)
+  (ediff-split-window-function #'split-window-horizontally)
+  (ediff-window-setup-function #'ediff-setup-windows-plain))
+
 (use-package diff-hl
   :demand t
   :general

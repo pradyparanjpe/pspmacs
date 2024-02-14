@@ -69,6 +69,16 @@
   ;; (magit-log-margin (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
 #+end_src
 
+* Ediff configuration
+#+begin_src emacs-lisp
+  (use-package ediff
+    :custom
+    (ediff-keep-variants nil)
+    (ediff-make-buffers-readonly-at-startup nil)
+    (ediff-split-window-function #'split-window-horizontally)
+    (ediff-window-setup-function #'ediff-setup-windows-plain))
+#+end_src
+
 * diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
