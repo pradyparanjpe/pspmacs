@@ -48,21 +48,14 @@
      '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 
 (use-package exec-path-from-shell
-
   :custom
-  (dolist (envvar '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO"
-                    "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"
-                    "PKG_CONFIG_PATH"))
+  (exec-path-from-shell-arguments nil)
+  (dolist (envvar '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LC_CTYPE"
+                    "LANG" "NIX_SSL_CERT_FILE" "NIX_PATH" "PKG_CONFIG_PATH"))
     (add-to-list 'exec-path-from-shell-variables envvar))
-
   :init
-  ;; MacOS
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
-  (if (string-equal system-type "darwin")
-      (exec-path-from-shell-initialize))
-  ;; Daemon mode
-  (when (daemonp)
+  (when (or (daemonp)
+            (memq window-system '(mac ns x)) (string= system-type "darwin"))
     (exec-path-from-shell-initialize)))
 
 (setq wl-copy-process nil)
