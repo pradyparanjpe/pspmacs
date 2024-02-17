@@ -98,7 +98,7 @@
 (use-package yasnippet
   :general
   (pspmacs/leader-keys
-    "y" '(:ignore t :wk "yas")
+    "y" '(:ignore t :wk "as")
     "yn" '(yas-new-snippet :wk "new")
     "yi" '(yas-insert-snippet :wk "insert"))
   (yas-minor-mode-map
@@ -118,7 +118,7 @@
 
 (general-add-hook 'org-mode-hook 'flyspell-mode)
 (pspmacs/leader-keys
-  "S" '(:ignore t :wk "flySpell")
+  "S" '(:ignore t :wk "pell")
   "Sb" '(flyspell-buffer :wk "buffer")
   "Sn" '(evil-next-flyspell-error :wk "next")
   "Sp" '(evil-prev-flyspell-error :wk "previous")
@@ -185,7 +185,7 @@
   :demand t
   :vc (live-wc :url "https://gitlab.com/pradyparanjpe/live-wc.git")
   :init (global-live-wc-mode)
-  :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk "live-wc"))
+  :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk "wc"))
   :custom
   (live-wc-max-buffer-size 1048576)  ; 1mB
   (live-wc-fraction t)

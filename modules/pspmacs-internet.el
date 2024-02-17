@@ -74,7 +74,7 @@
 (use-package gptel
   :demand t
   :general (pspmacs/leader-keys
-             "A"     '(:ignore t  :wk "AI")
+             "A"     '(:ignore t  :wk "I")
              "A g"   '(:ignore t  :wk "GPT")
              "A g l" '(gptel      :wk "Launch")
              "A g m" '(gptel-menu :wk "menu"))

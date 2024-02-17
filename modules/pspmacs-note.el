@@ -36,7 +36,7 @@
     "aoo" '(org-agenda :wk "capture")
     "aot" '(org-todo-list :wk "todo")
 
-    "t"   '(:ignore t :wk "Toggle")
+    "t"   '(:ignore t :wk "ogl")
     "t="  '(pspmacs/org-toggle-emphasis-display :wk "markers")
     "ti"  '(org-toggle-inline-images :wk "inline images")
     "tl"  '(org-toggle-link-display :wk "link display")
@@ -340,7 +340,7 @@ parent."
   :general
   (pspmacs/leader-keys
     :keymaps 'org-mode-map
-    "T"   '(:ignore t :wk "Time")
+    "T"   '(:ignore t :wk "ime")
     "Tc"  '(:ignore t :wk "clock")
     "Tcc" '(org-clock-cancel :wk "cancel")
     "Tci" '(org-clock-in :wk "in")
@@ -465,7 +465,7 @@ parent."
   :ensure org
   :general
   (pspmacs/leader-keys
-    "o" '(:ignore t :wk "org")
+    "o" '(:ignore t :wk "rg")
     "oc" '(org-capture :wk "capture"))
   :init
   (unless (file-exists-p (expand-file-name "tasks.org" pspmacs/org-path))

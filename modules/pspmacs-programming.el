@@ -208,7 +208,7 @@
   (pspmacs/leader-keys
     :states 'normal
     :keymaps 'flymake-mode-map
-    "e" '(:ignore t :wk "errors")
+    "e" '(:ignore t :wk "rr")
     "en" '(flymake-goto-next-error :wk "next")
     "ep" '(flymake-goto-prev-error :wk "previous"))
   :custom

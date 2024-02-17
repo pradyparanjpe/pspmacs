@@ -32,7 +32,7 @@
   :after transient
   :general
   (pspmacs/leader-keys
-   "g" '(:ignore t :wk "git")
+   "g" '(:ignore t :wk "it")
    "g b" 'magit-blame
    "g s" 'magit-status
    "g S" 'magit-status-here

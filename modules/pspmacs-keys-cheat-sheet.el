@@ -1,4 +1,4 @@
-﻿;;; pspmacs-funcs.el --- Keybinding maps using pspmacs-general.el -*- lexical-binding: t; -*-
+;;; pspmacs-funcs.el --- Keybinding maps using pspmacs-general.el -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023  Pradyumna Swanand Paranjape
 
@@ -28,6 +28,7 @@
   (which-key-mode)
   :custom
   (which-key-separator ": ")
+  (which-key-prefix-prefix "")
   :config
   (which-key-setup-minibuffer))
 

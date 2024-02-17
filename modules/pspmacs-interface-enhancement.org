@@ -95,8 +95,8 @@
     (pspmacs/leader-keys
       "TAB" '((lambda ()
                 (interactive)
-                (switch-to-buffer (other-buffer (current-buffer) 1)))
-              :wk "last buff"))
+                (message "Depricated, use buffer binding instead (<SPC> b TAB)"))
+              :wk " "))
 
     ;; Clear
     (pspmacs/leader-keys
@@ -105,7 +105,7 @@
     ;; Updates
     (pspmacs/leader-keys
       :states 'normal
-      "+" '(:ignore t :wk "Update")
+      "+" '(:ignore t :wk "Up")
       "+e" '(:ignore t :wk "Emacs (Build)")
       "+em" '(emacs-repo :wk "Transient menu")
       "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
@@ -152,26 +152,26 @@
 
     ;; AI
     (pspmacs/leader-keys
-      "A"   '(:ignore t :wk "AI"))
+      "A"   '(:ignore t :wk "I"))
 
     ;; bookmark
     (pspmacs/leader-keys
-      "B" '(:ignore t :wk "Bookmark")
+      "B" '(:ignore t :wk "ukmrk")
       "Bd" '(bookmark-delete :wk "del")
       "Bj" '(bookmark-jump :wk "jump")
       "Bl" '(list-bookmarks :wk "list"))
 
     ;; powerthesaurus
     (pspmacs/leader-keys
-      "D" '(:ignore t :wk "Diction"))
+      "D" '(:ignore t :wk "ict"))
 
     ;; font
     (pspmacs/leader-keys
-      "F" '(:ignore t :wk "Font"))
+      "F" '(:ignore t :wk "ont"))
 
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
-      "M"  '(:ignore t :wk "Mode")
+      "M"  '(:ignore t :wk "ode")
       "M<" '(:ignore t :wk "mail")
       "Mc" '(:ignore t :wk "config")
       "Mm" '(:ignore t :wk "markup")
@@ -179,15 +179,15 @@
       "Mw" '(:ignore t :wk "web"))
 
     ;; unix password store
-    (pspmacs/leader-keys "P" '(pass :wk "Password"))
+    (pspmacs/leader-keys "P" '(pass :wk "asswd"))
 
     ;; FlySpell
     (pspmacs/leader-keys
-      "S" '(:ignore t :wk "flySpell"))
+      "S" '(:ignore t :wk "pell"))
 
     ;; pspmacs
     (pspmacs/leader-keys
-      "[" '(:ignote t :wk "PSPMacs")
+      "[" '(:ignote t :wk "PSP]")
       "[c" '((lambda ()
                (interactive)
                (find-file custom-file))
@@ -208,15 +208,21 @@
                 (message "disabled"))
               :wk "global <disabled>"))
 
+    ;; input method
+    (pspmacs/leader-keys
+      "\\" '(:ignore t :wk "kbd")
+      "\\\\" '(toggle-input-method :wk "toggle")
+      "\\\|" '(set-input-method :wk "interactive"))
+
     ;; see pspmacs-notes.org
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
-      "a"   '(:ignore t :wk "agenda"))
+      "a"   '(:ignore t :wk "genda"))
 
     ;; buffer
     ;; see 'bufler'
     (pspmacs/leader-keys
-      "b" '(:ignore t :wk "buffer")
+      "b" '(:ignore t :wk "uf")
       "b TAB" '((lambda ()
                   (interactive)
                   (switch-to-buffer (other-buffer (current-buffer) 1)))
@@ -256,21 +262,21 @@
 
     ;; Comments
     (pspmacs/leader-keys
-      "c" '(:ignore t :wk "comment")
+      "c" '(:ignore t :wk "omnt")
       "cl" '(comment-line :wk "comment line")
       "cp" '(comment-region :wk "comment paragraph"))
 
     ;; describe
     (pspmacs/leader-keys
-      "d" '(:ignore t :wk "describe"))
+      "d" '(:ignore t :wk "esc"))
 
     ;; errors
     (pspmacs/leader-keys
-      "e" '(:ignore t :wk "error"))
+      "e" '(:ignore t :wk "rr"))
 
     ;; file operations
     (pspmacs/leader-keys
-      "f" '(:ignore t :wk "file")
+      "f" '(:ignore t :wk "ile")
       "ff" '(find-file :wk "find")
       "fD" '((lambda ()
                (interactive)
@@ -282,27 +288,27 @@
       "fy" '(pspmacs/yank-file-name :wk "Copy file name"))
 
     ;; git
-    (pspmacs/leader-keys "g" '(:ignore t :wk "git"))
+    (pspmacs/leader-keys "g" '(:ignore t :wk "it"))
 
     ;; help
-    (pspmacs/leader-keys "h" (general-simulate-key "C-h" :which-key "Help"))
+    (pspmacs/leader-keys "h" (general-simulate-key "C-h" :which-key "C-h"))
 
     ;; internet
-    (pspmacs/leader-keys "i" '(:ignore t :wk "inet"))
+    (pspmacs/leader-keys "i" '(:ignore t :wk "net"))
 
     ;; jumps
     (pspmacs/leader-keys
-      "j" '(:ignore t :wk "jump"))
+      "j" '(:ignore t :wk "ump"))
 
     ;; Language server protocol
     (pspmacs/leader-keys
       :states 'normal
       :keymaps 'prog-mode-map
-      "l" '(:ignore t :wk "lang"))
+      "l" '(:ignore t :wk "ang"))
 
     ;; marks
     (pspmacs/leader-keys
-      "m" '(:ignore t :wk "mark")
+      "m" '(:ignore t :wk "ark")
       "mm" '(set-mark-command :wk "set")
       "mM" '((lambda () (interactive)
                (call-interactively 'set-mark-command)
@@ -312,17 +318,17 @@
 
     ;; org mode
     (pspmacs/leader-keys
-      "o" '(:ignore t :wk "org"))
+      "o" '(:ignore t :wk "rg"))
 
     ;; TODO:
     ;; set 'citar' and 'org-roam'
 
     (pspmacs/leader-keys
-      "p" '(:ignore t :wk "pop"))
+      "p" '(:ignore t :wk "roj"))
 
     ;; quit
     (pspmacs/leader-keys
-      "q" '(:ignore t :wk "quit")
+      "q" '(:ignore t :wk "uit")
       "qQ" '(kill-emacs :wk "daemon")
       "qq" '(delete-frame :wk "client")
       "qr" '(restart-emacs :wk "and restart")
@@ -330,11 +336,11 @@
 
     ;; Registers *consult*
     (pspmacs/leader-keys
-      "r" '(:ignore t :wk "register"))
+      "r" '(:ignore t :wk "eg"))
 
     ;; Toggles
     (pspmacs/leader-keys
-      "t"     '(:ignore t :wk "toggle")
+      "t"     '(:ignore t :wk "ogl")
       "t RET" '(pspmacs/toggle-var :wk "toggle arbitrary")
       "t#"    '(:ignore t :wk "line number")
       "t#d"   '((lambda () (interactive) (setq display-line-numbers nil))
@@ -354,12 +360,11 @@
       "tv"  '(visual-line-mode :wk "visual line"))
 
     ;; universal argument
-    (pspmacs/leader-keys
-      "u" '(universal-argument :wk "universal"))
+    (pspmacs/leader-keys "u" '(universal-argument :wk "C-u"))
 
     ;; Window
     (pspmacs/leader-keys
-      "w" '(:ignore t :which-key "window")
+      "w" '(:ignore t :which-key "in")
       "w TAB" '(other-window :wk "◎ that")
       "w=" '(balance-windows-area :wk "balance")
       "wD" '(kill-buffer-and-window :wk "& buf: del")
@@ -748,11 +753,6 @@ Auto-hiding text-based scroll bar
 #+begin_src emacs-lisp
   (use-package pspmacs/pspline
     :ensure nil
-    :general
-    (pspmacs/leader-keys
-      "\\" '(:ignore t :wk "Input method")
-      "\\\\" '(toggle-input-method :wk "toggle")
-      "\\\|" '(set-input-method :wk "interactive"))
     :commands pspmacs/pspline-set-up
     :config
     (battery))
