@@ -287,7 +287,7 @@ Integrate $\LaTeX$ with evil mode.
 #+end_src
 
 * BIBTeX
-Bibliography $BIB\TeX$
+Bibliography $\TeX$
 #+begin_src emacs-lisp
   (use-package bibtex
     :custom
@@ -298,26 +298,32 @@ Bibliography $BIB\TeX$
     (bibtex-autokey-titleword-separator "-")
     (bibtex-autokey-titlewords 2)
     (bibtex-autokey-titlewords-stretch 1)
-    (bibtex-autokey-titleword-length 5)
+    (bibtex-autokey-titleword-length 5))
+#+end_src
+
+* BIBTex completion
+#+begin_src emacs-lisp
+  (use-package bibtex-completion
+    :after bibtex
+    :custom
+    ;; Following customizations are suggested by org-ref in their wiki
     (bibtex-completion-bibliography
-     (remq 'nil (mapcar
-                 (lambda (x)
-                   (let ((bibfile (expand-file-name "biblio.bib" x)))
-                     (if (file-exists-p bibfile) bibfile)))
-                 pspmacs/ref-paths)))
+     (remq 'nil (mapcar (lambda (x)
+                          (let ((bibfile (expand-file-name "biblio.bib" x)))
+                            (if (file-exists-p bibfile) bibfile)))
+                        pspmacs/ref-paths)))
     (bibtex-completion-library-path
-     (remq 'nil (mapcar
-                 (lambda (x)
-                   (let ((bibdir (file-name-as-directory
-                                  (expand-file-name "library" x))))
-                     (if (file-exists-p bibdir) bibdir)))
-                 pspmacs/ref-paths)))
+     (remq 'nil (mapcar (lambda (x)
+                          (let ((bibdir (file-name-as-directory
+                                         (expand-file-name "library" x))))
+                            (if (file-exists-p bibdir) bibdir)))
+                        pspmacs/ref-paths)))
     (bibtex-completion-notes-path
      (car (last (remq 'nil (mapcar
                             (lambda (x)
                               (let ((bibdir (file-name-as-directory
                                              (expand-file-name "notes" x))))
-                                (if (file-exists-p bibdir) bibdir)))
+                                (when (file-exists-p bibdir) bibdir)))
                             pspmacs/ref-paths)))))
     (biblio-download-directory
      (car (last (remq 'nil
@@ -330,10 +336,9 @@ Bibliography $BIB\TeX$
 #+end_src
 
 * RefTeX
-$BIB\TeX$ references
+$TeX$ references
 #+begin_src emacs-lisp
   (use-package reftex
-    :after (latex bibtex)
     :commands turn-on-reftex
     :hook ((latex-mode LaTeX-mode) . turn-on-reftex)
     :custom
@@ -346,8 +351,8 @@ $BIB\TeX$ references
 * Org-ref
 #+begin_src emacs-lisp
   (use-package org-ref
-    :after (org bibtex)
     :demand t
+    :after (org bibtex-completion)
     :general
     (pspmacs/local-leader-keys :keymaps 'bibtex-mode-map
       "i" '(:ignore t :wk "insert")
@@ -360,6 +365,8 @@ $BIB\TeX$ references
       "irl" '(org-ref-insert-link :wk "link")
       "irh" '(org-ref-insert-link-hydra/body :wk "hydra"))
 
+    :init
+    (require 'org-ref)
     :config
     ;; Initialize components
     (require 'org-ref-arxiv)
@@ -373,13 +380,14 @@ $BIB\TeX$ references
        (_ (car (last bibtex-completion-library-path))))))
   #+end_src
 
-# ** prettify
-# #+begin_src emacs-lisp
-  ;; (use-package org-ref-prettify
-    ;; :after org-ref
-    ;; :hook
-    ;; (org-mode . org-ref-prettify))
-# #+end_src
+** prettify
+#+begin_src emacs-lisp
+  (use-package org-ref-prettify
+    :disabled
+    :after org-ref
+    :hook
+    (org-mode . org-ref-prettify))
+#+end_src
 
 * Citar references
 #+begin_src emacs-lisp

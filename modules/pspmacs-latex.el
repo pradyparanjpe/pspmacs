@@ -264,26 +264,29 @@ Restore backed up files."
   (bibtex-autokey-titleword-separator "-")
   (bibtex-autokey-titlewords 2)
   (bibtex-autokey-titlewords-stretch 1)
-  (bibtex-autokey-titleword-length 5)
+  (bibtex-autokey-titleword-length 5))
+
+(use-package bibtex-completion
+  :after bibtex
+  :custom
+  ;; Following customizations are suggested by org-ref in their wiki
   (bibtex-completion-bibliography
-   (remq 'nil (mapcar
-               (lambda (x)
-                 (let ((bibfile (expand-file-name "biblio.bib" x)))
-                   (if (file-exists-p bibfile) bibfile)))
-               pspmacs/ref-paths)))
+   (remq 'nil (mapcar (lambda (x)
+                        (let ((bibfile (expand-file-name "biblio.bib" x)))
+                          (if (file-exists-p bibfile) bibfile)))
+                      pspmacs/ref-paths)))
   (bibtex-completion-library-path
-   (remq 'nil (mapcar
-               (lambda (x)
-                 (let ((bibdir (file-name-as-directory
-                                (expand-file-name "library" x))))
-                   (if (file-exists-p bibdir) bibdir)))
-               pspmacs/ref-paths)))
+   (remq 'nil (mapcar (lambda (x)
+                        (let ((bibdir (file-name-as-directory
+                                       (expand-file-name "library" x))))
+                          (if (file-exists-p bibdir) bibdir)))
+                      pspmacs/ref-paths)))
   (bibtex-completion-notes-path
    (car (last (remq 'nil (mapcar
                           (lambda (x)
                             (let ((bibdir (file-name-as-directory
                                            (expand-file-name "notes" x))))
-                              (if (file-exists-p bibdir) bibdir)))
+                              (when (file-exists-p bibdir) bibdir)))
                           pspmacs/ref-paths)))))
   (biblio-download-directory
    (car (last (remq 'nil
@@ -295,7 +298,6 @@ Restore backed up files."
                      pspmacs/ref-paths))))))
 
 (use-package reftex
-  :after (latex bibtex)
   :commands turn-on-reftex
   :hook ((latex-mode LaTeX-mode) . turn-on-reftex)
   :custom
@@ -305,8 +307,8 @@ Restore backed up files."
   (reftex-use-multiple-selection-buffers t))
 
 (use-package org-ref
-  :after (org bibtex)
   :demand t
+  :after (org bibtex-completion)
   :general
   (pspmacs/local-leader-keys :keymaps 'bibtex-mode-map
     "i" '(:ignore t :wk "insert")
@@ -319,6 +321,8 @@ Restore backed up files."
     "irl" '(org-ref-insert-link :wk "link")
     "irh" '(org-ref-insert-link-hydra/body :wk "hydra"))
 
+  :init
+  (require 'org-ref)
   :config
   ;; Initialize components
   (require 'org-ref-arxiv)
@@ -330,6 +334,12 @@ Restore backed up files."
    (pcase (type-of bibtex-completion-library-path)
      (string bibtex-completion-library-path)
      (_ (car (last bibtex-completion-library-path))))))
+
+(use-package org-ref-prettify
+  :disabled
+  :after org-ref
+  :hook
+  (org-mode . org-ref-prettify))
 
 (use-package citar
   :after latex
