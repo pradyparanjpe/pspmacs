@@ -100,21 +100,18 @@ GPTel supports Gemini (google service)
 #+end_src
 
 * Mail
-** Org mime
-#+begin_src emacs-lisp
-  (use-package org-mime
-    :ensure t
-    :commands (org-mime-confirm-when-no-multipart)
-    :custom
-    (org-mime-export-options '(:section-numbers nil
-                                                :with-author nil
-                                                :with-toc nil))
-    (org-mime-library 'mml))
+It wouldn't be always desirable to synchronize mailboxes on each device running Emacs.
+Also, it may be desired to synchronize different mailbox(es) on different devices.
+Hence, /use-package/ directives in this section don't load by default.
+To enable *Mail* features on a device, set appropriate path to =pspmacs/mu4e-load-path= in =local-emacs-dir/early/config.el=.
+#+begin_src emacs-lisp :tangle no
+  (customize-set-variable 'pspmacs/mu4e-load-path
+                          "/usr/share/emacs/site-lisp/mu4e/")
 #+end_src
 
 ** Mu
 - Depends on mu(4e), isync (mbsync) and gpg
-- This requires configuration of =mbsync= to be placed in =${XDG_CONFIG_HOME:-{HOME}/.config/mu4e/mbsyncrc}=.
+- This requires configuration of =mbsync= to be placed in =${XDG_CONFIG_HOME:-${HOME}/.config}/mu4e/mbsyncrc=.
 - Depending upon the number of mails, this may eat up a lot of storage space.
 
 *** Local/Private configuration
@@ -161,112 +158,132 @@ GPTel supports Gemini (google service)
 #+end_src
 
 #+begin_note
-/Personal/ and /Work/ are configured mail directory sub-directories in mbsyncrc.
+/Personal/ and /Work/ are configured mail directories in mbsyncrc.
 #+end_note
 
 - Reference:
   - Videos Playlist: [[https://www.youtube.com/watch?v=yZRyEhi4y44&list=PLEoMzSkcN8oM-kA19xOQc8s0gr0PpFGJQ][System Crafters]]
   - Repository: [[https://github.com/daviwil/emacs-from-scratch][emacs-from-scratch]]
 
-- Set path to =pspmacs/mu4e-load-path= in =local-emacs-dir/early/config.el=.
-  #+begin_src emacs-lisp :tangle no
-    (customize-set-variable 'pspmacs/mu4e-load-path "/usr/share/emacs/site-lisp/mu4e/")
-    #+end_src
+*** Org mime
+#+begin_src emacs-lisp
+  (use-package org-mime
+    :when pspmacs/mu4e-load-path
+    :commands (org-mime-confirm-when-no-multipart
+               org-mime-edit-mail-in-org-mode)
+    :defer 20
+    :general
+    (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
+      "oe" '(org-mime-edit-mail-in-org-mode :wk "edit")
+      "<h" '(:ignore t :wk "htmlize")
+      "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
+
+    (pspmacs/leader-keys
+      :keymaps '(org-mode-map mu4e-compose-mode-map)
+      ;; NEXT: add as send-mail hook
+      "<h"  '(:ignore t :wk "htmlize")
+      "<hh" '(org-mime-htmlize :wk "this"))
+
+    (pspmacs/leader-keys
+      :keymaps '(org-mode-map)
+      "<h"  '(:ignore t :wk "htmlize")
+      "<hb" '(org-mime-org-buffer-htmlize :wk "buffer")
+      "<hs" '(org-mime-org-subtree-htmlize :wk "subtree"))
+
+    :custom
+    (org-mime-export-options
+     '(:section-numbers nil :with-author nil :with-toc nil))
+    (org-mime-library 'mml)
+
+    :hook
+    (org-mime-html . (lambda ()
+                       (org-mime-change-element-style
+                        "pre"
+                        (string-join
+                         '("color: #959a9f"
+                           "background-color: #000307"
+                           "padding: 0.5em;")
+                         "; ")))))
+#+end_src
 
 *** Mu4e global configuration
 #+begin_src emacs-lisp
-  (when pspmacs/mu4e-load-path
-    (use-package mu4e
-      :ensure nil
-      :load-path pspmacs/mu4e-load-path
-      :defer 20
-      :after evil-collection
-      :general
-      (pspmacs/leader-keys
-        "<"  '(:ignore t :wk "mail")
-        "<<" '(mu4e :wk "main")
-        "<u" '(mu4e-update-mail-and-index :wk "update")
-        "<c" '(mu4e-compose-new :wk "compose"))
+  (use-package mu4e
+    :when pspmacs/mu4e-load-path
+    :ensure nil
+    :load-path pspmacs/mu4e-load-path
+    :defer 20
+    :after (evil-collection org-mime)
+    :general
+    (pspmacs/leader-keys
+      "<"  '(:ignore t :wk "mail")
+      "<<" '(mu4e :wk "main")
+      "<u" '(mu4e-update-mail-and-index :wk "update")
+      "<c" '(mu4e-compose-new :wk "compose"))
 
-      (pspmacs/leader-keys
-        :keymaps '(org-mode-map mu4e-compose-mode-map)
-        ;; NEXT: add as send-mail hook
-        "<h"  '(:ignore t :wk "htmlize")
-        "<hh" '(org-mime-htmlize :wk "this"))
+    :init
+    (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
+    (customize-set-variable 'smtpmail-servers-requiring-authorization
+                            "smtp\\.gmail\\.com")
+    :custom
+    (mu4e-account-alist t)
+    (mu4e-enable-notifications t)
+    (mu4e-enable-mode-lineu4e-enable-mode-line t)
+    (mu4e-compose-signature-auto-include t)
+    (mu4e-compose-signature (format "%s\n%s" "--" user-full-name))
+    (mu4e-compose-format-flowed t)
+    (mu4e-get-mail-command (format
+                            "mbsync -c %s -a"
+                            (expand-file-name
+                             "mu4e/mbsyncrc"
+                             (or (getenv "XDG_CONFIG_HOME") "~/.config"))))
+    (mu4e-maildir (expand-file-name
+                   "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
+    (mu4e-change-filenames-when-moving t)
+    (mu4e-update-interval (* 1 60 60))
+    (mu4e-view-show-images t)
+    (mu4e-view-show-addresses t)
 
-      (pspmacs/leader-keys
-        :keymaps '(org-mode-map)
-        "<h"  '(:ignore t :wk "htmlize")
-        "<hb" '(org-mime-org-subtree-htmlize :wk "buffer")
-        "<hs" '(org-mime-org-subtree-htmlize :wk "subtree"))
+    :hook
+    ((mu4e-compose-mode . display-fill-column-indicator-mode)
+     (message-send . mml-secure-message-sign-pgpmime)
+     (message-send . org-mime-confirm-when-no-multipart))
 
-      :init
-      (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
-      (customize-set-variable 'smtpmail-servers-requiring-authorization
-                              "smtp\\.gmail\\.com")
-      :custom
-      (mu4e-account-alist t)
-      (mu4e-enable-notifications t)
-      (mu4e-enable-mode-lineu4e-enable-mode-line t)
-      (mu4e-compose-signature-auto-include t)
-      (mu4e-compose-signature (format "%s\n%s" "--" user-full-name))
-      (mu4e-compose-format-flowed t)
-      (mu4e-get-mail-command (format
-                              "mbsync -c %s -a"
-                              (expand-file-name
-                               "mu4e/mbsyncrc"
-                               (or (getenv "XDG_CONFIG_HOME") "~/.config"))))
-      (mu4e-maildir (expand-file-name
-                     "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
-      (mu4e-change-filenames-when-moving t)
-      (mu4e-update-interval (* 1 60 60))
-      (mu4e-view-show-images t)
-      (mu4e-view-show-addresses t)
-      :hook
-      ((mu4e-compose-mode . display-fill-column-indicator-mode)
-       (message-send . mml-secure-message-sign-pgpmime)
-       (message-send . org-mime-confirm-when-no-multipart)
-       (org-mime-html . (lambda ()
-                          (org-mime-change-element-style
-                           "pre"
-                           (format
-                            "color: %s; background-color: %s; padding: 0.5em;"
-                            "#959a9f" "#000307")))))
-      :config
-      (mu4e t)
-      (evil-collection-mu4e-setup)))
+    :config
+    (mu4e t)
+    (evil-collection-mu4e-setup))
       #+end_src
 
 ** Mu4e-org
 Integrate mu4e with org-mode
 #+begin_src emacs-lisp
-  (when pspmacs/mu4e-load-path
-    (use-package mu4e-org
-      :ensure nil
-      :after (mu4e org)
-      :init
-      (require 'org-capture)
-      ;; Ensure File exists
-      (make-directory (file-name-directory pspmacs/org-mail-path) t)
-      (unless (file-exists-p pspmacs/org-mail-path)
-        (write-region "\n* Follow up\n\n* Read later" nil pspmacs/org-mail-path))
-      (pspmacs/extend-list
-       'org-capture-templates
-       `(("m" "Mail")
-         ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
-          ,(string-join
-            '("* About %a"
-              "** With %:fromname"
-              "** Created: %:date-timestamp-inactive"
-              "")
-            "\n"))
-         ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
-          ,(string-join
-            '("* About %a"
-              "** From %:fromname"
-              "** Created: %:date-timestamp-inactive"
-              "")
-           "\n"))))))
+  (use-package mu4e-org
+    :when pspmacs/mu4e-load-path
+    :ensure nil
+    :load-path pspmacs/mu4e-load-path
+    :after (mu4e org-capture)
+    :init
+    ;; Ensure File exists
+    (make-directory (file-name-directory pspmacs/org-mail-path) t)
+    (unless (file-exists-p pspmacs/org-mail-path)
+      (write-region "\n* Follow up\n\n* Read later" nil pspmacs/org-mail-path))
+    (pspmacs/extend-list
+     'org-capture-templates
+     `(("m" "Mail")
+       ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
+        ,(string-join
+          '("* About %a"
+            "** With %:fromname"
+            "** Created: %:date-timestamp-inactive"
+            "")
+          "\n"))
+       ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
+        ,(string-join
+          '("* About %a"
+            "** From %:fromname"
+            "** Created: %:date-timestamp-inactive"
+            "")
+         "\n")))))
 #+end_src
 
 * native Emacs settings

@@ -83,102 +83,115 @@
   :config (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
 (use-package org-mime
-  :ensure t
-  :commands (org-mime-confirm-when-no-multipart)
+  :when pspmacs/mu4e-load-path
+  :commands (org-mime-confirm-when-no-multipart
+             org-mime-edit-mail-in-org-mode)
+  :defer 20
+  :general
+  (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
+    "oe" '(org-mime-edit-mail-in-org-mode :wk "edit")
+    "<h" '(:ignore t :wk "htmlize")
+    "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
+
+  (pspmacs/leader-keys
+    :keymaps '(org-mode-map mu4e-compose-mode-map)
+    ;; NEXT: add as send-mail hook
+    "<h"  '(:ignore t :wk "htmlize")
+    "<hh" '(org-mime-htmlize :wk "this"))
+
+  (pspmacs/leader-keys
+    :keymaps '(org-mode-map)
+    "<h"  '(:ignore t :wk "htmlize")
+    "<hb" '(org-mime-org-buffer-htmlize :wk "buffer")
+    "<hs" '(org-mime-org-subtree-htmlize :wk "subtree"))
+
   :custom
-  (org-mime-export-options '(:section-numbers nil
-                                              :with-author nil
-                                              :with-toc nil))
-  (org-mime-library 'mml))
+  (org-mime-export-options
+   '(:section-numbers nil :with-author nil :with-toc nil))
+  (org-mime-library 'mml)
 
-(when pspmacs/mu4e-load-path
-  (use-package mu4e
-    :ensure nil
-    :load-path pspmacs/mu4e-load-path
-    :defer 20
-    :after evil-collection
-    :general
-    (pspmacs/leader-keys
-      "<"  '(:ignore t :wk "mail")
-      "<<" '(mu4e :wk "main")
-      "<u" '(mu4e-update-mail-and-index :wk "update")
-      "<c" '(mu4e-compose-new :wk "compose"))
+  :hook
+  (org-mime-html . (lambda ()
+                     (org-mime-change-element-style
+                      "pre"
+                      (string-join
+                       '("color: #959a9f"
+                         "background-color: #000307"
+                         "padding: 0.5em;")
+                       "; ")))))
 
-    (pspmacs/leader-keys
-      :keymaps '(org-mode-map mu4e-compose-mode-map)
-      ;; NEXT: add as send-mail hook
-      "<h"  '(:ignore t :wk "htmlize")
-      "<hh" '(org-mime-htmlize :wk "this"))
+(use-package mu4e
+  :when pspmacs/mu4e-load-path
+  :ensure nil
+  :load-path pspmacs/mu4e-load-path
+  :defer 20
+  :after (evil-collection org-mime)
+  :general
+  (pspmacs/leader-keys
+    "<"  '(:ignore t :wk "mail")
+    "<<" '(mu4e :wk "main")
+    "<u" '(mu4e-update-mail-and-index :wk "update")
+    "<c" '(mu4e-compose-new :wk "compose"))
 
-    (pspmacs/leader-keys
-      :keymaps '(org-mode-map)
-      "<h"  '(:ignore t :wk "htmlize")
-      "<hb" '(org-mime-org-subtree-htmlize :wk "buffer")
-      "<hs" '(org-mime-org-subtree-htmlize :wk "subtree"))
+  :init
+  (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
+  (customize-set-variable 'smtpmail-servers-requiring-authorization
+                          "smtp\\.gmail\\.com")
+  :custom
+  (mu4e-account-alist t)
+  (mu4e-enable-notifications t)
+  (mu4e-enable-mode-lineu4e-enable-mode-line t)
+  (mu4e-compose-signature-auto-include t)
+  (mu4e-compose-signature (format "%s\n%s" "--" user-full-name))
+  (mu4e-compose-format-flowed t)
+  (mu4e-get-mail-command (format
+                          "mbsync -c %s -a"
+                          (expand-file-name
+                           "mu4e/mbsyncrc"
+                           (or (getenv "XDG_CONFIG_HOME") "~/.config"))))
+  (mu4e-maildir (expand-file-name
+                 "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
+  (mu4e-change-filenames-when-moving t)
+  (mu4e-update-interval (* 1 60 60))
+  (mu4e-view-show-images t)
+  (mu4e-view-show-addresses t)
 
-    :init
-    (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
-    (customize-set-variable 'smtpmail-servers-requiring-authorization
-                            "smtp\\.gmail\\.com")
-    :custom
-    (mu4e-account-alist t)
-    (mu4e-enable-notifications t)
-    (mu4e-enable-mode-lineu4e-enable-mode-line t)
-    (mu4e-compose-signature-auto-include t)
-    (mu4e-compose-signature (format "%s\n%s" "--" user-full-name))
-    (mu4e-compose-format-flowed t)
-    (mu4e-get-mail-command (format
-                            "mbsync -c %s -a"
-                            (expand-file-name
-                             "mu4e/mbsyncrc"
-                             (or (getenv "XDG_CONFIG_HOME") "~/.config"))))
-    (mu4e-maildir (expand-file-name
-                   "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
-    (mu4e-change-filenames-when-moving t)
-    (mu4e-update-interval (* 1 60 60))
-    (mu4e-view-show-images t)
-    (mu4e-view-show-addresses t)
-    :hook
-    ((mu4e-compose-mode . display-fill-column-indicator-mode)
-     (message-send . mml-secure-message-sign-pgpmime)
-     (message-send . org-mime-confirm-when-no-multipart)
-     (org-mime-html . (lambda ()
-                        (org-mime-change-element-style
-                         "pre"
-                         (format
-                          "color: %s; background-color: %s; padding: 0.5em;"
-                          "#959a9f" "#000307")))))
-    :config
-    (mu4e t)
-    (evil-collection-mu4e-setup)))
+  :hook
+  ((mu4e-compose-mode . display-fill-column-indicator-mode)
+   (message-send . mml-secure-message-sign-pgpmime)
+   (message-send . org-mime-confirm-when-no-multipart))
 
-(when pspmacs/mu4e-load-path
-  (use-package mu4e-org
-    :ensure nil
-    :after (mu4e org)
-    :init
-    (require 'org-capture)
-    ;; Ensure File exists
-    (make-directory (file-name-directory pspmacs/org-mail-path) t)
-    (unless (file-exists-p pspmacs/org-mail-path)
-      (write-region "\n* Follow up\n\n* Read later" nil pspmacs/org-mail-path))
-    (pspmacs/extend-list
-     'org-capture-templates
-     `(("m" "Mail")
-       ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
-        ,(string-join
-          '("* About %a"
-            "** With %:fromname"
-            "** Created: %:date-timestamp-inactive"
-            "")
-          "\n"))
-       ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
-        ,(string-join
-          '("* About %a"
-            "** From %:fromname"
-            "** Created: %:date-timestamp-inactive"
-            "")
-         "\n"))))))
+  :config
+  (mu4e t)
+  (evil-collection-mu4e-setup))
+
+(use-package mu4e-org
+  :when pspmacs/mu4e-load-path
+  :ensure nil
+  :load-path pspmacs/mu4e-load-path
+  :after (mu4e org-capture)
+  :init
+  ;; Ensure File exists
+  (make-directory (file-name-directory pspmacs/org-mail-path) t)
+  (unless (file-exists-p pspmacs/org-mail-path)
+    (write-region "\n* Follow up\n\n* Read later" nil pspmacs/org-mail-path))
+  (pspmacs/extend-list
+   'org-capture-templates
+   `(("m" "Mail")
+     ("mf" "Follow up" entry (file+olp ,pspmacs/org-mail-path "Follow up")
+      ,(string-join
+        '("* About %a"
+          "** With %:fromname"
+          "** Created: %:date-timestamp-inactive"
+          "")
+        "\n"))
+     ("mr" "Read later" entry (file+olp ,pspmacs/org-mail-path "Read Later")
+      ,(string-join
+        '("* About %a"
+          "** From %:fromname"
+          "** Created: %:date-timestamp-inactive"
+          "")
+       "\n")))))
 
 (use-package emacs
   :custom
