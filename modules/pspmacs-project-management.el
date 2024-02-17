@@ -22,6 +22,23 @@
 
 ;;; Code:
 
+(use-package project
+  :custom
+  (project-switch-commands
+   '((project-shell-command "Shell command")
+     (project-dired "Dired")
+     (project-switch-to-buffer "Buffer")
+     (project-find-dir "Find directory")
+     (project-eshell "Eshell")
+     (project-find-file "Find file")
+     (project-find-regexp "Find regexp")
+     (project-kill-buffers "Kill buffers")
+     (project-query-replace-regexp "Query replace")
+     (project-vc-dir "VC-Dir")))
+  (project-list-file (xdg/make-path "projects" 'cache))
+  :general
+  (pspmacs/leader-keys "p" '(:keymap project-prefix-map :wk "roj")))
+
 (use-package dired
   :ensure nil
   :general
