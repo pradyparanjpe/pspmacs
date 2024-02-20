@@ -38,9 +38,7 @@ Integration
     (use-package vterm
       :general
       (pspmacs/leader-keys
-        "'v" '((lambda () (interactive)
-                 (pspmacs/inferior-interpreter 'vterm))
-               :wk "vterm"))
+        "'v" '(vterm :wk "vterm"))
       :custom
       (vterm-always-compile-module t)
       (vterm-ignore-blink-cursor t)
@@ -55,13 +53,23 @@ Integration
   (use-package eat
     :general
     (pspmacs/leader-keys
-      "'e" '((lambda () (interactive)
-               (pspmacs/inferior-interpreter 'eat))
-             :wk "eat"))
+      "'e" '(eat :wk "eat"))
     :config
     (general-add-hook
        'eat-exit-hook
        '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
+#+end_src
+
+** Eshell
+#+begin_src emacs-lisp
+  (use-package eshell
+      :general
+      (pspmacs/leader-keys
+        "'E" '(eat :wk "eshell"))
+      :config
+      (general-add-hook
+         'eat-exit-hook
+         '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 #+end_src
 
 * Copy Environment

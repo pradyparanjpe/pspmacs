@@ -25,9 +25,7 @@
 (use-package vterm
   :general
   (pspmacs/leader-keys
-    "'v" '((lambda () (interactive)
-             (pspmacs/inferior-interpreter 'vterm))
-           :wk "vterm"))
+    "'v" '(vterm :wk "vterm"))
   :custom
   (vterm-always-compile-module t)
   (vterm-ignore-blink-cursor t)
@@ -39,13 +37,20 @@
 (use-package eat
   :general
   (pspmacs/leader-keys
-    "'e" '((lambda () (interactive)
-             (pspmacs/inferior-interpreter 'eat))
-           :wk "eat"))
+    "'e" '(eat :wk "eat"))
   :config
   (general-add-hook
      'eat-exit-hook
      '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
+
+(use-package eshell
+    :general
+    (pspmacs/leader-keys
+      "'E" '(eat :wk "eshell"))
+    :config
+    (general-add-hook
+       'eat-exit-hook
+       '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 
 (use-package exec-path-from-shell
   :custom

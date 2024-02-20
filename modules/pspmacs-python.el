@@ -32,14 +32,16 @@
     "'" '((lambda () (interactive)
             (pspmacs/inferior-interpreter #'run-python))
           :wk "python"))
+  (pspmacs/leader-keys
+    "'p" '(run-python :wk ""))
   (general-def 'normal
     python-mode-map
     "gz" nil
     "C-j" nil)
   :init
   ;; (with-eval-after-load 'eglot
-    ;; (add-to-list 'eglot-server-programs
-                 ;; '(python-mode . ("pyright-langserver" "--stdio"))))
+  ;; (add-to-list 'eglot-server-programs
+  ;; '(python-mode . ("pyright-langserver" "--stdio"))))
   :custom
   (python-indent-offset 4)
   ;; Global python-lsp-server configuration
@@ -57,6 +59,7 @@
                                :pylsp_mypy (:enabled nil)
                                :yapf (:enabled t :json-false)
                                :flake8 (:enabled nil)))))
+  (python-shell-dedicated t)
   :hook
   ((python-mode . pspmacs/prefer-interpreter-ipython)
    (python-mode . pspmacs/prettify-python)
@@ -67,9 +70,7 @@
 (use-package jupyter
   :general
   (pspmacs/leader-keys
-    "'i" '((lambda () (interactive)
-             (pspmacs/inferior-interpreter #'jupyter-run-repl))
-           :wk "ipy"))
+    "'i" '(jupyter-run-repl :wk "ipy"))
   :custom
   (org-babel-default-header-args:jupyter-python '((:pandoc . t)
                                                   (:async . "yes")
