@@ -1,0 +1,119 @@
+#+title: Resources for Emacs
+#+PROPERTY: header-args :mkdirp t :results no :eval no
+#+STARTUP: overview
+#+export_file_name: resources.html
+
+* Manuals
+- [[https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html][Emacs HTML manual]]
+- [[https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html][Emacs Lisp HTML manual]]
+- [[https://orgmode.org/manual/][Org Mode]]
+
+* Wiki
+- [[https://www.emacswiki.org/][EmacsWiki]]
+
+* Minad
+** Sites
+- [[https://github.com/minad][github]]
+
+** Notes
+*** Author
+- Corfu
+- Consult
+- Cape
+- Vertico
+- Marginalia
+- Org-modern
+- Tempel
+
+* Karthink
+** Sites
+- [[https://github.com/karthink][github]]
+- [[https://www.youtube.com/@karthink][YouTube]]
+
+** Notes
+*** Author
+- Popper
+- GPTel
+- Org Preview [POP] (WIP to be integrated into Emacs)
+- Org AucTeX [WIP]
+- Consult RefTeX [WIP]
+
+* Oantolin
+** Sites
+- [[https://github.com/oantolin][github]]
+
+** Notes
+*** Author
+- Embark
+- Orderless
+- Math delimiters
+
+* KJambunathan
+** Sites
+- [[https://github.com/kjambunathan][github]]
+
+** Notes
+*** Author
+- org-mode-ox-odt
+
+* Jwiegley
+** Sites
+- [[https://github.com/jwiegley][github]]
+
+** Notes
+*** Author
+- Use-package
+- Emacs Async
+
+* Joao Tavora
+- [[https://github.com/joaotavora][github]]
+
+** Notes
+*** Author
+- Yasnippet
+- Eglot
+- breadcrumb
+
+* Protesilos Stovrou
+** Sites
+- [[https://protesilaos.com/][Web Site]]
+- [[https://github.com/protesilaos][github]]
+- [[https://gitlab.com/protesilaos][gitlab]]
+
+** Notes
+*** Author
+- Modus Themes
+- Fontaine
+
+* System Crafters
+** Sites
+- [[https://www.youtube.com/@SystemCrafters][YouTube]] 
+- [[fosstodon.org/@daviwil][Fediverse]]
+- [[twitter.com/SystemCrafters][X]]
+- [[systemcrafters.net][Web Site]]
+- [[https://github.com/daviwil][github]]
+
+** Notes
+- System Crafters Live
+- Emacs from Scratch tutorials
+- Uses GNU/Guix
+
+* Emacs Elements
+** Sites
+- [[https://www.youtube.com/@emacselements][YouTube]]
+
+** Notes
+- Uses MS Windows ,at least in video demonstrations.
+
+* Emacs Conf
+** Sites
+- [[https://www.youtube.com/@EmacsConf][YouTube]]
+- [[emacsconf.org][Web Site]]
+- [[emacswiki.org/emacs/Usergroups][Emacs Wiki]]
+
+** Notes
+Emacs Conferences
+
+
+* Jonathan Bennett
+- [[https://jonathanabennett.github.io/][Website]]

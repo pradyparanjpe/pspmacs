@@ -327,6 +327,10 @@ Color it
         semantic-new-buffer-setup-functions)
 #+end_src
 
+#+begin_seealso
+[[file:pspmacs-project-management.org::*Breadcrumbs][Breadcrumbs]]: project-tree
+#+end_seealso
+
 * debugging
 #+begin_example emacs-lisp
   (use-package dap-mode

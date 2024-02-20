@@ -157,6 +157,10 @@
   :hook
   (dired-mode . dired-du-mode))
 
+(use-package breadcrumb
+  :demand t
+  :init (breadcrumb-mode))
+
 (use-package emacs
   :init
   (mkdir (xdg/make-path "backups") t)

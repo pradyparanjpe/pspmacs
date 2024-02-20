@@ -296,6 +296,17 @@ While =projectile= was a great project manager, the built-in /project.el/ serves
       :config (treemacs-set-scope-type 'Tabs))
 #+end_src
 
+* Breadcrumbs
+#+begin_src emacs-lisp
+  (use-package breadcrumb
+    :demand t
+    :init (breadcrumb-mode))
+#+end_src
+
+#+begin_seealso
+[[file:pspmacs-programming.org::*Semantics][Semantics]]: Program tree
+#+end_seealso
+
 * native emacs-settings
 ** Backups
 - built-in pattern at different location
