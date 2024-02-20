@@ -88,7 +88,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
 GPTel supports Gemini (google service)
 #+begin_src emacs-lisp
   (use-package gptel
-    :demand t
+    :commands (gptel gptel-menu)
     :general (pspmacs/leader-keys
                "A"     '(:ignore t  :wk "I")
                "A g"   '(:ignore t  :wk "GPT")

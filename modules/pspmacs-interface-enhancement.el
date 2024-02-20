@@ -83,11 +83,11 @@
   ;; Updates
   (pspmacs/leader-keys
     :states 'normal
-    "+" '(:ignore t :wk "Up")
-    "+e" '(:ignore t :wk "Emacs (Build)")
-    "+em" '(emacs-repo :wk "Transient menu")
-    "+e+" '(emacs-repo/repo-install :wk "Upgrade with defaults")
-    "++" '(pspmacs/git-rebase :wk "PSPMacs Config"))
+    "+"   '(:ignore t :wk "Up")
+    "+e"  '(:ignore t :wk "Emacs (Build)")
+    "+em" '(build-emacs :wk "Transient menu")
+    "+e+" '(build-emacs/repo-install :wk "Upgrade with defaults")
+    "++"  '(pspmacs/git-rebase :wk "PSPMacs Config"))
 
   ;; debug
   (pspmacs/leader-keys

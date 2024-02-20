@@ -72,7 +72,7 @@
    (eww-after-render . karthink/reader-center-images)))
 
 (use-package gptel
-  :demand t
+  :commands (gptel gptel-menu)
   :general (pspmacs/leader-keys
              "A"     '(:ignore t  :wk "I")
              "A g"   '(:ignore t  :wk "GPT")

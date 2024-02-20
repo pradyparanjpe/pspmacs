@@ -37,10 +37,7 @@
 ** 50: Networking / Internet / outreach
 - [[file:pspmacs-internet.org][internet]]
 
-** 60: GNU Emacs
-- [[file:pspmacs-emacs-ci-cd.org][ci-cd]]
-
-** 70: multimedia
+** 60: multimedia
 - [[file:pspmacs-multimedia.org][multimedia]]
 
 * Yaml export
@@ -70,7 +67,5 @@
   50:
   - internet
   60:
-  - emacs-ci-cd
-  70:
   - multimedia
 #+end_src
