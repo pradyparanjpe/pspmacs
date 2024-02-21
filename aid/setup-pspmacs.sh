@@ -55,13 +55,14 @@ set_vars () {
     # install dependencies
     include_deps=true
 
-    # recommended dependences
+    # recommended dependencies
     recommend="
-    shell-utilities: sed awk
-    package-managers: pip
-    linters: shellcheck bashate pylint diction
-    code-structurers: isort yapf
-    exporters: latex xetex pandoc
+    <-SHELL-UTILITIES--> sed gawk:awk
+    <-PACKAGE-MANAGERS-> pip:pip3
+    <------LINTERS-----> shellcheck bashate pylint diction
+    <-CODE-STRUCTURERS-> isort yapf
+    <----EXPORTERS-----> latex xetex pandoc texlive-dvisvgm:dvisvgm texlive-dvipng:dvipng latexmk
+    <-------MAIL-------> mutt:mu isync:mbsync
 "
 
     # ?install fonts
@@ -89,7 +90,8 @@ set_vars () {
     emacs_state="${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
 
     # OS dependencies
-    dependencies="gcc make autoconf git curl zip npm ripgrep stow emacs"
+    dependencies="gnupg:gpg coreutils:realpath gcc make autoconf git curl \
+zip npm ripgrep:rg stow emacs"
 
     # fonts plist
     # format: one font-entry per line (delimited by $IFS)
@@ -145,7 +147,7 @@ cantarell:https://github.com/s373r/cantarell-nerd-font/releases\
     Supported package managers: ${package_managers}
     for others, ensure dependencies yourself and then run with --no-deps.
 "
-        recommend="${recommend}    clipboard: wl-clipboard xcopy
+        recommend="${recommend}    <----CLIPBOARD-----> wl-clipboard:wl-copy xclip
 "
     fi
 
@@ -208,15 +210,12 @@ cli () {
                 clean_exit 0 "${help_msg}"
                 ;;
             --recommend)
-                clean_exit 0 "
-Recommended Dependencies:
-    ${recommend}
-"
+                check_recommend
+                clean_exit 0
                 ;;
             --list-deps)
-                clean_exit 0 "
-Dependencies:
-    ${dependencies}"
+                check_dependencies
+                clean_exit 0
                 ;;
             --list-fonts)
                 clean_exit 0 "
@@ -544,14 +543,78 @@ install_dependencies () {
     printf "[PART] GNU/Linux dependencies\n"
     printf "[INFO] trying to install GNU/Linux system-dependencies.\n"
     printf "[ACT]  you may be asked questions by the package-manager.\n"
-    printf "[INFO] Installing coreutils, gnupg\n"
-    package_install "coreutils" "gnupg"
     for dep in ${dependencies}; do
-        if ! command -v "${dep}" >/dev/null 2>&1; then
-            printf "[INFO] Installing %s\n" "${dep}"
-            package_install "${dep}"
+        if ! command -v "${dep##*:}" >/dev/null 2>&1; then
+            printf "[INFO] Installing %s\n" "${dep%:*}"
+            package_install "${dep%:*}"
         fi
     done
+}
+
+# Check dependencies
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+check_dependencies () {
+    _need=
+    printf "\n\n"
+    printf "[INFO] Checking GNU/${ostype} dependencies\n"
+    printf "[ACT]  Dependencies marked with [NEED] need to be installed.\n\n"
+    for dep in ${dependencies}; do
+        if command -v "${dep##*:}" >/dev/null 2>&1; then
+            printf "[OK]   Found %s\n" "${dep%:*}"
+        else
+            printf "[NEED] Didn't find %s\n" "${dep}"
+            _need="${_need} ${dep%:*}"
+        fi
+    done
+    printf "\n"
+    if [ -n "${_need}" ]; then
+        printf "[ACT]  install%s\n" "${_need}"
+    else
+        printf "[GOOD] All OK."
+    fi
+    unset _need
+    printf "\n\n"
+}
+
+# Check recommendations
+#
+# Args:
+#     NULL
+# Returns:
+#     NULL
+check_recommend () {
+    _reco=
+    printf "\n\n"
+    printf "[INFO] Checking recommended dependencies\n"
+    printf "[ACT]  Recommendations marked with [RECO] may be installed.\n\n"
+    while IFS= read -r deptype; do
+        if [ -n "${deptype}" ]; then
+            for dep in $deptype; do
+                if [ -z "${dep%%<*}" ]; then
+                    printf "\n[TYPE] %s\n" "${dep}"
+                else
+                    if command -v "${dep##*:}" >/dev/null 2>&1; then
+                        printf "[OK]   Found %s\n" "${dep%:*}"
+                    else
+                        printf "[RECO] Didn't find %s\n" "${dep}"
+                        _reco="${_reco} ${dep%:*}"
+                    fi
+                fi
+            done
+        fi
+    done <<< ${recommend}
+    printf "\n"
+    if [ -n "${_reco}" ]; then
+        printf "[ACT]  install%s\n" "${_reco}"
+    else
+        printf "[GOOD] All recommendations are already available."
+    fi
+    unset _reco
+    printf "\n\n"
 }
 
 # Back up existing Emacs from standard locations with a .bak extension
