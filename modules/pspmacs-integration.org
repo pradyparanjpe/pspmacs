@@ -89,7 +89,6 @@ Integration
 * Clipboard
 - Use wl-copy when =XDG_SESSION_TYPE= is "wayland".
 #+begin_src emacs-lisp
-  (setq wl-copy-process nil)
   (when (string-collate-equalp (getenv "XDG_SESSION_TYPE") "WAYLAND" nil t)
     (setq interprogram-cut-function 'wl-copy)
     (setq interprogram-paste-function 'wl-paste))

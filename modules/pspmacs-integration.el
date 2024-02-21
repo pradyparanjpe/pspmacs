@@ -63,7 +63,6 @@
             (memq window-system '(mac ns x)) (string= system-type "darwin"))
     (exec-path-from-shell-initialize)))
 
-(setq wl-copy-process nil)
 (when (string-collate-equalp (getenv "XDG_SESSION_TYPE") "WAYLAND" nil t)
   (setq interprogram-cut-function 'wl-copy)
   (setq interprogram-paste-function 'wl-paste))

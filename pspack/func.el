@@ -314,7 +314,8 @@ Copy TEXT to wayland wl-copy"
   (setq wl-copy-process (make-process :name "wl-copy"
                                       :buffer nil
                                       :command '("wl-copy" "-f" "-n")
-                                      :connection-type 'pipe))
+                                      :connection-type 'pipe
+                                      :noquery t))
   (process-send-string wl-copy-process text)
   (process-send-eof wl-copy-process))
 

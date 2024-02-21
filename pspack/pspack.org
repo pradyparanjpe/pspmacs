@@ -642,7 +642,12 @@ To have org-table formatted correctly with org-modern mode and variable-pitch-fo
           (message (format "Copied: %s" current-focus))))))
 #+end_src
 
-* wayland kill-ring
+* Wayland kill-ring
+#+begin_src emacs-lisp :tangle vars.el
+  (defvar wl-copy-process nil
+    "Integration of wl-copy (wl-clipboard) for wayland")
+#+end_src
+
 - [[https://www.emacswiki.org/emacs/CopyAndPaste][Wayland copy/paste]]
 #+begin_src emacs-lisp :tangle func.el
   (defun wl-copy (text)
@@ -652,7 +657,8 @@ To have org-table formatted correctly with org-modern mode and variable-pitch-fo
     (setq wl-copy-process (make-process :name "wl-copy"
                                         :buffer nil
                                         :command '("wl-copy" "-f" "-n")
-                                        :connection-type 'pipe))
+                                        :connection-type 'pipe
+                                        :noquery t))
     (process-send-string wl-copy-process text)
     (process-send-eof wl-copy-process))
 
