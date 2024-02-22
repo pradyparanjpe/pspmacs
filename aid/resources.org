@@ -88,9 +88,9 @@
 * System Crafters
 ** Sites
 - [[https://www.youtube.com/@SystemCrafters][YouTube]] 
-- [[fosstodon.org/@daviwil][Fediverse]]
-- [[twitter.com/SystemCrafters][X]]
-- [[systemcrafters.net][Web Site]]
+- [[https://fosstodon.org/@daviwil][Fediverse]]
+- [[https://twitter.com/systemcrafters][X]]
+- [[https://systemcrafters.net][Web Site]]
 - [[https://github.com/daviwil][github]]
 
 ** Notes
@@ -108,12 +108,11 @@
 * Emacs Conf
 ** Sites
 - [[https://www.youtube.com/@EmacsConf][YouTube]]
-- [[emacsconf.org][Web Site]]
-- [[emacswiki.org/emacs/Usergroups][Emacs Wiki]]
+- [[https://emacsconf.org][Web Site]]
+- [[https://emacswiki.org/emacs/Usergroups][Emacs Wiki]]
 
 ** Notes
 Emacs Conferences
-
 
 * Jonathan Bennett
 - [[https://jonathanabennett.github.io/][Website]]
