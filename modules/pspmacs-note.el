@@ -335,6 +335,84 @@ parent."
                 (let ((process-connection-type nil))
                   (apply orig-fun args)))))
 
+(use-package org-present
+  :general
+  (pspmacs/local-leader-keys :keymaps 'org-mode-map
+    "P" '(:ignore t :wk "Present")
+    "PP" '(org-present :wk "here")
+    "P0" '((lambda () (interactive)
+             (beginning-of-buffer)
+             (org-present))
+           :wk "afresh"))
+
+  (pspmacs/local-leader-keys :keymaps 'org-present-mode-keymap
+    "q" '(org-present-quit :wk "Quit")
+    "]" '(hydra-curtains/body :wk "Widen"))
+
+  :custom
+  (org-present-text-scale 3)
+  (pspmacs/present-settings
+   '((visual-line-mode . 1)
+     (display-line-numbers-mode . -1)
+     (visual-fill-column-center-text . t)
+     (visual-fill-column-width . 80)
+     (visual-fill-column-mode . 1)
+     (buffer-read-only . 1)
+     (header-line-format . "")  ;; blank head-space place holder
+     (mode-line-format . "")  ;; blank foot-space place holder
+     ((lambda ()) . org-cycle-set-startup-visibility)
+     ;; display images
+     (org-display-inline-images
+      . (lambda () (interactive)
+          (unless org-startup-with-inline-images (org-remove-inline-images))))
+     ;; fullscreen
+     ((lambda () (interactive)
+        (defvar pspmacs/frame-fullscreen-was (frame-parameter nil 'fullscreen))
+        (set-frame-parameter nil 'fullscreen 'fullboth))
+      . (lambda () (interactive)
+          (set-frame-parameter nil 'fullscreen pspmacs/frame-fullscreen-was)
+          (makunbound 'pspmacs/frame-fullscreen-was)))
+     ;; Large faces
+     (face-remapping-alist
+      . '((default (:height 1.5) variable-pitch)
+          (header-line (:height 4.0) variable-pitch)
+          (org-document-title (:height 1.75) org-document-title)
+          (org-code (:height 1.55) org-code)
+          (org-verbatim (:height 1.55) org-verbatim)
+          (org-block (:height 1.25) org-block)
+          (org-block-begin-line (:height 0.7) org-block)))))
+  :config
+  (require 'visual-fill-column)
+  (defhydra hydra-curtains ()
+    "Widen View"
+    ("]" (lambda () (interactive)
+           (setq-local visual-fill-column-width
+                       (+ visual-fill-column-width 1)))
+     "wide")
+    ("[" (lambda () (interactive)
+           (setq-local visual-fill-column-width
+                       (- visual-fill-column-width 1)))
+     "narrow"))
+  (add-hook 'org-present-after-navigate-functions #'pspmacs/next-slide)
+  :hook
+  (org-present-mode . pspmacs/present-start)
+  (org-present-mode-quit . pspmacs/present-end))
+
+(customize-set-variable 'oer-reveal-org-includes-dir
+                        (expand-file-name "oer-reveal-org" local-emacs-dir))
+(use-package emacs-reveal
+  :ensure nil
+  :vc (emacs-reveal :url "https://gitlab.com/oer/emacs-reveal")
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'org-mode-map
+    "xv" '(org-pandoc-export-to-revealjs :wk "reveal"))
+  :custom
+  (oer-reveal-org-includes-dir
+   (expand-file-name "oer-reveal-org" local-emacs-dir))
+  (org-re-reveal-single-file t)
+  :hook (org-mode . reveal-mode))
+
 (use-package org-pomodoro
   :after org
   :general
@@ -485,69 +563,6 @@ parent."
 (use-package visual-fill-column
   :custom
   (visual-fill-column-center-text t))
-
-(use-package org-present
-  :general
-  (pspmacs/local-leader-keys :keymaps 'org-mode-map
-    "P" '(:ignore t :wk "Present")
-    "PP" '(org-present :wk "here")
-    "P0" '((lambda () (interactive)
-             (beginning-of-buffer)
-             (org-present))
-           :wk "afresh"))
-
-  (pspmacs/local-leader-keys :keymaps 'org-present-mode-keymap
-    "q" '(org-present-quit :wk "Quit")
-    "]" '(hydra-curtains/body :wk "Widen"))
-
-  :custom
-  (org-present-text-scale 3)
-  (pspmacs/present-settings
-   '((visual-line-mode . 1)
-     (display-line-numbers-mode . -1)
-     (visual-fill-column-center-text . t)
-     (visual-fill-column-width . 80)
-     (visual-fill-column-mode . 1)
-     (buffer-read-only . 1)
-     (header-line-format . "")  ;; blank head-space place holder
-     (mode-line-format . "")  ;; blank foot-space place holder
-     ((lambda ()) . org-cycle-set-startup-visibility)
-     ;; display images
-     (org-display-inline-images
-      . (lambda () (interactive)
-          (unless org-startup-with-inline-images (org-remove-inline-images))))
-     ;; fullscreen
-     ((lambda () (interactive)
-        (defvar pspmacs/frame-fullscreen-was (frame-parameter nil 'fullscreen))
-        (set-frame-parameter nil 'fullscreen 'fullboth))
-      . (lambda () (interactive)
-          (set-frame-parameter nil 'fullscreen pspmacs/frame-fullscreen-was)
-          (makunbound 'pspmacs/frame-fullscreen-was)))
-     ;; Large faces
-     (face-remapping-alist
-      . '((default (:height 1.5) variable-pitch)
-          (header-line (:height 4.0) variable-pitch)
-          (org-document-title (:height 1.75) org-document-title)
-          (org-code (:height 1.55) org-code)
-          (org-verbatim (:height 1.55) org-verbatim)
-          (org-block (:height 1.25) org-block)
-          (org-block-begin-line (:height 0.7) org-block)))))
-  :config
-  (require 'visual-fill-column)
-  (defhydra hydra-curtains ()
-    "Widen View"
-    ("]" (lambda () (interactive)
-           (setq-local visual-fill-column-width
-                       (+ visual-fill-column-width 1)))
-     "wide")
-    ("[" (lambda () (interactive)
-           (setq-local visual-fill-column-width
-                       (- visual-fill-column-width 1)))
-     "narrow"))
-  (add-hook 'org-present-after-navigate-functions #'pspmacs/next-slide)
-  :hook
-  (org-present-mode . pspmacs/present-start)
-  (org-present-mode-quit . pspmacs/present-end))
 
 (abbrev-table-put org-mode-abbrev-table
                   :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:,?.*\\)")

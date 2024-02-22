@@ -138,6 +138,9 @@
 (use-package emacs
   :custom
   (custom-theme-directory xdg/emacs-cache-directory)
+  :general
+  (pspmacs/leader-keys
+    "Fv" '(variable-pitch-mode :wk "variable-pitch"))
   :hook
   (text-mode . variable-pitch-mode))
 

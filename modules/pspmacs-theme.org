@@ -30,8 +30,7 @@
 #+end_src
 
 * Modus theme
-We shall use latest modus themes (they (~21MB) aren't really heavy!), not the
-built-in ones.
+We shall use latest modus themes (they (~21MB) aren't really heavy!), not the built-in ones.
 #+begin_src emacs-lisp
   (use-package modus-themes
     :demand t
@@ -155,6 +154,9 @@ built-in ones.
   (use-package emacs
     :custom
     (custom-theme-directory xdg/emacs-cache-directory)
+    :general
+    (pspmacs/leader-keys
+      "Fv" '(variable-pitch-mode :wk "variable-pitch"))
     :hook
     (text-mode . variable-pitch-mode))
 #+end_src

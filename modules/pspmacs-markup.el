@@ -26,7 +26,9 @@
   :mode ("\\.ya?ml\\'" . yaml-mode)
   :general
   (:keymaps 'yaml-mode-map
-            "\C-m" 'newline-and-indent))
+            "\C-m" 'newline-and-indent)
+  :hook
+  (yaml-mode . (lambda () (variable-pitch-mode -1))))
 
 (use-package toml-mode
   :mode ("\\.toml\\'" . toml-mode))
@@ -37,20 +39,5 @@
 
 (use-package mermaid-mode)
 (use-package ob-mermaid)
-
-(customize-set-variable 'oer-reveal-org-includes-dir local-emacs-dir)
-(use-package emacs-reveal
-  :ensure nil
-  :vc (emacs-reveal :url "https://gitlab.com/oer/emacs-reveal")
-  :general
-  (pspmacs/local-leader-keys
-    :keymaps 'org-mode-map
-    "v" '(:ignore t :wk "reveal")
-    "vv" '(org-pandoc-export-to-revealjs :wk "export")
-    "vo" '(org-pandoc-export-to-revealjs-and-open :wk "export and open"))
-  :custom
-  (oer-reveal-org-includes-dir (expand-file-name "oer-reveal-org" local-emacs-dir))
-  (org-re-reveal-single-file t)
-  :hook (org-mode . reveal-mode))
 
 (pspmacs/load-inherit)
