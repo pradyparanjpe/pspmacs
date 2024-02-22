@@ -136,7 +136,7 @@ Organize command-line calls.
   victor-mono=https://rubjo.github.io/victor-mono/VictorMonoAll.zip
   fira-code-nerd=https://github.com/ryanoasis/nerd-fonts/releases\
   /download/v3.0.2/FiraCode.zip
-  cantarell:https://github.com/s373r/cantarell-nerd-font/releases\
+  cantarell=https://github.com/s373r/cantarell-nerd-font/releases\
   /download/v1.1/cantarell-nerd-fonts-complete-release.zip"
 
       # variables to unset
