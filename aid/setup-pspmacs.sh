@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # -*- coding: utf-8; mode: shell-script; -*-
 #
-# Copyright © 2023 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+# Copyright © 2023-2024 Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 #
 # Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 # Keywords: help, languages

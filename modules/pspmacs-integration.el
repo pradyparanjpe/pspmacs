@@ -1,6 +1,6 @@
 ;;; pspmacs-integration.el --- User experience/interface -*- lexical-binding: t; -*-
 
-;; Copyright © 2023  Pradyumna Swanand Paranjape
+;; Copyright © 2023-2024  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: help, languages

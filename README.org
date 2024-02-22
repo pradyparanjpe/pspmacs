@@ -217,4 +217,8 @@ GNU/Emacs may be built by maintaining its source-code at a suitable location, pr
   - However, if they store them at the hard-coded location =user-emacs-home/NEW-NAME=, =NEW-NAME= needs to be added to =pspmacs/.gitignore=.
     I shall do so whenever I notice such incidences either myself or through an issue.
 
+* [[file:LICENSE]]
+All work in this project is made available under the terms of [[https://www.gnu.org/licenses/lgpl-3.0.en.html][GNU LGPLv3]], which the user implicitly accepts by using any part or all of  it.
+Copyright © 2023-2024  [[mailto:pradyparanjpe@rediffmail.com][Pradyumna Swanand Paranjape]].
+
 * [[file:sitemap.org][Sitemap]]

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # -*- coding:utf-8; mode: shell-script; -*-
 #
-# Copyright 2020-2023 Pradyumna Paranjape
+# Copyright 2020-2024 Pradyumna Paranjape
 #
 # This file is part of pspmacs.
 # pspmacs is free software: you can redistribute it and/or modify
