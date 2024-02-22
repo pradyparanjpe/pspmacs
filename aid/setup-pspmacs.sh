@@ -560,7 +560,7 @@ install_dependencies () {
 check_dependencies () {
     _need=
     printf "\n\n"
-    printf "[INFO] Checking GNU/${ostype} dependencies\n"
+    printf "[INFO] Checking GNU/%s dependencies\n" "${ostype}"
     printf "[ACT]  Dependencies marked with [NEED] need to be installed.\n\n"
     for dep in ${dependencies}; do
         if command -v "${dep##*:}" >/dev/null 2>&1; then
@@ -606,7 +606,9 @@ check_recommend () {
                 fi
             done
         fi
-    done <<< ${recommend}
+    done << EOR
+${recommend}
+EOR
     printf "\n"
     if [ -n "${_reco}" ]; then
         printf "[ACT]  install%s\n" "${_reco}"
