@@ -124,12 +124,16 @@
   (kill-emacs-hook . fontaine-store-latest-preset)
   (pspmacs/after-enable-theme . fontaine-apply-current-preset)
   :config
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (with-selected-frame frame
-                    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
-    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))))
+  (cond
+   ((daemonp)
+    (add-hook
+     'after-make-frame-functions
+     (lambda (frame)
+       (with-selected-frame frame
+         (fontaine-set-preset
+          (or (fontaine-restore-latest-preset) 'regular))))))
+   (window-system (fontaine-set-preset
+                   (or (fontaine-restore-latest-preset) 'regular)))))
 
 (use-package emacs
   :custom
