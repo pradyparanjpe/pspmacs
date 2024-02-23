@@ -96,6 +96,7 @@
   :after yasnippet)
 
 (use-package yasnippet
+  :pin melpa
   :general
   (pspmacs/leader-keys
     "y" '(:ignore t :wk "as")
@@ -107,11 +108,9 @@
    "C-TAB" 'yas-expand)
   :config
   (let ((pspmacs/snippets (mapcar (lambda (x) (expand-file-name "snippets" x))
-    pspmacs/worktrees)))
-    (dolist (snippets-wt pspmacs/snippets nil)
-      (mkdir snippets-wt t))
-    (pspmacs/extend-list
-     'yas-snippet-dirs pspmacs/snippets))
+                                  pspmacs/worktrees)))
+    (dolist (snippets-wt pspmacs/snippets nil) (mkdir snippets-wt t))
+    (pspmacs/extend-list 'yas-snippet-dirs pspmacs/snippets))
   (yas-reload-all)
   :hook
   (((prog-mode org-mode) . yas-minor-mode)))
