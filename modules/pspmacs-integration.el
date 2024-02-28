@@ -116,13 +116,10 @@
 
 (use-package wgrep)
 
-(use-package systemd)
-
 (use-package pass
   :custom
   (auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc.gpg" "~/.netrc"))
-  :init
-  (auth-source-pass-enable))
+  :init (auth-source-pass-enable))
 
 (use-package pinentry
   :custom

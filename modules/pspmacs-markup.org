@@ -47,6 +47,11 @@
     :mode ("\\.toml\\'" . toml-mode))
 #+end_src
 
+* Systemd
+#+begin_src emacs-lisp
+  (use-package systemd)
+#+end_src
+
 * Markdown mode
 #+begin_src emacs-lisp
   (use-package markdown-mode

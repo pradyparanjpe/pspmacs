@@ -33,6 +33,8 @@
 (use-package toml-mode
   :mode ("\\.toml\\'" . toml-mode))
 
+(use-package systemd)
+
 (use-package markdown-mode
   :mode ("README\\.md\\'" . gfm-mode)
   :custom (markdown-command "multimarkdown"))
