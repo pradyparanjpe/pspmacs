@@ -281,4 +281,11 @@ Original values are restored by `pspmacs/present-end' which is hooked to
   :group 'pspack
   :type '(repeat directory))
 
+(defvar pspmacs/served-dirs nil
+  "List of cons cells whith ports and handles.
+
+ Handles point to processes that serve directories at those ports.")
+
+(put pspmacs/served-dirs 'risky-local-variable t)
+
 ;;; vars.el ends there

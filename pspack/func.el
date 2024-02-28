@@ -640,4 +640,104 @@ VAR must be quoted"
   (dolist (watch pspmacs/duc-watches-list nil)
     (start-process "duc" nil "duc" "index" watch)))
 
+(defun pspmacs/temp-serve--negotiate-port (&optional port)
+  "Negotiate and return a unique port or nil to abort."
+  (while (or (not port)
+             (when-let
+                 (((member port (mapcar #'car pspmacs/served-dirs)))
+                  (original-dir
+                   (nth 4 (process-command
+                           (cdr (assoc port pspmacs/served-dirs))))))
+               (cl-case
+                   (string-to-char
+                    (substring
+                     (completing-read
+                      (format "Port %d is serving %s." 8080 original-dir)
+                      `("I'll re-enter a different port."
+                        ,(format "Stop %s to serve what I say."original-dir)
+                        "Cancel (abort).")
+                      nil t)
+                     0 1))
+                 (?S
+                  (message "Stopping %s to serve %s" original-dir
+                           default-directory)
+                  (pspmacs/stop-serve port)
+                  ;; remove from alist
+                  ;; The sentinel will take much longer to do forget.
+                  (setq pspmacs/served-dirs
+                        (delete (assoc port pspmacs/served-dirs)
+                                pspmacs/served-dirs))
+                  port)
+                 (?I (not (setq port nil)))
+                 (?C (setq port nil)))))
+    (unless port
+      (setq port (read-number
+                  "Serve to port:\t"
+                  (1+ (apply #'max (-concat
+                                    (mapcar #'car pspmacs/served-dirs)
+                                    '(8079))))))))
+  port)
+
+(defun pspmacs/temp-server--forget (process event)
+  "Forget buffer, cons corresponding to PROCESS based on EVENT.
+
+Currently. EVENT is always ignored."
+  (when-let ((elem (rassoc process pspmacs/served-dirs)))
+    (kill-buffer (process-buffer process))
+    (setq pspmacs/served-dirs (delete elem pspmacs/served-dirs))))
+
+(defun pspmacs/temp-serve (&optional directory port)
+  "Serve directory temporarily at localhost.
+
+Expose DIRECTORY (prompt if nil) to serve at https://localhost:PORT.
+If PORT is nil, prompt for one, offer the
+port above the highest served port starting 8080.
+
+Maintain a record at `pspmacs/served-dirs'."
+  (interactive)
+  (when-let
+      ((port (pspmacs/temp-serve--negotiate-port port))
+       (default-directory
+        (or directory (read-directory-name "Serve to expose directory:\t")))
+       (process-name (format "SERVE %s" default-directory))
+       (buffer (format " *%s*" process-name)))
+    (if (file-remote-p default-directory)
+        (message "Can't serve remote locations.")
+      (add-to-list 'pspmacs/served-dirs
+                   `(,port . ,(make-process
+                               :name process-name
+                               :buffer buffer
+                               :command
+                               `("python" "-m" "http.server"
+                                 "-d" ,(expand-file-name default-directory)
+                                 ,(number-to-string port))
+                               :sentinel #'pspmacs/temp-server--forget
+                               :noquery nil))))))
+
+(defun pspmacs/stop-serve (port)
+  "Stop serving directory by killing process that initiated it.
+
+PORT identifies the directory."
+  (interactive
+   (list (when pspmacs/served-dirs
+           (string-to-number
+            (nth
+             0 (split-string
+                (completing-read
+                 "Stop server on port:\t"
+                 (mapcar (lambda (x)
+                           (format "%d:\t%s" (car x)
+                                   (nth 4 (process-command (cdr x)))))
+                         pspmacs/served-dirs)
+                 nil t)
+                "\t"))))))
+  (when port
+    (interrupt-process (alist-get port pspmacs/served-dirs))))
+
+(defun pspmacs/stop-serve-all ()
+  "Stop all temporary directories being served by `pspmacs/temp-serve'"
+  (interactive)
+  (dolist (elt pspmacs/served-dirs)
+    (pspmacs/stop-serve (car elt))))
+
 ;;; func.el ends there
