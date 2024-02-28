@@ -195,7 +195,7 @@ p: PROJECT point
   (keymap-set evil-normal-state-local-map
               (kbd "p") (lambda () (interactive)
                           (goto-char pspmacs/startpage-projects-point)))
-  (setq revert-buffer-function #'pspmacs/startpage-refresh))
+  (setq-local revert-buffer-function #'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--native-bind-jumps ()
     "Bind following keys (native):

@@ -1,4 +1,4 @@
-﻿;;; bootstrap.el --- bootstrap package manager -*- lexical-binding: t; -*-
+;;; bootstrap.el --- bootstrap package manager -*- lexical-binding: t; -*-
 
 ;; package configuration
 ;; Code:
@@ -12,19 +12,19 @@
   "If package ARCHIVE was initialized today.
 
 t only if ARCHIVE's time-stamp within last `pspmacs/archives-stale-days'"
-  (let* ((today (decode-time nil nil t))
-         (archive-path (expand-file-name
-                        (format "archives/%s/archive-contents" archive)
-                        package-user-dir))
-         (last-update-time (decode-time (file-attribute-modification-time
-                                         (file-attributes archive-path))))
-         (delta (make-decoded-time :day pspmacs/archives-stale-days)))
-    (cond ((not (file-readable-p archive-path)) nil)
-          ((time-less-p (encode-time
-                         (decoded-time-add last-update-time delta))
-                        (encode-time today))
-           nil)
-          (t t))))
+  (when-let*
+      ((archive-path (expand-file-name
+                      (format "archives/%s/archive-contents" archive)
+                      package-user-dir))
+       ((file-readable-p archive-path))
+       (last-update-time (decode-time (file-attribute-modification-time
+                                       (file-attributes archive-path))))
+       ((not (time-less-p (encode-time (decoded-time-add
+                                        last-update-time
+                                        (make-decoded-time
+                                         :day pspmacs/archives-stale-days)))
+                          (encode-time (decode-time nil nil t))))))
+    t))
 
 (defun pspmacs/archives-refreshed-recently-p ()
   "All archives have been refreshed today."
