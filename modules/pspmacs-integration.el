@@ -128,8 +128,13 @@
   (pinentry--socket-dir (xdg/make-path (format "pinentry") 'state))
   :config
   (epa-file-enable)
-  (unless pinentry--server-process
-    (pinentry-start)))
+  (unless pinentry--server-process (pinentry-start)))
+
+(use-package with-editor
+  :demand t
+  :init (shell-command-with-editor-mode)
+  :hook
+  ((shell-mode eshell-mode term-exec vterm-mode) . with-editor-export-editor))
 
 (use-package emacs
   :custom

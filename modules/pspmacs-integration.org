@@ -188,8 +188,18 @@ allow-emacs-pinentry
     (pinentry--socket-dir (xdg/make-path (format "pinentry") 'state))
     :config
     (epa-file-enable)
-    (unless pinentry--server-process
-      (pinentry-start)))
+    (unless pinentry--server-process (pinentry-start)))
+#+end_src
+
+* EDITOR
+Use Emacs client as the =EDITOR= of a child-process.
+This is like loopback for =pinentry=.
+#+begin_src emacs-lisp
+  (use-package with-editor
+    :demand t
+    :init (shell-command-with-editor-mode)
+    :hook
+    ((shell-mode eshell-mode term-exec vterm-mode) . with-editor-export-editor))
 #+end_src
 
 * native Emacs settings
