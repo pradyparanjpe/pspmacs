@@ -1,6 +1,6 @@
-;;; pspmacs-markup.el --- filesystem markup -*- lexical-binding: t; -*-
+;;; pspmacs-conf-format.el --- filesystem conf-format -*- lexical-binding: t; -*-
 
-;; Copyright © 2023-2024  Pradyumna Swanand Paranjape
+;; Copyright © 2024  Pradyumna Swanand Paranjape
 
 ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
 ;; Keywords: help, languages
@@ -22,22 +22,13 @@
 
 ;;; Code:
 
-(use-package yaml-mode
-  :mode ("\\.ya?ml\\'" . yaml-mode)
+(use-package systemd)
+
+(use-package dockerfile-mode
+  :custom
+  (dockerfile-build-command (cl-some #'executable-find '("podman" "docker")))
   :general
-  (:keymaps 'yaml-mode-map
-            "\C-m" 'newline-and-indent)
-  :hook
-  (yaml-mode . (lambda () (variable-pitch-mode -1))))
-
-(use-package toml-mode
-  :mode ("\\.toml\\'" . toml-mode))
-
-(use-package markdown-mode
-  :mode ("README\\.md\\'" . gfm-mode)
-  :custom (markdown-command "multimarkdown"))
-
-(use-package mermaid-mode)
-(use-package ob-mermaid)
-
-(pspmacs/load-inherit)
+  (pspmacs/local-leader-keys
+    "c" '(:ignore t :wk "compile")
+    "cc" '(dockerfile-build-buffer :wk "build")'
+    "cb" '(dockerfile-build-no-cache-buffer :wk "build w/o cache")))

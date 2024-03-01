@@ -1,16 +1,16 @@
-#+title: pspmacs-markup
-#+PROPERTY: header-args :tangle pspmacs-markup.el :mkdirp t :results no :eval no
+#+title: pspmacs-conf-format
+#+PROPERTY: header-args :tangle pspmacs-conf-format.el :mkdirp t :results no :eval no
 #+OPTIONS: tex:t
 #+auto_tangle: t
 
 * Scope
-Markup languages other than =org-mode=.
+Special configuration formats other than markup languages (yaml, toml, xml, …).
 
 * Header Copyright
 #+begin_src emacs-lisp
-  ;;; pspmacs-markup.el --- filesystem markup -*- lexical-binding: t; -*-
+  ;;; pspmacs-conf-format.el --- filesystem conf-format -*- lexical-binding: t; -*-
 
-  ;; Copyright © 2023-2024  Pradyumna Swanand Paranjape
+  ;; Copyright © 2024  Pradyumna Swanand Paranjape
 
   ;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
   ;; Keywords: help, languages
@@ -33,37 +33,20 @@ Markup languages other than =org-mode=.
   ;;; Code:
 #+end_src
 
-* Yaml mode
+* Systemd
 #+begin_src emacs-lisp
-  (use-package yaml-mode
-    :mode ("\\.ya?ml\\'" . yaml-mode)
+  (use-package systemd)
+#+end_src
+
+* Dockerfile
+Docker build depends on [[https://podman.io/][podman]] / [[https://docs.docker.com/][docker]].
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode
+    :custom
+    (dockerfile-build-command (cl-some #'executable-find '("podman" "docker")))
     :general
-    (:keymaps 'yaml-mode-map
-              "\C-m" 'newline-and-indent)
-    :hook
-    (yaml-mode . (lambda () (variable-pitch-mode -1))))
-#+end_src
-
-* Toml mode
-#+begin_src emacs-lisp
-  (use-package toml-mode
-    :mode ("\\.toml\\'" . toml-mode))
-#+end_src
-
-* Markdown mode
-#+begin_src emacs-lisp
-  (use-package markdown-mode
-    :mode ("README\\.md\\'" . gfm-mode)
-    :custom (markdown-command "multimarkdown"))
-#+end_src
-
-* Mermaid
-#+begin_src emacs-lisp
-  (use-package mermaid-mode)
-  (use-package ob-mermaid)
-#+end_src
-
-* Inherit from private and local
-#+begin_src emacs-lisp
-  (pspmacs/load-inherit)
+    (pspmacs/local-leader-keys
+      "c" '(:ignore t :wk "compile")
+      "cc" '(dockerfile-build-buffer :wk "build")'
+      "cb" '(dockerfile-build-no-cache-buffer :wk "build w/o cache")))
 #+end_src

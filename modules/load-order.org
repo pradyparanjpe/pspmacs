@@ -23,6 +23,7 @@
 ** 30: project / file-system / Operating system
 - [[file:pspmacs-project-management.org][project-management]]
 - [[file:pspmacs-integration.org][integration]]
+- [[file:pspmacs-version-control.org][version-control]]
 
 ** 40: Programming
 - [[file:pspmacs-programming.org][programming]]
@@ -30,7 +31,7 @@
 - [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
 - [[file:pspmacs-ess-R.org][ess-R]]
 - [[file:pspmacs-lua.org][lua]]
-- [[file:pspmacs-version-control.org][version-control]]
+- [[file:pspmacs-conf-format.org][conf-format]]
 - [[file:pspmacs-markup.org][markup]]
 - [[file:pspmacs-latex.org][latex]]
 
@@ -53,6 +54,7 @@
   30:
   - project-management
   - integration
+  - version-control
   40:
   - programming
   - python
@@ -61,7 +63,7 @@
   - rust
   - javascript
   - lua
-  - version-control
+  - conf-format
   - markup
   - latex
   50:

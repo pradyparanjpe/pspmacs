@@ -9,6 +9,7 @@
 30:
 - project-management
 - integration
+- version-control
 40:
 - programming
 - python
@@ -17,7 +18,7 @@
 - rust
 - javascript
 - lua
-- version-control
+- conf-format
 - markup
 - latex
 50:
