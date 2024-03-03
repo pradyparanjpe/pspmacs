@@ -24,13 +24,24 @@
 
 (add-hook 'emacs-lisp-mode-hook #'pspmacs/prettify-emacs-lisp)
 (add-hook 'emacs-lisp-mode-hook #'pspmacs/setup-elisp)
-;;; pspmacs-emacs-lisp.el ends here
 
 (defun pspmacs/el-package-provide ()
+  "Derive lines \\='provide\\=' line from variable `buffer-file-name'.
+
+Insert following two lines at point.
+
+\(provide <file-stem>)
+;;; <file-stem>.el ends here"
   (interactive)
   (let ((base (file-name-sans-extension
                (file-name-nondirectory (buffer-file-name)))))
     (insert (format "(provide '%s)\n;;; %s.el ends here" base base))))
+
+(use-package package-lint
+  :hook
+  (emacs-lisp-mode . (lambda () (interactive)
+                       (unless (derived-mode-p 'lisp-interaction-mode)
+                         (package-lint-flymake-setup)))))
 
 (pspmacs/local-leader-keys
   :keymaps 'emacs-lisp-mode-map
@@ -41,3 +52,4 @@
   "eb" '(eval-buffer :wk "buffer"))
 
 (pspmacs/load-inherit)
+;;; pspmacs-emacs-lisp.el ends here

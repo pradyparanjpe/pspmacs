@@ -95,6 +95,7 @@ emacs-reveal-submodules/
 
 # asynchronous bytecompilation log files
 async-byte-compile-log-file
+async-bytecomp.log
 
 # Evil-Tutor cache
 .tutor/
