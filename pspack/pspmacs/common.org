@@ -10,25 +10,26 @@
   ;; COMMON ModeLine for Emacs
   ;;
   ;;; Code:
+  (require 'cl-lib)
+  (require 'color)
 #+end_src
 
 * Truncate strings
 #+begin_src emacs-lisp
-  (defcustom pspmacs/long-str-ellipses
-    "…"
-    "Character(s) that indicates that the name was trimmed"
+  (defcustom pspmacs/long-str-ellipses "…"
+    "Character(s) that indicates that the name was trimmed."
     :type '(string)
     :group 'pspmacs)
 
   (defun pspmacs/shorten-it (long-str &optional shorten-to ellipses)
-    "Shorten string
+    "Shorten string.
 
-    If LONG-STR is longer than SHORTEN-TO, then, shorten it by inserting ELLIPSES
+  If LONG-STR is longer than SHORTEN-TO, then, shorten it by inserting ELLIPSES
   LONG-STR may be a string (preferred), symbol or sequence of allowed types.
   When sequence, the function is applied to each element.
 
   Default shorten-to is `fill-column'.
-  Default ellipses are customized using `pspmacs/long-str-ellipses'"
+  Default ellipses are customized using `pspmacs/long-str-ellipses'."
     (let ((ellipses (or ellipses pspmacs/long-str-ellipses))
           (shorten-to (or shorten-to fill-column)))
       (cond ((stringp long-str)
@@ -48,7 +49,7 @@
 
             ;; Apply to each element in sequence (possible deep stack)
             ;; When using deep nested sequences,
-            ;;     the /=user/= must worry about deep stack.
+            ;;     the \\='user\\=' must worry about deep stack.
             ((sequencep long-str)
              (mapcar (lambda (x) (pspmacs/shorten-it x shorten-to ellipses))
                      long-str)))))
@@ -57,7 +58,7 @@
 * Pspmacs/Fill-Colors
 #+begin_src emacs-lisp
   (defcustom pspmacs/fill-color-overflow-color "#ff00ff"
-    "Color of indicator when line overflows `fill-column'"
+    "Color of indicator when line overflows `fill-column'."
     :type 'color
     :group 'pspmacs/fill-color)
 
@@ -92,47 +93,8 @@
     (apply #'color-rgb-to-hex `(,@col-vals 2))))
 #+end_src
 
-* Point is at
-** Point in block
-#+begin_src emacs-lisp
-  (defun pspmacs/in-org-block-p ()
-    "Return non-nil if inside any block.
-
-  Does not necessitate Org \=Special\= Block.
-
-  This function is heavily adapted from `org-between-regexps-p'.
-  Gratefully copied from https://scripter.co/splitting-an-org-block-into-two/
-  Under the function named \=modi/org-in-any-block-p\=.
-  "
-    (save-match-data
-      (let ((pos (point))
-            (case-fold-search t)
-            (block-begin-re "^[[:blank:]]*#\\+begin_\\(?1:.+?\\)\\(?: .*\\)*$")
-            (limit-up (save-excursion (outline-previous-heading)))
-            (limit-down (save-excursion (outline-next-heading)))
-            beg end)
-        (save-excursion
-          ;; Point is on a block when on BLOCK-BEGIN-RE or if
-          ;; BLOCK-BEGIN-RE can be found before it...
-          (and (or (org-in-regexp block-begin-re)
-                   (re-search-backward block-begin-re limit-up :noerror))
-               (setq beg (match-beginning 0))
-               ;; ... and BLOCK-END-RE after it...
-               (let ((block-end-re (concat "^[[:blank:]]*#\\+end_"
-                                           (match-string-no-properties 1)
-                                           "\\( .*\\)*$")))
-                 (goto-char (match-end 0))
-                 (re-search-forward block-end-re limit-down :noerror))
-               (> (setq end (match-end 0)) pos)
-          ;; ... without another BLOCK-BEGIN-RE in-between.
-          (goto-char (match-beginning 0))
-          (not (re-search-backward block-begin-re (1+ beg) :noerror))
-          ;; Return value.
-          (cons beg end))))))
-#+end_src
-
 * Footer
 #+begin_src emacs-lisp
   (provide 'pspmacs/common)
-  ;;; common.el ends there
+  ;;; common.el ends here
 #+end_src

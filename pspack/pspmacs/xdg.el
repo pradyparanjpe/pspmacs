@@ -61,8 +61,8 @@ ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
   "Generate xdg/emacs path.
 
 Return path for VAR relative to xdg/emacs-BASE-directory.
-BASE can be 'cache 'data 'state 'config
-If BASE is nil, assume \=data\=."
+BASE can be \\='cache \\='data \\='state \\='config
+If BASE is nil, assume \\='data\\='."
   (convert-standard-filename
    (let ((base (or base "data")))
      (expand-file-name
@@ -98,7 +98,7 @@ directory if it does not exist."
                      (make-directory xdg/emacs-cache-directory t)
                    (error (setq errtype "create")))))
              (when (and errtype
-                        xdg/emacs-cache-directory-warning
+                        user-emacs-directory-warning
                         (not (get 'xdg/emacs-cache-directory-warning
                                   'this-session)))
                ;; Warn only once per Emacs session.
@@ -113,4 +113,4 @@ customize the variable `xdg/emacs-cache-directory-warning'."
        bestname))))
 
 (provide 'pspmacs/xdg)
-;;; xdg.el ends there
+;;; xdg.el ends here

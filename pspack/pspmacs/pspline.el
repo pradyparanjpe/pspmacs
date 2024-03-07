@@ -18,89 +18,77 @@
 
 (defvar pspmacs/pspline--original-format
   mode-line-format
-  "Save original mode-line format")
+  "Save original mode-line format.")
 
-(defcustom pspmacs/pspline-all-the-icons-installed-p
-  nil
-  "`all-the-icons-install-fonts' was called"
+(defcustom pspmacs/pspline-all-the-icons-installed-p nil
+  "Was `all-the-icons-install-fonts' called."
   :type 'boolean
   :group 'pspline)
 
 (defcustom pspmacs/pspline-win-loc-format
   '(concat (eval pspmacs/pspline-loc-pc-format) "/%05I")
-
-  "window location string (at:of)"
+  "Window location string (at:of)."
   :type '(choice
           (string :tag "verbatim")
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
-(defcustom pspmacs/pspline-cursor-position-format
-  "%03l:%02c"
-
-  "Cursor position string (row:col)"
+(defcustom pspmacs/pspline-cursor-position-format "%03l:%02c"
+  "Cursor position string (row:col)."
   :type '(choice
           (string :tag "verbatim")
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
-(defcustom pspmacs/pspline-evil-state-format
-  ""
-
-  "Evil state (vim keybindings) indicator"
+(defcustom pspmacs/pspline-evil-state-format ""
+  "Evil state (vim keybindings) indicator."
   :type '(choice
           (string :tag "verbatim")
           (sexp :tag "Evaluates to string"))
   :group 'pspline)
 
-(defcustom pspmacs/pspline-input-method-replace-alist
-  nil
-  "Replace window-location mode-line indicator string with custom string."
-  :type '(alist (cons (string :tag "mode-line indicator string")
-                      (string :tag "replacement")))
+(defcustom pspmacs/pspline-input-method-replace-alist nil
+  "Replace window-location `mode-line' indicator string with custom string."
+  :type '(repeat (cons (string :tag "mode-line indicator string")
+                       (string :tag "replacement")))
   :group 'pspline)
 
-(defcustom pspmacs/pspline-buffer-name-length
-  20
-  "Length of buffer name beyond which, it is trimmed"
+(defcustom pspmacs/pspline-buffer-name-length 20
+  "Length of buffer name beyond which, it is trimmed."
   :type 'number
   :group 'pspline)
 
 (defcustom pspmacs/pspline-flymake-error-icon
-  (propertize " × " 'face 'pspmacs/pspline-flymake-error-face)
-  "Flymake error icon"
-  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-error-face'")
+  (propertize " × " 'face 'pspmacs/pspline-flymake-error)
+  "Flymake error icon."
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-error'")
   :group 'pspline)
 
 (defcustom pspmacs/pspline-flymake-warning-icon
-  (propertize " ! " 'face 'pspmacs/pspline-flymake-warning-face)
-  "Flymake warning icon"
-  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-warning-face'")
+  (propertize " ! " 'face 'pspmacs/pspline-flymake-warning)
+  "Flymake warning icon."
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-warning'")
   :group 'pspline)
 
 (defcustom pspmacs/pspline-flymake-note-icon
-  (propertize " ? " 'face 'pspmacs/pspline-flymake-note-face)
-  "Flymake note icon"
-  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-note-face'")
+  (propertize " ? " 'face 'pspmacs/pspline-flymake-note)
+  "Flymake note icon."
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-note'")
   :group 'pspline)
 
 (defcustom pspmacs/pspline-flymake-good-icon
-  (propertize " 🗸 " 'face 'pspmacs/pspline-flymake-good-face)
-  "Flymake good icon"
-  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-good-face'")
+  (propertize " 🗸 " 'face 'pspmacs/pspline-flymake-good)
+  "Flymake good icon."
+  :type '(string :tag "Propertized with `pspmacs/pspline-flymake-good'")
   :group 'pspline)
 
-(defcustom pspmacs/pspline-time-string-format
-  "%H:%M"
-
-  "window location format"
+(defcustom pspmacs/pspline-time-string-format "%H:%M"
+  "Window location format."
   :type '(string :tag "Time string format")
   :group 'pspline)
 
-(defcustom pspmacs/pspline--show-string
-  "percent"
-
-  "Type of information to show as battery"
+(defcustom pspmacs/pspline--show-string "percent"
+  "Type of information to show as battery."
   :type '(string :options ("time" "percent"))
   :group 'pspline)
 
@@ -110,12 +98,12 @@
     (33 . "\uf242")
     (10 . "\uf243")
     (0  . "\uf244"))
-  "Battery icon cdr for battery-percentage above car"
+  "Battery icon cdr for battery-percentage above car."
   :type '(repeat (cons (number :tag "Icon above")
                        (string :tag "Icon")))
   :group 'pspline)
 
-(defcustom pspmacs/pspline-segments-plist
+(defcustom pspmacs/pspline-segments-alist
   '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
     (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
     (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
@@ -129,11 +117,12 @@
     (pspmacs/pspline-battery . (:display t :right t :inactive nil))
     (pspmacs/pspline-time . (:display t :right t :inactive nil)))
 
-  "Ordered list whose
-car is segment handle
-cdr is \\'(:show nil :on-right nil :inactive nil)
+  "Ordered alist of segment with properties.
 
-When :SHOW is non-nil, display the segment on mode-line
+car is segment handle
+cdr is \\='(:display nil :right nil :inactive nil)
+
+When :DISPLAY is non-nil, display the segment on mode-line
 When :RIGHT is non-nil, align the setment from the right.
 When :INACTIVE is non-nil, display the segment even in inactive buffer"
   :type '(repeat (cons (symbol :tag "Evaluates to segment string")
@@ -142,120 +131,84 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
                               :value-type boolean)))
   :group 'pspline)
 
-(defface pspmacs/pspline-buffer-modified-face
-  '((t (:foreground "#cf5f6f")))
-
-  "Face of buffer name when buffer is modified"
+(defface pspmacs/pspline-buffer-modified '((default (:foreground "#cf5f6f")))
+  "Face of buffer name when buffer is modified."
   :group 'pspline)
 
-(defface pspmacs/pspline-win-loc-face
-  '((t (:foreground "#2f7fcf")))
-
-  "Face of window location indicator"
+(defface pspmacs/pspline-win-loc '((default (:foreground "#2f7fcf")))
+  "Face of window location indicator."
   :group 'pspline)
 
-(defface pspmacs/pspline-cursor-position-face
-  '((t (:foreground "#ffff7f")))
-
-  "Face of cursor position row:col indicator"
+(defface pspmacs/pspline-cursor-position '((default (:foreground "#ffff7f")))
+  "Face of cursor position row:col indicator."
   :group 'pspline)
 
-(defface pspmacs/pspline-vc-main-face
-  '((t (:foreground "#cf4f0f")))
-
-  "Face of buffer name when buffer is state"
+(defface pspmacs/pspline-vc-main '((default (:foreground "#cf4f0f")))
+  "Face of buffer name when buffer is state."
   :group 'pspline)
 
-(defface pspmacs/pspline-vc-non-main-face
-  '((t (:foreground "#4fcf0f")))
-
-  "Face of vc non-main branch"
+(defface pspmacs/pspline-vc-non-main '((default (:foreground "#4fcf0f")))
+  "Face of vc non-main branch."
   :group 'pspline)
 
-(defface pspmacs/pspline-vc-release-face
-  '((t (:foreground "#7f3fff")))
-
-  "Face of vc release branch"
+(defface pspmacs/pspline-vc-release '((default (:foreground "#7f3fff")))
+  "Face of vc release branch."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-normal-face
-  '((t (:foreground "#ff9f00")))
-
-  "Normal evil state"
+(defface pspmacs/pspline-evil-normal '((default (:foreground "#ff9f00")))
+  "Normal evil state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-insert-face
-  '((t (:foreground "#00cf6f")))
-
-  "Evil insert state"
+(defface pspmacs/pspline-evil-insert '((default (:foreground "#00cf6f")))
+  "Evil insert state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-visual-face
-  '((t (:foreground "#009fff")))
-
-  "Evil visual state"
+(defface pspmacs/pspline-evil-visual '((default (:foreground "#009fff")))
+  "Evil visual state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-replace-face
-  '((t (:foreground "#ffff00")))
-
-  "Evil visual state"
+(defface pspmacs/pspline-evil-replace '((default (:foreground "#ffff00")))
+  "Evil visual state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-operator-face
-  '((t (:foreground "#ff009f")))
-
-  "Evil operator state"
+(defface pspmacs/pspline-evil-operator '((default (:foreground "#ff009f")))
+  "Evil operator state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-motion-face
-  '((t (:foreground "#3fffff")))
-
-  "Evil Motion state"
+(defface pspmacs/pspline-evil-motion '((default (:foreground "#3fffff")))
+  "Evil Motion state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-emacs-face
-  '((t (:foreground "#bfbfbf")))
-
-  "Emacs evil state"
+(defface pspmacs/pspline-evil-emacs '((default (:foreground "#bfbfbf")))
+  "Emacs evil state."
   :group 'pspline)
 
-(defface pspmacs/pspline-evil-unknown-face
-  '((t (:foreground "#000000")))
-
-  "Unknown evil state"
+(defface pspmacs/pspline-evil-unknown '((default (:foreground "#000000")))
+  "Unknown evil state."
   :group 'pspline)
 
-(defface pspmacs/pspline-input-method-face
-  '((t (:foreground "#af5fff")))
-
-  "Face of input-method indicator"
+(defface pspmacs/pspline-input-method '((default (:foreground "#af5fff")))
+  "Face of input-method indicator."
   :group 'pspline)
 
-(defface pspmacs/pspline-flymake-error-face
-  '((t (:foreground "#cf0f8f")))
-  "Face of Flymake Error Counter"
+(defface pspmacs/pspline-flymake-error '((default (:foreground "#cf0f8f")))
+  "Face of Flymake Error Counter."
   :group 'pspline)
 
-(defface pspmacs/pspline-flymake-warning-face
-  '((t (:foreground "#cf8f0f")))
-  "Face of Flymake Error Counter"
+(defface pspmacs/pspline-flymake-warning '((default (:foreground "#cf8f0f")))
+  "Face of Flymake Error Counter."
   :group 'pspline)
 
-(defface pspmacs/pspline-flymake-note-face
-  '((t (:foreground "#0fcf8f")))
-  "Face of Flymake Error Counter"
+(defface pspmacs/pspline-flymake-note '((default (:foreground "#0fcf8f")))
+  "Face of Flymake Error Counter."
   :group 'pspline)
 
-(defface pspmacs/pspline-flymake-good-face
-  '((t (:foreground "#0f8fcf")))
-  "Face of Flymake Error Counter"
+(defface pspmacs/pspline-flymake-good '((default (:foreground "#0f8fcf")))
+  "Face of Flymake Error Counter."
   :group 'pspline)
 
-(defface pspmacs/pspline-time-face
-  '((t (:foreground "#df00ff")))
-
-  "Pspline time face"
+(defface pspmacs/pspline-time '((default (:foreground "#df00ff")))
+  "Pspline time face."
   :group 'pspline)
 
 (defun pspmacs/pspline--major-icon ()
@@ -283,7 +236,7 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
   "Major mode icon.")
 
 (defun pspmacs/pspline--toggle-read-only (&optional _button)
-  "Toggle read-only-mode"
+  "Toggle `read-only-mode'."
   (read-only-mode 'toggle)
   (force-mode-line-update t))
 
@@ -291,7 +244,7 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
   "Evaluated by `pspmacs/pspline--buffer-name'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-name)
     (let* ((base (if (buffer-modified-p)
-                     'pspmacs/pspline-buffer-modified-face
+                     'pspmacs/pspline-buffer-modified
                    (if (mode-line-window-selected-p)
                        'mode-line-buffer-id
                      'mode-line-inactive)))
@@ -315,7 +268,7 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
 (defvar-local pspmacs/pspline-buffer-name
   '(:eval (pspmacs/pspline--buffer-name))
   "Buffer-name, process-state.
-Customize face with `pspmacs/pspline-buffer-modified-face'.")
+Customize face with `pspmacs/pspline-buffer-modified'.")
 
 (defun pspmacs/pspline--buffer-process ()
   "Evaluated by `pspmacs/pspline-buffer-process'."
@@ -345,15 +298,16 @@ Customize face with `pspmacs/pspline-buffer-modified-face'.")
       `(,(propertize
           (eval pspmacs/pspline-win-loc-format)
           'face (if (mode-line-window-selected-p)
-                    'pspmacs/pspline-win-loc-face
+                    'pspmacs/pspline-win-loc
                   'mode-line-inactive))
         " ")))
 
 (defvar-local pspmacs/pspline-win-loc
   '(:eval (pspmacs/pspline--win-loc))
-  "Location of window in buffer
+  "Location of window in buffer.
+
 Customize value with `pspmacs/pspline-win-loc-format'.
-Customize face with `pspmacs/pspline-win-loc-face'.")
+Customize face with `pspmacs/pspline-win-loc'.")
 
 (defun pspmacs/pspline--cursor-position ()
   "Evaluated by `pspmacs/pspline-cursor-position'."
@@ -361,15 +315,16 @@ Customize face with `pspmacs/pspline-win-loc-face'.")
     `(,(propertize
         (eval pspmacs/pspline-cursor-position-format)
         'face (if (mode-line-window-selected-p)
-                  'pspmacs/pspline-cursor-position-face
+                  'pspmacs/pspline-cursor-position
                 'mode-line-inactive))
       " ")))
 
 (defvar-local pspmacs/pspline-cursor-position
     '(:eval (pspmacs/pspline--cursor-position))
   "Cursor position indicator <row:col>.
+
 Customize value with `pspmacs/pspline-cursor-position-format'.
-Customize face with `pspmacs/pspline-cursor-position-face'.")
+Customize face with `pspmacs/pspline-cursor-position'.")
 
 (defun pspmacs/pspline--cycle-evil-state (&optional back)
   "Cycle between evil states.
@@ -384,7 +339,7 @@ Order of states:
 - replace
 - operator
 - motion
-- emacs"
+- Emacs"
   (let* ((evil-states-order
           '(evil-normal-state
             evil-insert-state
@@ -403,12 +358,12 @@ Order of states:
                     evil-states-order)))))
 
 (defun pspmacs/pspline--next-evil-state ()
-  "Push evil-state in `pspmacs/pspline--cycle-evil-state'"
+  "Push `evil-state' in `pspmacs/pspline--cycle-evil-state'."
   (interactive)
   (pspmacs/pspline--cycle-evil-state))
 
 (defun pspmacs/pspline--prev-evil-state ()
-  "Pull back evil-state in `pspmacs/pspline--cycle-evil-state'"
+  "Pull back `evil-state' in `pspmacs/pspline--cycle-evil-state'."
   (interactive)
   (pspmacs/pspline--cycle-evil-state t))
 
@@ -420,20 +375,20 @@ Order of states:
   "Keymap to display on Flymake indicator.")
 
 (defun pspmacs/pspline--evil-state ()
-  "Evaluated by `pspmacs/pspline-evil-state'"
+  "Evaluated by `pspmacs/pspline-evil-state'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-statr)
     `(,(propertize (eval pspmacs/pspline-evil-state-format)
                    'face
                    (if (mode-line-window-selected-p)
                        (cl-case evil-state
-                         (normal 'pspmacs/pspline-evil-normal-face)
-                         (insert 'pspmacs/pspline-evil-insert-face)
-                         (visual 'pspmacs/pspline-evil-visual-face)
-                         (replace 'pspmacs/pspline-evil-replace-face)
-                         (operator 'pspmacs/pspline-evil-operator-face)
-                         (motion 'pspmacs/pspline-evil-motion-face)
-                         (emacs 'pspmacs/pspline-evil-emacs-face)
-                         (_ 'pspmacs/pspline-evil-emacs-face))
+                         (normal 'pspmacs/pspline-evil-normal)
+                         (insert 'pspmacs/pspline-evil-insert)
+                         (visual 'pspmacs/pspline-evil-visual)
+                         (replace 'pspmacs/pspline-evil-replace)
+                         (operator 'pspmacs/pspline-evil-operator)
+                         (motion 'pspmacs/pspline-evil-motion)
+                         (emacs 'pspmacs/pspline-evil-emacs)
+                         (_ 'pspmacs/pspline-evil-emacs))
                      'mode-line-inactive)
                    'local-map pspmacs/pspline-evil-state-map
                    'help-echo
@@ -443,16 +398,16 @@ Order of states:
 (defvar-local pspmacs/pspline-evil-state
     '(:eval (pspmacs/pspline--evil-state))
 
-  "Evil state dot
+  "Evil state icon.
 Customize faces with `pspmacs/pspline-evil-state-format',
-`pspmacs/pspline-evil-normal-face',
-`pspmacs/pspline-evil-insert-face',
-`pspmacs/pspline-evil-visual-face',
-`pspmacs/pspline-evil-replace-face',
-`pspmacs/pspline-evil-operator-face',
-`pspmacs/pspline-evil-motion-face',
-`pspmacs/pspline-evil-emacs-face',
-`pspmacs/pspline-evil-unknown-face'.")
+`pspmacs/pspline-evil-normal',
+`pspmacs/pspline-evil-insert',
+`pspmacs/pspline-evil-visual',
+`pspmacs/pspline-evil-replace',
+`pspmacs/pspline-evil-operator',
+`pspmacs/pspline-evil-motion',
+`pspmacs/pspline-evil-emacs',
+`pspmacs/pspline-evil-unknown'.")
 
 (defun pspmacs/pspline--input-method ()
   "Evaluated by `pspmacs/pspline-input-method'."
@@ -476,7 +431,7 @@ Customize faces with `pspmacs/pspline-evil-state-format',
           'keymap click-map
           'help-echo (format "%s ❌" lang-env)
           'face (if (mode-line-window-selected-p)
-                    'pspmacs/pspline-input-method-face
+                    'pspmacs/pspline-input-method
                   'mode-line-inactive))
         " "))))
 
@@ -484,15 +439,16 @@ Customize faces with `pspmacs/pspline-evil-state-format',
     '(:eval (pspmacs/pspline--input-method))
   "Cursor position indicator <row:col>.
 Customize value with `pspmacs/pspline-input-method-replace-alist'.
-Customize face with `pspmacs/pspline-input-method-face'.")
+Customize face with `pspmacs/pspline-input-method'.")
 
 (defun pspmacs/pspline--info ()
+  "Miscellaneous information as provided by `mode-line-misc-info'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-info)
     mode-line-misc-info))
 
 (defvar-local pspmacs/pspline-info
     '(:eval (pspmacs/pspline--info))
-  "Handle for miscellaneous information")
+  "Handle for miscellaneous information.")
 
 (defun pspmacs/pspline--version-control ()
   "Evaluated by `pspmacs/pspline-version-control'."
@@ -509,21 +465,21 @@ Customize face with `pspmacs/pspline-input-method-face'.")
            (if (mode-line-window-selected-p)
                (pcase
                    vc-spec
-                 (" main" 'pspmacs/pspline-vc-main-face)
-                 (" master" 'pspmacs/pspline-vc-main-face)
-                 (" release" 'pspmacs/pspline-vc-release-face)
-                 (_ 'pspmacs/pspline-vc-non-main-face))
+                 (" main" 'pspmacs/pspline-vc-main)
+                 (" master" 'pspmacs/pspline-vc-main)
+                 (" release" 'pspmacs/pspline-vc-release)
+                 (_ 'pspmacs/pspline-vc-non-main))
              'mode-line-inactive))))))
 
 (defvar-local pspmacs/pspline-version-control
   '(:eval (pspmacs/pspline--version-control))
   "Version control spec.
-Customize faces with `pspmacs/pspline-vc-main-face',
-`pspmacs/pspline-vc-non-main-face',
-`pspmacs/pspline-vc-release-face'.")
+Customize faces with `pspmacs/pspline-vc-main',
+`pspmacs/pspline-vc-non-main',
+`pspmacs/pspline-vc-release'.")
 
 (defun pspmacs/pspline--flymake-counter (type)
-  "Plain `flymake--mode-line-counter' without properties"
+  "Plain `flymake--mode-line-counter' of TYPE without properties."
   (let ((count 0))
     (dolist (d (flymake-diagnostics))
       (when (= (flymake--severity type)
@@ -541,12 +497,13 @@ Customize faces with `pspmacs/pspline-vc-main-face',
   "Keymap to display on Flymake indicator.")
 
 (defun pspmacs/pspline--hint-part (type)
+  "Derive hint part of flymake error TYPE."
   (let ((err (pspmacs/pspline--flymake-counter type)))
     (if (cl-plusp err)
         (propertize (format "%d " err)
                     'face
                     (intern
-                     (format "pspmacs/pspline-flymake-%s-face"
+                     (format "pspmacs/pspline-flymake-%s"
                              (string-trim (symbol-name type) ":")))
                     'local-map pspmacs/pspline-flymake-map
                     'help-echo
@@ -571,7 +528,7 @@ Customize faces with `pspmacs/pspline-vc-main-face',
 
 (defvar-local pspmacs/pspline-error-hints
   '(:eval (pspmacs/pspline--error-hints))
-  "Version control spec. Customize faces with")
+  "Version control spec.  Customize faces with.")
 
 (defun pspmacs/pspline--time ()
   "Evaluated by `pspmacs/pspline-time'."
@@ -579,17 +536,18 @@ Customize faces with `pspmacs/pspline-vc-main-face',
       `(
         ,(propertize
           (format-time-string (eval pspmacs/pspline-time-string-format))
-          'face 'pspmacs/pspline-time-face
+          'face 'pspmacs/pspline-time
           'help-echo (format-time-string "%c"))
         " ")))
 
 (defvar-local pspmacs/pspline-time
   '(:eval (pspmacs/pspline--time))
   "Time segment.
+
 Customize value with `pspmacs/pspline-time-string-format'.")
 
 (defun pspmacs/pspline--battery-toggle-show-string (&optional _button)
-    "Toggle display and help-text"
+    "Toggle display and help-text."
     (customize-set-variable
      'pspmacs/pspline--show-string
      (if (string= pspmacs/pspline--show-string "time")
@@ -598,7 +556,7 @@ Customize value with `pspmacs/pspline-time-string-format'.")
     (force-mode-line-update t))
 
 (defun pspmacs/pspline--battery-icon (perc)
-  "Battery icon based on current battery percentage PERC"
+  "Battery icon based on current battery percentage PERC."
   (cl-some (lambda (x)
              (if (> perc (car x)) (cdr x)))
            pspmacs/pspline-battery-icon-plist))
@@ -641,18 +599,21 @@ Customize value with `pspmacs/pspline-time-string-format'.")
 Customize value with `pspmacs/pspline-battery-icon-plist',
 `pspmacs/pspline-battery-color-plist'.")
 
-(dolist (seg pspmacs/pspline-segments-plist nil)
+(dolist (seg pspmacs/pspline-segments-alist nil)
   (put (car seg) 'risky-local-variable t))
 
 (defun pspmacs/pspline--display-segment (seg-symbol)
-  "Whether SEG-SYMBOL should be displayed"
+  "Whether SEG-SYMBOL should be displayed."
   (or (mode-line-window-selected-p)
       (cl-some (lambda (x)
                  (if (eq (car x) seg-symbol)
                      (plist-get (cdr x) :inactive)))
-               pspmacs/pspline-segments-plist)))
+               pspmacs/pspline-segments-alist)))
 
 (defun pspmacs/pspline--assert-all-the-icons ()
+  "Assert that all-the-icons is installed.
+
+Many default strings are derived from all-the-icons."
   (with-eval-after-load
       custom-file
     (unless pspmacs/pspline-all-the-icons-installed-p
@@ -669,7 +630,7 @@ Customize value with `pspmacs/pspline-battery-icon-plist',
                        (fstart (/ (- (window-start) 1) 0.01 (point-max))))
                    (if (= fstart 0) (if (= fend 100) nil 0) fend))))
        " all")
-  "Buffer location in percentage or all")
+  "Buffer location in percentage or all.")
 
 (defun pspmacs/pspline-generate ()
   "Generate format of pspline.
@@ -678,7 +639,7 @@ If current buffer is not focused,
 only display segments meant for inactive buffer"
   (let* ((left-segs nil)
          (right-segs nil))
-    (dolist (seg pspmacs/pspline-segments-plist nil)
+    (dolist (seg pspmacs/pspline-segments-alist nil)
       (if (plist-get (cdr seg) :display)
           (let ((segment (eval (car seg))))
             (if (plist-get (cdr seg) :right)
@@ -701,11 +662,10 @@ only display segments meant for inactive buffer"
   (run-hooks 'pspmacs/pspline-after-reset-hook))
 
 (defun pspmacs/pspline-reset ()
-  "Reset pspline as default mode-line
+  "Reset pspline as default mode-line.
 
 When setting for first time, use `pspmacs/pspline-set-up'.
-Hooks: `pspmacs/pspline-after-reset-hook'.
-"
+Hooks: `pspmacs/pspline-after-reset-hook'."
   (interactive)
   (let ((pspline-format (pspmacs/pspline-generate)))
     (setq-default mode-line-format pspline-format)
@@ -719,18 +679,18 @@ Hooks: `pspmacs/pspline-after-reset-hook'.
 
 ;;;###autoload
 (defun pspmacs/pspline-set-up ()
-  "Set up pspline as mode-line
+  "Set up pspline as mode-line.
 
 Save current `mode-line-format' as `pspmacs/pspline--original-format'
-To reset, consider `pspmacs/pspline-reset'
-"
+To reset, consider `pspmacs/pspline-reset'"
   (interactive)
   (setq pspmacs/pspline--original-format mode-line-format)
   (pspmacs/pspline-reset))
 
 (defun pspmacs/pspline-tear-down ()
-  "tear down pspline as mode-line, resetting to
-`pspmacs/pspline--original-format'"
+  "Tear down pspline as mode-line.
+
+Resetting to `pspmacs/pspline--original-format'"
   (interactive)
   (setq-default mode-line-format  pspmacs/pspline--original-format)
   (dolist (open-buff (buffer-list) nil)
@@ -809,4 +769,4 @@ Mode line construct to right align all following constructs.")
   (put 'mode-line-format-right-align 'risky-local-variable t))
 
 (provide 'pspmacs/pspline)
-;;; pspline.el ends there
+;;; pspline.el ends here

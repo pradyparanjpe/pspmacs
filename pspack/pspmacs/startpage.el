@@ -14,26 +14,26 @@
 (recentf-mode 1)
 
 (defcustom pspmacs/startpage-buffer-name "*StartPage*"
-  "Name of startpage buffer"
+  "Name of startpage buffer."
   :type 'string
   :group 'startpage)
 
 (defcustom pspmacs/startpage-banner-image
   (expand-file-name "data/banners/Tux.svg" user-emacs-directory)
-  "Banner Image"
+  "Banner Image."
   :type '(file :must-match t)
   :group 'startpage)
 
 (defcustom pspmacs/startpage-banner-scale-width 1.5
-  "Width of `pspmacs/startpage-banner-image' in pixels
+  "Width of `pspmacs/startpage-banner-image' in pixels.
 
-is set as this factor times frame width in columns"
-  :type 'float
+Set as this factor times frame width in columns."
+  :type '(float :tag "X # columns (px)")
   :group 'startpage)
 
 (defcustom pspmacs/startpage-banner-ascii
   (expand-file-name "data/banners/2.txt" user-emacs-directory)
-  "Banner Image"
+  "Banner image."
   :type '(file :must-match t)
   :group 'startpage)
 
@@ -44,7 +44,9 @@ is set as this factor times frame width in columns"
                  (expand-file-name ".cache" (getenv "HOME")))
             ,(or (getenv "XDG_STATE_HOME")
                  (expand-file-name ".local/state" (getenv "HOME")))))
-  "Don't even look at anything placed inside this location. (recursively)"
+  "Don't even look at anything placed inside this location.
+
+This is recursive."
   :type '(repeat directory)
   :group 'startpage)
 
@@ -87,71 +89,70 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
   :group 'startpage)
 
 (defcustom pspmacs/startpage-block-cap 0.8
-  "Fraction of window-width as limit on length of file-names."
+  "Fraction of `window-width' as limit on length of file-names."
   :type 'number
   :group 'startpage)
 
 (defcustom pspmacs/startpage-recentf-num 5
-  "number of recent files to link"
+  "Number of recent files to link."
   :type 'integer
   :group 'startpage)
 
 (defcustom pspmacs/startpage-projects-num 3
-  "number of projects to link"
+  "Number of projects to link."
   :type 'integer
   :group 'startpage)
 
 (defcustom pspmacs/startpage-url-links
-  '(("GNU/Emacs" . "https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html")
-    ("Emacs-lisp" . "https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html")
+  '(("GNU/Emacs"
+     . "https://www.gnu.org/software/emacs/manual/html_node/emacs/index.html")
+    ("Emacs-lisp"
+     . "https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html")
     ("Documentation" . "https://pradyparanjpe.gitlab.io/pspmacs/index.html")
     ("Repository" . "https://gitlab.com/pradyparanjpe/pspmacs"))
-  "Details of url links to display"
+  "Details of url links to display."
   :type '(repeat (cons (string :tag "display text")
                        (string :tag "url")))
   :group 'startpage)
 
-(defface pspmacs/startpage-banner-face
-  '((t (:foreground "#9f8f4f")))
-  "Links face properties"
+(defface pspmacs/startpage-banner '((default (:foreground "#9f8f4f")))
+  "Links face properties."
   :group 'startpage)
 
-(defface pspmacs/startpage-url-links-face
-  '((t (:foreground "#6fafcf" :underline nil)))
-  "URL links face properties"
+(defface pspmacs/startpage-url-links
+  '((default (:foreground "#6fafcf" :underline nil)))
+  "URL links face properties."
   :group 'startpage)
 
-(defface pspmacs/startpage-block-title-face
-  '((t (:foreground "#ff007f" :bold t)))
-  "Quicklink block Title Face"
+(defface pspmacs/startpage-block-title
+  '((default (:foreground "#ff007f" :bold t)))
+  "Quicklink block Title Face."
   :group 'startpage)
 
-(defface pspmacs/startpage-block-link-face
-  '((t (:foreground "#af9fa7" :underline nil)))
-  "Quicklink block Link item faces"
+(defface pspmacs/startpage-block-link
+  '((default (:foreground "#af9fa7" :underline nil)))
+  "Quicklink block Link item faces."
   :group 'startpage)
 
-(defface pspmacs/startpage-load-time-face
-  '((t (:inherit italic :foreground "#bfdfff" :background "#002040")))
-  "Load-time information face"
+(defface pspmacs/startpage-load-time
+  '((default (:inherit italic :foreground "#bfdfff" :background "#002040")))
+  "Load-time information face."
   :group 'startpage)
 
-(defvar pspmacs/startpage-recent-files-point
-  (point-min)
-  "Point to recent files")
+(defvar pspmacs/startpage-recent-files-point (point-min)
+  "Point to recent files.")
 
-(defvar pspmacs/startpage-projects-point
-  (point-min)
-  "Point to projects")
+(defvar pspmacs/startpage-projects-point (point-min)
+  "Point to projects.")
 
 (defun pspmacs/startpage--shorten-path (filepath)
-  "Shorten FILEPATH replacing home-directory by ~"
+  "Shorten FILEPATH replacing home-directory by \\='~\\='."
   (pspmacs/shorten-it
    (replace-regexp-in-string (getenv "HOME") "~" filepath)
    (round (* pspmacs/startpage-block-cap (window-width)))))
 
 (defun pspmacs/startpage--ascii-banner ()
-    "Put ASCII Banner for non-graphic frames"
+    "Put ASCII Banner for non-graphic frames."
     (let* ((banner (split-string
                     (f-read pspmacs/startpage-banner-ascii) "\n"))
            (banner-width (length (nth 0 banner)))
@@ -161,14 +162,14 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
              (lambda (line)
                (progn
                  (add-face-text-property
-                  0 (length line) 'pspmacs/startpage-banner-face t line)
+                  0 (length line) 'pspmacs/startpage-banner t line)
                  `(,pad-string ,line)))
              banner)))
       (when (> (window-width) banner-width)
         (eval `(insert ,@render-banner)))))
 
 (defun pspmacs/startpage--graphic-banner ()
-  "Put Image Banner for graphic frames"
+  "Put Image Banner for graphic frames."
   (let* ((width (round (* pspmacs/startpage-banner-scale-width
                           (window-width))))
          (banner (create-image
@@ -180,11 +181,11 @@ file name must be of the form '\\\\(.*/\\\\)*exp' and not \=^exp\="
     (insert-image banner)))
 
 (defun pspmacs/startpage--evil-bind-jumps ()
-  "Bind following keys (evil):
+  "Bind following EVIL keys.
 
-tab: next button
-r: RECENT point
-p: PROJECT point
+<TAB> : next button
+r     : RECENT point
+p     : PROJECT point
 `revert-buffer-function' set to `pspmacs/startpage-refresh'"
   (keymap-set evil-normal-state-local-map
               "TAB" (lambda () (interactive)
@@ -198,7 +199,7 @@ p: PROJECT point
   (setq-local revert-buffer-function #'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--native-bind-jumps ()
-    "Bind following keys (native):
+    "Bind following keys natively.
 
 r: RECENT point
 p: PROJECT point
@@ -216,13 +217,13 @@ p: PROJECT point
     (setq revert-buffer-function #'pspmacs/startpage-refresh))
 
 (defun pspmacs/startpage--center-pad-string (display-width)
-  "Left padding to center text if DISPLAY-WIDTH size"
+  "Left padding to center text if DISPLAY-WIDTH size."
   (concat "\n" (make-string (round (/ (max 0 (- (window-width) display-width))
                                       2))
                             ? )))
 
 (defun pspmacs/startpage--put-links (fname-list &optional pad-string)
-  "Put link to FNAME padded with pad-string"
+  "Put link to FNAME-LIST padded with PAD-STRING."
   (dolist (fname fname-list nil)
     (let ((button
            (buttonize
@@ -230,7 +231,7 @@ p: PROJECT point
             (lambda (_button) (find-file fname)))))
       (add-face-text-property
        0 (length button)
-       'pspmacs/startpage-block-link-face
+       'pspmacs/startpage-block-link
        nil button)
       (insert (or pad-string "") button))))
 
@@ -251,7 +252,7 @@ Returns point to BLOCK-TITLE"
          (block-point nil))
     (add-face-text-property
      0 (length block-title)
-     'pspmacs/startpage-block-title-face t block-title)
+     'pspmacs/startpage-block-title t block-title)
     (insert (string-trim-right pad-string "  $") block-title)
 
     ;; Remember this point
@@ -266,18 +267,15 @@ Returns point to BLOCK-TITLE"
 Supported project-managers: project.el (builtin), projectile"
   (seq-filter
    (lambda (proj)
-     (let ((proj-path (expand-file-name
-                       (file-name-as-directory proj))))
-       (not (or
-             (member proj-path pspmacs/startpage-emacs-roots)
-             ;; don't see
-             (seq-filter (lambda (root) (eq 0 (cl-search root proj-path)))
-                         pspmacs/startpage-dont-see)))))
+     (let ((proj-path (expand-file-name (file-name-as-directory proj))))
+       (not (or (member proj-path pspmacs/startpage-emacs-roots)
+                (seq-filter (lambda (root) (eq 0 (cl-search root proj-path)))
+                            pspmacs/startpage-dont-see)))))
    (if (featurep 'projectile) (projectile-load-known-projects)
      (project-known-project-roots))))
 
 (defun pspmacs/recentf--list ()
-  "Filtered recentf list"
+  "Filtered recentf list."
   (seq-filter
    (lambda (filename)
      (let ((fname (expand-file-name filename)))
@@ -297,28 +295,27 @@ Supported project-managers: project.el (builtin), projectile"
    recentf-list))
 
 (defun pspmacs/startpage-add-roots (&rest roots)
-  "Add entry to `pspmacs/startpage-emacs-roots'
+  "Add entry to `pspmacs/startpage-emacs-roots'.
 
-Use this in configuration file \=init.el\=
+Use this in configuration file \\='init.el\\='
 Add to list all ROOTS without checking if that location exists.
 
-Directories *must* and file paths *can not* have a trailing \=/\="
-  (dolist (root roots nil)
-    (add-to-list 'pspmacs/startpage-emacs-roots root)))
+Directories *must* and file paths *can not* have a trailing \\='/\\='"
+  (dolist (root roots nil) (add-to-list 'pspmacs/startpage-emacs-roots root)))
 
 (defun pspmacs/startpage-put-recentf ()
-  "Place a block of recentf files
+  "Place a block of recentf files.
 
-customize-save-variable number `pspmacs/startpage-recentf-num'"
+Customize number `pspmacs/startpage-recentf-num'"
   (setq pspmacs/startpage-recent-files-point
         (pspmacs/startpage--put-block (pspmacs/recentf--list)
                                       pspmacs/startpage-recentf-num
                                       "(r) Recent Files")))
 
 (defun pspmacs/startpage-put-projects ()
-  "Place a block of known projects
+  "Place a block of known projects.
 
-customize number `pspmacs/startpage-projects-num'"
+Customize number `pspmacs/startpage-projects-num'"
   (setq pspmacs/startpage-projects-point
         (pspmacs/startpage--put-block (pspmacs/startpage--known-projects)
                                       pspmacs/startpage-projects-num
@@ -329,18 +326,16 @@ customize number `pspmacs/startpage-projects-num'"
 
 If `display-graphic-p', use `pspmacs/startpage-banner-image'
 else, use `pspmacs/startpage-banner-ascii'"
-  (if (display-graphic-p)
-      (pspmacs/startpage--graphic-banner)
+  (if (display-graphic-p) (pspmacs/startpage--graphic-banner)
     (pspmacs/startpage--ascii-banner)))
 
 (defun pspmacs/startpage-bind-jumps ()
   "Bind jumps to locations RECENT and PROJECT in buffer."
-  (if (featurep 'evil)
-      (pspmacs/startpage--evil-bind-jumps)
+  (if (featurep 'evil) (pspmacs/startpage--evil-bind-jumps)
     (pspmacs/startpage--native-bind-jumps)))
 
 (defun pspmacs/startpage-put-load-time ()
-  "Load time information"
+  "Load time information."
   (let* ((load-string
           (format
            (emacs-init-time
@@ -350,11 +345,11 @@ else, use `pspmacs/startpage-banner-ascii'"
                       (length load-string))))
     (add-face-text-property
      0 (length load-string)
-     'pspmacs/startpage-load-time-face t load-string)
+     'pspmacs/startpage-load-time t load-string)
     (insert "\n" pad-string load-string)))
 
 (defun pspmacs/startpage-put-url-links ()
-  "Place pspmacs links"
+  "Place pspmacs links."
   (let* ((num-letters (apply '+ (mapcar (lambda (x)
                                           (+ (length (car x)) 2))
                                         pspmacs/startpage-url-links)))
@@ -367,7 +362,7 @@ else, use `pspmacs/startpage-banner-ascii'"
                                              (browse-url (cdr item))))))
                                  (add-face-text-property
                                   0 (length button)
-                                  'pspmacs/startpage-url-links-face
+                                  'pspmacs/startpage-url-links
                                   nil button)
                                  (concat
                                   spacer
@@ -377,7 +372,7 @@ else, use `pspmacs/startpage-banner-ascii'"
     (eval `(insert ,@links-text))))
 
 (defun pspmacs/startpage-refresh (&optional _IGNORE-AUTO NOCONFIRM)
-  "Refresh start-page
+  "Refresh start-page.
 
 To be in line with arguments passed by `revert-buffer-function',
 _IGNORE-AUTO is outright ignored.
@@ -413,19 +408,18 @@ Returns buffer handle."
 
 ;;;###autoload
 (defun pspmacs/startpage-show ()
-  "Switch to existing OR new startpage buffer
+  "Switch to existing OR new startpage buffer.
 
-Returns buffer handle"
+Returns buffer handle."
   (interactive)
   (let ((startpage-buffer (get-buffer pspmacs/startpage-buffer-name)))
-    (if startpage-buffer
-        (switch-to-buffer startpage-buffer)
+    (if startpage-buffer (switch-to-buffer startpage-buffer)
       (setq startpage-buffer (pspmacs/startpage-refresh nil t)))
     startpage-buffer))
 
 ;;;###autoload
 (defun pspmacs/startpage-display ()
-  "Switch to existing OR new startpage buffer
+  "Switch to existing OR new startpage buffer.
 
 And then, forcefully run `pspmacs/startpage-refresh'"
   (interactive)
@@ -439,8 +433,8 @@ And then, forcefully run `pspmacs/startpage-refresh'"
 Call to initialize i.e. after `use-package'"
   (interactive)
   (customize-set-variable 'initial-buffer-choice #'pspmacs/startpage-show)
-  (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display)))
+  (when (daemonp)
+    (add-hook 'server-after-make-frame-hook #'pspmacs/startpage-display)))
 
 (provide 'pspmacs/startpage)
-;;; startpage.el ends there
+;;; startpage.el ends here
