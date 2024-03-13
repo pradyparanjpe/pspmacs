@@ -127,7 +127,11 @@
   (org-latex-to-mathml-convert-command
    "latexmlmath '%i' --presentationmathml=%o")
  (org-latex-pdf-process
-  '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+  '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"
+    "bibtex %b"
+    "makeindex %b"
+    "latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"
+    "latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
 
  ;; From https://git.tecosaur.net/tec/emacs-config,
  ;; the default link colors are hideous.
@@ -328,7 +332,8 @@ Restore backed up files."
   (require 'org-ref-arxiv)
   (require 'org-ref-scopus)
   (require 'org-ref-wos)
-
+  (require 'org-ref-pubmed)
+  (require 'org-ref-sci-id)
   :custom
   (org-ref-bibtex-pdf-download-directory
    (pcase (type-of bibtex-completion-library-path)
