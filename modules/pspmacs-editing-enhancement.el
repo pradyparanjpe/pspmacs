@@ -181,14 +181,14 @@
             :wk "check buffer")))
 
 (use-package live-wc
-  :demand t
   :vc (live-wc :url "https://gitlab.com/pradyparanjpe/live-wc.git")
-  :init (global-live-wc-mode)
   :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk "wc"))
   :custom
   (live-wc-max-buffer-size 1048576)  ; 1mB
   (live-wc-fraction t)
-  (live-wc-line-pos 5))
+  (live-wc-line-pos 5)
+  :hook
+  (git-commit-setup . live-wc-mode))
 
 (use-package abbrev
   :ensure nil
