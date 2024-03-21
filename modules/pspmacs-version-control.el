@@ -49,6 +49,7 @@
   (magit-display-buffer-function
    #'magit-display-buffer-same-window-except-diff-v1)
   (magit-log-arguments '("--graph" "--decorate" "--color"))
+  (git-commit-major-mode 'gfm-mode)
   :hook
   ((git-commit-setup . bug-reference-mode)
    (git-commit-setup . (lambda () (setq-local fill-column 50)))

@@ -335,6 +335,8 @@ parent."
                 (let ((process-connection-type nil))
                   (apply orig-fun args)))))
 
+(use-package ox-gfm)
+
 (use-package org-present
   :general
   (pspmacs/local-leader-keys :keymaps 'org-mode-map

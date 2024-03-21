@@ -404,6 +404,11 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
                       (apply orig-fun args)))))
   #+end_src
 
+** Export to github flavoured markup
+#+begin_src emacs-lisp
+  (use-package ox-gfm)
+#+end_src
+
 ** Export as Presentations
 *** Org Present
 #+begin_src emacs-lisp
