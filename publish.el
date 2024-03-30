@@ -54,9 +54,11 @@
         ("org" :components ("pspmacs" "org-static"))))
 
 (defun pspmacs/publish-all ()
-  "Publish everything"
+  "Publish everything."
   (mkdir "docs/" t)
   (org-publish-all t nil))
 
 (unless (getenv "CI_PAGES_URL")
   (pspmacs/publish-all))
+
+;;; publish.el ends here
