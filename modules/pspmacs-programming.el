@@ -247,10 +247,8 @@
 
 (use-package color-fci
   :vc (color-fci :url "https://gitlab.com/pradyparanjpe/color-fci")
-  :custom
-  (color-fci-overflow-color "#ffffff")
-  :hook
-  (prog-mode . color-fci-mode))
+  :custom-face (color-fci-overflow ((default (:background "#ffffff"))))
+  :hook (display-fill-column-indicator-mode . color-fci-mode))
 
 (use-package origami
   :hook ((prog-mode . origami-mode)))
