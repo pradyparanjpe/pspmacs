@@ -60,17 +60,14 @@ ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
 (defun xdg/make-path (var &optional base)
   "Generate xdg/emacs path.
 
-Return path for VAR relative to xdg/emacs-BASE-directory.
-BASE can be \\='cache \\='data \\='state \\='config
-If BASE is nil, assume \\='data\\='."
+Construct path for VAR relative to xdg/emacs-BASE-directory.  BASE can be
+data [default], config, cache, state."
   (convert-standard-filename
-   (let ((base (or base "data")))
-     (expand-file-name
-      var
-      (eval (intern (format "xdg/emacs-%s-directory" base)))))))
+   (expand-file-name
+    var (eval (intern (format "xdg/emacs-%s-directory" (or base "data")))))))
 
 (defun locate-user-emacs-file (new-name &optional old-name)
-  "This function supersedes Emacs-native function.
+  "This function overwrites Emacs-native function.
 
 Return an absolute per-user Emacs-specific file name.
 If NEW-NAME exists in `xdg/emacs-cache-directory', return it.
@@ -80,8 +77,7 @@ directory if it does not exist."
   (convert-standard-filename
    (let* ((home (concat "~" (or init-file-user "")))
           (at-home (and old-name (expand-file-name old-name home)))
-          (bestname (abbreviate-file-name
-                     (xdg/make-path new-name 'cache))))
+          (bestname (abbreviate-file-name (xdg/make-path new-name 'cache))))
      (if (and at-home (not (file-readable-p bestname))
               (file-readable-p at-home))
          at-home

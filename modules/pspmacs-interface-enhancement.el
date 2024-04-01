@@ -647,11 +647,17 @@
                       :background "#7f7f99"))
 
 (use-package pspmacs/pspline
+  :after modus-themes
   :ensure nil
+  :demand t
   :commands pspmacs/pspline-set-up
+  :custom-face
+  (pspmacs/pspline-buffer-process
+   ((default
+     (:foreground ,(modus-themes-get-color-value 'modeline-info) :box t))))
   :config
-  (battery))
-(pspmacs/pspline-set-up)
+  (battery)
+  (pspmacs/pspline-set-up))
 
 (use-package solaire-mode
   :config

@@ -24,23 +24,24 @@ Default ellipses are customized using `pspmacs/long-str-ellipses'."
   (let ((ellipses (or ellipses pspmacs/long-str-ellipses))
         (shorten-to (or shorten-to fill-column)))
     (cond ((stringp long-str)
-           (let ((str-mid (/ (length long-str) 2))
-                 (str-cut (ceiling (/ (- (+ (length long-str) (length ellipses))
-                                         shorten-to)
-                                      2))))
-             (if (cl-plusp str-cut)
-                 (concat (substring long-str 0 (- str-mid str-cut))
-                         ellipses
-                         (substring long-str (+ str-mid str-cut)))
-               long-str)))
+           (if-let* ((long-str (abbreviate-file-name long-str))
+                     (str-mid (/ (length long-str) 2))
+                     (str-cut
+                      (ceiling (/ (- (+ (length long-str) (length ellipses))
+                                     shorten-to)
+                                  2)))
+                     ((cl-minusp str-cut)))
+               long-str
+             (concat (substring long-str 0 (- str-mid str-cut))
+                     ellipses
+                     (substring long-str (+ str-mid str-cut)))))
 
-          ;; 'symbol to "string"
           ((symbolp long-str)
            (pspmacs/shorten-it (symbol-name long-str) shorten-to ellipses))
 
           ;; Apply to each element in sequence (possible deep stack)
           ;; When using deep nested sequences,
-          ;;     the \\='user\\=' must worry about deep stack.
+          ;;     the \\='user\\=' must worry about stack depth.
           ((sequencep long-str)
            (mapcar (lambda (x) (pspmacs/shorten-it x shorten-to ellipses))
                    long-str)))))
@@ -61,24 +62,25 @@ Default ellipses are customized using `pspmacs/long-str-ellipses'."
 (defun pspmacs/fill-color-cap (frac &optional bright invert overflow)
   "Color based on filled capacity fraction FRAC.
 
-\=0\= is empty (good = cyan), \=1\= is filled (bad = red)
+\\='0\\=' is empty (good = cyan), \\='1\\=' is filled (bad = red)
 Fraction of brightness is provided through BRIGHT, else assumed as 1.0
 FRAC > 1.0 is interpreted as *overfilled* and returns
 BRIGHT-scaled `pspmacs/fill-color-overflow-color')
 If OVERFLOW is non-nil, return that color for overflow instead.
 If INVERT is not-nil, return inverted pallet, i.e.
-\=0\= is empty (bad = red), \=1\= is filled (good = cyan)"
-  (let* ((bright (max 0 (min (or bright 1) 1)))
-         (frac (if invert (- 1.0 frac) frac))
-         (rgb (if (or (> frac 1.0) (< frac 0.0))
+\\='0\\=' is empty (bad = red), \\='1\\=' is filled (good = cyan)"
+  (let ((frac (if invert (- 1.0 frac) frac)))
+    (apply
+     #'color-rgb-to-hex
+     `(,@(mapcar
+          (lambda (x) (* (max 0 (min (or bright 1) 1)) x))
+          (if (or (< frac 0.0) (> frac 1.0))
               (color-name-to-rgb
                (or overflow pspmacs/fill-color-overflow-color))
-              (let* ((red (min 1.0 (* 2.0 frac)))
-                     (green (min 1.0 (* 2.0 (- 1.0 frac))))
-                     (blue (max 0 (- 1.0 (* 10 frac)))))
-                `(,red ,green ,blue))))
-    (col-vals (mapcar (lambda (x) (* bright x)) rgb)))
-  (apply #'color-rgb-to-hex `(,@col-vals 2))))
+            `(,(min 1.0 (* 2.0 frac))  ; red
+              ,(min 1.0 (* 2.0 (- 1.0 frac)))  ; green
+              ,(max 0 (- 1.0 (* 10 frac))))))  ; blue
+       2))))
 
 (provide 'pspmacs/common)
 ;;; common.el ends here

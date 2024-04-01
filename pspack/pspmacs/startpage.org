@@ -21,8 +21,9 @@
 
 * Requirements
 #+begin_src emacs-lisp
-  (require 'pspmacs/common)
+  (require 'f)
   (require 'recentf)
+  (require 'pspmacs/common)
   (recentf-mode 1)
 #+end_src
 
@@ -181,10 +182,9 @@
 * Internal Functions
 #+begin_src emacs-lisp
   (defun pspmacs/startpage--shorten-path (filepath)
-    "Shorten FILEPATH replacing home-directory by \\='~\\='."
+    "Shorten FILEPATH replacing home-directory with \\='~\\='."
     (pspmacs/shorten-it
-     (replace-regexp-in-string (getenv "HOME") "~" filepath)
-     (round (* pspmacs/startpage-block-cap (window-width)))))
+     filepath (round (* pspmacs/startpage-block-cap (window-width)))))
 
   (defun pspmacs/startpage--ascii-banner ()
       "Put ASCII Banner for non-graphic frames."
@@ -299,7 +299,7 @@
   (defun pspmacs/startpage--known-projects ()
     "Get Projects list from suitable project-manager.
 
-  Supported project-managers: project.el (builtin), projectile"
+  Supported project-managers: project.el (builtin), projectile."
     (seq-filter
      (lambda (proj)
        (let ((proj-path (expand-file-name (file-name-as-directory proj))))
@@ -338,16 +338,16 @@
   (defun pspmacs/startpage-add-roots (&rest roots)
     "Add entry to `pspmacs/startpage-emacs-roots'.
 
-  Use this in configuration file \\='init.el\\='
+  Use this in configuration file \\='init.el\\='.
   Add to list all ROOTS without checking if that location exists.
 
-  Directories *must* and file paths *can not* have a trailing \\='/\\='"
+  Directories *must* and file paths *can not* have a trailing \\='/\\='."
     (dolist (root roots nil) (add-to-list 'pspmacs/startpage-emacs-roots root)))
 
   (defun pspmacs/startpage-put-recentf ()
     "Place a block of recentf files.
 
-  Customize number `pspmacs/startpage-recentf-num'"
+  Customize number `pspmacs/startpage-recentf-num'."
     (setq pspmacs/startpage-recent-files-point
           (pspmacs/startpage--put-block (pspmacs/recentf--list)
                                         pspmacs/startpage-recentf-num
@@ -356,7 +356,7 @@
   (defun pspmacs/startpage-put-projects ()
     "Place a block of known projects.
 
-  Customize number `pspmacs/startpage-projects-num'"
+  Customize number `pspmacs/startpage-projects-num'."
     (setq pspmacs/startpage-projects-point
           (pspmacs/startpage--put-block (pspmacs/startpage--known-projects)
                                         pspmacs/startpage-projects-num
@@ -365,8 +365,8 @@
   (defun pspmacs/startpage-put-banner ()
     "Place center-aligned banner in current buffer.
 
-  If `display-graphic-p', use `pspmacs/startpage-banner-image'
-  else, use `pspmacs/startpage-banner-ascii'"
+  If `display-graphic-p', use `pspmacs/startpage-banner-image'.
+  else, use `pspmacs/startpage-banner-ascii'."
     (if (display-graphic-p) (pspmacs/startpage--graphic-banner)
       (pspmacs/startpage--ascii-banner)))
 

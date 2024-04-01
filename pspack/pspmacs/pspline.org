@@ -58,7 +58,7 @@
 
 ** cursor position format
 #+begin_src emacs-lisp
-  (defcustom pspmacs/pspline-cursor-position-format "%03l:%02c"
+  (defcustom pspmacs/pspline-cursor-pos-format "%03l:%02c"
     "Cursor position string (row:col)."
     :type '(choice
             (string :tag "verbatim")
@@ -161,7 +161,7 @@
 #+begin_src emacs-lisp
   (defcustom pspmacs/pspline-segments-alist
     '((pspmacs/pspline-evil-state . (:display t :right nil :inactive nil))
-      (pspmacs/pspline-cursor-position . (:display t :right nil :inactive t))
+      (pspmacs/pspline-cursor-pos . (:display t :right nil :inactive t))
       (pspmacs/pspline-win-loc . (:display t :right nil :inactive t))
       (pspmacs/pspline-input-method . (:display t :right nil :inactive nil))
       (pspmacs/pspline-major-icon . (:display t :right nil :inactive t))
@@ -196,6 +196,14 @@
     :group 'pspline)
 #+end_src
 
+** Buffer process face
+#+begin_src emacs-lisp
+  (defface pspmacs/pspline-buffer-process
+    '((default (:foreground "#9fefff" :box t)))
+    "Face of buffer process."
+    :group 'pspline)
+#+end_src
+
 ** Window location face
 #+begin_src emacs-lisp
   (defface pspmacs/pspline-win-loc '((default (:foreground "#2f7fcf")))
@@ -205,7 +213,7 @@
 
 ** Cursor position face
 #+begin_src emacs-lisp
-  (defface pspmacs/pspline-cursor-position '((default (:foreground "#ffff7f")))
+  (defface pspmacs/pspline-cursor-pos '((default (:foreground "#ffff7f")))
     "Face of cursor position row:col indicator."
     :group 'pspline)
 #+end_src
@@ -345,8 +353,7 @@
               (capitalize (string-trim (symbol-name major-mode) nil "-mode")))
             " ")))))
 
-  (defvar-local pspmacs/pspline-major-icon
-      '(:eval (pspmacs/pspline--major-icon))
+  (defvar-local pspmacs/pspline-major-icon '(:eval (pspmacs/pspline--major-icon))
     "Major mode icon.")
 #+end_src
 
@@ -383,8 +390,9 @@
           " "))))
 
   (defvar-local pspmacs/pspline-buffer-name
-    '(:eval (pspmacs/pspline--buffer-name))
+      '(:eval (pspmacs/pspline--buffer-name))
     "Buffer-name, process-state.
+
   Customize face with `pspmacs/pspline-buffer-modified'.")
 #+end_src
 
@@ -403,9 +411,7 @@
           `(,(propertize
               (pspmacs/shorten-it
                proc-string pspmacs/pspline-buffer-name-length)
-              'face `(:foreground
-                      ,(modus-themes-get-color-value 'modeline-info)
-                      :box t))
+              'face 'pspmacs/pspline-buffer-process)
             " ")))))
 
   (defvar-local pspmacs/pspline-buffer-process
@@ -420,13 +426,11 @@
     (when (pspmacs/pspline--display-segment 'pspmacs/pspline-win-loc)
         `(,(propertize
             (eval pspmacs/pspline-win-loc-format)
-            'face (if (mode-line-window-selected-p)
-                      'pspmacs/pspline-win-loc
+            'face (if (mode-line-window-selected-p) 'pspmacs/pspline-win-loc
                     'mode-line-inactive))
           " ")))
 
-  (defvar-local pspmacs/pspline-win-loc
-    '(:eval (pspmacs/pspline--win-loc))
+  (defvar-local pspmacs/pspline-win-loc '(:eval (pspmacs/pspline--win-loc))
     "Location of window in buffer.
 
   Customize value with `pspmacs/pspline-win-loc-format'.
@@ -435,22 +439,20 @@
 
 ** Cursor position
 #+begin_src emacs-lisp
-  (defun pspmacs/pspline--cursor-position ()
-    "Evaluated by `pspmacs/pspline-cursor-position'."
-    (when (pspmacs/pspline--display-segment 'pspmacs/pspline-cursor-position)
+  (defun pspmacs/pspline--cursor-pos ()
+    "Evaluated by `pspmacs/pspline-cursor-pos'."
+    (when (pspmacs/pspline--display-segment 'pspmacs/pspline-cursor-pos)
       `(,(propertize
-          (eval pspmacs/pspline-cursor-position-format)
-          'face (if (mode-line-window-selected-p)
-                    'pspmacs/pspline-cursor-position
+          (eval pspmacs/pspline-cursor-pos-format)
+          'face (if (mode-line-window-selected-p) 'pspmacs/pspline-cursor-pos
                   'mode-line-inactive))
         " ")))
 
-  (defvar-local pspmacs/pspline-cursor-position
-      '(:eval (pspmacs/pspline--cursor-position))
+  (defvar-local pspmacs/pspline-cursor-pos '(:eval (pspmacs/pspline--cursor-pos))
     "Cursor position indicator <row:col>.
 
-  Customize value with `pspmacs/pspline-cursor-position-format'.
-  Customize face with `pspmacs/pspline-cursor-position'.")
+  Customize value with `pspmacs/pspline-cursor-pos-format'.
+  Customize face with `pspmacs/pspline-cursor-pos'.")
 #+end_src
 
 ** Evil state
@@ -480,8 +482,7 @@
            (current-position
             (cl-position (intern (format "evil-%s-state" evil-state))
                          evil-states-order)))
-      (if (not current-position)
-          (evil-normal-state)
+      (if (not current-position) (evil-normal-state)
         (funcall (nth (mod (+ current-position (if back -1 1))
                            (length evil-states-order))
                       evil-states-order)))))
@@ -505,27 +506,24 @@
 
   (defun pspmacs/pspline--evil-state ()
     "Evaluated by `pspmacs/pspline-evil-state'."
-    (when (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-statr)
-      `(,(propertize (eval pspmacs/pspline-evil-state-format)
-                     'face
-                     (if (mode-line-window-selected-p)
-                         (cl-case evil-state
-                           (normal 'pspmacs/pspline-evil-normal)
-                           (insert 'pspmacs/pspline-evil-insert)
-                           (visual 'pspmacs/pspline-evil-visual)
-                           (replace 'pspmacs/pspline-evil-replace)
-                           (operator 'pspmacs/pspline-evil-operator)
-                           (motion 'pspmacs/pspline-evil-motion)
-                           (emacs 'pspmacs/pspline-evil-emacs)
-                           (_ 'pspmacs/pspline-evil-emacs))
-                       'mode-line-inactive)
-                     'local-map pspmacs/pspline-evil-state-map
-                     'help-echo
-                     (symbol-name evil-state))
+    (when (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-state)
+      `(,(propertize
+          (eval pspmacs/pspline-evil-state-format)
+          'face (if (not (mode-line-window-selected-p)) 'mode-line-inactive
+                  (cl-case evil-state
+                    (normal 'pspmacs/pspline-evil-normal)
+                    (insert 'pspmacs/pspline-evil-insert)
+                    (visual 'pspmacs/pspline-evil-visual)
+                    (replace 'pspmacs/pspline-evil-replace)
+                    (operator 'pspmacs/pspline-evil-operator)
+                    (motion 'pspmacs/pspline-evil-motion)
+                    (emacs 'pspmacs/pspline-evil-emacs)
+                    (_ 'pspmacs/pspline-evil-emacs)))
+          'local-map pspmacs/pspline-evil-state-map
+          'help-echo (symbol-name evil-state))
         " ")))
 
-  (defvar-local pspmacs/pspline-evil-state
-      '(:eval (pspmacs/pspline--evil-state))
+  (defvar-local pspmacs/pspline-evil-state '(:eval (pspmacs/pspline--evil-state))
 
     "Evil state icon.
   Customize faces with `pspmacs/pspline-evil-state-format',
@@ -562,14 +560,14 @@
             indicator
             'keymap click-map
             'help-echo (format "%s ❌" lang-env)
-            'face (if (mode-line-window-selected-p)
-                      'pspmacs/pspline-input-method
+            'face (if (mode-line-window-selected-p) 'pspmacs/pspline-input-method
                     'mode-line-inactive))
           " "))))
 
   (defvar-local pspmacs/pspline-input-method
       '(:eval (pspmacs/pspline--input-method))
     "Cursor position indicator <row:col>.
+
   Customize value with `pspmacs/pspline-input-method-replace-alist'.
   Customize face with `pspmacs/pspline-input-method'.")
 #+end_src
@@ -580,8 +578,7 @@
     (when (pspmacs/pspline--display-segment 'pspmacs/pspline-info)
       mode-line-misc-info))
 
-  (defvar-local pspmacs/pspline-info
-      '(:eval (pspmacs/pspline--info))
+  (defvar-local pspmacs/pspline-info '(:eval (pspmacs/pspline--info))
     "Handle for miscellaneous information.")
 #+end_src
 
@@ -591,26 +588,23 @@
     "Evaluated by `pspmacs/pspline-version-control'."
     (if (pspmacs/pspline--display-segment 'pspmacs/pspline-version-control)
         (when (stringp vc-mode)
-          (let
-              ((vc-spec
-                (replace-regexp-in-string
-                 (format "^ %s[-:@]" (vc-backend buffer-file-name))
-                 " " vc-mode)))
+          (let ((vc-spec
+                 (replace-regexp-in-string
+                  (format "^ %s[-:@]" (vc-backend buffer-file-name))
+                  " " vc-mode)))
             (propertize
              (concat vc-spec " ")
-             'face
-             (if (mode-line-window-selected-p)
-                 (pcase
-                     vc-spec
-                   (" main" 'pspmacs/pspline-vc-main)
-                   (" master" 'pspmacs/pspline-vc-main)
-                   (" release" 'pspmacs/pspline-vc-release)
-                   (_ 'pspmacs/pspline-vc-non-main))
-               'mode-line-inactive))))))
+             'face (if (not (mode-line-window-selected-p)) 'mode-line-inactive
+                     (pcase vc-spec
+                       (" main" 'pspmacs/pspline-vc-main)
+                       (" master" 'pspmacs/pspline-vc-main)
+                       (" release" 'pspmacs/pspline-vc-release)
+                       (_ 'pspmacs/pspline-vc-non-main))))))))
 
   (defvar-local pspmacs/pspline-version-control
     '(:eval (pspmacs/pspline--version-control))
     "Version control spec.
+
   Customize faces with `pspmacs/pspline-vc-main',
   `pspmacs/pspline-vc-non-main',
   `pspmacs/pspline-vc-release'.")
@@ -640,14 +634,12 @@
     "Derive hint part of flymake error TYPE."
     (let ((err (pspmacs/pspline--flymake-counter type)))
       (if (cl-plusp err)
-          (propertize (format "%d " err)
-                      'face
-                      (intern
-                       (format "pspmacs/pspline-flymake-%s"
-                               (string-trim (symbol-name type) ":")))
-                      'local-map pspmacs/pspline-flymake-map
-                      'help-echo
-                      (concat "mouse-1: buffer diagnostics"
+          (propertize
+           (format "%d " err)
+           'face (intern (format "pspmacs/pspline-flymake-%s"
+                                 (string-trim (symbol-name type) ":")))
+           'local-map pspmacs/pspline-flymake-map
+           'help-echo (concat "mouse-1: buffer diagnostics"
                               "\n"
                               "mouse-3: project diagnostics")))))
 
@@ -682,8 +674,7 @@
             'help-echo (format-time-string "%c"))
           " ")))
 
-  (defvar-local pspmacs/pspline-time
-    '(:eval (pspmacs/pspline--time))
+  (defvar-local pspmacs/pspline-time '(:eval (pspmacs/pspline--time))
     "Time segment.
 
   Customize value with `pspmacs/pspline-time-string-format'.")
@@ -695,52 +686,48 @@
       "Toggle display and help-text."
       (customize-set-variable
        'pspmacs/pspline--show-string
-       (if (string= pspmacs/pspline--show-string "time")
-           "percent"
-         "time"))
+       (if (string= pspmacs/pspline--show-string "time") "percent" "time"))
       (force-mode-line-update t))
 
   (defun pspmacs/pspline--battery-icon (perc)
     "Battery icon based on current battery percentage PERC."
-    (cl-some (lambda (x)
-               (if (> perc (car x)) (cdr x)))
+    (cl-some (lambda (x) (when (> perc (car x)) (cdr x)))
              pspmacs/pspline-battery-icon-plist))
 
   (defun pspmacs/pspline--battery ()
     "Evaluated by `pspmacs/pspline-battery'."
-    (when (and (pspmacs/pspline--display-segment 'pspmacs/pspline-battery)
-               (not (equal
-                     "N/A" (cdr (assq ?p (funcall battery-status-function))))))
-      (let* ((battery-info (funcall battery-status-function))
-             (hours-remain (concat (cdr (assq ?t battery-info)) "h"))
-             (bat-perc (cdr (assq ?p battery-info)))
-             (bat-perc-num (if (stringp bat-perc)
-                               (string-to-number bat-perc)
-                             bat-perc))
-             (bat-perc-string (format "%s%%" bat-perc-num))
-             (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
-             (bat-color (pspmacs/fill-color-cap bat-perc-num 1.0 t "#00ffff"))
-             (bat-string
-              (concat
-               bat-icon (if (string= pspmacs/pspline--show-string "time")
-                            hours-remain (format "%s%%" bat-perc-string))))
-             (tooltip-string (if (string= pspmacs/pspline--show-string "time")
-                                 bat-perc-string
-                               hours-remain)))
-        (when bat-color
-          `(,(propertize
-              (buttonize bat-string
-                         #'pspmacs/pspline--battery-toggle-show-string)
-              'face (if (string= (cdr (assq ?b battery-info)) "+")
-                        `(:background ,bat-color :foreground ,"#000000")
-                      `(:foreground ,bat-color))
-              'help-echo tooltip-string
-              'mouse-face `(:foreground "#000000" :background ,bat-color))
-            " ")))))
+    (when-let* (((pspmacs/pspline--display-segment 'pspmacs/pspline-battery))
+                ((not (equal
+                       "N/A" (cdr (assq ?p (funcall battery-status-function))))))
+                (battery-info (funcall battery-status-function))
+                (hours-remain (concat (cdr (assq ?t battery-info)) "h"))
+                (bat-perc (cdr (assq ?p battery-info)))
+                (bat-perc-num (if (stringp bat-perc) (string-to-number bat-perc)
+                                bat-perc))
+                (bat-perc-string (format "%s%%" bat-perc-num))
+                (bat-icon (pspmacs/pspline--battery-icon bat-perc-num))
+                (bat-color (pspmacs/fill-color-cap bat-perc-num 1.0 t "#00ffff"))
+                (bat-string
+                 (concat bat-icon
+                         (when (string= pspmacs/pspline--show-string "time")
+                           hours-remain (format "%s%%" bat-perc-string))))
+                (tooltip-string
+                 (if (string= pspmacs/pspline--show-string "time")
+                     bat-perc-string
+                   hours-remain)))
+      `(,(propertize
+          (buttonize bat-string
+                     #'pspmacs/pspline--battery-toggle-show-string)
+          'face (if (string= (cdr (assq ?b battery-info)) "+")
+                    `(:background ,bat-color :foreground ,"#000000")
+                  `(:foreground ,bat-color))
+          'help-echo tooltip-string
+          'mouse-face `(:foreground "#000000" :background ,bat-color))
+        " ")))
 
-  (defvar-local pspmacs/pspline-battery
-      '(:eval (pspmacs/pspline--battery))
+  (defvar-local pspmacs/pspline-battery '(:eval (pspmacs/pspline--battery))
     "Battery segment.
+
   Customize value with `pspmacs/pspline-battery-icon-plist',
   `pspmacs/pspline-battery-color-plist'.")
 #+end_src
@@ -797,22 +784,16 @@
     "Generate format of pspline.
 
   If current buffer is not focused,
-  only display segments meant for inactive buffer"
-    (let* ((left-segs nil)
-           (right-segs nil))
+  only display segments meant for inactive buffer."
+    (let* (left-segs right-segs)
       (dolist (seg pspmacs/pspline-segments-alist nil)
-        (if (plist-get (cdr seg) :display)
-            (let ((segment (eval (car seg))))
-              (if (plist-get (cdr seg) :right)
-                  (push segment right-segs)
-                (push segment left-segs)))))
+        (when (plist-get (cdr seg) :display)
+          (let ((segment (eval (car seg))))
+            (if (plist-get (cdr seg) :right) (push segment right-segs)
+              (push segment left-segs)))))
       ;; Mode line format
-      `("%e"
-        mode-line-front-space
-        ,@(nreverse left-segs)
-        mode-line-format-right-align
-        ,@(nreverse right-segs)
-        " "
+      `("%e" mode-line-front-space ,@(nreverse left-segs)
+        mode-line-format-right-align ,@(nreverse right-segs) " "
         mode-line-end-spaces)))
   #+end_src
 
@@ -864,10 +845,12 @@
 
 ** TEMP Back-Port
 - GNU/Emacs ~master~ branch includes the function ~mode-line-format-right-align~.
+  The back-port is copied from [[https://github.com/emacs-mirror/emacs/blob/master/lisp/bindings.el][downstream code]].
   #+begin_src emacs-lisp
     (when (version< emacs-version "30")
       (defcustom mode-line-right-align-edge 'window
-        "For forward compatibility with master branch version 30
+        "A back-port from master branch (version 30).
+
     Where function `mode-line-format-right-align' should align to.
     Internally, that function uses `:align-to' in a display property,
     so aligns to the left edge of the given area.  See info node
@@ -885,7 +868,8 @@
         :version "30.1")
 
       (defun mode--line-format-right-align ()
-        "For forward compatibility with master branch version 30
+        "A back-port from master branch (version 30).
+
     Right-align all following mode-line constructs.
 
     When the symbol `mode-line-format-right-align' appears in
@@ -899,41 +883,41 @@
     such as `(:eval (mode-line-format-right-align)').  This is because
     the symbol `mode-line-format-right-align' is processed by
     `format-mode-line' as a variable."
-        (let* ((rest (cdr (memq 'mode-line-format-right-align
-                                mode-line-format)))
+        (let* ((rest (cdr (memq 'mode-line-format-right-align mode-line-format)))
                (rest-str (format-mode-line `("" ,@rest)))
-               (rest-width (progn
-                             (add-face-text-property
-                              0 (length rest-str) 'mode-line t rest-str)
-                             (string-pixel-width rest-str))))
-          (propertize " " 'display
-                      ;; The `right' spec doesn't work on TTY frames
-                      ;; when windows are split horizontally (bug#59620)
-                      (if (and (display-graphic-p)
-                               (not (eq mode-line-right-align-edge 'window)))
-                          `(space :align-to (- ,mode-line-right-align-edge
-                                               (,rest-width)))
-                        `(space :align-to (,(- (window-pixel-width)
-                                               (window-scroll-bar-width)
-                                               (window-right-divider-width)
-                                               (* (or (cdr (window-margins)) 1)
-                                                  (frame-char-width))
-                                               ;; Manually account for value of
-                                               ;; `mode-line-right-align-edge' even
-                                               ;; when display is non-graphical
-                                               (pcase mode-line-right-align-edge
-                                                 ('right-margin
-                                                  (or (cdr (window-margins)) 0))
-                                                 ('right-fringe
-                                                  ;; what here?
-                                                  (or (cadr (window-fringes)) 0))
-                                                 (_ 0))
-                                               rest-width)))))))
+               (rest-width
+                (progn (add-face-text-property
+                        0 (length rest-str) 'mode-line t rest-str)
+                       (string-pixel-width rest-str))))
+          (propertize
+           " "
+           'display
+           ;; The `right' spec doesn't work on TTY frames
+           ;; when windows are split horizontally (bug#59620)
+           (if (and (display-graphic-p)
+                    (not (eq mode-line-right-align-edge 'window)))
+               `(space :align-to (- ,mode-line-right-align-edge (,rest-width)))
+             `(space
+               :align-to
+               (,(- (window-pixel-width)
+                    (window-scroll-bar-width)
+                    (window-right-divider-width)
+                    (* (or (cdr (window-margins)) 1) (frame-char-width))
+                    ;; Manually account for value of `mode-line-right-align-edge'
+                    ;; even when display is non-graphical
+                    (pcase mode-line-right-align-edge
+                      ('right-margin (or (cdr (window-margins)) 0))
+                      ;; what here?
+                      ('right-fringe (or (cadr (window-fringes)) 0))
+                      (_ 0))
+                    rest-width)))))))
 
-      (defvar mode-line-format-right-align '(:eval (mode--line-format-right-align))
-        "For forward compatibility with master branch version 30
+      (defvar mode-line-format-right-align
+        '(:eval (mode--line-format-right-align))
+        "A back-port from master branch (version 30).
+
     Mode line construct to right align all following constructs.")
-        ;;;###autoload
+      ;;;###autoload
       (put 'mode-line-format-right-align 'risky-local-variable t))
   #+end_src
 

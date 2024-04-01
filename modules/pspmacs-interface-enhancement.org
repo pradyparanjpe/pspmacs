@@ -752,11 +752,17 @@ Auto-hiding text-based scroll bar
   to load ~(battery-status-function)~
 #+begin_src emacs-lisp
   (use-package pspmacs/pspline
+    :after modus-themes
     :ensure nil
+    :demand t
     :commands pspmacs/pspline-set-up
+    :custom-face
+    (pspmacs/pspline-buffer-process
+     ((default
+       (:foreground ,(modus-themes-get-color-value 'modeline-info) :box t))))
     :config
-    (battery))
-  (pspmacs/pspline-set-up)
+    (battery)
+    (pspmacs/pspline-set-up))
 #+end_src
 
 * hlissner/solaire-mode
