@@ -55,7 +55,7 @@
 * Linter
 As recommended for [[https://github.com/melpa/melpa/blob/master/CONTRIBUTING.org][contributions to MELPA.]]
 #+begin_src emacs-lisp
-  (use-package package-lint
+  (use-package package-lint-flymake
     :hook
     (emacs-lisp-mode . (lambda () (interactive)
                          (unless (derived-mode-p 'lisp-interaction-mode)

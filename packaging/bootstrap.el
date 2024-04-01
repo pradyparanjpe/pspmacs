@@ -51,20 +51,19 @@ vc-use-package is included in Emacs 30"
 (defun pspmacs/init-package-manager ()
   "Initialize /=package.el/= as the package manager"
   ;; package should store data locally.
-  (customize-set-variable 'package-user-dir
-                          (expand-file-name "packages" local-emacs-dir))
+  (customize-set-variable
+   'package-user-dir (expand-file-name "packages" local-emacs-dir))
   (unless (file-exists-p package-user-dir) (mkdir package-user-dir t))
   ;; Paranoia
   ;; (add-to-list 'package-archives
   ;;              '("stable" . "https://stable.melpa.org/packages/"))
   ;; ("stable" . 70)
+  ;; ("nongnu" . 80)
 
   ;; Additional package archives
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-  (customize-set-variable 'package-archive-priorities
-                          '(("gnu"    . 99)
-                            ("nongnu" . 80)
-                            ("melpa"  . 0)))
+  (customize-set-variable
+   'package-archive-priorities '(("gnu" . 90) ("melpa" . 0)))
 
   (package-initialize)
   (unless (pspmacs/archives-refreshed-recently-p)
@@ -77,9 +76,8 @@ vc-use-package is included in Emacs 30"
   (auto-package-update-delete-old-versions t)
   (auto-package-update-hide-results t)
   (auto-package-update-prompt-before-update t)
-  (auto-package-update-last-update-day-filename (expand-file-name
-                                                 ".last-package-update-day"
-                                                 xdg/emacs-state-directory))
+  (auto-package-update-last-update-day-filename
+   (expand-file-name ".last-package-update-day" xdg/emacs-state-directory))
   (auto-package-update-show-preview t)
   :config
   (auto-package-update-maybe))

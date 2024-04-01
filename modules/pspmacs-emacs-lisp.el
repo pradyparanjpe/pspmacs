@@ -37,7 +37,7 @@ Insert following two lines at point.
                (file-name-nondirectory (buffer-file-name)))))
     (insert (format "(provide '%s)\n;;; %s.el ends here" base base))))
 
-(use-package package-lint
+(use-package package-lint-flymake
   :hook
   (emacs-lisp-mode . (lambda () (interactive)
                        (unless (derived-mode-p 'lisp-interaction-mode)
