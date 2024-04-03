@@ -218,23 +218,18 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
 
 (defun pspmacs/pspline--major-icon ()
   "Evaluated by `pspmacs/pspline-major-icon'."
-  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-major-icon)
-    (let*
-        ((icon (ignore-errors
-                 (all-the-icons-icon-for-buffer)))
-         (icon (if icon
-                   icon
-                 (ignore-errors
-                   (all-the-icons-icon-for-mode major-mode)))))
-      (when icon
-        ;; Eat mode patch
-        (if (string= icon 'eat-mode)
-            (setq icon (all-the-icons-icon-for-mode 'vterm-mode)))
-        `(,(propertize
-            icon
-            'help-echo
-            (capitalize (string-trim (symbol-name major-mode) nil "-mode")))
-          " ")))))
+  (when-let
+      (((pspmacs/pspline--display-segment 'pspmacs/pspline-major-icon))
+       (icon
+        (if (string= major-mode 'eat-mode)
+            (ignore-errors (all-the-icons-icon-for-mode 'vterm-mode))
+          (or (ignore-errors (all-the-icons-icon-for-buffer))
+              (ignore-errors (all-the-icons-icon-for-mode major-mode))))))
+    `(,(propertize
+        icon
+        'help-echo
+        (capitalize (string-trim (symbol-name major-mode) nil "-mode")))
+      " ")))
 
 (defvar-local pspmacs/pspline-major-icon '(:eval (pspmacs/pspline--major-icon))
   "Major mode icon.")
@@ -246,28 +241,24 @@ When :INACTIVE is non-nil, display the segment even in inactive buffer"
 
 (defun pspmacs/pspline--buffer-name ()
   "Evaluated by `pspmacs/pspline--buffer-name'."
-  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-name)
-    (let* ((base (if (buffer-modified-p)
-                     'pspmacs/pspline-buffer-modified
-                   (if (mode-line-window-selected-p)
-                       'mode-line-buffer-id
-                     'mode-line-inactive)))
-           (box (if buffer-read-only '(:box t) '(:box nil)))
-           (buffer-string
-            (or
-             (ignore-errors
-               (file-relative-name buffer-file-name
-                                   (projectile-project-mode)))
-             "%b")
-            ))
-      `(,(propertize
-          (buttonize (pspmacs/shorten-it
-                      buffer-string pspmacs/pspline-buffer-name-length)
-                     #'pspmacs/pspline--toggle-read-only)
-          'face `(,base ,box)
-          'help-echo (format "Click to make buffer %s"
-                             (if buffer-read-only "writable" "read-only")))
-        " "))))
+  (when-let (((pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-name))
+             (base (if (buffer-modified-p) 'pspmacs/pspline-buffer-modified
+                     (if (mode-line-window-selected-p) 'mode-line-buffer-id
+                       'mode-line-inactive)))
+             (box (if buffer-read-only '(:box t) '(:box nil)))
+             (buffer-string
+              (or (ignore-errors
+                    (file-relative-name
+                     buffer-file-name (projectile-project-mode)))
+                  "%b")))
+    `(,(propertize
+        (buttonize (pspmacs/shorten-it
+                    buffer-string pspmacs/pspline-buffer-name-length)
+                   #'pspmacs/pspline--toggle-read-only)
+        'face `(,base ,box)
+        'help-echo (format "Click to make buffer %s"
+                           (if buffer-read-only "writable" "read-only")))
+      " ")))
 
 (defvar-local pspmacs/pspline-buffer-name
     '(:eval (pspmacs/pspline--buffer-name))
@@ -277,19 +268,19 @@ Customize face with `pspmacs/pspline-buffer-modified'.")
 
 (defun pspmacs/pspline--buffer-process ()
   "Evaluated by `pspmacs/pspline-buffer-process'."
-  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-process)
-    (let ((proc-string (cl-case (type-of mode-line-process)
-                         (string mode-line-process)
-                         (list (remq nil (mapconcat (lambda (x) (eval x))
-                                                    mode-line-process)))
-                         (symbol (if mode-line-process
-                                       (symbol-name mode-line-process))))))
-      (when proc-string
-        `(,(propertize
-            (pspmacs/shorten-it
-             proc-string pspmacs/pspline-buffer-name-length)
-            'face 'pspmacs/pspline-buffer-process)
-          " ")))))
+  (when-let
+      (((pspmacs/pspline--display-segment 'pspmacs/pspline-buffer-process))
+       (proc-string
+        (pcase mode-line-process
+          ((pred stringp) mode-line-process)
+          ((pred symbolp)
+           (when mode-line-process (symbol-name mode-line-process)))
+          ((pred consp)
+           (remq nil (mapconcat (lambda (x) (eval x)) mode-line-process))))))
+    `(,(propertize
+        (pspmacs/shorten-it proc-string pspmacs/pspline-buffer-name-length)
+        'face 'pspmacs/pspline-buffer-process)
+      " ")))
 
 (defvar-local pspmacs/pspline-buffer-process
     '(:eval (pspmacs/pspline--buffer-process))
@@ -298,11 +289,11 @@ Customize face with `pspmacs/pspline-buffer-modified'.")
 (defun pspmacs/pspline--win-loc ()
   "Evaluated by `pspmacs/pspline-win-loc'."
   (when (pspmacs/pspline--display-segment 'pspmacs/pspline-win-loc)
-      `(,(propertize
-          (eval pspmacs/pspline-win-loc-format)
-          'face (if (mode-line-window-selected-p) 'pspmacs/pspline-win-loc
-                  'mode-line-inactive))
-        " ")))
+    `(,(propertize
+        (eval pspmacs/pspline-win-loc-format)
+        'face (if (mode-line-window-selected-p) 'pspmacs/pspline-win-loc
+                'mode-line-inactive))
+      " ")))
 
 (defvar-local pspmacs/pspline-win-loc '(:eval (pspmacs/pspline--win-loc))
   "Location of window in buffer.
@@ -339,21 +330,22 @@ Order of states:
 - operator
 - motion
 - Emacs"
-  (let* ((evil-states-order
-          '(evil-normal-state
-            evil-insert-state
-            evil-visual-state
-            evil-replace-state
-            evil-operator-state
-            evil-motion-state
-            evil-emacs-state))
-         (current-position
-          (cl-position (intern (format "evil-%s-state" evil-state))
-                       evil-states-order)))
-    (if (not current-position) (evil-normal-state)
-      (funcall (nth (mod (+ current-position (if back -1 1))
-                         (length evil-states-order))
-                    evil-states-order)))))
+  (when (featurep 'evil)
+    (if-let* ((evil-states-order
+               '(evil-normal-state
+                 evil-insert-state
+                 evil-visual-state
+                 evil-replace-state
+                 evil-operator-state
+                 evil-motion-state
+                 evil-emacs-state))
+              (current-position
+               (cl-position (intern (format "evil-%s-state" evil-state))
+                            evil-states-order)))
+        (funcall (nth (mod (+ current-position (if back -1 1))
+                           (length evil-states-order))
+                      evil-states-order)))
+    (evil-normal-state)))
 
 (defun pspmacs/pspline--next-evil-state ()
   "Push `evil-state' in `pspmacs/pspline--cycle-evil-state'."
@@ -367,14 +359,17 @@ Order of states:
 
 (defvar pspmacs/pspline-evil-state-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [mode-line down-mouse-1] #'pspmacs/pspline--next-evil-state)
-    (define-key map [mode-line down-mouse-3] #'pspmacs/pspline--prev-evil-state)
+    (define-key
+     map [mode-line down-mouse-1] #'pspmacs/pspline--next-evil-state)
+    (define-key
+     map [mode-line down-mouse-3] #'pspmacs/pspline--prev-evil-state)
     map)
-  "Keymap to display on Flymake indicator.")
+  "Mouse clicks on `evil-state' icon.")
 
 (defun pspmacs/pspline--evil-state ()
   "Evaluated by `pspmacs/pspline-evil-state'."
-  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-state)
+  (when (and (pspmacs/pspline--display-segment 'pspmacs/pspline-evil-state)
+             (featurep 'evil))
     `(,(propertize
         (eval pspmacs/pspline-evil-state-format)
         'face (if (not (mode-line-window-selected-p)) 'mode-line-inactive
@@ -406,28 +401,28 @@ Customize faces with `pspmacs/pspline-evil-state-format',
 
 (defun pspmacs/pspline--input-method ()
   "Evaluated by `pspmacs/pspline-input-method'."
-  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-input-method)
-    (when-let*
-        ((input-method (or (when (featurep 'evil) evil-input-method)
-                           current-input-method))
-         ;; '(INPUT-METHOD LANGUAGE-ENV ACTIVATE-FUNC TITLE DESCRIPTION)
-         (input-info (assoc input-method input-method-alist))
-         (lang-env (nth 1 input-info))
-         (title (nth 3 input-info))
-         (indicator
-          (or (cdr (assoc title pspmacs/pspline-input-method-replace-alist))
-              title))
-         (click-map (make-sparse-keymap)))
-      (define-key click-map [mode-line down-mouse-1] #'toggle-input-method)
-      (define-key click-map [mode-line down-mouse-3] #'set-input-method)
+  (when-let*
+      (((pspmacs/pspline--display-segment 'pspmacs/pspline-input-method))
+       (input-method (if (featurep 'evil) evil-input-method
+                       current-input-method))
+       ;; '(INPUT-METHOD LANGUAGE-ENV ACTIVATE-FUNC TITLE DESCRIPTION)
+       (input-info (assoc input-method input-method-alist))
+       (lang-env (nth 1 input-info))
+       (title (nth 3 input-info))
+       (indicator
+        (or (cdr (assoc title pspmacs/pspline-input-method-replace-alist))
+            title))
+       (click-map (make-sparse-keymap)))
+    (define-key click-map [mode-line down-mouse-1] #'toggle-input-method)
+    (define-key click-map [mode-line down-mouse-3] #'set-input-method)
 
-      `(,(propertize
-          indicator
-          'keymap click-map
-          'help-echo (format "%s ❌" lang-env)
-          'face (if (mode-line-window-selected-p) 'pspmacs/pspline-input-method
-                  'mode-line-inactive))
-        " "))))
+    `(,(propertize
+        indicator
+        'keymap click-map
+        'help-echo (format "%s ❌" lang-env)
+        'face (if (mode-line-window-selected-p) 'pspmacs/pspline-input-method
+                'mode-line-inactive))
+      " ")))
 
 (defvar-local pspmacs/pspline-input-method
     '(:eval (pspmacs/pspline--input-method))
@@ -446,20 +441,20 @@ Customize face with `pspmacs/pspline-input-method'.")
 
 (defun pspmacs/pspline--version-control ()
   "Evaluated by `pspmacs/pspline-version-control'."
-  (if (pspmacs/pspline--display-segment 'pspmacs/pspline-version-control)
-      (when (stringp vc-mode)
-        (let ((vc-spec
-               (replace-regexp-in-string
-                (format "^ %s[-:@]" (vc-backend buffer-file-name))
-                " " vc-mode)))
-          (propertize
-           (concat vc-spec " ")
-           'face (if (not (mode-line-window-selected-p)) 'mode-line-inactive
-                   (pcase vc-spec
-                     (" main" 'pspmacs/pspline-vc-main)
-                     (" master" 'pspmacs/pspline-vc-main)
-                     (" release" 'pspmacs/pspline-vc-release)
-                     (_ 'pspmacs/pspline-vc-non-main))))))))
+  (when-let
+      (((pspmacs/pspline--display-segment 'pspmacs/pspline-version-control))
+       ((stringp vc-mode))
+       (vc-spec
+        (replace-regexp-in-string
+         (format "^ %s[-:@]" (vc-backend buffer-file-name)) " " vc-mode)))
+    (propertize
+     (concat vc-spec " ")
+     'face (if (not (mode-line-window-selected-p)) 'mode-line-inactive
+             (pcase vc-spec
+               (" main" 'pspmacs/pspline-vc-main)
+               (" master" 'pspmacs/pspline-vc-main)
+               (" release" 'pspmacs/pspline-vc-release)
+               (_ 'pspmacs/pspline-vc-non-main))))))
 
 (defvar-local pspmacs/pspline-version-control
   '(:eval (pspmacs/pspline--version-control))
@@ -490,30 +485,30 @@ Customize faces with `pspmacs/pspline-vc-main',
 (defun pspmacs/pspline--hint-part (type)
   "Derive hint part of flymake error TYPE."
   (let ((err (pspmacs/pspline--flymake-counter type)))
-    (if (cl-plusp err)
-        (propertize
-         (format "%d " err)
-         'face (intern (format "pspmacs/pspline-flymake-%s"
-                               (string-trim (symbol-name type) ":")))
-         'local-map pspmacs/pspline-flymake-map
-         'help-echo (concat "mouse-1: buffer diagnostics"
-                            "\n"
-                            "mouse-3: project diagnostics")))))
+    (when (cl-plusp err)
+      (propertize
+       (format "%d " err)
+       'face (intern (format "pspmacs/pspline-flymake-%s"
+                             (string-trim (symbol-name type) ":")))
+       'local-map pspmacs/pspline-flymake-map
+       'help-echo (concat "mouse-1: buffer diagnostics"
+                          "\n"
+                          "mouse-3: project diagnostics")))))
 
 (defun pspmacs/pspline--error-hints ()
   "Evaluated by `pspmacs/pspline-error-hints'."
-  (if (pspmacs/pspline--display-segment 'pspmacs/pspline-error-hints)
-
-      (let ((errr (pspmacs/pspline--hint-part :error))
-            (wrng (pspmacs/pspline--hint-part :warning))
-            (note (pspmacs/pspline--hint-part :note)))
-        `(,(cond (errr pspmacs/pspline-flymake-error-icon)
-                 (wrng pspmacs/pspline-flymake-warning-icon)
-                 (note pspmacs/pspline-flymake-note-icon)
-                 (t pspmacs/pspline-flymake-good-icon))
-          ,errr
-          ,wrng
-          ,note))))
+  (when (and (pspmacs/pspline--display-segment 'pspmacs/pspline-error-hints)
+             (featurep 'flymake))
+    (let ((errr (pspmacs/pspline--hint-part :error))
+          (wrng (pspmacs/pspline--hint-part :warning))
+          (note (pspmacs/pspline--hint-part :note)))
+      `(,(cond (errr pspmacs/pspline-flymake-error-icon)
+               (wrng pspmacs/pspline-flymake-warning-icon)
+               (note pspmacs/pspline-flymake-note-icon)
+               (t pspmacs/pspline-flymake-good-icon))
+        ,errr
+        ,wrng
+        ,note))))
 
 (defvar-local pspmacs/pspline-error-hints
   '(:eval (pspmacs/pspline--error-hints))
@@ -521,13 +516,12 @@ Customize faces with `pspmacs/pspline-vc-main',
 
 (defun pspmacs/pspline--time ()
   "Evaluated by `pspmacs/pspline-time'."
-  (if (pspmacs/pspline--display-segment 'pspmacs/pspline-time)
-      `(
-        ,(propertize
-          (format-time-string (eval pspmacs/pspline-time-string-format))
-          'face 'pspmacs/pspline-time
-          'help-echo (format-time-string "%c"))
-        " ")))
+  (when (pspmacs/pspline--display-segment 'pspmacs/pspline-time)
+    `(,(propertize
+        (format-time-string (eval pspmacs/pspline-time-string-format))
+        'face 'pspmacs/pspline-time
+        'help-echo (format-time-string "%c"))
+      " ")))
 
 (defvar-local pspmacs/pspline-time '(:eval (pspmacs/pspline--time))
   "Time segment.
