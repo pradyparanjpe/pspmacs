@@ -22,6 +22,157 @@
 
 ;;; Code:
 
+(defun pspmacs/setup-org-latex-headers ()
+  "Set up headers for org latex exports."
+  (let ((pkgs-xtra
+         (concat "[NO-DEFAULT-PACKAGES]\n" "[PACKAGES]\n" "[EXTRA]\n")))
+    (dolist (class-args
+             `(("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
+               ("apa6" "\\documentclass{apa6}")
+               ("IEEEtran" "\\documentclass[conference]{IEEEtran}")
+               ("article" "\\documentclass[11pt]{article}")
+               ("komaarticle" "\\documentclass{scrartcl}")
+               ("elsarticle" ,(concat "\\documentclass{elsarticle}" pkgs-xtra))
+               ("report" "\\documentclass[11pt]{report}")
+               ("komareport" "\\documentclass{scrreprt}")
+               ("mimore" ,(concat "\\documentclass{mimore}" pkgs-xtra))
+               ("book" "\\documentclass[11pt]{book}")
+               ("komabook" "\\documentclass[twoside=false]{scrbook}" nil
+                '("\\chapter{%s}" . "\\chapter*{%s}"))
+               ("mimosis"
+                ,(concat
+                  "\\documentclass{mimosis}\n"
+                  pkgs-xtra
+                  "\\newcommand{\\mboxparagraph}[1]"
+                  "{\\paragraph{#1}\\mbox{}\\\\}\n"
+                  "\\newcommand{\\mboxsubparagraph}[1]\n"
+                  "{\\subparagraph{#1}\\mbox{}\\\\}")
+                :no-defaults
+                ("\\chapter{%s}"          . "\\chapter*{%s}")
+                ("\\section{%s}"          . "\\section*{%s}")
+                ("\\subsection{%s}"       . "\\subsection*{%s}")
+                ("\\subsubsection{%s}"    . "\\subsubsection*{%s}")
+                ("\\mboxparagraph{%s}"    . "\\mboxparagraph*{%s}")
+                ("\\mboxsubparagraph{%s}" . "\\mboxsubparagraph*{%s}"))
+               ("beamer"
+                ,(concat "\\documentclass[presentation]{beamer}\n" pkgs-xtra))))
+      (apply #'pspmacs/org-latex--add-class class-args))))
+
+(defun karthink/add-latex-in-org-mode-expansions ()
+  "Extend org-mode expansions with LaTeX"
+  ;; Make Emacs recognize \ as an escape character in org
+  (modify-syntax-entry ?\\ "\\" org-mode-syntax-table)
+  ;; Paragraph end at end of math environment
+  (setq paragraph-start
+        (concat paragraph-start "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
+  ;; (setq paragraph-separate
+  ;;   (concat paragraph-separate "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
+  ;; LaTeX mode expansions
+  (with-eval-after-load 'expand-region
+    (set (make-local-variable 'karthink/try-expand-list)
+         (append (remove #'karthink/mark-method-call karthink/try-expand-list)
+                 '(LaTeX-mark-environment
+                   karthink/mark-LaTeX-inside-math
+                   karthink/mark-latex-inside-delimiters
+                   karthink/mark-latex-outside-delimiters
+                   karthink/mark-LaTeX-math)))))
+
+(use-package ox-latex
+  :ensure org
+  :after ox
+  :general
+  (pspmacs/local-leader-keys
+    :keymaps 'org-mode-map
+    "xp"  '(org-latex-export-to-pdf :wk "pdf")
+    "xb" '(org-beamer-export-to-pdf :wk "beamer"))
+  :init
+  (defun pspmacs/org-latex--add-class
+      (name class-str &optional no-defaults &rest sections)
+    "Add CLASS-STR and SECTIONS for documentclass NAME.
+
+CLASS-STR may contain other arbitrary header declarations.
+Modify the variable `org-latex-classes'.
+If NO-DEFAULTS, only declare SECTIONS, ordinarily, use default sections."
+    (setf (alist-get name org-latex-classes nil nil #'equal)
+          (append (list class-str)
+                  sections
+                  (unless no-defaults
+                    '(("\\section{%s}"       . "\\section*{%s}")
+                      ("\\subsection{%s}"    . "\\subsection*{%s}")
+                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                      ("\\paragraph{%s}"     . "\\paragraph*{%s}")
+                      ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))))
+  :custom
+  (org-export-with-LaTeX-fragments t)
+  (org-export-with-smart-quotes t)
+  (org-latex-caption-above nil)
+  (org-latex-tables-booktabs t)
+  (org-latex-prefer-user-labels t)
+  (org-latex-reference-command "\\cref{%s}")
+  (org-latex-compiler "xelatex")
+  (org-latex-src-block-backend 'listings)
+  (org-latex-to-mathml-convert-command
+   "latexmlmath '%i' --presentationmathml=%o")
+  (org-latex-pdf-process
+   '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"
+     "bibtex %b"
+     "makeindex %b"
+     "latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"
+     "latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+
+  ;; From https://git.tecosaur.net/tec/emacs-config,
+  ;; the default link colors are hideous.
+  (org-latex-hyperref-template
+   "
+\\usepackage{xcolor}
+\\providecolor{url}{HTML}{006fcf}
+\\providecolor{link}{HTML}{6f2f47}
+\\providecolor{cite}{HTML}{8f8f2f}
+\\hypersetup{
+  pdfauthor={%a},
+  pdftitle={%t},
+  pdfkeywords={%k},
+  pdfsubject={%d},
+  pdfcreator={%c},
+  pdflang={%L},
+  breaklinks=true,
+  colorlinks=true,
+  linkcolor=link,
+  urlcolor=url,
+  citecolor=cite}
+\\urlstyle{same}
+%% hide links styles in toc
+\\NewCommandCopy{\\oldtoc}{\\tableofcontents}
+\\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}
+")
+
+  (org-startup-with-latex-preview t)
+  (org-highlight-latex-and-related '(native))
+  (org-preview-latex-default-process 'dvisvgm)
+
+  :hook
+  (org-mode . karthink/add-latex-in-org-mode-expansions)
+
+  :config
+  (plist-put org-format-latex-options :background "Transparent")
+  (plist-put org-format-latex-options :scale 1.5)
+  (plist-put org-format-latex-options :zoom 1.0)
+
+  (dolist (package '(("" "longtable" nil)
+                     ("" "booktabs"  nil)
+                     ("" "listings"  nil)
+                     ("" "minted"    nil)
+                     ("" "color"     nil)
+                     ("" "cancel"    t)))
+    ;; ;FIXME: Some documentclasses load these themselves,
+    ;; ;causing all manner of conflicts.
+    ;; ("capitalize" "cleveref"  nil)
+    ;; (""           "amsmath"   t)
+    ;; (""           "amssymb"   t)
+    (cl-pushnew package org-latex-packages-alist
+                :test (lambda (a b) (equal (cadr a) (cadr b)))))
+  (pspmacs/setup-org-latex-headers))
+
 (defun karthink/latex-with-outline ()
   (add-to-list 'minor-mode-overriding-map-alist
                `(outline-minor-mode . ,outline-minor-mode-map))
@@ -89,127 +240,11 @@
                              sp-point-before-same-p
                              sp-latex-point-after-backslash))))
 
-(defun karthink/add-latex-in-org-mode-expansions ()
-  "Extend org-mode expansions with LaTeX"
-  ;; Make Emacs recognize \ as an escape character in org
-  (modify-syntax-entry ?\\ "\\" org-mode-syntax-table)
-  ;; Paragraph end at end of math environment
-  (setq paragraph-start (concat paragraph-start "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
-  ;; (setq paragraph-separate (concat paragraph-separate "\\|\\\\end{\\([A-Za-z0-9*]+\\)}"))
-  ;; Latex mode expansions
-  (with-eval-after-load 'expand-region
-    (set (make-local-variable 'karthink/try-expand-list)
-         (append (remove #'karthink/mark-method-call karthink/try-expand-list)
-                 '(LaTeX-mark-environment
-                   karthink/mark-LaTeX-inside-math
-                   karthink/mark-latex-inside-delimiters
-                   karthink/mark-latex-outside-delimiters
-                   karthink/mark-LaTeX-math)))))
-
-(use-package ox-latex
- :ensure org
- :after ox
- :general
- (pspmacs/local-leader-keys
-   :keymaps 'org-mode-map
-   "xp"  '(org-latex-export-to-pdf :wk "pdf")
-   "xb" '(org-beamer-export-to-pdf :wk "beamer"))
-
- :custom
- (org-export-with-LaTeX-fragments t)
- (org-export-with-smart-quotes t)
- (org-latex-caption-above nil)
- (org-latex-tables-booktabs t)
- (org-latex-prefer-user-labels t)
- (org-latex-reference-command "\\cref{%s}")
- (org-latex-compiler "xelatex")
- (org-latex-src-block-backend 'listings)
-  (org-latex-to-mathml-convert-command
-   "latexmlmath '%i' --presentationmathml=%o")
- (org-latex-pdf-process
-  '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"
-    "bibtex %b"
-    "makeindex %b"
-    "latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"
-    "latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
-
- ;; From https://git.tecosaur.net/tec/emacs-config,
- ;; the default link colors are hideous.
- (org-latex-hyperref-template
-  "
-\\usepackage{xcolor}
-\\providecolor{url}{HTML}{006fcf}
-\\providecolor{link}{HTML}{6f2f47}
-\\providecolor{cite}{HTML}{8f8f2f}
-\\hypersetup{
-  pdfauthor={%a},
-  pdftitle={%t},
-  pdfkeywords={%k},
-  pdfsubject={%d},
-  pdfcreator={%c},
-  pdflang={%L},
-  breaklinks=true,
-  colorlinks=true,
-  linkcolor=link,
-  urlcolor=url,
-  citecolor=cite}
-\\urlstyle{same}
-%% hide links styles in toc
-\\NewCommandCopy{\\oldtoc}{\\tableofcontents}
-\\renewcommand{\\tableofcontents}{\\begingroup\\hypersetup{hidelinks}\\oldtoc\\endgroup}
-")
-
- (org-startup-with-latex-preview t)
- (org-highlight-latex-and-related '(native))
- (org-preview-latex-default-process 'dvisvgm)
-
- :hook
- (org-mode . karthink/add-latex-in-org-mode-expansions)
-
- :config
- (plist-put org-format-latex-options :background "Transparent")
- (plist-put org-format-latex-options :scale 1.5)
- (plist-put org-format-latex-options :zoom 1.0)
-
- (dolist (package '(("" "longtable" nil)
-                    ("" "booktabs"  nil)
-                    ("" "listings"  nil)
-                    ("" "minted"    nil)
-                    ("" "color"     nil)
-                    ("" "cancel"    t)))
-   ;; ;FIXME: Some documentclasses load these themselves,
-   ;; ;causing all manner of conflicts.
-   ;; ("capitalize" "cleveref"  nil)
-   ;; (""           "amsmath"   t)
-   ;; (""           "amssymb"   t)
-   (cl-pushnew package org-latex-packages-alist
-               :test (lambda (a b) (equal (cadr a) (cadr b)))))
- (let* ((article-sections '(("\\section{%s}"       . "\\section*{%s}")
-                            ("\\subsection{%s}"    . "\\subsection*{%s}")
-                            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                            ("\\paragraph{%s}"     . "\\paragraph*{%s}")
-                            ("\\subparagraph{%s}"  . "\\subparagraph*{%s}"))))
-   (pcase-dolist (`(,name ,class-string . ,extra)
-                   `(("IEEEtran" "\\documentclass[conference]{IEEEtran}")
-                     ("article" "\\documentclass{scrartcl}")
-                     ("apa6" "\\documentclass{apa6}")
-                     ("report" "\\documentclass{scrreprt}")
-                     ("blank" "[NO-DEFAULT-PACKAGES]\n[NO-PACKAGES]\n[EXTRA]")
-                     ("beamer"
-                      ,(concat "\\documentclass[presentation]{beamer}\n"
-                               "[DEFAULT-PACKAGES]"
-                               "[PACKAGES]"
-                               "[EXTRA]\n"))
-                     ("book" "\\documentclass[twoside=false]{scrbook}"
-                      ("\\chapter{%s}" . "\\chapter*{%s}"))))
-     (setf (alist-get name org-latex-classes nil nil #'equal)
-           (append (list class-string) extra article-sections)))))
-
 (defun pspmacs/rename-beamer-export (export-command &rest r)
   "Intended as advice around `org-beamer-export-to-pdf'.
 
 Back up already existing files by the extensions
-\=.tex\= \=.aux\= \=.log\= \=.pdf\= by adding \=.bak\=.
+\\='.tex\\=' \\='.aux\\=' \\='.log\\=' \\='.pdf\\=' by adding \\='.bak\\='.
 
 Call the wrapped function. Catch any error thrown.
 
@@ -414,6 +449,13 @@ Restore backed up files."
   (cdlatex-reset-mode))
 
 (use-package pdf-tools
+  :init
+  (defun pspmacs/pdf-view--disable-incompatible ()
+    "Disable modes declared in variable `pdf-view-incompatible-modes'."
+    (interactive)
+    (dolist (incompat pdf-view-incompatible-modes)
+      (when (and (boundp incompat) incompat)
+        (funcall incompat -1))))
   :config
   ;; initialise
   (pdf-tools-install)
@@ -427,6 +469,7 @@ Restore backed up files."
   (pdf-view-display-size 'fit-width)
   (pdf-annot-activate-created-annotations t "automatically annotate highlights")
   :hook
+  (pdf-view-mode . pspmacs/pdf-view--disable-incompatible)
   (pdf-view-mode . auto-revert-mode))
 
 (use-package nov)
