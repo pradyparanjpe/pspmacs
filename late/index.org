@@ -33,46 +33,40 @@
 ** Package installation directory
 We want packages to be cloned/downloaded locally.
 #+begin_src emacs-lisp :tangle package-management.el
-  (customize-set-variable 'package-user-dir
-                          (expand-file-name "packages" local-emacs-dir))
+  (customize-set-variable
+   'package-user-dir (expand-file-name "packages" local-emacs-dir))
 #+end_src
 
 ** Package system
-- Load the built-in package-system.
-  Optionally, by customizing =pspmacs/packaging-directory= to a different location already in [[file:../early/config.el][early config]], other packaging systems such as  [[https://github.com/radian-software/straight.el][straight.el]] may be bootstrapped in a file name =<pspmacs/packaging-directory>/bootstrap.el=
+Load the built-in package-system.
+Optionally, by customizing =pspmacs/packaging-directory= to a different location already in [[file:../early/config.el][early config]], other packaging systems such as  [[https://github.com/radian-software/straight.el][straight.el]] may be bootstrapped in a file name =<pspmacs/packaging-directory>/bootstrap.el=
   The file for bootstrapping the packaging system is maintained separately.
 #+begin_src emacs-lisp :tangle  package-management.el
-  (load (expand-file-name "bootstrap.el" pspmacs/packaging-directory)
-        nil 'nomessage)
+  (load
+   (expand-file-name "bootstrap.el" pspmacs/packaging-directory) nil 'nomessage)
   (pspmacs/init-package-manager)
 #+end_src
 
 ** Initiate org mode with latest release
-- Emacs is shipped with a built-in org-mode. However, we shall use the latest release.
+Emacs is shipped with a built-in org-mode. However, we shall use the latest release.
   #+begin_src emacs-lisp :tangle package-management.el
     (use-package org
       :demand t)
   #+end_src
 
 ** Load-path
-- Add the modules to the top of the load-path so any user custom-modules take overwrite privileges.
+Add the modules to the top of the load-path so any user custom-modules take overwrite privileges.
 #+begin_src emacs-lisp :tangle package-management.el
-  (dolist (init-dir pspmacs/worktrees nil)
-    (let ((modular-modules (expand-file-name "modules/" init-dir)))
-      (when (file-directory-p modular-modules)
-        (setq load-path
-              (append (let ((load-path (list))
-                            (default-directory modular-modules))
-                        (add-to-list 'load-path modular-modules)
-                        ;;(normal-top-level-add-to-load-path '("."))
-                        (normal-top-level-add-subdirs-to-load-path)
-                        load-path)
-                      load-path)))))
+  (dolist (init-dir pspmacs/worktrees)
+    (when-let* ((default-directory (expand-file-name "modules/" init-dir))
+                ((file-directory-p default-directory)))
+      (add-to-list 'load-path default-directory)
+      (normal-top-level-add-subdirs-to-load-path)))
 #+end_src
 
 ** Inherit
 #+begin_src emacs-lisp :tangle package-management.el
-    (pspmacs/load-inherit)
+  (pspmacs/load-inherit)
 #+end_src
 
 * Definitions
@@ -114,7 +108,7 @@ We want packages to be cloned/downloaded locally.
 #+end_src
 
 ** Org mode auto-load
-- Expand faculties of [[file:../early/index.org::*Inherence][pspmacs/load-inherit]] to =org-babel-load-file=
+Expand faculties of [[file:../early/index.org::*Inherence][pspmacs/load-inherit]] to =org-babel-load-file=
  #+begin_src emacs-lisp :tangle definitions.el
    (defun pspmacs/load-suitable (fname &optional nag)
      "Load Emacs init file FNAME.
@@ -172,14 +166,14 @@ Pack of functions, variables, faces for pspmacs
 #+end_src
 
 ** Reset gc-cons
-- To hasten early-init, gc-cons was set to highest possible value in =early/definitions.el=
-  - Let's reduce it back to 2MB.
+To hasten early-init, gc-cons was set to highest possible value in =early/definitions.el=.
+Let's reduce it back to 2MB.
 #+begin_src emacs-lisp :tangle init.el
   (customize-set-variable 'gc-cons-threshold (* 2 1000 1000))
 #+end_src
 
 #+begin_note
-gcmh, which is a package presumed to be better at handling gc shall be loaded in the module [[file:../modules/pspmacs-interface-enhancement.org]]
+A package, [[file:~/.emacs.d/modules/pspmacs-interface-enhancement.org::*Garbage better collector stops hiccups][gcmh]], is presumed to be better at gc.
 #+end_note
 
 ** [[file:../modules/index.org][Load Modules]]
@@ -197,7 +191,7 @@ gcmh, which is a package presumed to be better at handling gc shall be loaded in
 #+end_src
 
 * Config
-- Allow for very late configurations.
+Allow for very late configurations.
 ** Headers
 #+begin_src emacs-lisp :tangle config.el
   ;;; late/config.el --- Final configurations -*- lexical-binding: t; -*-

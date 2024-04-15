@@ -66,6 +66,7 @@ The *script* will invoke =sudo= privileges whenever necessary.
     (require 'perseverance)
     (while t
       (troubleshoot))
+    ;; 😉
   #+end_src
 
 ** Requirements
@@ -78,9 +79,9 @@ Bare Minimal Dependencies: (the installation script tries to install them.)
 - =GNU/Emacs= (Well, obviously.)
   [[file:aid/build.org][Built]] with flags (at least):
 #+begin_src bash :tangle no
-  ./configure --prefix="${HOME}/.local" --with-pgtk --with-cairo --with-rsvg \
-              --with-gnutls=ifavailable --with-native-compilation --with-png \
-              --with-modules --with-mailutils --with-tree-sitter
+  ./configure --with-gnutls=ifavailable --with-native-compilation --with-cairo \
+      --with-pgtk --with-mailutils --with-png --with-tree-sitter --with-modules \
+      --with-rsvg
 #+end_src
 
 ** Update
@@ -96,6 +97,10 @@ GNU/Emacs may be built by maintaining its source-code at a suitable location, pr
 - If you also use [[https://pradyparanjpe.gitlab.io/sh_scripts][my sh-scripts]], [[file:aid/build.org]] lists commands to pull, clean, build and install GNU/Emacs v29 at the location =${HOME}/.local/bin/emacs=.
 
 * Inheritance principle
+:PROPERTIES:
+:CUSTOM_ID: inheritance
+:END:
+
 - The configuration is made with three *inherited work-trees*.
 - Each file in this configuration (other than some obvious documented exceptions) calls a function [[file:late/index.org::*Org mode auto-load][pspmacs/load-inherit]] at the end.
   This function ensures the following.
@@ -105,7 +110,7 @@ GNU/Emacs may be built by maintaining its source-code at a suitable location, pr
 - This is the default Emacs directory [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Find-Init.html][conventionally located]] at =~/.emacs.d=.
   However, *this* configuration is meant to occupy that location.
   Since this configuration is git-version-controlled, any changes in =~/.emacs.d= may cause commit-conflicts.
-  Hence, we try to put *nothing* more in this location than what it already contains.
+  Hence, we try to put *nothing* more at this location than what it already contains.
 - If not accessible at path =~/.emacs.d=, or =~/.config/emacs=, /this/ directory may be supplied as the =user-emacs-directory= while launching from the command-line using the flag =--init-directory=.
 
 *** Private: =pvt-emacs-dir=
@@ -187,7 +192,7 @@ GNU/Emacs may be built by maintaining its source-code at a suitable location, pr
 
 - Code
   - =late/init.el= loads the correct =org-mode= (latest version) and uses ~org-babel-load-file~ to load each file in =modules=.
-  - The customization file =<local-emacs-dir>/custom.el= will be loaded after =late/config.el= only if the value of `pspmacs/load-custom-file' is set to a non-nil.
+  - The customization file =<local-emacs-dir>/custom.el= will be loaded after =late/config.el= only if the value of [[file:early/index.org::*Custom file][pspmacs/load-custom-file]] is set to a non-nil.
 #+begin_src emacs-lisp :tangle init.el
   ;;; init.el --- Late Emacs init -*- lexical-binding: t; no-byte-compile: t; -*-
   ;;; late definitions init configs
@@ -213,7 +218,7 @@ GNU/Emacs may be built by maintaining its source-code at a suitable location, pr
 
 * .gitignore
 - Remember to add =local.d/= to =<pvt-emacs-dir>/.gitignore=, since it may be used as =local-emacs-dir=.
-- As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in =pspack/pspmacs/xdg.el= to point at =xdg/emacs-cache-directory=.
+- As a good practice, packages should store cache files at the location returned by the function ~(locate-user-emacs-file NEW-NAME)~, which has been overloaded in [[file:pspack/pspmacs/xdg.org::*All cached files should be saved in =XDG_CACHE_HOME=][pspack/pspmacs/xdg.el]] to point at =xdg/emacs-cache-directory=.
   - However, if they store them at the hard-coded location =user-emacs-home/NEW-NAME=, =NEW-NAME= needs to be added to =pspmacs/.gitignore=.
     I shall do so whenever I notice such incidences either myself or through an issue.
 

@@ -1,4 +1,4 @@
-﻿;;; late/package-management.el --- initiate package manager -*- lexical-binding: t; -*-
+;;; late/package-management.el --- initiate package manager -*- lexical-binding: t; -*-
 
 ;; Copyright © 2023-2024  Pradyumna Swanand Paranjape
 
@@ -21,26 +21,20 @@
 ;; Commentary: Set packate manager system, Also, initiate latest org mode.:
 ;; Code:
 
-(customize-set-variable 'package-user-dir
-                        (expand-file-name "packages" local-emacs-dir))
+(customize-set-variable
+ 'package-user-dir (expand-file-name "packages" local-emacs-dir))
 
-(load (expand-file-name "bootstrap.el" pspmacs/packaging-directory)
-      nil 'nomessage)
+(load
+ (expand-file-name "bootstrap.el" pspmacs/packaging-directory) nil 'nomessage)
 (pspmacs/init-package-manager)
 
 (use-package org
   :demand t)
 
-(dolist (init-dir pspmacs/worktrees nil)
-  (let ((modular-modules (expand-file-name "modules/" init-dir)))
-    (when (file-directory-p modular-modules)
-      (setq load-path
-            (append (let ((load-path (list))
-                          (default-directory modular-modules))
-                      (add-to-list 'load-path modular-modules)
-                      ;;(normal-top-level-add-to-load-path '("."))
-                      (normal-top-level-add-subdirs-to-load-path)
-                      load-path)
-                    load-path)))))
+(dolist (init-dir pspmacs/worktrees)
+  (when-let* ((default-directory (expand-file-name "modules/" init-dir))
+              ((file-directory-p default-directory)))
+    (add-to-list 'load-path default-directory)
+    (normal-top-level-add-subdirs-to-load-path)))
 
 (pspmacs/load-inherit)

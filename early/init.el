@@ -1,7 +1,7 @@
 ;;; early/init.el --- early init -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(if (and pvt-emacs-dir (file-exists-p pvt-emacs-dir))
-    (add-to-list 'load-path pvt-emacs-dir))
+(when (and pvt-emacs-dir (file-exists-p pvt-emacs-dir))
+  (add-to-list 'load-path pvt-emacs-dir))
 (add-to-list 'load-path local-emacs-dir)
 
 (load-theme 'deeper-blue t)

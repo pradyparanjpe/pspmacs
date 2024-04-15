@@ -4,33 +4,33 @@
 #+auto_tangle: t
 
 * Prune
-- Define early variables, functions, etc.
-  - This file does not inherit private/local prune.el
+Define early variables, functions, etc.
+This file does *NOT* inherit private/local =prune.el=.
 ** Headers
 #+begin_src emacs-lisp :tangle prune.el
   ;;; early/prune.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 #+end_src
 
 ** Grabage Collection
-- Increase the GC threshold for faster startup. The default is 800 kilobytes.
+Increase the GC threshold for faster startup. The default is 800 kilobytes.
 #+begin_src emacs-lisp :tangle prune.el
   (customize-set-variable 'gc-cons-threshold most-positive-fixnum)
   (customize-set-variable 'gc-cons-percentage 0.6)
 #+end_src
 
 ** package management
-- After GNU/Emacs v29, =use-package= built-in.
-  An add-on '[[https://github.com/slotThe/vc-use-package][vc-use-package]]' extends use-package to install packages from version-control repository.
-  A future release of Emacs [[https://git.savannah.gnu.org/cgit/emacs.git/commit/?id=2ce279680bf9c1964e98e2aa48a03d6675c386fe][shall]] contain this add-on as a built-in.
-  Hence, [[https://github.com/radian-software/straight.el][straight.el]] has become unnecessary.
-  Following code was added to allow hold back built-in package-manager allowing =straight.el=.
-  Nevertheless, they are maintained for better control by [[file:../packaging/bootstrap.org][package-system-bootstrap]].
+After GNU/Emacs v29, =use-package= built-in.
+An add-on '[[https://github.com/slotThe/vc-use-package][vc-use-package]]' extends use-package to install packages from version-control repository.
+A future release of Emacs [[https://git.savannah.gnu.org/cgit/emacs.git/commit/?id=2ce279680bf9c1964e98e2aa48a03d6675c386fe][shall]] contain this add-on as a built-in.
+Hence, [[https://github.com/radian-software/straight.el][straight.el]] has become unnecessary.
+Following code was added to allow hold back built-in package-manager allowing =straight.el=.
+Nevertheless, they are maintained for better control by [[file:../packaging/bootstrap.org][package-system-bootstrap]].
 #+begin_src emacs-lisp :tangle prune.el
   (customize-set-variable 'package-enable-at-startup nil)
   (customize-set-variable 'package-quickstart nil)
 #+end_src
 
-** Unnecessary features.
+** Unnecessary features
 #+begin_src emacs-lisp :tangle prune.el
   (customize-set-variable 'inhibit-splash-screen t)
   (customize-set-variable 'use-file-dialog nil)
@@ -38,20 +38,21 @@
   (customize-set-variable 'tab-bar-close-button-show nil)
   (customize-set-variable 'tab-line-close-button-show nil)
   (customize-set-variable 'native-comp-async-report-warnings-errors nil)
-  (customize-set-variable 'byte-compile-warnings
-                          '(not free-vars unresolved noruntime lexical make-local))
+  (customize-set-variable
+   'byte-compile-warnings
+   '(not free-vars unresolved noruntime lexical make-local))
 #+end_src
 
 ** UI configuration
-- Remove some unnecessary UI elements temporarily
+Remove some unnecessary UI elements temporarily
 #+begin_src emacs-lisp :tangle prune.el
   (dolist (prune-mode
-           '(menu-bar-mode tool-bar-mode scroll-bar-mode blink-cursor-mode) nil)
-    (if (fboundp prune-mode) (funcall prune-mode -1)))
+           '(menu-bar-mode tool-bar-mode scroll-bar-mode blink-cursor-mode))
+    (when (fboundp prune-mode) (funcall prune-mode -1)))
 #+end_src
 
 ** Source compilation
-- Prefer loading newest compiled =.el= file
+Prefer loading newest compiled =.el= file
 #+begin_src emacs-lisp :tangle prune.el
   (customize-set-variable 'load-prefer-newer t)
 #+end_src
@@ -63,20 +64,20 @@
 #+end_src
 
 ** Inheritance / superceding order
-- Get values from environment variables.
+Get values from environment variables.
 *** Private, version controlled
 If envrionment variables are not set, ignore
 #+begin_src emacs-lisp :tangle definitions.el
   (defvar pvt-emacs-dir
     (condition-case err (file-name-as-directory
-                         (if (getenv "PVT_EMACS_HOME")
-                             (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
+                         (when (getenv "PVT_EMACS_HOME")
+                           (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
       ((error)
        (unless (string= (format "%s" err) "(wrong-type-argument stringp nil)")
          (throw 'uncaught err))))
-    "Private version controlled
+    "Private version controlled.
 
-  privately synchronized configuration directory")
+  Privately synchronized configuration directory.")
 #+end_src
 
 *** Local, machine-specific
@@ -86,53 +87,42 @@ If environment variables are not set, use:
   #+begin_src emacs-lisp :tangle definitions.el
     (defvar local-emacs-dir
       (file-name-as-directory
-       (if (getenv "LOCAL_EMACS_HOME")
-           (file-name-as-directory (getenv "LOCAL_EMACS_HOME"))
-         (if pvt-emacs-dir
-             (expand-file-name "local.d" pvt-emacs-dir)
-           (expand-file-name "local.d" user-emacs-directory))))
-      "Local, machine-specific, un-synchronized configuration directory")
-  #+end_src
+       (or (getenv "LOCAL_EMACS_HOME")
+           (expand-file-name "local.d" (or pvt-emacs-dir user-emacs-directory))))
+      "Local, machine-specific, un-synchronized configuration directory.")
+      #+end_src
 
 *** Inheritance list
 #+begin_src emacs-lisp :tangle definitions.el
-  (defvar pspmacs/user-worktrees
-    (if pvt-emacs-dir
-        `(,pvt-emacs-dir ,local-emacs-dir)
-      `(,local-emacs-dir))
-    "user's worktrees to load")
+  (defvar pspmacs/user-worktrees (delq 'nil (list pvt-emacs-dir local-emacs-dir))
+    "User's worktrees to load.")
 
   (defvar pspmacs/worktrees
-    (if pvt-emacs-dir
-        `(,user-emacs-directory ,pvt-emacs-dir ,local-emacs-dir)
-      `(,user-emacs-directory ,local-emacs-dir))
-    "worktrees to load")
+    (delq 'nil (list user-emacs-directory pvt-emacs-dir local-emacs-dir))
+    "Worktrees to load.")
 #+end_src
 
 ** Custom file
-- The custom file is found in the =local-emacs-dir=. It contains
- customizations of variables and faces that are made by the user through the
- Customization UI, as well as any customizations made by packages.")
+The [[elisp:(find-file (expand-file-name "custom.el" local-emacs-dir))][<local-emacs-dir>/custom.el]] file contains customization of variables and faces that are made by the user through the Customization UI, as well as any customization made by packages.
 #+begin_src emacs-lisp :tangle definitions.el
-  (defvar pspmacs/load-custom-file t
-    "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'")
+  (defcustom pspmacs/load-custom-file t
+    "When non-nil, load `custom.el' after `<user-emacs-config>/late/config.el'.")
 #+end_src
 
 ** Inherence
-- Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
-  - Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads org-mode files.
+Temporarily, while org-mode is not yet loaded, this function is used for inheritance.
+Later, this function is overwritten by a [[file:../late/index.org::*Org mode auto-load][generalized version]] that also loads org-mode files.
 #+begin_src emacs-lisp :tangle definitions.el
   (defun pspmacs/load-suitable (fname &optional nag)
     "Load emacs init file FNAME.
 
-  If FNAME is found, load it and return.
-  If not found and if NAG is `t', throw error. Default: return.
+  If FNAME is found, load it.
+  If not found and only if NAG is non-nil, throw error.
 
   This function is overwritten in late/definitions.el after the correct
   org mode is loaded to include org-babel-load-file method"
-    (if (file-readable-p fname)
-        (load fname nil 'nomessage)
-      (if nag (user-error (format "%s not found." fname)))))
+    (if (file-readable-p fname) (load fname nil 'nomessage)
+      (when nag (user-error (format "%s not found." fname)))))
 
   (defun pspmacs/load-inherit (&optional fname)
     "Inherit all equivalent files.
@@ -144,16 +134,13 @@ If environment variables are not set, use:
   stem of `load-file-name' is attempted.
 
   Init files are loaded using the function `pspmacs/load-suitable'."
-    (let ((name-branch
-           (file-relative-name
-            (or fname load-file-name) user-emacs-directory)))
-      (dolist (config-dir pspmacs/user-worktrees nil)
-        (let ((modular-init (expand-file-name
-                             name-branch config-dir)))
-          (condition-case err
-              (pspmacs/load-suitable modular-init)
-            (t (message
-                "Error while loading %s: %s" modular-init err)))))))
+    (dolist (config-dir pspmacs/user-worktrees)
+      (let ((modular-init
+             (expand-file-name
+              (file-relative-name (or fname load-file-name) user-emacs-directory)
+              config-dir)))
+        (condition-case err (pspmacs/load-suitable modular-init)
+          (t (message "Error while loading %s: %s" modular-init err))))))
 #+end_src
 
 ** Inherit
@@ -162,17 +149,17 @@ If environment variables are not set, use:
 #+end_src
 
 * Init
-Initialize configurations
-** headers
+Initialize configurations.
+** Headers
 #+begin_src emacs-lisp :tangle init.el
   ;;; early/init.el --- early init -*- lexical-binding: t; no-byte-compile: t; -*-
 #+end_src
 
 ** Load Path
-- Ensure the ={local,pvt}-emacs-directory= is on the load path.
+Ensure the ={local,pvt}-emacs-directory= is on the load path.
 #+begin_src emacs-lisp :tangle init.el
-  (if (and pvt-emacs-dir (file-exists-p pvt-emacs-dir))
-      (add-to-list 'load-path pvt-emacs-dir))
+  (when (and pvt-emacs-dir (file-exists-p pvt-emacs-dir))
+    (add-to-list 'load-path pvt-emacs-dir))
   (add-to-list 'load-path local-emacs-dir)
 #+end_src
 
@@ -209,8 +196,8 @@ Initialize configurations
 #+end_src
 
 ** Package management
-- User may overwrite the =pspmacs/packaging-directory= in private or local init-tree to customize packaging system and decide how packages are to be initiated.
-- These values are set in the =early-init=, but take effect as the /first step/ of =init.el=.
+User may overwrite the =pspmacs/packaging-directory= in private or local init-tree to customize packaging system and decide how packages are to be initiated.
+These values are set in the =early-init=, but take effect as the /first step/ of =init.el=.
 #+begin_src emacs-lisp :tangle init.el
   (setq pspmacs/packaging-directory
         (expand-file-name "packaging" user-emacs-directory))
@@ -229,7 +216,7 @@ Initialize configurations
 * Config
 ** Headers
 #+begin_src emacs-lisp :tangle config.el
-;;; early/config.el --- Early config for speedy launch -*- lexical-binding: t; no-byte-compile: t; -*-
+  ;;; early/config.el --- Early config for speedy launch -*- lexical-binding: t; no-byte-compile: t; -*-
 #+end_src
 
 ** Inherit

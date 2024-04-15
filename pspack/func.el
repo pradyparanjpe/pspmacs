@@ -14,33 +14,30 @@ Return STDOUT as a string
 Copied and maybe modufied form module pspmacs-ci-cd."
     (message "Executing: %s args: %s" program args)
     (with-temp-buffer
-      (let ((exit-code (apply 'call-process
-                              `(,program nil ,(current-buffer) nil ,@args))))
-        (unless (eq 0 exit-code)
-          (when on-fail
-            (switch-to-buffer (current-buffer))
-            (eval on-fail)))
+      (let ((exit-code
+             (apply #'call-process program nil (current-buffer) nil args)))
+        (when (and (not (eq 0 exit-code)) on-fail)
+          (switch-to-buffer (current-buffer))
+          (eval on-fail))
         (replace-regexp-in-string "\n$" "" (buffer-string)))))
 
 (defun pspmacs/git-rebase ()
   "Synchronize by rebasing locally cloned worktree/git on remote git."
   (interactive)
   (let ((default-directory user-emacs-directory)
-        (_ (pspmacs--call-shell "git" '("fetch" "origin")))
+        ((pspmacs--call-shell "git" '("fetch" "origin")))
         (behind-by
          (string-to-number
           (pspmacs--call-shell
            "git" '("rev-list" "--count" "--right-only"
                    "HEAD...@{upstream}")))))
-    (pspmacs--call-shell "git" '("rebase"))
-    (if (> behind-by 0)
-        (progn
-          (when (string= "Restart" (completing-read
-                                    "Restart for settings to take effect."
-                                    '("Restart" "I'll do it myself")))
-            (restart-emacs))
-          (message "Remember to restart!"))
-      (message "👍"))))
+    (if (= behind-by 0) (message "👍")
+      (pspmacs--call-shell "git" '("rebase"))
+      (when (string= "Restart" (completing-read
+                                "Restart for settings to take effect."
+                                '("Restart" "I'll do it myself")))
+        (restart-emacs))
+      (message "Remember to restart!"))))
 
 (defun pspmacs/fill-cap-color (perc &optional bright invert)
   "Color based on filled capacity percentage PERC.
@@ -132,17 +129,15 @@ Load prettify-symbols from Each of SUB-MODES."
 
 Load modules as defined in MODULES-ORDER.
 Defaults to the variable pspmacs/modules-order"
-  (let* ((modules-order (or modules-order pspmacs/modules-order)))
-    (seq-doseq (autofile modules-order nil)
-      (catch 'load-success
-        (dolist (work-tree pspmacs/worktrees nil)
-          (let* ((lit-module
-                  (expand-file-name
-                   (format "modules/pspmacs-%s.org" autofile) work-tree))
-                 (found (when (file-readable-p lit-module)
-                          (pspmacs/load-suitable lit-module)
-                          lit-module)))
-            (when found (throw 'load-success lit-module))))))))
+  (dolist (autofile (or modules-order pspmacs/modules-order))
+    (catch 'load-success
+      (dolist (work-tree pspmacs/worktrees)
+        (let ((lit-module
+               (expand-file-name
+                (format "modules/pspmacs-%s.org" autofile) work-tree)))
+          (when (file-readable-p lit-module)
+            (pspmacs/load-suitable lit-module)
+            (throw 'load-success lit-module)))))))
 
 (defun pspmacs/byte-compile-worktrees (&optional worktree)
   "Byte-compile directory recursively.
@@ -150,19 +145,18 @@ Defaults to the variable pspmacs/modules-order"
 Target: WORKTREE.
 Default worktree is global (`user-emacs-directory)
 This may be disabled by setting `pspmacs/byte-worktree' to nil"
-  (unless (and (boundp 'no-native-compile) no-native-compile)
-    (when pspmacs/byte-worktree
-      (let ((worktree (or worktree user-emacs-directory)))
-        (byte-recompile-directory worktree 0)))))
+  (when (and (not (boundp 'no-native-compile))
+             (not no-native-compile)
+             pspmacs/byte-worktree)
+    (byte-recompile-directory (or worktree user-emacs-directory) 0)))
 
 (defun pspmacs/inferior-interpreter (executable)
   "Open an inferior interpreter in split window.
 
 Open EXECUTABLE interpreter in an inferior windows."
   (interactive)
-  (let ((interpreter-window (split-window-below)))
-    (select-window interpreter-window)
-    (call-interactively executable)))
+  (select-window (split-window-below))
+  (call-interactively executable))
 
 (defun pspmacs/destroy-buffer-and-window (&optional target-buffer)
   "Destroy window and buffer after some process is done.
@@ -170,17 +164,14 @@ Open EXECUTABLE interpreter in an inferior windows."
 If TARGET-BUFFER is supplied, it and its window is destroyed.
 Else, current buffer and window is destroyed.
 If window is the only window, it is spared"
-  (let* ((used-buffer (or target-buffer (current-buffer)))
-         (used-window (get-buffer-window used-buffer)))
-    (when (not (one-window-p))
-      (delete-window used-window))
+  (let ((used-buffer (or target-buffer (current-buffer))))
+    (when (not (one-window-p)) (delete-window (get-buffer-window used-buffer)))
     (kill-buffer used-buffer)))
 
 (defun pspmacs/switch-to-minibuffer ()
   "Switch to minibuffer window."
   (interactive)
-  (if (active-minibuffer-window)
-      (select-window (active-minibuffer-window))
+  (if (active-minibuffer-window) (select-window (active-minibuffer-window))
     (message "Minibuffer is not active")))
 
 (defun pspmacs/kill-other-buffers ()
@@ -200,8 +191,7 @@ If window is the only window, it is spared"
 Add each element from the list of ELEMENTS to LIST-VAR.
 APPEND and COMPARE-FN are passed to `add-to-list'
 Return value is the new value of LIST-VAR."
-  (unless (listp elements)
-    (user-error "ELEMENTS must be list"))
+  (unless (listp elements) (user-error "ELEMENTS must be list"))
   (dolist (elem elements)
     (add-to-list list-var elem append compare-fn))
   (symbol-value list-var))
@@ -210,10 +200,8 @@ Return value is the new value of LIST-VAR."
   "Run CALLBACK unless major mode is any of MAJ-MODES.
 
 If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
-  (let ((maj-modes-list
-         (if (listp maj-modes) maj-modes `(,maj-modes))))
-    (unless (member major-mode maj-modes-list)
-      (call-interactively callback))))
+  (let ((maj-modes-list (if (listp maj-modes) maj-modes `(,maj-modes))))
+    (unless (member major-mode maj-modes-list) (call-interactively callback))))
 
 (defun pspmacs/run-after-enable-theme-hook (&rest _args)
   "Run `after-enable-theme-hook'."
@@ -261,19 +249,17 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
       (eq (char-after (car completion-in-region--data)) ?:)))
 
 (defun pspmacs/setup-elisp ()
-  (setq-local completion-at-point-functions
-              `(,(cape-capf-super
-                  (cape-capf-predicate
-                   #'elisp-completion-at-point
-                   #'pspmacs/ignore-elisp-keywords)
-                  #'cape-dabbrev)
-                cape-file)
-              cape-dabbrev-min-length 5))
+  (setq-local
+   completion-at-point-functions
+   (list (cape-capf-super
+          (cape-capf-predicate #'elisp-completion-at-point
+                               #'pspmacs/ignore-elisp-keywords)
+          #'cape-dabbrev)
+         #'cape-file)
+   cape-dabbrev-min-length 5))
 
 (defun pspmacs/pytest-use-venv (orig-fun &rest args)
-  (if-let ((python-pytest-executable (executable-find "pytest")))
-      (apply orig-fun args)
-    (apply orig-fun args)))
+  (apply orig-fun args))
 
 (defun pspmacs/prefer-interpreter-ipython ()
   "Use ipython as the python interpreter if available.
@@ -320,29 +306,28 @@ Copy TEXT to wayland wl-copy"
   (process-send-eof wl-copy-process))
 
 (defun wl-paste ()
-  "Paste from wayland clipboard."
-  (if (and wl-copy-process (process-live-p wl-copy-process))
-      nil ; should return nil if we're the current paste owner
+  "Paste from wayland clipboard.
+
+Return nil if we're the current paste owner."
+  (unless (and wl-copy-process (process-live-p wl-copy-process))
     (shell-command-to-string "wl-paste -n | tr -d \r")))
 
 (defun pspmacs/drop-bom ()
-  "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer
+  "Drop Byte Order Mark (BOM) that may get tangled at the beginning of buffer.
 
 Suggestion: add to `org-babel-post-tangle-hook'"
   (interactive)
-  (let ((bom '(?\ufeff ?\ufffe ?\uffff))
-        (current-point (point)))
+  (save-excursion
     (goto-char (point-min))
-    (when (member (char-after 1) bom)
+    (when (member (char-after 1) '(?\ufeff ?\ufffe ?\uffff))
       (delete-char 1)
-      (message "BOM deleted"))
-    (goto-char current-point)))
+      (message "BOM deleted"))))
 
 (defun pspmacs/project-to-publish-alist
     (org-root html-root org-templates)
-  "Set root locations for source ORG-ROOT and target HTML-ROOT
+  "Set root locations for source ORG-ROOT and target HTML-ROOT.
 
-to publish orgmode files to html."
+To publish orgmode files to HTML."
   (interactive
    (let (org-root html-root org-templates)
      (setq org-root (read-directory-name
@@ -395,17 +380,14 @@ to publish orgmode files to html."
 (defun pspmacs/org-paste-as-link ()
   "Paste contents of clipboard as link."
   (interactive)
-  (let* ((link-loc (current-kill 0))
-         (desc (read-string "Description:\t" link-loc)))
-    (org-insert-link nil link-loc desc)))
+  (org-insert-link
+   nil (current-kill 0) (read-string "Description:\t" link-loc)))
 
 (defun pspmacs/org-copy-link-at-point ()
   "Copy link if thing at point as link"
   (interactive)
-  (let* ((context (org-element-context))
-         (type (org-element-type context))
-         )
-    (when (eq type 'link)
+  (let* ((context (org-element-context)))
+    (when (eq (org-element-type context) 'link)
       (kill-new (format "%s:%s"
                         (org-element-property :type context)
                         (org-element-property :path context))))))
@@ -444,15 +426,13 @@ HEADING-COOKIE-RE: regular expression that recognises cookies"
     (goto-char (line-end-position))
     (while (re-search-backward heading-cookie-re (line-beginning-position) t)
       (replace-match "" nil nil)))
-  (if (string= (org-get-todo-state) "TODO")
-      (org-todo "")))
+  (when (string= (org-get-todo-state) "TODO") (org-todo "")))
 
 (defun pspmacs--org-push-cookie ()
   "PRIVATE: used by `pspmacs/org-put-checkboxes'."
   (end-of-line)
   (insert " [/]")
-  (unless (org-get-todo-state)
-    (org-todo "TODO")))
+  (unless (org-get-todo-state) (org-todo "TODO")))
 
 (defun pspmacs/org-map-plain-list (func)
   "Walk down the current heading to locate plain lists and map.
@@ -460,10 +440,8 @@ HEADING-COOKIE-RE: regular expression that recognises cookies"
 Allpy FUNC to all lines which qualify to be list items `org-at-item-p'"
   (save-excursion
     (forward-line 1)
-    (while (and (not (eobp))
-                (not (org-at-heading-p)))
-      (when (org-at-item-p)
-        (funcall func))
+    (while (and (not (eobp)) (not (org-at-heading-p)))
+      (when (org-at-item-p) (funcall func))
       (forward-line 1))))
 
 (defun pspmacs/org-put-checkboxes (&optional negate called-recursively)
@@ -479,25 +457,20 @@ only at the end of recursion by the caller function.
 "
   (interactive)
   (save-excursion
-    (let
-        ((line-text (buffer-substring-no-properties
-                     (line-beginning-position)
-                     (line-end-position)))
-         (heading-cookie-re ".+\\(\\[[0-9]*/[0-9]*\\]\\)$"))
+    (let ((line-text (buffer-substring-no-properties
+                      (line-beginning-position)
+                      (line-end-position)))
+          (heading-cookie-re ".+\\(\\[[0-9]*/[0-9]*\\]\\)$"))
       (cond ((org-at-heading-p)
              ;; Handle Headings
              (if (string-match-p heading-cookie-re line-text)
-                 (if negate
-                     (pspmacs--org-pop-cookie heading-cookie-re))
+                 (if negate (pspmacs--org-pop-cookie heading-cookie-re))
                (pspmacs--org-push-cookie))
-             (unless called-recursively
-               (org-update-statistics-cookies t)))
+             (unless called-recursively (org-update-statistics-cookies t)))
             ((org-at-item-p)
              ;; Handle Lists
-             (when (or (null (or (org-at-item-checkbox-p)
-                                 negate))
-                       (and (org-at-item-checkbox-p)
-                            negate))
+             (when (or (null (or (org-at-item-checkbox-p) negate))
+                       (and (org-at-item-checkbox-p) negate))
                (org-toggle-checkbox '(4))))))))
 
 (defun pspmacs/org-put-checkboxes-recursively (&optional negate)
@@ -513,8 +486,7 @@ only at the end of recursion by the caller function.
        (pspmacs/org-put-checkboxes negate t)
        (org-map-entries
         (pspmacs/org-map-plain-list
-         (lambda ()
-           (pspmacs/org-put-checkboxes negate t)))
+         (lambda () (pspmacs/org-put-checkboxes negate t)))
         nil
         'tree)))
     (org-update-statistics-cookies nil)))
@@ -522,7 +494,7 @@ only at the end of recursion by the caller function.
 (defun pspmacs/next-slide (buffer-name heading)
   "Run with /=next-slide-please/=
 
- Added to abnormal hook `org-present-after-navigate-functions'"
+Added to abnormal hook `org-present-after-navigate-functions'"
   (org-overview)
   (org-show-entry)
   (org-show-children))
@@ -591,8 +563,7 @@ and `pspmacs/preset-orig-vars' if they exists."
 (defun pspmacs/serve-or-run (command)
   "Run after the program code file is loaded"
   (interactive
-   `(,(read-string "serve-or-run-command: "
-                   pspmacs/serve-or-run-command)))
+   `(,(read-string "serve-or-run-command: " pspmacs/serve-or-run-command)))
   (run-hooks 'pspmacs/serve-or-run-hook)
   (unless (string= command "")
     (message "Starting command %s" command)
@@ -704,7 +675,7 @@ Maintain a record at `pspmacs/served-dirs'."
     (if (file-remote-p default-directory)
         (message "Can't serve remote locations.")
       (add-to-list 'pspmacs/served-dirs
-                   `(,port . ,(make-process
+                   (cons port (make-process
                                :name process-name
                                :buffer buffer
                                :command
@@ -719,20 +690,19 @@ Maintain a record at `pspmacs/served-dirs'."
 
 PORT identifies the directory."
   (interactive
-   (list (when pspmacs/served-dirs
-           (string-to-number
-            (nth
-             0 (split-string
-                (completing-read
-                 "Stop server on port:\t"
-                 (mapcar (lambda (x)
-                           (format "%d:\t%s" (car x)
-                                   (nth 4 (process-command (cdr x)))))
-                         pspmacs/served-dirs)
-                 nil t)
-                "\t"))))))
-  (when port
-    (interrupt-process (alist-get port pspmacs/served-dirs))))
+   (list
+    (when pspmacs/served-dirs
+      (string-to-number
+       (nth 0 (split-string (completing-read
+                             "Stop server on port:\t"
+                             (mapcar (lambda (x)
+                                       (format "%d:\t%s" (car x)
+                                               (nth 4 (process-command
+                                                       (cdr x)))))
+                                     pspmacs/served-dirs)
+                             nil t)
+                            "\t"))))))
+  (when port (interrupt-process (alist-get port pspmacs/served-dirs))))
 
 (defun pspmacs/stop-serve-all ()
   "Stop all temporary directories being served by `pspmacs/temp-serve'"

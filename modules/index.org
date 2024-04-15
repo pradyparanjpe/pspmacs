@@ -1,26 +1,85 @@
 #+title: modules
-#+PROPERTY: header-args :tangle pspmacs-os.el :mkdirp t :results no :eval no
+#+PROPERTY: header-args :tangle load-order.el :mkdirp t :results no :eval no
 #+auto_tangle: t
 
 * Modules
-- Packages belonging to same category are placed in a module in a tangled org-mode file in modules directory.
-  - Categories are prefixed with =pspmacs-= and named in =lower-case-kebab-case=.
+Packages belonging to same category are placed in a module in a tangled org-mode file for that category in this modules directory.
+Categories are prefixed with =pspmacs-= and named in =lower-case-kebab-case=.
 #+begin_example
 pspmacs-module-category.org
 #+end_example
-- Wherever available, modular arrangement of packages is according to their level-1 headings in [[https://github.com/emacs-tw/awesome-emacs][emacs-tw/awesome-emacs]].
-  - As an exception:
-    1. Programming languages (python, R, ...) are maintained as separate modules.
-    2. Markup languages (yaml, html, ...) are maintained in =pspmacs-markup.org=.
-- Modules are loaded using the function [[file:../late/index.org::*Org mode auto-load][pspmacs/load-inherit]].
+
+Wherever available, modular arrangement of packages is according to their level-1 headings in [[https://github.com/emacs-tw/awesome-emacs][emacs-tw/awesome-emacs]].
+As an exception:
+- Programming languages (python, R, ...) are maintained as separate modules.
+- Markup languages (yaml, html, ...) are maintained in =pspmacs-markup.org=.
+
+Modules are loaded using the function [[file:../late/index.org::*Org mode auto-load][pspmacs/load-inherit]].
 
 * Order of loading modules
-- Order of loaded modules follows [[file:load-order.org][modules/load-order.yml]].
-- Objects with arbitrary keys containing list of =<module-category>=
-  - lists from objects are loaded according to sort-order of object-keys.
-- Lists defined in superseding files *replace*
-  - To load additional modules, add them with a *new* object key in superseding files.
-- Work-trees are scanned sequentially =user-emacs-directory=, =pvt-emacs-dir=, =local-emacs-dir=.
-  - Only the earliest occurrence of module =<work-tree>/modules/pspmacs-<module-category>.org= is loaded.
-  - Modules in =user-emacs-directory= obviously load those from the other work-trees using ~pspmacs/load-inherit~.
-  - If not found, error is *NOT* thrown.
+Order of loaded modules is defined in =modules/load-order.el=, which is tangled from the source block below..
+The file is an alist of groups (list) of modules whose car is the load order and cdr is list of module name suffixes (=<module-category>=).
+Groups are sorted by car before loading the modules.
+Thus, modules associated with =0= are loaded those associated with =1=.
+Cars for sorting have been intentionally spaced out as multiples of 10.
+Groups defined in superseding files *replace* the existing entry in the groups alist.
+- To load additional modules, add them with a *new* groups cons in a suitable superseding worktree file. Hence,
+  - To replace a group of modules to be loaded, redefine the cdr of the group identified by that car.
+  - To prevent a group from begin loaded, redefined it as an empty list.
+
+Work-trees are scanned sequentially =user-emacs-directory=, =pvt-emacs-dir=, =local-emacs-dir=.
+Only the earliest occurrence of module =<work-tree>/modules/pspmacs-<module-category>.org= is loaded.
+Modules in =user-emacs-directory= obviously load those from the other work-trees using ~pspmacs/load-inherit~.
+If not found, error is *NOT* thrown.
+
+* Module groups
+** 10: Interface
+- [[file:pspmacs-interface-enhancement.org][interface-enhancement]]
+- [[file:pspmacs-keys-cheat-sheet.org][keys-cheat-sheet]]
+- [[file:pspmacs-theme.org][theme]]
+
+** 20: Editing
+- [[file:pspmacs-editing-enhancement.org][editing-enhancement]]
+- [[file:pspmacs-note.org][note]]
+
+** 30: project / file-system / Operating system
+- [[file:pspmacs-project-management.org][project-management]]
+- [[file:pspmacs-integration.org][integration]]
+- [[file:pspmacs-version-control.org][version-control]]
+
+** 40: Programming
+- [[file:pspmacs-programming.org][programming]]
+- [[file:pspmacs-python.org][python]]
+- [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
+- [[file:pspmacs-ess-R.org][ess-R]]
+- [[file:pspmacs-rustess-R.org][rust]]
+- [[file:pspmacs-javascript.org][javascript]]
+- [[file:pspmacs-lua.org][lua]]
+- [[file:pspmacs-conf-format.org][conf-format]]
+- [[file:pspmacs-markup.org][markup]]
+- [[file:pspmacs-latex.org][latex]]
+
+** 50: Networking / Internet / outreach
+- [[file:pspmacs-internet.org][internet]]
+
+** 60: multimedia
+- [[file:pspmacs-multimedia.org][multimedia]]
+
+* Alist export
+#+begin_src emacs-lisp
+  '((10 . (interface-enhancement keys-cheat-sheet theme))
+    (20 . (editing-enhancement data-vis note))
+    (30 . (project-management integration version-control))
+    (40 . (programming
+           python
+           emacs-lisp
+           ess-R
+           rust
+           javascript
+           lua
+           conf-format
+           markup
+           latex))
+    (50 . (internet))
+    (60 . (multimedia)))
+#+end_src

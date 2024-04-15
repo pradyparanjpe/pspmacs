@@ -154,17 +154,19 @@ Organize command-line calls.
   "
       help_msg="${usage}
 
-      DESCRIPTION:
+      DESCRIPTION
+      ===========
       Set up PSPMacs for ${ostype}
 
-      TIP:
-      Check documentation: https://pradyparanjpe.gitlab.io/pspmacs/index.html to
-      decide if following environment variables need to be set.
-      Current values:
+      TIP
+      ---
+      To decide if following environment variables need to be set, read
+      https://pradyparanjpe.gitlab.io/pspmacs/index.html#inheritance.
       LOCAL_EMACS_HOME='${LOCAL_EMACS_HOME:-<BLANK>}'
       PVT_EMACS_HOME='${PVT_EMACS_HOME:-<BLANK>}'
 
-      Optional Arguments:
+      Optional Arguments
+      ------------------
       -h\t\t\tprint usage message and exit
       --help\t\tprint this message and exit
       -d|--no-deps\tDon't install dependencies (skip to the next PART).
@@ -277,6 +279,7 @@ Organize command-line calls.
                   fi
                   ;;
               ,*)
+                  printf "[CMD]  Bad option '%s'\n" "${1}"
                   clean_exit 1 "${usage}"
                   ;;
           esac

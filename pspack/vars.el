@@ -104,40 +104,25 @@
   :group 'pspack
   :type 'integer)
 
-(use-package yaml
-  ;; This is early configuration
-  ;; Further configuration is maintained
-  ;; under modular tree
-  :ensure t
-  :demand t)
-(use-package ht
-  :demand t)
-(use-package f
-  :demand t)
-
 (defcustom pspmacs/modules-order
-  (let
-      ((modules-dir
-        (mapcar
-         (lambda (x) (expand-file-name "modules" x)) pspmacs/worktrees)))
-    (apply
-     'vconcat (mapcar
-               (lambda (x) (cdr x))
-               (sort
-                (ht->alist
-                (apply
-                 'ht-merge
-                 (remq 'nil
-                       (mapcar
-                        (lambda (x)
-                          (let
-                              ((order-file
-                                (expand-file-name "load-order.yml" x)))
-                            (if (file-readable-p order-file)
-                                (yaml-parse-string
-                                 (f-read-text order-file)))))
-                        modules-dir))))
-               (lambda (a b) (< (car a) (car b)))))))
+  (mapcan
+   #'cdr
+   (sort
+    (let (order)
+      (dolist (tree pspmacs/worktrees order)
+        (dolist
+            (group
+             (let ((order-file
+                    (expand-file-name "modules/load-order.el" tree)))
+               (when (file-readable-p order-file)
+                 (with-temp-buffer
+                   (insert-file-contents order-file)
+                   (emacs-lisp-mode)
+                   (goto-char (point-max))
+                   (backward-sexp)
+                   (eval (sexp-at-point))))))
+          (setf (alist-get (car group) order) (cdr group)))))
+    (lambda (a b) (< (car a) (car b)))))
   "Ordered list of pspmacs/modules to load."
   :group 'pspack
   :type '(repeat (string :tag "module-name")))
@@ -210,7 +195,7 @@
   :type 'directory)
 
 (defcustom pspmacs/ref-paths
-  `(,(xdg/make-path "references/"))
+  (list (xdg/make-path "references/"))
   "Reference base paths order"
   :group 'pspmacs
   :type '(repeat directory))
@@ -225,23 +210,22 @@ Only when this is set to a directory, configuration for mu4e is attempted."
           (const :tag "off" nil)
           (directory)))
 
-(defvar-local pspmacs/present-end-callbacks
-    nil
+(defvar-local pspmacs/present-end-callbacks nil
   "Temporary storage for orignial values during presentation.
+
    Value is set by `pspmacs/present-start' and unset by `pspmacs/present-end'.
    This is risky if manually set.")
 
 (put pspmacs/present-end-callbacks 'risky-local-variable t)
 
-(defcustom pspmacs/present-settings
-  nil
+(defcustom pspmacs/present-settings nil
   "Org-Presentation settings.
 
 Each entry should be a cons cell, whose,
-  CAR should be a symbol (variable, function).
-  If CAR ends with \=-mode\=, the corresponding mode is suitably (un)set.
-  CDR should be its value in `org-present-mode' for variable
-  and a reciprocal function if CAR is a function.
+CAR should be a symbol (variable, function).
+If CAR ends with \=-mode\=, the corresponding mode is suitably (un)set.
+CDR should be its value in `org-present-mode' for variable
+and a reciprocal function if CAR is a function.
 
 These are set by `pspmacs/present-start' which is hooked to `org-present'.
 Original values are restored by `pspmacs/present-end' which is hooked to
@@ -276,7 +260,7 @@ Original values are restored by `pspmacs/present-end' which is hooked to
   :type '(hook :tag "Serve or run project"))
 
 (defcustom pspmacs/duc-watches-list
-  `(,(file-name-as-directory (getenv "HOME")))
+  (list (file-name-as-directory (getenv "HOME")))
   "List of locations to be auto-indexed by duc"
   :group 'pspack
   :type '(repeat directory))
