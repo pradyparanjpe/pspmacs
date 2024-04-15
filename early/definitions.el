@@ -1,6 +1,6 @@
 ;;; early/definitions.el --- Prune overloads -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(defvar pvt-emacs-dir
+(defconst pvt-emacs-dir
   (condition-case err (file-name-as-directory
                        (when (getenv "PVT_EMACS_HOME")
                          (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
@@ -11,16 +11,17 @@
 
 Privately synchronized configuration directory.")
 
-(defvar local-emacs-dir
+(defconst local-emacs-dir
   (file-name-as-directory
    (or (getenv "LOCAL_EMACS_HOME")
        (expand-file-name "local.d" (or pvt-emacs-dir user-emacs-directory))))
   "Local, machine-specific, un-synchronized configuration directory.")
 
-(defvar pspmacs/user-worktrees (delq 'nil (list pvt-emacs-dir local-emacs-dir))
+(defconst pspmacs/user-worktrees
+  (delq 'nil (list pvt-emacs-dir local-emacs-dir))
   "User's worktrees to load.")
 
-(defvar pspmacs/worktrees
+(defconst pspmacs/worktrees
   (delq 'nil (list user-emacs-directory pvt-emacs-dir local-emacs-dir))
   "Worktrees to load.")
 

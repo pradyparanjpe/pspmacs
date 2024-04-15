@@ -68,7 +68,7 @@ Get values from environment variables.
 *** Private, version controlled
 If envrionment variables are not set, ignore
 #+begin_src emacs-lisp :tangle definitions.el
-  (defvar pvt-emacs-dir
+  (defconst pvt-emacs-dir
     (condition-case err (file-name-as-directory
                          (when (getenv "PVT_EMACS_HOME")
                            (file-name-as-directory (getenv "PVT_EMACS_HOME"))))
@@ -85,7 +85,7 @@ If environment variables are not set, use:
 - ~<pvt-emacs-dir>/local.d~ or
 - ~<user-emacs-directory>/local.d~
   #+begin_src emacs-lisp :tangle definitions.el
-    (defvar local-emacs-dir
+    (defconst local-emacs-dir
       (file-name-as-directory
        (or (getenv "LOCAL_EMACS_HOME")
            (expand-file-name "local.d" (or pvt-emacs-dir user-emacs-directory))))
@@ -94,10 +94,11 @@ If environment variables are not set, use:
 
 *** Inheritance list
 #+begin_src emacs-lisp :tangle definitions.el
-  (defvar pspmacs/user-worktrees (delq 'nil (list pvt-emacs-dir local-emacs-dir))
+  (defconst pspmacs/user-worktrees
+    (delq 'nil (list pvt-emacs-dir local-emacs-dir))
     "User's worktrees to load.")
 
-  (defvar pspmacs/worktrees
+  (defconst pspmacs/worktrees
     (delq 'nil (list user-emacs-directory pvt-emacs-dir local-emacs-dir))
     "Worktrees to load.")
 #+end_src
