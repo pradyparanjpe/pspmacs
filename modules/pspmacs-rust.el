@@ -36,8 +36,8 @@
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'rust-mode-map
-    "ll" '(rust-run-clippy :wk "lint")
-    "dw" '(rust-dbg-wrap-or-unwrap :wk "wrap/unwrap dbg!"))
+    "ll" '(rust-run-clippy :wk "int")
+    "dw" '(rust-dbg-wrap-or-unwrap :wk "rap/unwrap dbg!"))
   :custom
   (indent-tabs-mode nil)
   (rust-format-on-save t)
@@ -52,7 +52,7 @@
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'cargo-minor-mode-map
-    "r" '(cargo-mode-command-map :wk "cargo"))
+    "r" '(cargo-mode-command-map :wk "Cargo"))
   :hook
   (rust-mode . cargo-minor-mode))
 

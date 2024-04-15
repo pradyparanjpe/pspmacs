@@ -27,8 +27,8 @@
   :after fontaine
   :vc (modus-themes :url "https://www.github.com/protesilaos/modus-themes")
   :general (pspmacs/leader-keys
-             "t" '(:ignore t :wk "Theme")
-             "tT" 'modus-themes-toggle)
+             "t" '(:ignore t :wk "ogl")
+             "tT" '(modus-themes-toggle :wk "heme"))
   :init
   ;; ESSENTIAL to make the underline move to the bottom of the box:
   (setq x-underline-at-descent-line t)
@@ -74,7 +74,7 @@
   :general
   (pspmacs/leader-keys
     "Ff" '(fontaine-set-preset :wk "set")
-    "FF" '(fontaine-set-face-font :wk "face")
+    "FF" '(fontaine-set-face-font :wk "ace")
     "F=" '(text-scale-adjust :wk "🔍")
     "F-" '(text-scale-adjust :wk "🔍")
     "F0" '(text-scale-adjust :wk "🔍"))
@@ -140,7 +140,7 @@
   (custom-theme-directory xdg/emacs-cache-directory)
   :general
   (pspmacs/leader-keys
-    "Fv" '(variable-pitch-mode :wk "variable-pitch"))
+    "Fv" '(variable-pitch-mode :wk "ariable-pitch"))
   :hook
   (text-mode . variable-pitch-mode))
 

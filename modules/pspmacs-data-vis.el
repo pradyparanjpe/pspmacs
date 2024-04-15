@@ -27,23 +27,23 @@
   :general
   (pspmacs/local-leader-keys
     csv-mode-map
-    "a" '(:ignore t :wk "align")
-    "aa" '(csv-align-fields :wk "align")
-    "au" '(csv-unalign-fields :wk "align")
+    "a" '(:ignore t :wk "lign")
+    "aa" '(csv-align-fields :wk "lign")
+    "au" '(csv-unalign-fields :wk "nalign")
 
-    "," '(:ignore t :wk "separator")
-    ",v" '(csv-toggle-invisibility "visibility toggle")
+    "," '(:ignore t :wk "Separator")
+    ",v" '(csv-toggle-invisibility "isibility toggle")
 
-    "s" '(:ignore t :wk "sort")
-    "ss" '(csv-sort-fields :wk "sort")
-    "sn" '(csv-sort-numeric-fields :wk "numeric")
+    "s" '(:ignore t :wk "ort")
+    "ss" '(csv-sort-fields :wk "ort")
+    "sn" '(csv-sort-numeric-fields :wk "umeric")
 
-    "r" '(csv-reverse-region :wk "reverse")
-    "T" '(csv-transpose :wk "transpose")
+    "r" '(csv-reverse-region :wk "everse")
+    "T" '(csv-transpose :wk "ranspose")
 
-    "y" '(:ignore t :wk "yank")
-    "yy" '(csv-kill-fields :wk "kill")
-    "yc" '(csv-yank-fields :wk "yank"))
+    "y" '(:ignore t :wk "ank")
+    "yy" '(csv-kill-fields :wk "Kill")
+    "yc" '(csv-yank-fields :wk "opy"))
   :custom
   (csv-comment-start "#")
   :config

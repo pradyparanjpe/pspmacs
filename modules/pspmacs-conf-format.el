@@ -29,6 +29,6 @@
   (dockerfile-build-command (cl-some #'executable-find '("podman" "docker")))
   :general
   (pspmacs/local-leader-keys
-    "c" '(:ignore t :wk "compile")
-    "cc" '(dockerfile-build-buffer :wk "build")'
-    "cb" '(dockerfile-build-no-cache-buffer :wk "build w/o cache")))
+    "c" '(:ignore t :wk "ompile")
+    "cc" '(dockerfile-build-buffer :wk "Build")'
+    "cb" '(dockerfile-build-no-cache-buffer :wk "uild w/o cache")))

@@ -33,7 +33,7 @@
             (pspmacs/inferior-interpreter #'run-python))
           :wk "python"))
   (pspmacs/leader-keys
-    "'p" '(run-python :wk ""))
+    "'p" '(run-python :wk "ython"))
   (general-def 'normal
     python-mode-map
     "gz" nil
@@ -70,7 +70,7 @@
 (use-package jupyter
   :general
   (pspmacs/leader-keys
-    "'i" '(jupyter-run-repl :wk "ipy"))
+    "'i" '(jupyter-run-repl :wk "py"))
   :custom
   (org-babel-default-header-args:jupyter-python '((:pandoc . t)
                                                   (:async . "yes")
@@ -125,10 +125,10 @@ ACTION: action to perform (install, uninstall)"
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'importmagic-mode-map
-    "i"  '(:ignore t :wk "import")
-    "if" '(importmagic-fix-symbol-at-point :wk "fix at point")
-    "ii" '(importmagic-fix-imports :wk "fix")
-    "iI" '(importmagic-fix-symbol :wk "manually"))
+    "i"  '(:ignore t :wk "mport")
+    "if" '(importmagic-fix-symbol-at-point :wk "ix at point")
+    "ii" '(importmagic-fix-imports :wk "Fix")
+    "iI" '(importmagic-fix-symbol :wk "Manually"))
   :hook
   (python-mode . importmagic-mode))
 

@@ -83,8 +83,8 @@
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
-    "xp"  '(org-latex-export-to-pdf :wk "pdf")
-    "xb" '(org-beamer-export-to-pdf :wk "beamer"))
+    "xp"  '(org-latex-export-to-pdf :wk "df")
+    "xb" '(org-beamer-export-to-pdf :wk "eamer"))
   :init
   (defun pspmacs/org-latex--add-class
       (name class-str &optional no-defaults &rest sections)
@@ -196,17 +196,17 @@ If NO-DEFAULTS, only declare SECTIONS, ordinarily, use default sections."
   :general
   (pspmacs/local-leader-keys
     :keymaps 'LaTeX-mode-map
-    "TAB" '(TeX-complete-symbol :wk "complete symbol")
-    "=" '(reftex-toc :wk "reftex toc")
-    "(" '(reftex-latex :wk "reftex label")
-    ")" '(reftex-reference :wk "reftex ref")
-    "c" '(TeX-command-run-all :wk "compile")
-    "e" '(LaTeX-environment :wk "insert environment")
-    "f" '(TeX-font :wk "font")
-    "i" '(LaTeX-insert-item :wk "insert item")
-    "m" '(LaTeX-macro :wk "insert macro")
-    "p" '(preview-at-point :wk "preview at point")
-    "s" '(LaTeX-section :wk "insert section header"))
+    "TAB" '(TeX-complete-symbol :wk "Complete symbol")
+    "=" '(reftex-toc :wk "Reftex toc")
+    "(" '(reftex-latex :wk "Reftex label")
+    ")" '(reftex-reference :wk "Reftex ref")
+    "c" '(TeX-command-run-all :wk "ompile")
+    "e" '(LaTeX-environment :wk "nvironment insert")
+    "f" '(TeX-font :wk "ont")
+    "i" '(LaTeX-insert-item :wk "tem insert")
+    "m" '(LaTeX-macro :wk "acro insert")
+    "p" '(preview-at-point :wk "review at point")
+    "s" '(LaTeX-section :wk "ection head insert"))
   :custom
   (TeX-auto-save t)  ; parse on save
   (TeX-parse-self t) ; parse on load
@@ -350,15 +350,15 @@ Restore backed up files."
   :after (org bibtex-completion)
   :general
   (pspmacs/local-leader-keys :keymaps 'bibtex-mode-map
-    "i" '(:ignore t :wk "insert")
-    "ir" '(:ignore t :wk "org-ref")
-    "irh" '(org-ref-bibtex-hydra/body :wk "hydra"))
+    "i" '(:ignore t :wk "nsert")
+    "ir" '(:ignore t :wk "ef")
+    "irh" '(org-ref-bibtex-hydra/body :wk "ydra"))
 
   (pspmacs/local-leader-keys :keymaps 'org-mode-map
-    "i" '(:ignore t :wk "insert")
-    "ir" '(:ignore t :wk "org-ref")
-    "irl" '(org-ref-insert-link :wk "link")
-    "irh" '(org-ref-insert-link-hydra/body :wk "hydra"))
+    "i" '(:ignore t :wk "nsert")
+    "ir" '(:ignore t :wk "ef")
+    "irl" '(org-ref-insert-link :wk "ink")
+    "irh" '(org-ref-insert-link-hydra/body :wk "ydra"))
 
   :init
   (require 'org-ref)
@@ -387,11 +387,11 @@ Restore backed up files."
   :general
   (pspmacs/local-leader-keys
     :keymaps 'latex-mode-map
-    "@i" '(citar-insert-citation :wk "insert"))
+    "@i" '(citar-insert-citation :wk "nsert"))
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
-    "@i" '(org-cite-insert :wk "insert")
-    "@c" '(citar-copy-citation :wk "insert"))
+    "@i" '(org-cite-insert :wk "nsert")
+    "@c" '(citar-copy-citation :wk "opy"))
   :custom
   (citar-bibliography org-cite-global-bibliography)
   (citar-at-point-function 'embark-act)
@@ -409,10 +409,10 @@ Restore backed up files."
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-cdlatex-mode-map
-    "c"  '(:ignore t :wk "cdlatex")
-    "c`" '(cdlatex-math-symbol :wk "symbol")
-    "c_" '(org-cdlatex-underscore-caret :wk "sub-superscript")
-    "ce" '(org-cdlatex-environment-indent :wk "environment"))
+    "c"  '(:ignore t :wk "dlatex")
+    "c`" '(cdlatex-math-symbol :wk "Symbol")
+    "c_" '(org-cdlatex-underscore-caret :wk "Sub-superscript")
+    "ce" '(org-cdlatex-environment-indent :wk "nvironment"))
   :custom
   (cdlatex-math-symbol-prefix (kbd "M-+") "unbind cdlatex-math-symbol")
   (cdlatex-math-symbol-alist '((?F ("\\Phi"))

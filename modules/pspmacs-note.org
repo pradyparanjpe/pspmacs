@@ -78,108 +78,109 @@ All keywords are designed to be 4 character long for consistent formatting with 
     ;; ORG AGENDA
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
-      "ao"  '(:ignore t :wk "org-agenda")
-      "ao#" '(org-agenda-list-stuck-projects :wk "stuck")
-      "ao/" '(org-occur-in-agenda-files :wk "occur in agenda")
-      "aoa" '(org-agenda-list :wk "list")
-      "aoc" '(org-agenda-capture :wk "capture")
-      "aoo" '(org-agenda :wk "capture")
-      "aot" '(org-todo-list :wk "todo")
+      "ao"  '(:ignore t :wk "rg-agenda")
+      "ao#" '(org-agenda-list-stuck-projects :wk "Stuck")
+      "ao/" '(org-occur-in-agenda-files :wk "Occur in agenda")
+      "aoa" '(org-agenda-list :wk "List")
+      "aoc" '(org-agenda-capture :wk "apture")
+      "aoo" '(org-agenda :wk "Capture")
+      "aot" '(org-todo-list :wk "odo")
 
       "t"   '(:ignore t :wk "ogl")
-      "t="  '(pspmacs/org-toggle-emphasis-display :wk "markers")
-      "ti"  '(org-toggle-inline-images :wk "inline images")
-      "tl"  '(org-toggle-link-display :wk "link display")
-      "tt"  '(org-toggle-timestamp-type :wk "time-stamp")
-      "tp"  '(org-latex-preview :wk "preview latex"))
+      "t="  '(pspmacs/org-toggle-emphasis-display :wk "Markers")
+      "ti"  '(org-toggle-inline-images :wk "nline images")
+      "tl"  '(org-toggle-link-display :wk "ink display")
+      "tt"  '(org-toggle-timestamp-type :wk "ime-stamp")
+      "tp"  '(org-latex-preview :wk "review latex"))
 
     ;; ORG TABLE
     (pspmacs/local-leader-keys
       :keymaps  'org-mode-map
-      "TAB"     '(:ignore t :wk "table")
+      "TAB"     '(:ignore t :wk "le")
 
-      "TAB RET" '(org-table-create-or-convert-from-region :wk "create")
-      "TAB <"   '(org-table-shrink :wk "shrink")
-      "TAB >"   '(org-table-expand :wk "expand")
-      "TAB ?"   '(org-table-field-info :wk "field info")
+      "TAB RET" '(org-table-create-or-convert-from-region :wk "Create")
+      "TAB <"   '(org-table-shrink :wk "Shrink")
+      "TAB >"   '(org-table-expand :wk "Expand")
+      "TAB ?"   '(org-table-field-info :wk "Field info")
 
-      "TAB P"   '(:ignore t :wk "plot")
-      "TAB Pa"  '(orgtbl-ascii-plot :wk "ascii")
-      "TAB Pg"  '(org-plot/gnuplot :wk "gnuplot")
-      "TAB Pp"  '(org-plot/gnuplot :wk "gnuplot")
+      "TAB P"   '(:ignore t :wk "lot")
+      "TAB Pa"  '(orgtbl-ascii-plot :wk "scii")
+      "TAB Pg"  '(org-plot/gnuplot :wk "nuplot")
 
-      "TAB d"   '(:ignore t :wk "delete")
-      "TAB dc"  '(org-table-delete-column :wk "column")
-      "TAB dd"  '(org-table-blank-field :wk "field contents")
-      "TAB dr"  '(org-table-kill-row :wk "row")
+      "TAB d"   '(:ignore t :wk "elete")
+      "TAB dc"  '(org-table-delete-column :wk "olumn")
+      "TAB dd"  '(org-table-blank-field :wk "Field contents")
+      "TAB dr"  '(org-table-kill-row :wk "ow")
 
-      "TAB i"   '(:ignore t :wk "insert")
+      "TAB i"   '(:ignore t :wk "nsert")
       "TAB iH"  '(org-table-hline-and-move :wk "‾‾‾‾")
-      "TAB ic"  '(org-table-insert-column :wk "column")
+      "TAB ic"  '(org-table-insert-column :wk "olumn")
       "TAB ih"  '(org-table-insert-hline :wk "____")
-      "TAB ii"  '(table-insert :wk "table")
-      "TAB ir"  '(org-table-insert-row :wk "row")
+      "TAB ii"  '(table-insert :wk "Table")
+      "TAB ir"  '(org-table-insert-row :wk "ow")
 
-      "TAB p"   '(org-table-paste-rectangle)
+      "TAB p"   '(org-table-paste-rectangle :wk "aste rect")
 
-      "TAB s"   '(org-table-sort-lines :wk "sort")
-      "TAB x"   '(org-table-cut-region :wk "cut")
-      "TAB y"   '(org-tablecopy-region))
+      "TAB s"   '(org-table-sort-lines :wk "ort")
+      "TAB x"   '(org-table-cut-region :wk "Cut")
+      "TAB y"   '(org-table-copy-region :wk "ank"))
 
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map
-      "@"   '(:ignore t :wk "reference")
+      "@"   '(:ignore t :wk "Reference")
 
-      "="   '(:ignore t :wk "count")
-      "=w"  '(:ignore t :wk "words")
-      "=ww" '(count-words t :wk "all")
-      "=wr" '(count-words-region t :wk "region")
+      "="   '(:ignore t :wk "Count")
+      "=w"  '(:ignore t :wk "ords")
+      "=ww" '(count-words t :wk "All")
+      "=wr" '(count-words-region t :wk "egion")
 
-      ">"   '(org-demote-subtree :wk "demote subtree")
-      "<"   '(org-promote-subtree :wk "demote subtree")
+      ">"   '(org-demote-subtree :wk "Demote subtree")
+      "<"   '(org-promote-subtree :wk "Promote subtree")
 
-      "["   '(:ignore t :wk "checkboxes")
-      "[]"  '(pspmacs/org-put-checkboxes :wk "here")
-      "[*"  '(pspmacs/org-put-checkboxes-recursively
-              :wk "all")
-      "[!"  '(:ignore t :wk "remove")
-      "[!]" '((lambda () (interactive) (pspmacs/org-put-checkboxes t)) :wk "this")
-      "[!*" '((lambda () (interactive) (pspmacs/org-put-checkboxes-recursively t))
-              :wk "all")
+      "["   '(:ignore t :wk "Checkboxes")
+      "[]"  '(pspmacs/org-put-checkboxes :wk "Here")
+      "[*"  '(pspmacs/org-put-checkboxes-recursively :wk "All")
+      "[!"  '(:ignore t :wk "Remove")
+      "[!]" '((lambda () (interactive) (pspmacs/org-put-checkboxes t))
+              :wk "This")
+      "[!*" '((lambda ()
+                (interactive)
+                (pspmacs/org-put-checkboxes-recursively t))
+              :wk "All")
 
-      "S"   '(:ignore t :wk "special")
-      "Sx"  '(org-cut-special :wk "org cut special")
-      "Se"  '(org-edit-special :wk "edit")
+      "S"   '(:ignore t :wk "pecial")
+      "Sx"  '(org-cut-special :wk "Cut")
+      "Se"  '(org-edit-special :wk "dit")
 
-      "b"   '(:keymap org-babel-map :wk "babel")
+      "b"   '(:keymap org-babel-map :wk "abel")
 
-      "d"   '(:ignore t :wk "date-time")
-      "dd"  '(org-deadline :wk "date-time")
-      "dT"  '(org-time-stamp-inactive :wk "inactive time stamp")
-      "ds"  '(org-schedule :wk "schedule")
-      "dt"  '(org-time-stamp :wk "time-stamp")
+      "d"   '(:ignore t :wk "ate-time")
+      "dd"  '(org-deadline :wk "eadline")
+      "dT"  '(org-time-stamp-inactive :wk "ime-stamp inactive")
+      "ds"  '(org-schedule :wk "chedule")
+      "dt"  '(org-time-stamp :wk "ime-stamp")
 
-      "f"   '(org-footnote-action :wk "footnote action")
+      "f"   '(org-footnote-action :wk "ootnote action")
 
-      "i"   '(:ignore t :wk "insert")
-      "ih"  '(org-insert-heading :wk "insert heading")
-      "is"  '(org-insert-subheading :wk "insert heading")
+      "i"   '(:ignore t :wk "nsert")
+      "ih"  '(org-insert-heading :wk "eading")
+      "is"  '(org-insert-subheading :wk "ub-heading")
 
-      "l"   '(:ignore t :wk "link")
-      "lL"  '(org-store-link t :wk "grab")
-      "lp"  '(pspmacs/org-paste-as-link :wk "paste")
-      "ll"  '(org-insert-link t :wk "put")
-      "ly"  '(pspmacs/org-copy-link-at-point :wk "yank")
+      "l"   '(:ignore t :wk "ink")
+      "lL"  '(org-store-link t :wk "Grab")
+      "lp"  '(pspmacs/org-paste-as-link :wk "aste")
+      "ll"  '(org-insert-link t :wk "Put")
+      "ly"  '(pspmacs/org-copy-link-at-point :wk "ank")
 
-      "p"   '(org-paste-special :wk "org paste special")
-      "s"   '(org-insert-structure-template :wk "template")
-      "t"   '(org-todo :wk "todo")
+      "p"   '(org-paste-special :wk "aste special")
+      "s"   '(org-insert-structure-template :wk "Template")
+      "t"   '(org-todo :wk "odo")
 
-      "x"   '(:ignore t :wk "export")
-      "xm"  '(org-export-dispatch :wk "menu")
-      "xh"  '(org-html-export-to-html :wk "html")
+      "x"   '(:ignore t :wk "port")
+      "xm"  '(org-export-dispatch :wk "enu")
+      "xh"  '(org-html-export-to-html :wk "tml")
 
-      "y"   '(org-copy-special :wk "org copy special"))
+      "y"   '(org-copy-special :wk "ank special"))
 
     (general-def
       :keymaps 'org-agenda-mode-map
@@ -376,7 +377,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
       :general
       (pspmacs/local-leader-keys
         :keymaps 'org-mode-map
-        "xo" '(org-odt-export-to-odt :wk "odt")
+        "xo" '(org-odt-export-to-odt :wk "dt")
         "xw"  '(org-pandoc-export-to-docs :wk "MSdocx"))
 
       :custom
@@ -415,15 +416,15 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
   (use-package org-present
     :general
     (pspmacs/local-leader-keys :keymaps 'org-mode-map
-      "P" '(:ignore t :wk "Present")
-      "PP" '(org-present :wk "here")
+      "P" '(:ignore t :wk "resent")
+      "PP" '(org-present :wk "Here")
       "P0" '((lambda () (interactive)
                (beginning-of-buffer)
                (org-present))
-             :wk "afresh"))
+             :wk "Afresh"))
 
     (pspmacs/local-leader-keys :keymaps 'org-present-mode-keymap
-      "q" '(org-present-quit :wk "Quit")
+      "q" '(org-present-quit :wk "uit")
       "]" '(hydra-curtains/body :wk "Widen"))
 
     :custom
@@ -486,7 +487,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     :general
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map
-      "xv" '(org-pandoc-export-to-revealjs :wk "reveal"))
+      "xv" '(org-pandoc-export-to-revealjs :wk "Reveal"))
     :custom
     (oer-reveal-org-includes-dir
      (expand-file-name "oer-reveal-org" local-emacs-dir))
@@ -506,26 +507,26 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     (pspmacs/leader-keys
       :keymaps 'org-mode-map
       "T"   '(:ignore t :wk "ime")
-      "Tc"  '(:ignore t :wk "clock")
-      "Tcc" '(org-clock-cancel :wk "cancel")
-      "Tci" '(org-clock-in :wk "in")
-      "Tco" '(org-clock-out :wk "out")
-      "Tcj" '(org-clock-goto :wk "goto")
+      "Tc"  '(:ignore t :wk "lock")
+      "Tcx" '(org-clock-cancel :wk "Cancel")
+      "Tci" '(org-clock-in :wk "n")
+      "Tco" '(org-clock-out :wk "ut")
+      "Tcj" '(org-clock-goto :wk "Goto")
 
-      "Tp"  '(:ignore t :wk "pomodoro")
-      "Tpp" '(org-pomodoro :wk "pomodoro")
-      "Tpe" '(org-pomodoro-extend-last-clock :wk "extend last")
+      "Tp"  '(:ignore t :wk "omodoro")
+      "Tpp" '(org-pomodoro :wk "omodoro")
+      "Tpe" '(org-pomodoro-extend-last-clock :wk "xtend last")
       "Tp?" '((lambda ()
                 (interactive)
                 (message
                  (format-seconds
                   "%0.2m:%0.2s left"
                   (round (org-pomodoro-remaining-seconds)))))
-              :wk "remaining")
+              :wk "Remaining")
       "Tpk" '((lambda ()
                 (interactive)
                 (org-pomodoro-kill))
-              :wk "kill")
+              :wk "ill")
       "Tpx" '((lambda ()
                 (interactive)
                 (cond
@@ -534,7 +535,8 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
                  ((eq org-pomodoro-state :short-break)
                   (org-pomodoro-short-break-finished))
                  ((eq org-pomodoro-state :long-break)
-                  (org-pomodoro-long-break-finished))))))
+                  (org-pomodoro-long-break-finished))))
+              :wk "Finish"))
     :custom
     (org-pomodoro-clock-break t)
     (org-pomodoro-manual-break t)
@@ -555,7 +557,7 @@ Reference: Borrowed and modified from [[https://github.com/karthink/.emacs.d/blo
     :general
     (pspmacs/local-leader-keys
       :keymaps 'org-mode-map
-      "=wt" '(org-wc-display :wk "org word-count tree")))
+      "=wt" '(org-wc-display :wk "ree")))
 #+end_src
 
 * SavchenkoValeriy/emacs-powerthesaurus
@@ -654,7 +656,7 @@ Capture for future.
     :general
     (pspmacs/leader-keys
       "o" '(:ignore t :wk "rg")
-      "oc" '(org-capture :wk "capture"))
+      "oc" '(org-capture :wk "apture"))
     :init
     (unless (file-exists-p (expand-file-name "tasks.org" pspmacs/org-path))
       (write-region "* Misc\n" nil (expand-file-name "tasks.org" pspmacs/org-path)))

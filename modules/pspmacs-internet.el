@@ -31,10 +31,10 @@
   :general
   (pspmacs/leader-keys
     :states 'normal
-    "ib" '(eww-switch-to-buffer :wk "buffers")
-    "io" '(eww t :wk "open")
-    "is" '(:ignore t :wk "search")
-    "isw" '(eww-search-words :wk "words"))
+    "ib" '(eww-switch-to-buffer :wk "uffers")
+    "io" '(eww t :wk "pen")
+    "is" '(:ignore t :wk "earch")
+    "isw" '(eww-search-words :wk "ords"))
 
   :init
   (defun karthink/reader-center-images ()
@@ -73,11 +73,12 @@
 
 (use-package gptel
   :commands (gptel gptel-menu)
-  :general (pspmacs/leader-keys
-             "A"     '(:ignore t  :wk "I")
-             "A g"   '(:ignore t  :wk "GPT")
-             "A g l" '(gptel      :wk "Launch")
-             "A g m" '(gptel-menu :wk "menu"))
+  :general
+  (pspmacs/leader-keys
+    "A"     '(:ignore t  :wk "I")
+    "A g"   '(:ignore t  :wk "pt")
+    "A g l" '(gptel      :wk "aunch")
+    "A g m" '(gptel-menu :wk "enu"))
   :custom (gptel-default-mode 'org-mode)
   :hook (gptel-post-stream . gptel-auto-scroll)
   :config (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
@@ -89,21 +90,21 @@
   :defer 20
   :general
   (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
-    "oe" '(org-mime-edit-mail-in-org-mode :wk "edit")
-    "<h" '(:ignore t :wk "htmlize")
+    "oe" '(org-mime-edit-mail-in-org-mode :wk "dit")
+    "<h" '(:ignore t :wk "tmlize")
     "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
 
   (pspmacs/leader-keys
     :keymaps '(org-mode-map mu4e-compose-mode-map)
     ;; NEXT: add as send-mail hook
-    "<h"  '(:ignore t :wk "htmlize")
+    "<h"  '(:ignore t :wk "tmlize")
     "<hh" '(org-mime-htmlize :wk "this"))
 
   (pspmacs/leader-keys
     :keymaps '(org-mode-map)
-    "<h"  '(:ignore t :wk "htmlize")
-    "<hb" '(org-mime-org-buffer-htmlize :wk "buffer")
-    "<hs" '(org-mime-org-subtree-htmlize :wk "subtree"))
+    "<h"  '(:ignore t :wk "tmlize")
+    "<hb" '(org-mime-org-buffer-htmlize :wk "uffer")
+    "<hs" '(org-mime-org-subtree-htmlize :wk "ubtree"))
 
   :custom
   (org-mime-export-options
@@ -130,8 +131,8 @@
   (pspmacs/leader-keys
     "<"  '(:ignore t :wk "mail")
     "<<" '(mu4e :wk "main")
-    "<u" '(mu4e-update-mail-and-index :wk "update")
-    "<c" '(mu4e-compose-new :wk "compose"))
+    "<u" '(mu4e-update-mail-and-index :wk "pdate")
+    "<c" '(mu4e-compose-new :wk "ompose"))
 
   :init
   (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)

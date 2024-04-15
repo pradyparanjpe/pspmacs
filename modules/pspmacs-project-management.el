@@ -43,7 +43,7 @@
   :ensure nil
   :general
   (pspmacs/leader-keys
-    "jd" '(dired-jump :wk "dired"))
+    "jd" '(dired-jump :wk "ired"))
   :custom
   (dired-guess-shell-alist-user
    '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
@@ -127,7 +127,7 @@
   (pspmacs/local-leader-keys
     :keymaps 'dired-mode-map
     :states 'normal
-    "H" 'dired-hide-dotfiles-mode)
+    "H" '(dired-hide-dotfiles-mode :wk "ide"))
   :hook
   (dired-mode . dired-hide-dotfiles-mode))
 
@@ -136,7 +136,7 @@
   (pspmacs/local-leader-keys
     :keymaps 'dired-mode-map
     :states 'normal
-    "r" 'dired-rsync))
+    "r" '(dired-rsync :wk "sync")))
 
 (use-package dired-git
   :hook

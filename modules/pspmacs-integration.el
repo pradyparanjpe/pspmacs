@@ -25,7 +25,7 @@
 (use-package vterm
   :general
   (pspmacs/leader-keys
-    "'v" '(vterm :wk "vterm"))
+    "'v" '(vterm :wk "term"))
   :custom
   (vterm-always-compile-module t)
   (vterm-ignore-blink-cursor t)
@@ -37,20 +37,20 @@
 (use-package eat
   :general
   (pspmacs/leader-keys
-    "'e" '(eat :wk "eat"))
+    "'e" '(eat :wk "at"))
   :config
   (general-add-hook
      'eat-exit-hook
      '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 
 (use-package eshell
-    :general
-    (pspmacs/leader-keys
-      "'E" '(eat :wk "eshell"))
-    :config
-    (general-add-hook
-       'eat-exit-hook
-       '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
+  :general
+  (pspmacs/leader-keys
+    "'E" '(eshell :wk "shell"))
+  :config
+  (general-add-hook
+   'eat-exit-hook
+   '(lambda (&rest _) (pspmacs/destroy-buffer-and-window))))
 
 (use-package exec-path-from-shell
   :custom
@@ -76,20 +76,20 @@
             (interactive)
             (consult-ripgrep nil (thing-at-point 'symbol)))
           :wk "/'THIS'")
-    "Br" '(consult-bookmark :wk "remember")
+    "Br" '(consult-bookmark :wk "emember")
     "bb" '(consult-buffer :wk "𑂼")
-    "el" '(consult-flymake :wk "list")
-    "fc" '(consult-find :wk "consult")
-    "fr" '(consult-recent-file :wk "recent")
-    "js" '(consult-imenu :wk "section")
-    "jS" '(consult-imenu-multi :wk "project section")
-    "mj" '(consult-mark :wk "jump")
-    "rl" '(consult-register-load t :wk "load")
-    "rr" '(consult-register-store :wk "remember")
-    "rj" '(consult-register :wk "jump"))
+    "el" '(consult-flymake :wk "ist")
+    "fc" '(consult-find :wk "onsult")
+    "fr" '(consult-recent-file :wk "ecent")
+    "js" '(consult-imenu :wk "ection")
+    "jS" '(consult-imenu-multi :wk "Proj sect")
+    "mj" '(consult-mark :wk "ump")
+    "rl" '(consult-register-load t :wk "oad")
+    "rr" '(consult-register-store :wk "emember")
+    "rj" '(consult-register :wk "ump"))
 
   (pspmacs/local-leader-keys
-    "M-x" '(consult-mode-command :wk "mode command"))
+    "M-x" '(consult-mode-command :wk "Mode command"))
   ;; Enable automatic preview at point in the *Completions* buffer. This is
   ;; relevant when you use the default completion UI.
   :hook (completion-list-mode . consult-preview-at-point-mode)

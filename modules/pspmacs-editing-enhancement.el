@@ -100,8 +100,8 @@
   :general
   (pspmacs/leader-keys
     "y" '(:ignore t :wk "as")
-    "yn" '(yas-new-snippet :wk "new")
-    "yi" '(yas-insert-snippet :wk "insert"))
+    "yn" '(yas-new-snippet :wk "ew")
+    "yi" '(yas-insert-snippet :wk "nsert"))
   (yas-minor-mode-map
    :states 'insert
    "TAB" 'nil
@@ -118,9 +118,9 @@
 (general-add-hook 'org-mode-hook 'flyspell-mode)
 (pspmacs/leader-keys
   "S" '(:ignore t :wk "pell")
-  "Sb" '(flyspell-buffer :wk "buffer")
-  "Sn" '(evil-next-flyspell-error :wk "next")
-  "Sp" '(evil-prev-flyspell-error :wk "previous")
+  "Sb" '(flyspell-buffer :wk "uffer")
+  "Sn" '(evil-next-flyspell-error :wk "ext")
+  "Sp" '(evil-prev-flyspell-error :wk "revious")
   "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
 
 (use-package smartparens
@@ -175,14 +175,14 @@
   (pspmacs/local-leader-keys
     :keymaps '(text-mode-map org-mode-map)
     :states 'normal
-    "=r" '(:ignore t :wk "readibility")
-    "=rr" '(pspmacs/readability :wk "check region")
+    "=r" '(:ignore t :wk "eadibility")
+    "=rr" '(pspmacs/readability :wk "egion")
     "=rb" '((lambda () (interactive) (pspmacs/readability t))
-            :wk "check buffer")))
+            :wk "uffer")))
 
 (use-package live-wc
   :vc (live-wc :url "https://gitlab.com/pradyparanjpe/live-wc.git")
-  :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk "wc"))
+  :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk "WC"))
   :custom
   (live-wc-max-buffer-size 1048576)  ; 1mB
   (live-wc-fraction t)

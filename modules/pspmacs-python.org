@@ -49,7 +49,7 @@
               (pspmacs/inferior-interpreter #'run-python))
             :wk "python"))
     (pspmacs/leader-keys
-      "'p" '(run-python :wk ""))
+      "'p" '(run-python :wk "ython"))
     (general-def 'normal
       python-mode-map
       "gz" nil
@@ -126,7 +126,7 @@
   (use-package jupyter
     :general
     (pspmacs/leader-keys
-      "'i" '(jupyter-run-repl :wk "ipy"))
+      "'i" '(jupyter-run-repl :wk "py"))
     :custom
     (org-babel-default-header-args:jupyter-python '((:pandoc . t)
                                                     (:async . "yes")
@@ -198,10 +198,10 @@
     (pspmacs/local-leader-keys
       :states 'normal
       :keymaps 'importmagic-mode-map
-      "i"  '(:ignore t :wk "import")
-      "if" '(importmagic-fix-symbol-at-point :wk "fix at point")
-      "ii" '(importmagic-fix-imports :wk "fix")
-      "iI" '(importmagic-fix-symbol :wk "manually"))
+      "i"  '(:ignore t :wk "mport")
+      "if" '(importmagic-fix-symbol-at-point :wk "ix at point")
+      "ii" '(importmagic-fix-imports :wk "Fix")
+      "iI" '(importmagic-fix-symbol :wk "Manually"))
     :hook
     (python-mode . importmagic-mode))
 #+end_src
@@ -224,12 +224,13 @@
 #+begin_src emacs-lisp :tangle no
   (use-package python-pytest
     :general
+    :disabled t
     (pspmacs/local-leader-keys
       :keymaps 'python-mode-map
-      "t" '(:ignore t :wk "test")
-      "t d" '(python-pytest-dispatch :wk "dispatch")
-      "t f" '(python-pytest-file :wk "file")
-      "t t" '(python-pytest-function :wk "function"))
+      "t" '(:ignore t :wk "est")
+      "td" '(python-pytest-dispatch :wk "ispatch")
+      "tf" '(python-pytest-file :wk "ile")
+      "tt" '(python-pytest-function :wk "Function"))
     :init
     (setq python-pytest-arguments '("--color" "--failed-first"))
     :config

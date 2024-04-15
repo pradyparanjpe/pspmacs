@@ -187,14 +187,14 @@
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'eglot-mode-map
-    "g" '(:ignore t :wk "go to")
-    "gg" '(xref-find-definitions :wk "symbol definition")
-    "l" '(:ignore t :wk "language-server (eglot)")
-    "lr" 'eglot-rename
-    "ls" '(:ignore t :wk "server")
-    "lsr" 'eglot-reconnect
-    "lss" 'eglot-shutdown
-    "lss" 'eglot-shutdown-all)
+    "g" '(:ignore t :wk "o to")
+    "gg" '(xref-find-definitions :wk "Symbol definition")
+    "l" '(:ignore t :wk "anguage-server (eglot)")
+    "lr" '(eglot-rename :wk "ename")
+    "ls" '(:ignore t :wk "erver")
+    "lsr" '(eglot-reconnect :wk "econnect")
+    "lss" '(eglot-shutdown :wk "hutdown")
+    "lsS" '(eglot-shutdown-all :wk "hutdown all"))
   :custom
   (eglot-extend-to-xref t)
   (eglot-connect-timeout 60)
@@ -209,8 +209,8 @@
     :states 'normal
     :keymaps 'flymake-mode-map
     "e" '(:ignore t :wk "rr")
-    "en" '(flymake-goto-next-error :wk "next")
-    "ep" '(flymake-goto-prev-error :wk "previous"))
+    "en" '(flymake-goto-next-error :wk "ext")
+    "ep" '(flymake-goto-prev-error :wk "revious"))
   :custom
   (flymake-suppress-zero-counters t)
   (flymake-number-of-errors-to-display nil)
@@ -230,13 +230,13 @@
   (pspmacs/local-leader-keys
     :state 'normal
     :keymaps 'prog-mode-map
-    "d" '(:ignore t :wk "eldoc")
+    "d" '(:ignore t :wk "oc")
     "dh" '((lambda ()
              (interactive)
              (progn
                (display-local-help)
                (switch-to-buffer-other-window "*eldoc*")))
-           :wk "describe")))
+           :wk "escribe")))
 
 (use-package display-fill-column-indicator
   :demand t
@@ -284,23 +284,23 @@ to_list all modes that have parsers"
   (pspmacs/leader-keys
     :states 'normal
     :keymaps 'prog-mode-map
-    "C"  '(:ignore t :wk "compiler")
+    "C"  '(:ignore t :wk "ompile")
     "Cc" '((lambda ()
              (interactive)
              (progn
                (call-interactively 'compile)
                (switch-to-buffer-other-window "*compilation*")))
-           :wk "compile")
+           :wk "ompile")
     "Ci" '((lambda ()
              (interactive)
              (progn
                (call-interactively 'pspmacs/project-init)))
-           :wk "run")
+           :wk "nit")
     "Cr" '((lambda ()
              (interactive)
              (progn
                (call-interactively 'pspmacs/serve-or-run)))
-           :wk "run")))
+           :wk "un")))
 
 (pspmacs/load-inherit)
 ;;; pspmacs-programming.el ends here

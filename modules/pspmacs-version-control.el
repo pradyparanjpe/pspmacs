@@ -33,10 +33,10 @@
   :general
   (pspmacs/leader-keys
    "g" '(:ignore t :wk "it")
-   "g b" 'magit-blame
-   "g s" 'magit-status
-   "g S" 'magit-status-here
-   "g l" 'magit-log)
+   "gb" '(magit-blame :wk "lame")
+   "gs" '(magit-status :wk "tatus")
+   "gS" '(magit-status-here :wk "tatus here")
+   "gl" '(magit-log :wk "og"))
   (general-nmap
     :keymaps '(magit-status-mode-map
                magit-stash-mode-map
@@ -67,14 +67,14 @@
   :demand t
   :general
   (pspmacs/leader-keys
-    "gd" '(:ignore t :wk "diff")
-    "gd<" '(diff-hl-revert-hunk :wk "revert")
-    "gd>" '(diff-hl-stage-current-hunk :wk "stage")
-    "gdd" '(diff-hl-show-hunk :wk "see")
-    "gdn" '(diff-hl-next-hunk :wk "next")
-    "gdN" '(diff-hl-show-hunk-next :wk "next & see")
-    "gdp" '(diff-hl-previous-hunk :wk "prev")
-    "gdP" '(diff-hl-show-hunk-previous :wk "prev & see"))
+    "gd" '(:ignore t :wk "iff")
+    "gd<" '(diff-hl-revert-hunk :wk "Revert")
+    "gd>" '(diff-hl-stage-current-hunk :wk "Stage")
+    "gdd" '(diff-hl-show-hunk :wk "See")
+    "gdn" '(diff-hl-next-hunk :wk "ext")
+    "gdN" '(diff-hl-show-hunk-next :wk "ext & see")
+    "gdp" '(diff-hl-previous-hunk :wk "rev")
+    "gdP" '(diff-hl-show-hunk-previous :wk "rev & see"))
   :custom
   (diff-hl-disable-on-remote t)
   :hook
