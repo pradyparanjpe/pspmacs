@@ -173,7 +173,7 @@ Let's reduce it back to 2MB.
 #+end_src
 
 #+begin_note
-A package, [[file:~/.emacs.d/modules/pspmacs-interface-enhancement.org::*Garbage better collector stops hiccups][gcmh]], is presumed to be better at gc.
+A package, [[file:../modules/pspmacs-interface-enhancement.org::*Garbage better collector stops hiccups][gcmh]], is presumed to be better at gc.
 #+end_note
 
 ** [[file:../modules/index.org][Load Modules]]
