@@ -127,8 +127,8 @@ ACTION: action to perform (install, uninstall)"
     :keymaps 'importmagic-mode-map
     "i"  '(:ignore t :wk "mport")
     "if" '(importmagic-fix-symbol-at-point :wk "ix at point")
-    "ii" '(importmagic-fix-imports :wk "Fix")
-    "iI" '(importmagic-fix-symbol :wk "Manually"))
+    "ii" '(importmagic-fix-imports :wk ":Fix")
+    "iI" '(importmagic-fix-symbol :wk ":Manually"))
   :hook
   (python-mode . importmagic-mode))
 

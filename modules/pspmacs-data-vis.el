@@ -31,7 +31,7 @@
     "aa" '(csv-align-fields :wk "lign")
     "au" '(csv-unalign-fields :wk "nalign")
 
-    "," '(:ignore t :wk "Separator")
+    "," '(:ignore t :wk ":Separator")
     ",v" '(csv-toggle-invisibility "isibility toggle")
 
     "s" '(:ignore t :wk "ort")
@@ -42,7 +42,7 @@
     "T" '(csv-transpose :wk "ranspose")
 
     "y" '(:ignore t :wk "ank")
-    "yy" '(csv-kill-fields :wk "Kill")
+    "yy" '(csv-kill-fields :wk ":Kill")
     "yc" '(csv-yank-fields :wk "opy"))
   :custom
   (csv-comment-start "#")

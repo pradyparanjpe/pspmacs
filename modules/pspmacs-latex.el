@@ -196,10 +196,10 @@ If NO-DEFAULTS, only declare SECTIONS, ordinarily, use default sections."
   :general
   (pspmacs/local-leader-keys
     :keymaps 'LaTeX-mode-map
-    "TAB" '(TeX-complete-symbol :wk "Complete symbol")
-    "=" '(reftex-toc :wk "Reftex toc")
-    "(" '(reftex-latex :wk "Reftex label")
-    ")" '(reftex-reference :wk "Reftex ref")
+    "TAB" '(TeX-complete-symbol :wk ":Complete symbol")
+    "=" '(reftex-toc :wk ":Reftex toc")
+    "(" '(reftex-latex :wk ":Reftex label")
+    ")" '(reftex-reference :wk ":Reftex ref")
     "c" '(TeX-command-run-all :wk "ompile")
     "e" '(LaTeX-environment :wk "nvironment insert")
     "f" '(TeX-font :wk "ont")
@@ -410,8 +410,8 @@ Restore backed up files."
   (pspmacs/local-leader-keys
     :keymaps 'org-cdlatex-mode-map
     "c"  '(:ignore t :wk "dlatex")
-    "c`" '(cdlatex-math-symbol :wk "Symbol")
-    "c_" '(org-cdlatex-underscore-caret :wk "Sub-superscript")
+    "c`" '(cdlatex-math-symbol :wk ":Symbol")
+    "c_" '(org-cdlatex-underscore-caret :wk ":Sub-superscript")
     "ce" '(org-cdlatex-environment-indent :wk "nvironment"))
   :custom
   (cdlatex-math-symbol-prefix (kbd "M-+") "unbind cdlatex-math-symbol")

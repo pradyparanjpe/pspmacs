@@ -121,7 +121,7 @@
   "Sb" '(flyspell-buffer :wk "uffer")
   "Sn" '(evil-next-flyspell-error :wk "ext")
   "Sp" '(evil-prev-flyspell-error :wk "revious")
-  "Ss" '(flyspell-correct-word-before-point :wk "Menu"))
+  "Ss" '(flyspell-correct-word-before-point :wk ":Menu"))
 
 (use-package smartparens
   :general
@@ -182,7 +182,7 @@
 
 (use-package live-wc
   :vc (live-wc :url "https://gitlab.com/pradyparanjpe/live-wc.git")
-  :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk "WC"))
+  :general (pspmacs/leader-keys "#" '(:keymap live-wc-keymap :wk ":WC"))
   :custom
   (live-wc-max-buffer-size 1048576)  ; 1mB
   (live-wc-fraction t)

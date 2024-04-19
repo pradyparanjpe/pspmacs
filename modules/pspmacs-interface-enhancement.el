@@ -71,16 +71,16 @@
 
   ;; Clear
   (pspmacs/leader-keys
-    "-" '(:ignore t :wk "Clear"))
+    "-" '(:ignore t :wk ":Clear"))
 
   ;; Updates
   (pspmacs/leader-keys
     :states 'normal
-    "+"   '(:ignore t :wk "Up")
-    "+e"  '(:ignore t :wk "Emacs (Build)")
-    "+em" '(build-emacs :wk "Transient menu")
-    "+e+" '(build-emacs/repo-install :wk "Upgrade with defaults")
-    "++"  '(pspmacs/git-rebase :wk "PSPMacs Config"))
+    "+"   '(:ignore t :wk ":Up")
+    "+e"  '(:ignore t :wk ":Emacs (Build)")
+    "+em" '(build-emacs :wk ":Transient menu")
+    "+e+" '(build-emacs/repo-install :wk ":Upgrade with defaults")
+    "++"  '(pspmacs/git-rebase :wk ":PSPMacs Config"))
 
   ;; debug
   (pspmacs/leader-keys
@@ -107,7 +107,7 @@
 
   ;; Eval expressions, lisp symbols
   (pspmacs/leader-keys
-    ":" '(:ignore t :wk "Eval")
+    ":" '(:ignore t :wk ":Eval")
     ":d" '(eval-defun :wk "efun")
     ":e" '(eval-expression :wk "xp")
     ":l" '(eval-last-expression :wk "ast-exp")
@@ -119,7 +119,7 @@
 
   ;; UTF-8
   (pspmacs/leader-keys
-    "8" '(insert-char :wk "UTF-8"))
+    "8" '(insert-char :wk "-UTF"))
 
   ;; AI
   (pspmacs/leader-keys
@@ -175,9 +175,9 @@
 
   ;; input method
   (pspmacs/leader-keys
-    "\\" '(:ignore t :wk "Kbd")
-    "\\\\" '(toggle-input-method :wk "Toggle")
-    "\\\|" '(set-input-method :wk "Interactive"))
+    "\\" '(:ignore t :wk ":Kbd")
+    "\\\\" '(toggle-input-method :wk ":Toggle")
+    "\\\|" '(set-input-method :wk ":Interactive"))
 
   ;; see pspmacs-notes.org
   (pspmacs/leader-keys
@@ -207,7 +207,7 @@
 
     ;; scratch
     "bs"  '(:ignore t :wk "🗒")
-    "bs<" '(:ignore t :wk "Mail")
+    "bs<" '(:ignore t :wk ":Mail")
     "bsc" '(:ignore t :wk "onfig")
     "bsm" '(:ignore t :wk "arkup")
     "bsp" '(:ignore t :wk "rog")
@@ -223,7 +223,7 @@
     "bs-" '((lambda () (interactive)
               (customize-set-variable 'comment-start "→")
               (pspmacs/mode-scratch 'fundamental-mode))
-            :wk "Fundamental"))
+            :wk ":Fundamental"))
 
   ;; Comments
   (pspmacs/leader-keys
@@ -256,7 +256,7 @@
   (pspmacs/leader-keys "g" '(:ignore t :wk "it"))
 
   ;; help
-  (pspmacs/leader-keys "h" (general-simulate-key "C-h" :which-key "C-h"))
+  (pspmacs/leader-keys "h" (general-simulate-key "C-h" :which-key ":C-h"))
 
   ;; internet
   (pspmacs/leader-keys "i" '(:ignore t :wk "net"))
@@ -274,11 +274,11 @@
   ;; marks
   (pspmacs/leader-keys
     "m" '(:ignore t :wk "ark")
-    "mm" '(set-mark-command :wk "Set")
+    "mm" '(set-mark-command :wk ":Set")
     "mM" '((lambda () (interactive)
              (call-interactively 'set-mark-command))
            :wk "ark visual")
-    "mx" '(exchange-point-and-mark :wk "Exchange"))
+    "mx" '(exchange-point-and-mark :wk ":Exchange"))
 
   ;; org mode
   (pspmacs/leader-keys
@@ -293,10 +293,10 @@
   ;; quit
   (pspmacs/leader-keys
     "q" '(:ignore t :wk "uit")
-    "qQ" '(kill-emacs :wk "Daemon")
-    "qq" '(delete-frame :wk "Client")
+    "qQ" '(kill-emacs :wk ":Daemon")
+    "qq" '(delete-frame :wk ":Client")
     "qr" '(restart-emacs :wk "estart")
-    "q C-d" '(delete-other-frames :wk "Other frames"))
+    "q C-d" '(delete-other-frames :wk ":Other frames"))
 
   ;; Registers *consult*
   (pspmacs/leader-keys
@@ -306,7 +306,7 @@
   (pspmacs/leader-keys
     "t"     '(:ignore t :wk "ogl")
     "t RET" '(pspmacs/toggle-var :wk "variable")
-    "t#"    '(:ignore t :wk "Number")
+    "t#"    '(:ignore t :wk ":Number")
     "t#d"   '((lambda () (interactive) (setq display-line-numbers nil))
               :wk "isable")
     "t#e"   '((lambda () (interactive) (setq display-line-numbers t))
@@ -324,14 +324,14 @@
     "tv"  '(visual-line-mode :wk "isual line"))
 
   ;; universal argument
-  (pspmacs/leader-keys "u" '(universal-argument :wk "C-u"))
+  (pspmacs/leader-keys "u" '(universal-argument :wk ":C-u"))
 
   ;; Window
   (pspmacs/leader-keys
     "w" '(:ignore t :wk "in")
-    "w TAB" '(other-window :wk "◎ that")
-    "w=" '(balance-windows-area :wk "balance")
-    "wD" '(kill-buffer-and-window :wk "& buf: del")
+    "w TAB" '(other-window :wk ":Back ◎")
+    "w=" '(balance-windows-area :wk ":Balance")
+    "wD" '(kill-buffer-and-window :wk "el & buf")
     "w C-d" '(delete-other-windows :wk "😵 rest"))
 
   ;; Scratch buffers and mode-toggles
@@ -386,13 +386,13 @@
 (use-package avy
   :general
   (pspmacs/leader-keys
-    "jj" '(avy-goto-char-timer :wk "Search")))
+    "jj" '(avy-goto-char-timer :wk ":Search")))
 
 (use-package ace-window
   :demand t
   :general
   (pspmacs/leader-keys
-    "wf" '(ace-window :wk "Hint"))
+    "wf" '(ace-window :wk ":Hint"))
   :config
   (ace-window-display-mode -1))
 
@@ -403,8 +403,8 @@
    "C-<iso-lefttab>" '(popper-toggle :wk "cycle"))
 
   (pspmacs/leader-keys
-    "wt" '(popper-toggle-type :wk "ype")
-    "wx" '(popper-kill-latest-popup :wk "Kill"))
+    "wt" '(popper-toggle-type :wk "ype pop")
+    "wx" '(popper-kill-latest-popup :wk ":Kill pop"))
 
   :init
   (popper-mode 1)
@@ -529,7 +529,7 @@
             ;; "C-;" #'kb/vertico-multiform-flat-toggle
             "M-<backspace>" #'vertico-directory-delete-word)
   (pspmacs/leader-keys
-    "SPC" '(execute-extended-command :wk "M-x"))
+    "SPC" '(execute-extended-command :wk ":M-x"))
 
   :init
   (vertico-mode)
@@ -571,7 +571,7 @@
   :general
   (pspmacs/leader-keys
     ">t" '(:ignore t :wk "emplates")
-    ">t>" '(tempel-complete :wk "Complete")
+    ">t>" '(tempel-complete :wk ":Complete")
     ">ti" '(tempel-insert :wk "nsert"))
 
   :init
@@ -654,7 +654,7 @@
   :demand t
   :general
   (pspmacs/leader-keys :keymaps 'hyperbole-mode-map
-    "RET" '(hkey-either :wk "Hyper")
+    "RET" '(hkey-either :wk ":Hyper")
     "wg" '(hycontrol-windows-grid :wk "rid")
     "wm" '(hycontrol-make-windows-grid :wk "ake grid"))
   :custom

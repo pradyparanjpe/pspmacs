@@ -30,5 +30,5 @@
   :general
   (pspmacs/local-leader-keys
     "c" '(:ignore t :wk "ompile")
-    "cc" '(dockerfile-build-buffer :wk "Build")'
+    "cc" '(dockerfile-build-buffer :wk ":Build")'
     "cb" '(dockerfile-build-no-cache-buffer :wk "uild w/o cache")))

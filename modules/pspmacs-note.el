@@ -29,15 +29,15 @@
   (pspmacs/leader-keys
     :keymaps 'org-mode-map
     "ao"  '(:ignore t :wk "rg-agenda")
-    "ao#" '(org-agenda-list-stuck-projects :wk "Stuck")
-    "ao/" '(org-occur-in-agenda-files :wk "Occur in agenda")
-    "aoa" '(org-agenda-list :wk "List")
+    "ao#" '(org-agenda-list-stuck-projects :wk ":Stuck")
+    "ao/" '(org-occur-in-agenda-files :wk ":Occur in agenda")
+    "aoa" '(org-agenda-list :wk ":List")
     "aoc" '(org-agenda-capture :wk "apture")
-    "aoo" '(org-agenda :wk "Capture")
+    "aoo" '(org-agenda :wk ":Capture")
     "aot" '(org-todo-list :wk "odo")
 
     "t"   '(:ignore t :wk "ogl")
-    "t="  '(pspmacs/org-toggle-emphasis-display :wk "Markers")
+    "t="  '(pspmacs/org-toggle-emphasis-display :wk ":Markers")
     "ti"  '(org-toggle-inline-images :wk "nline images")
     "tl"  '(org-toggle-link-display :wk "ink display")
     "tt"  '(org-toggle-timestamp-type :wk "ime-stamp")
@@ -46,12 +46,12 @@
   ;; ORG TABLE
   (pspmacs/local-leader-keys
     :keymaps  'org-mode-map
-    "TAB"     '(:ignore t :wk "le")
+    "TAB"     '(:ignore t :wk ":Table")
 
-    "TAB RET" '(org-table-create-or-convert-from-region :wk "Create")
-    "TAB <"   '(org-table-shrink :wk "Shrink")
-    "TAB >"   '(org-table-expand :wk "Expand")
-    "TAB ?"   '(org-table-field-info :wk "Field info")
+    "TAB RET" '(org-table-create-or-convert-from-region :wk ":Create")
+    "TAB <"   '(org-table-shrink :wk ":Shrink")
+    "TAB >"   '(org-table-expand :wk ":Expand")
+    "TAB ?"   '(org-table-field-info :wk ":Field info")
 
     "TAB P"   '(:ignore t :wk "lot")
     "TAB Pa"  '(orgtbl-ascii-plot :wk "scii")
@@ -59,47 +59,47 @@
 
     "TAB d"   '(:ignore t :wk "elete")
     "TAB dc"  '(org-table-delete-column :wk "olumn")
-    "TAB dd"  '(org-table-blank-field :wk "Field contents")
+    "TAB dd"  '(org-table-blank-field :wk ":Field contents")
     "TAB dr"  '(org-table-kill-row :wk "ow")
 
     "TAB i"   '(:ignore t :wk "nsert")
     "TAB iH"  '(org-table-hline-and-move :wk "‾‾‾‾")
     "TAB ic"  '(org-table-insert-column :wk "olumn")
     "TAB ih"  '(org-table-insert-hline :wk "____")
-    "TAB ii"  '(table-insert :wk "Table")
+    "TAB ii"  '(table-insert :wk ":Table")
     "TAB ir"  '(org-table-insert-row :wk "ow")
 
     "TAB p"   '(org-table-paste-rectangle :wk "aste rect")
 
     "TAB s"   '(org-table-sort-lines :wk "ort")
-    "TAB x"   '(org-table-cut-region :wk "Cut")
+    "TAB x"   '(org-table-cut-region :wk ":Cut")
     "TAB y"   '(org-table-copy-region :wk "ank"))
 
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
-    "@"   '(:ignore t :wk "Reference")
+    "@"   '(:ignore t :wk ":Reference")
 
-    "="   '(:ignore t :wk "Count")
+    "="   '(:ignore t :wk ":Count")
     "=w"  '(:ignore t :wk "ords")
-    "=ww" '(count-words t :wk "All")
+    "=ww" '(count-words t :wk ":All")
     "=wr" '(count-words-region t :wk "egion")
 
-    ">"   '(org-demote-subtree :wk "Demote subtree")
-    "<"   '(org-promote-subtree :wk "Promote subtree")
+    ">"   '(org-demote-subtree :wk ":Demote subtree")
+    "<"   '(org-promote-subtree :wk ":Promote subtree")
 
-    "["   '(:ignore t :wk "Checkboxes")
-    "[]"  '(pspmacs/org-put-checkboxes :wk "Here")
-    "[*"  '(pspmacs/org-put-checkboxes-recursively :wk "All")
-    "[!"  '(:ignore t :wk "Remove")
+    "["   '(:ignore t :wk ":Checkboxes")
+    "[]"  '(pspmacs/org-put-checkboxes :wk ":Here")
+    "[*"  '(pspmacs/org-put-checkboxes-recursively :wk ":All")
+    "[!"  '(:ignore t :wk ":Remove")
     "[!]" '((lambda () (interactive) (pspmacs/org-put-checkboxes t))
-            :wk "This")
+            :wk ":This")
     "[!*" '((lambda ()
               (interactive)
               (pspmacs/org-put-checkboxes-recursively t))
-            :wk "All")
+            :wk ":All")
 
     "S"   '(:ignore t :wk "pecial")
-    "Sx"  '(org-cut-special :wk "Cut")
+    "Sx"  '(org-cut-special :wk ":Cut")
     "Se"  '(org-edit-special :wk "dit")
 
     "b"   '(:keymap org-babel-map :wk "abel")
@@ -117,13 +117,13 @@
     "is"  '(org-insert-subheading :wk "ub-heading")
 
     "l"   '(:ignore t :wk "ink")
-    "lL"  '(org-store-link t :wk "Grab")
+    "lL"  '(org-store-link :wk ":Grab")
     "lp"  '(pspmacs/org-paste-as-link :wk "aste")
-    "ll"  '(org-insert-link t :wk "Put")
+    "ll"  '(org-insert-link :wk ":Put")
     "ly"  '(pspmacs/org-copy-link-at-point :wk "ank")
 
     "p"   '(org-paste-special :wk "aste special")
-    "s"   '(org-insert-structure-template :wk "Template")
+    "s"   '(org-insert-structure-template :wk ":Template")
     "t"   '(org-todo :wk "odo")
 
     "x"   '(:ignore t :wk "port")
@@ -310,7 +310,7 @@ parent."
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
     "xo" '(org-odt-export-to-odt :wk "dt")
-    "xw"  '(org-pandoc-export-to-docs :wk "MSdocx"))
+    "xw"  '(org-pandoc-export-to-docs :wk ":MSdocx"))
 
   :custom
   ;; (org-odt-preferred-output-format "docx")
@@ -342,15 +342,15 @@ parent."
   :general
   (pspmacs/local-leader-keys :keymaps 'org-mode-map
     "P" '(:ignore t :wk "resent")
-    "PP" '(org-present :wk "Here")
+    "PP" '(org-present :wk ":Here")
     "P0" '((lambda () (interactive)
              (beginning-of-buffer)
              (org-present))
-           :wk "Afresh"))
+           :wk ":Afresh"))
 
   (pspmacs/local-leader-keys :keymaps 'org-present-mode-keymap
     "q" '(org-present-quit :wk "uit")
-    "]" '(hydra-curtains/body :wk "Widen"))
+    "]" '(hydra-curtains/body :wk ":Widen"))
 
   :custom
   (org-present-text-scale 3)
@@ -409,7 +409,7 @@ parent."
   :general
   (pspmacs/local-leader-keys
     :keymaps 'org-mode-map
-    "xv" '(org-pandoc-export-to-revealjs :wk "Reveal"))
+    "xv" '(org-pandoc-export-to-revealjs :wk ":Reveal"))
   :custom
   (oer-reveal-org-includes-dir
    (expand-file-name "oer-reveal-org" local-emacs-dir))
@@ -423,10 +423,10 @@ parent."
     :keymaps 'org-mode-map
     "T"   '(:ignore t :wk "ime")
     "Tc"  '(:ignore t :wk "lock")
-    "Tcx" '(org-clock-cancel :wk "Cancel")
+    "Tcx" '(org-clock-cancel :wk ":Cancel")
     "Tci" '(org-clock-in :wk "n")
     "Tco" '(org-clock-out :wk "ut")
-    "Tcj" '(org-clock-goto :wk "Goto")
+    "Tcj" '(org-clock-goto :wk ":Goto")
 
     "Tp"  '(:ignore t :wk "omodoro")
     "Tpp" '(org-pomodoro :wk "omodoro")
@@ -437,7 +437,7 @@ parent."
                (format-seconds
                 "%0.2m:%0.2s left"
                 (round (org-pomodoro-remaining-seconds)))))
-            :wk "Remaining")
+            :wk ":Remaining")
     "Tpk" '((lambda ()
               (interactive)
               (org-pomodoro-kill))
@@ -451,7 +451,7 @@ parent."
                 (org-pomodoro-short-break-finished))
                ((eq org-pomodoro-state :long-break)
                 (org-pomodoro-long-break-finished))))
-            :wk "Finish"))
+            :wk ":Finish"))
   :custom
   (org-pomodoro-clock-break t)
   (org-pomodoro-manual-break t)
@@ -475,12 +475,12 @@ parent."
   :after org
   :general
   (pspmacs/leader-keys
-    "D!" '(powerthesaurus-lookup-antonyms-dwim :wk "antonym")
-    "D+" '(powerthesaurus-lookup-related-dwim :wk "related")
-    "D=" '(powerthesaurus-lookup-synonyms-dwim :wk "synonym")
-    "D?" '(powerthesaurus-lookup-definitions-dwim :wk "define")
-    "DL" '(powerthesaurus-transient :wk "explore")
-    "Dl" '(powerthesaurus-lookup-dwim :wk "lookup")))
+    "D!" '(powerthesaurus-lookup-antonyms-dwim :wk ":Antonym")
+    "D+" '(powerthesaurus-lookup-related-dwim :wk ":Related")
+    "D=" '(powerthesaurus-lookup-synonyms-dwim :wk ":Synonym")
+    "D?" '(powerthesaurus-lookup-definitions-dwim :wk ":Define")
+    "DL" '(powerthesaurus-transient :wk ":Explore")
+    "Dl" '(powerthesaurus-lookup-dwim :wk "ookup")))
 
 (use-package org-modern
   :custom

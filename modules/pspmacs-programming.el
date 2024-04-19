@@ -188,13 +188,13 @@
     :states 'normal
     :keymaps 'eglot-mode-map
     "g" '(:ignore t :wk "o to")
-    "gg" '(xref-find-definitions :wk "Symbol definition")
-    "l" '(:ignore t :wk "anguage-server (eglot)")
-    "lr" '(eglot-rename :wk "ename")
-    "ls" '(:ignore t :wk "erver")
-    "lsr" '(eglot-reconnect :wk "econnect")
-    "lss" '(eglot-shutdown :wk "hutdown")
-    "lsS" '(eglot-shutdown-all :wk "hutdown all"))
+    "gg" '(xref-find-definitions :wk ":Symbol definition")
+    "L" '(:ignore t :wk ":Eglot")
+    "Lr" '(eglot-rename :wk "ename")
+    "Ls" '(:ignore t :wk "erver")
+    "Lsr" '(eglot-reconnect :wk "econnect")
+    "Lss" '(eglot-shutdown :wk "hutdown")
+    "LsS" '(eglot-shutdown-all :wk "hutdown all"))
   :custom
   (eglot-extend-to-xref t)
   (eglot-connect-timeout 60)
@@ -231,7 +231,7 @@
     :state 'normal
     :keymaps 'prog-mode-map
     "d" '(:ignore t :wk "oc")
-    "dh" '((lambda ()
+    "dd" '((lambda ()
              (interactive)
              (progn
                (display-local-help)

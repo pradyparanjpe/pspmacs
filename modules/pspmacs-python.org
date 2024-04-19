@@ -200,8 +200,8 @@
       :keymaps 'importmagic-mode-map
       "i"  '(:ignore t :wk "mport")
       "if" '(importmagic-fix-symbol-at-point :wk "ix at point")
-      "ii" '(importmagic-fix-imports :wk "Fix")
-      "iI" '(importmagic-fix-symbol :wk "Manually"))
+      "ii" '(importmagic-fix-imports :wk ":Fix")
+      "iI" '(importmagic-fix-symbol :wk ":Manually"))
     :hook
     (python-mode . importmagic-mode))
 #+end_src
@@ -230,7 +230,7 @@
       "t" '(:ignore t :wk "est")
       "td" '(python-pytest-dispatch :wk "ispatch")
       "tf" '(python-pytest-file :wk "ile")
-      "tt" '(python-pytest-function :wk "Function"))
+      "tt" '(python-pytest-function :wk ":Function"))
     :init
     (setq python-pytest-arguments '("--color" "--failed-first"))
     :config

@@ -24,11 +24,18 @@
 
 (use-package which-key
   :after evil
+  :vc (which-key :url "https://www.github.com/pradyparanjpe/emacs-which-key.git")
   :init
   (which-key-mode)
   :custom
-  (which-key-separator ": ")
+  (which-key-separator "")
   (which-key-prefix-prefix "")
+  (which-key-special-keys '(("SPC"       . "␣")
+                            ("TAB"       . "↹")
+                            ("RET"       . "⏎")
+                            ("ESC"       . "⎋")
+                            ("backspace" . "⌫")
+                            ("DEL"       . "⌦")))
   :config
   (which-key-setup-minibuffer))
 

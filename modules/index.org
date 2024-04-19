@@ -34,8 +34,8 @@ If not found, error is *NOT* thrown.
 
 * Module groups
 ** 10: Interface
-- [[file:pspmacs-interface-enhancement.org][interface-enhancement]]
 - [[file:pspmacs-keys-cheat-sheet.org][keys-cheat-sheet]]
+- [[file:pspmacs-interface-enhancement.org][interface-enhancement]]
 - [[file:pspmacs-theme.org][theme]]
 
 ** 20: Editing
@@ -67,7 +67,7 @@ If not found, error is *NOT* thrown.
 
 * Alist export
 #+begin_src emacs-lisp
-  '((10 . (interface-enhancement keys-cheat-sheet theme))
+  '((10 . (keys-cheat-sheet interface-enhancement theme))
     (20 . (editing-enhancement data-vis note))
     (30 . (project-management integration version-control))
     (40 . (programming

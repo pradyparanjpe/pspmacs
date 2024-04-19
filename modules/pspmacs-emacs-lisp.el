@@ -45,10 +45,10 @@ Insert following two lines at point.
 
 (pspmacs/local-leader-keys
   :keymaps 'emacs-lisp-mode-map
-  "TAB" '(indent-sexp :wk "Indent")
+  "TAB" '(indent-sexp :wk ":Indent")
   "e" '(:ignore t :wk "val")
-  "ee" '(eval-last-sexp :wk "Sexp")
-  "ex" '(eval-expression :wk "Expression")
+  "ee" '(eval-last-sexp :wk ":Sexp")
+  "ex" '(eval-expression :wk ":Expression")
   "eb" '(eval-buffer :wk "uffer"))
 
 (pspmacs/load-inherit)

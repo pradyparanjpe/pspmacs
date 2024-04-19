@@ -120,14 +120,14 @@ libvterm for Emacs
       "fc" '(consult-find :wk "onsult")
       "fr" '(consult-recent-file :wk "ecent")
       "js" '(consult-imenu :wk "ection")
-      "jS" '(consult-imenu-multi :wk "Proj sect")
+      "jS" '(consult-imenu-multi :wk ":Proj sect")
       "mj" '(consult-mark :wk "ump")
       "rl" '(consult-register-load t :wk "oad")
       "rr" '(consult-register-store :wk "emember")
       "rj" '(consult-register :wk "ump"))
 
     (pspmacs/local-leader-keys
-      "M-x" '(consult-mode-command :wk "Mode command"))
+      "M-x" '(consult-mode-command :wk ":Mode command"))
     ;; Enable automatic preview at point in the *Completions* buffer. This is
     ;; relevant when you use the default completion UI.
     :hook (completion-list-mode . consult-preview-at-point-mode)

@@ -87,9 +87,9 @@
     :general
     (pspmacs/leader-keys
       "gd" '(:ignore t :wk "iff")
-      "gd<" '(diff-hl-revert-hunk :wk "Revert")
-      "gd>" '(diff-hl-stage-current-hunk :wk "Stage")
-      "gdd" '(diff-hl-show-hunk :wk "See")
+      "gd<" '(diff-hl-revert-hunk :wk ":Revert")
+      "gd>" '(diff-hl-stage-current-hunk :wk ":Stage")
+      "gdd" '(diff-hl-show-hunk :wk ":See")
       "gdn" '(diff-hl-next-hunk :wk "ext")
       "gdN" '(diff-hl-show-hunk-next :wk "ext & see")
       "gdp" '(diff-hl-previous-hunk :wk "rev")

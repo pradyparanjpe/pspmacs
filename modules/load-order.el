@@ -1,4 +1,4 @@
-'((10 . (interface-enhancement keys-cheat-sheet theme))
+'((10 . (keys-cheat-sheet interface-enhancement theme))
   (20 . (editing-enhancement data-vis note))
   (30 . (project-management integration version-control))
   (40 . (programming

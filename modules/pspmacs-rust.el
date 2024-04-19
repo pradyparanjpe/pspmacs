@@ -52,7 +52,7 @@
   (pspmacs/local-leader-keys
     :states 'normal
     :keymaps 'cargo-minor-mode-map
-    "r" '(cargo-mode-command-map :wk "Cargo"))
+    "r" '(cargo-mode-command-map :wk ":Cargo"))
   :hook
   (rust-mode . cargo-minor-mode))
 
