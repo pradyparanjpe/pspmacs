@@ -331,7 +331,7 @@ Order of colors:
           (dolist
               (group
                (let ((order-file
-                      (expand-file-name "modules/load-order.el" tree)))
+                      (expand-file-name "modules/load-order.eld" tree)))
                  (when (file-readable-p order-file)
                    (with-temp-buffer
                      (insert-file-contents order-file)
