@@ -36,6 +36,7 @@
                ("report" "\\documentclass[11pt]{report}")
                ("komareport" "\\documentclass{scrreprt}")
                ("mimore" ,(concat "\\documentclass{mimore}" pkgs-xtra))
+               ("moderncv" "\\documentclass{moderncv}")
                ("book" "\\documentclass[11pt]{book}")
                ("komabook" "\\documentclass[twoside=false]{scrbook}" nil
                 '("\\chapter{%s}" . "\\chapter*{%s}"))
