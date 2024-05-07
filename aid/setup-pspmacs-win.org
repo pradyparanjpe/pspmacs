@@ -1,0 +1,142 @@
+#+SETUPFILE: ~/.local/share/emacs/org/templates/rtd.org
+#+title: Setup PSPMac
+#+PROPERTY: header-args :tangle setup-pspmacs.ps1 :mkdirp t :results no :eval no
+#+auto_tangle: t
+#+export_file_name: setup-pspmacs-win.html
+
+* Non-Free Warning
+As is explained [[https://www.gnu.org/software/emacs/download.html][here]], GNU/Emacs strongly discourages its installation on non-free systems such as MSWindows.
+PSPMacs, which configures GNU/Emacs, also assumes that it is being run on GNU/Linux platform.
+Nevertheless, the following steps may be useful in setting GNU/Emacs using PSPMacs.
+
+Many of these steps may require graphical interaction; hence, have to be performed manually.
+
+- Run the script [[file:dependencies.ps1]] with administrative privileges to install essential dependencies.
+- After confirming that all dependencies were installed, run the [[file:setup-pspmacs.ps1]] script.
+# Future: automate each of these
+
+* Privileges
+If script is triggered without administrator privileges, pass to a powershell with elevated privileges.
+#+begin_src powershell :tangle dependencies.ps1
+  if (-NOT ([Security.Principal.WindowsPrincipal]
+            [Security.Principal.WindowsIdentity]::GetCurrent())
+      .IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+  {
+      $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+      Start-Process powershell -Verb runAs -ArgumentList $arguments
+      Break
+  }
+#+end_src
+
+* Dependencies
+** Chocolatey
+We shall use [[https://docs.chocolatey.org/][chocolatey]] as our package manager for MS Windows.
+#+begin_src powershell :tangle dependencies.ps1
+  Set-ExecutionPolicy Bypass -Scope Process -Force
+  [System.Net.ServicePointManager]::SecurityProtocol = `
+    [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+  iex ((New-Object System.Net.WebClient)
+       .DownloadString('https://community.chocolatey.org/install.ps1'))
+#+end_src
+
+** System dependencies
+#+begin_src powershell :tangle dependencies.ps1
+  choco install -y gnupg gnuwin32-coreutils.install mingw git.install `
+    curl zip nodejs ripgrep
+#+end_src
+
+** fonts
+#+begin_src powershell :tangle dependencies.ps1
+  choco install -y nerd-fonts-firacode nerd-fonts-victormonoo
+#+end_src
+
+* Install Emacs
+#+begin_src powershell :tangle dependencies.ps1
+  choco install -y emacs
+#+end_src
+
+#+begin_important
+- The user must manually install all fonts extracted from [[https://github.com/s373r/cantarell-nerd-font/releases/download/v1.1/cantarell-nerd-fonts-complete-release.zip][this archive]].
+#+end_important
+
+* Variables
+#+begin_src powershell
+  $emacs_data=("$env:LOCALAPPDATA" + "\emacs")
+  $emacs_state=("$env:TEMP" + "\emacs")
+#+end_src
+
+* Setup
+** Back up existing configuration
+Back-up configuration at ~%userprofile%\.emacs.d~ to  ~%userprofile%\.emacs.d.bak~ if found.
+#+begin_src powershell
+  function backup_std_emacs {
+      Write-Host "`r`n"
+      Write-Host "[PART] Back-up"
+      Write-Host "[INFO] backing up '.emacs.d' locations to '.emacs.d.bak'."
+      move-Item -Force -ErrorAction SilentlyContinue `
+        ("$env:userprofile" + "\.emacs.d") ("$env:userprofile" + "\.emacs.d.bak")
+      move-Item -Force -ErrorAction SilentlyContinue `
+        ("$env:appdata" + "\.emacs.d") ("$env:appdata" + "\.emacs.d.bak")
+  }
+#+end_src
+
+** =LOCAL_EMACS_HOME= and =PVT_EMACS_HOME=.
+As explained in the project's [[file:../README.org][README]], [[file:../README.org::*Local: =local-emacs-dir=][LOCAL_EMACS_HOME]] holds machine-specific cache.
+We set it prior to loading /PSPMacs/ the first time, so that the same location is used always.
+#+begin_src powershell
+  function set_local_home {
+      Write-Host "[INFO] Setting a local cache for Emacs packages."
+      if ("${LOCAL_EMACS_HOME}") {
+          Write-Host "[INFO] LOCAL_EMACS_HOME is set to %s, using it.`r`n" `
+            "${LOCAL_EMACS_HOME}"
+          return
+      }
+
+      $LOCAL_EMACS_HOME=("$emacs_data" + "\local.d")
+      New-Item "$LOCAL_EMACS_HOME\packages\gnupg" -Force -ItemType Directory
+      gpg --homedir "$LOCAL_EMACS_HOME\packages\gnupg" `
+        --receive-keys "066DAFCB81E42C40"
+      [System.Environment]::SetEnvironmentVariable(
+          'LOCAL_EMACS_HOME, $LOCAL_EMACS_HOME, 'User'
+      )
+  }
+  #+end_src
+
+** Infect
+#+begin_src powershell
+  function clone_pspmacs {
+      Write-Host "`r`n"
+      Write-Host "[PART] Download PSPMacs"
+
+      # set environment
+      Write-Host "[INFO] Preparing environment."
+
+      New-Item ("$emacs_data" + "\pspmacs") -Force -ItemType Directory
+      New-Item "$emacs_state" -Force -ItemType Directory
+
+      Write-Host "[INFO] cloning PSPMacs."
+      git clone --recurse-submodules `
+        "https://www.gitlab.com/pradyparanjpe/pspmacs.git" `
+        ("$emacs_data\" + "pspmacs")
+  }
+
+  function set_emacs_config {
+      Write-Host "[PART] Infecting Emacs with pspmacs config."
+      cmd \c mklink \d ("$env:userprofile" + "\.emacs.d") `
+        ("$emacs_data" + "\pspmacs")
+      cmd \c mklink \d ("$env:appdata" + "\.emacs.d") `
+        ("$emacs_data" + "\pspmacs")
+  }
+#+end_src
+
+* Main guard
+
+#+begin_src powershell
+  function main {
+      clone_pspmacs
+      backup_std_emacs
+      set_local_home
+      set_emacs_config
+  }
+  main
+#+end_src

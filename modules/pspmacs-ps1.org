@@ -1,0 +1,47 @@
+#+title: pspmacs-ps1
+#+property: header-args :tangle pspmacs-ps1.el :mkdirp t :results no :eval no
+#+auto_tangle: t
+
+* 
+* Header Copyright
+#+begin_src emacs-lisp
+;;; ps1.el --- powershell configuration -*- lexical-binding: t; -*-
+
+;; Copyright © 2023-2024  Pradyumna Swanand Paranjape
+
+;; Author: Pradyumna Swanand Paranjape <pradyparanjpe@rediffmail.com>
+;; Keywords: help, languages
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU Lesser General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU Lesser General Public License for more details.
+
+;; You should have received a copy of the GNU Lesser General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+#+end_src
+
+* Base package
+#+begin_src emacs-lisp
+  (use-package powershell
+    :custom
+    (powershell-indent 4)
+    (powershell-continuation-indent 2)
+    (powershell-log-level 1))
+#+end_src
+
+* Inherit from private and local
+ #+begin_src emacs-lisp
+
+   (pspmacs/load-inherit)
+   ;;; pspmacs-ps1.el ends here
+#+end_src
