@@ -139,23 +139,16 @@
   (customize-set-variable 'smtpmail-servers-requiring-authorization
                           "smtp\\.gmail\\.com")
   :custom
-  (mu4e-account-alist t)
-  (mu4e-enable-notifications t)
-  (mu4e-enable-mode-lineu4e-enable-mode-line t)
-  (mu4e-compose-signature-auto-include t)
-  (mu4e-compose-signature (format "%s\n%s" "--" user-full-name))
+  (mu4e-notification-support t)
+  (mu4e-modeline-support t)
   (mu4e-compose-format-flowed t)
   (mu4e-get-mail-command (format
                           "mbsync -c %s -a"
                           (expand-file-name
                            "mu4e/mbsyncrc"
                            (or (getenv "XDG_CONFIG_HOME") "~/.config"))))
-  (mu4e-maildir (expand-file-name
-                 "Maildir" (or (getenv "XDG_DATA_HOME") "~/.local/share")))
   (mu4e-change-filenames-when-moving t)
   (mu4e-update-interval (* 1 60 60))
-  (mu4e-view-show-images t)
-  (mu4e-view-show-addresses t)
 
   :hook
   ((mu4e-compose-mode . display-fill-column-indicator-mode)
@@ -206,6 +199,7 @@
   (message-auto-save-directory (expand-file-name
     "Maildir/drafts" (or (getenv "XDG_DATA_HOME")
                          (expand-file-name ".local/share" (getenv "HOME")))))
+  (message-signature (format "\n\n-- \n%s" user-full-name))
   (browse-url-generic-program (or (executable-find "qutebrowser")
                                   (executable-find "firefox")
                                   (executable-find "chromium-freeworld")
