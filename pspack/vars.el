@@ -163,9 +163,6 @@
   :type '(repeat (cons (symbol :tag "mode")
                        (string :tag "key-sequence"))))
 
-(defvar pspmacs/after-enable-theme-hook nil
-  "Normal hook run after enabling a theme.")
-
 (defvar wl-copy-process nil
   "Integration of wl-copy (wl-clipboard) for wayland")
 

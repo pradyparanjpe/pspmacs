@@ -117,3 +117,6 @@ auto/
 
 # Emacs local settings
 .dir-locals.el
+
+# TODO
+TODO.org

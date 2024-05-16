@@ -496,25 +496,11 @@ Key-bindings to:
   #+end_src
 
 * Theme customizations
-** After load theme hook
-#+begin_src emacs-lisp :tangle vars.el
-  (defvar pspmacs/after-enable-theme-hook nil
-    "Normal hook run after enabling a theme.")
-#+end_src
-
-#+begin_src emacs-lisp :tangle func.el
-  (defun pspmacs/run-after-enable-theme-hook (&rest _args)
-    "Run `after-enable-theme-hook'."
-    (run-hooks 'pspmacs/after-enable-theme-hook))
-
-  (advice-add 'enable-theme :after #'pspmacs/run-after-enable-theme-hook)
-#+end_src
-
 Org modern customizations as [[https://github.com/minad/org-modern/issues/5][suggested]] by Protesilaos himself.
 To have org-table formatted correctly with org-modern mode and variable-pitch-font.
 #+begin_src emacs-lisp :tangle func.el
   ;;;###autoload
-  (defun pspmacs/modus-themes-custom-faces ()
+  (defun pspmacs/modus-themes-custom-faces (&rest _)
     "Customize modus theme faces."
 
     ;; Org-modern might be defered

@@ -66,8 +66,8 @@
      (border-mode-line-inactive bg-mode-line-inactive)))
   ;; Load the theme of your choice.
   ;; (load-theme 'modus-operandi :no-confirm)
-  :hook
-  (pspmacs/after-enable-theme . pspmacs/modus-themes-custom-faces))
+  :config
+  (add-hook 'enable-theme-functions #'pspmacs/modus-themes-custom-faces))
 
 (use-package fontaine
   :demand t
@@ -122,18 +122,9 @@
       :line-spacing nil)))
   :hook
   (kill-emacs-hook . fontaine-store-latest-preset)
-  (pspmacs/after-enable-theme . fontaine-apply-current-preset)
   :config
-  (cond
-   ((daemonp)
-    (add-hook
-     'after-make-frame-functions
-     (lambda (frame)
-       (with-selected-frame frame
-         (fontaine-set-preset
-          (or (fontaine-restore-latest-preset) 'regular))))))
-   (window-system (fontaine-set-preset
-                   (or (fontaine-restore-latest-preset) 'regular)))))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (add-hook 'enable-theme-functions #'fontaine-apply-current-preset))
 
 (use-package emacs
   :custom

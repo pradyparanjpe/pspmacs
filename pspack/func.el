@@ -203,14 +203,8 @@ If MAJ-MODES is a list, `major-mode' shouldn't be in MAJ-MODES."
   (let ((maj-modes-list (if (listp maj-modes) maj-modes `(,maj-modes))))
     (unless (member major-mode maj-modes-list) (call-interactively callback))))
 
-(defun pspmacs/run-after-enable-theme-hook (&rest _args)
-  "Run `after-enable-theme-hook'."
-  (run-hooks 'pspmacs/after-enable-theme-hook))
-
-(advice-add 'enable-theme :after #'pspmacs/run-after-enable-theme-hook)
-
 ;;;###autoload
-(defun pspmacs/modus-themes-custom-faces ()
+(defun pspmacs/modus-themes-custom-faces (&rest _)
   "Customize modus theme faces."
 
   ;; Org-modern might be defered
