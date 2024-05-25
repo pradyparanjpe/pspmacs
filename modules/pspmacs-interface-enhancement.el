@@ -218,7 +218,7 @@
     "bss" '((lambda () (interactive)
               (customize-set-variable 'comment-start "→")
               (pspmacs/mode-scratch 'text-mode))
-            :wk "plain text")
+            :wk ":Plain text")
 
     "bs-" '((lambda () (interactive)
               (customize-set-variable 'comment-start "→")
@@ -340,19 +340,18 @@
     (dolist (maj-mode pspmacs/mode-keybindings nil)
       (let* ((key-seq (cdr maj-mode))
              (target-mode (car maj-mode))
-             (wk-hint (string-replace
-                       "-mode" ""
-                       (symbol-name (car maj-mode)))))
-        (push `(quote (,target-mode :wk ,wk-hint))
-               mode-toggle-binding)
-        (push (format "M%s" key-seq)
-              mode-toggle-binding)
+             (wk--hint
+              (string-replace "-mode" "" (symbol-name (car maj-mode))))
+             (wk-hint
+              (if (string= (substring wk--hint 0 1) (substring key-seq -1))
+                  (substring wk--hint 1) (format":%s" wk--hint))))
+        (push `(quote (,target-mode :wk ,wk-hint)) mode-toggle-binding)
+        (push (format "M%s" key-seq) mode-toggle-binding)
         (push `(quote ((lambda () (interactive)
                          (pspmacs/mode-scratch ',target-mode))
                        :wk ,wk-hint))
-               scratch-binding)
-        (push (format "bs%s" key-seq)
-              scratch-binding)))
+              scratch-binding)
+        (push (format "bs%s" key-seq) scratch-binding)))
     (eval `(pspmacs/leader-keys ,@mode-toggle-binding))
     (eval `(pspmacs/leader-keys ,@scratch-binding))))
 
