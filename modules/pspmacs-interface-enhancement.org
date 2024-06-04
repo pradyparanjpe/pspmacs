@@ -139,6 +139,10 @@
     (pspmacs/leader-keys "@" (general-simulate-key "C-x 8 e"
                                :which-key "Emoji"))
 
+    ;; Treemacs
+    (pspmacs/leader-keys
+      "0" '(:ignore t :wk ":🌳"))
+
     ;; UTF-8
     (pspmacs/leader-keys
       "8" '(insert-char :wk "-UTF"))
