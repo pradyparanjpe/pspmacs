@@ -192,6 +192,7 @@
     "L" '(:ignore t :wk ":Eglot")
     "Lr" '(eglot-rename :wk "ename")
     "Ls" '(:ignore t :wk "erver")
+    "Lsa" '(eglot-code-actions :wk "ct")
     "Lsr" '(eglot-reconnect :wk "econnect")
     "Lss" '(eglot-shutdown :wk "hutdown")
     "LsS" '(eglot-shutdown-all :wk "hutdown all"))
