@@ -64,6 +64,7 @@ GRTAGS
 GTAGS
 
 # known emacs cache
+eln-cache
 eln-cache/
 .cache/
 recentf
@@ -78,6 +79,7 @@ undo-tree/
 .mc-lists.el
 lsp/
 projectile-bookmarks.tld
+transient
 transient/
 org-persist/
 auto-save-list/
@@ -86,6 +88,7 @@ auto-save-list/
 elpa
 elpa/
 packages/
+url
 url/
 org-re-reveal/
 oer-reveal-org/
@@ -120,3 +123,6 @@ auto/
 
 # TODO
 TODO.org
+
+# Gnus
+netowrk-security.data

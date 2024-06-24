@@ -1,4 +1,3 @@
-
 #+title: pspmacs-internet
 #+PROPERTY: header-args :tangle pspmacs-internet.el :mkdirp t :results no :eval no
 #+auto_tangle: t
@@ -101,19 +100,19 @@ GPTel supports Gemini (google service)
 #+end_src
 
 * Mail
-It wouldn't be always desirable to synchronize mailboxes on each device running Emacs.
-Also, it may be desired to synchronize different mailbox(es) on different devices.
-Hence, /use-package/ directives in this section don't load by default.
-To enable *Mail* features on a device, set appropriate path to =pspmacs/mu4e-load-path= in =local-emacs-dir/early/config.el=.
-#+begin_src emacs-lisp :tangle no
+** Mu
+- Depends on mu(4e), isync (mbsync) and gpg2
+- This requires configuration of =mbsync= to be placed in =${XDG_CONFIG_HOME:-${HOME}/.config}/mu4e/mbsyncrc=.
+- Depending upon the number of mails, this may eat up a lot of storage space.
+  It wouldn't be always desirable to synchronize mailboxes on each device running Emacs.
+  Also, it may be desired to synchronize different mailbox(es) on different devices.
+  Hence, /use-package/ directives in this section don't load by default.
+  To enable *Mu4e Mail* features on a device, set appropriate path to =pspmacs/mu4e-load-path= in =local-emacs-dir/early/config.el=.
+
+  #+begin_src emacs-lisp :tangle no
   (customize-set-variable 'pspmacs/mu4e-load-path
                           "/usr/share/emacs/site-lisp/mu4e/")
 #+end_src
-
-** Mu
-- Depends on mu(4e), isync (mbsync) and gpg
-- This requires configuration of =mbsync= to be placed in =${XDG_CONFIG_HOME:-${HOME}/.config}/mu4e/mbsyncrc=.
-- Depending upon the number of mails, this may eat up a lot of storage space.
 
 *** Local/Private configuration
 - Configure remote and local mailbox using =~/.mbsyncrc=.
@@ -166,47 +165,6 @@ To enable *Mail* features on a device, set appropriate path to =pspmacs/mu4e-loa
   - Videos Playlist: [[https://www.youtube.com/watch?v=yZRyEhi4y44&list=PLEoMzSkcN8oM-kA19xOQc8s0gr0PpFGJQ][System Crafters]]
   - Repository: [[https://github.com/daviwil/emacs-from-scratch][emacs-from-scratch]]
 
-*** Org mime
-#+begin_src emacs-lisp
-  (use-package org-mime
-    :when pspmacs/mu4e-load-path
-    :commands (org-mime-confirm-when-no-multipart
-               org-mime-edit-mail-in-org-mode)
-    :defer 20
-    :general
-    (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
-      "oe" '(org-mime-edit-mail-in-org-mode :wk "dit")
-      "<h" '(:ignore t :wk "tmlize")
-      "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
-
-    (pspmacs/leader-keys
-      :keymaps '(org-mode-map mu4e-compose-mode-map)
-      ;; NEXT: add as send-mail hook
-      "<h"  '(:ignore t :wk "tmlize")
-      "<hh" '(org-mime-htmlize :wk "this"))
-
-    (pspmacs/leader-keys
-      :keymaps '(org-mode-map)
-      "<h"  '(:ignore t :wk "tmlize")
-      "<hb" '(org-mime-org-buffer-htmlize :wk "uffer")
-      "<hs" '(org-mime-org-subtree-htmlize :wk "ubtree"))
-
-    :custom
-    (org-mime-export-options
-     '(:section-numbers nil :with-author nil :with-toc nil))
-    (org-mime-library 'mml)
-
-    :hook
-    (org-mime-html . (lambda ()
-                       (org-mime-change-element-style
-                        "pre"
-                        (string-join
-                         '("color: #959a9f"
-                           "background-color: #000307"
-                           "padding: 0.5em;")
-                         "; ")))))
-#+end_src
-
 *** Mu4e global configuration
 #+begin_src emacs-lisp
   (use-package mu4e
@@ -222,10 +180,17 @@ To enable *Mail* features on a device, set appropriate path to =pspmacs/mu4e-loa
       "<u" '(mu4e-update-mail-and-index :wk "pdate")
       "<c" '(mu4e-compose-new :wk "ompose"))
 
-    :init
-    (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
-    (customize-set-variable 'smtpmail-servers-requiring-authorization
-                            "smtp\\.gmail\\.com")
+    (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
+      "oe" '(org-mime-edit-mail-in-org-mode :wk "dit")
+      "<h" '(:ignore t :wk "tmlize")
+      "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
+
+    (pspmacs/leader-keys
+      :keymaps '(mu4e-compose-mode-map)
+      ;; NEXT: add as send-mail hook
+      "<h"  '(:ignore t :wk "tmlize")
+      "<hh" '(org-mime-htmlize :wk "this"))
+
     :custom
     (mu4e-notification-support t)
     (mu4e-modeline-support t)
@@ -239,16 +204,14 @@ To enable *Mail* features on a device, set appropriate path to =pspmacs/mu4e-loa
     (mu4e-update-interval (* 1 60 60))
 
     :hook
-    ((mu4e-compose-mode . display-fill-column-indicator-mode)
-     (message-send . mml-secure-message-sign-pgpmime)
-     (message-send . org-mime-confirm-when-no-multipart))
+    (mu4e-compose-mode . display-fill-column-indicator-mode)
 
     :config
     (mu4e t)
     (evil-collection-mu4e-setup))
       #+end_src
 
-** Mu4e-org
+*** Mu4e-org
 Integrate mu4e with org-mode
 #+begin_src emacs-lisp
   (use-package mu4e-org
@@ -278,6 +241,102 @@ Integrate mu4e with org-mode
             "** Created: %:date-timestamp-inactive"
             "")
          "\n")))))
+#+end_src
+
+** Gnus
+If [[*Mu][Mu4e]] is not enabled, we shall use the Gnus to read directly from the mail server.
+Corresponding settings should be *private* and loaded appropriately from local or private [[file:~/.emacs.d/README.org::*Inheritance principle][work-tree]].
+
+#+begin_src emacs-lisp
+  (use-package gnus
+    :custom
+    (gnus-select-method '(nnnil nil))
+    (gnus-home-directory (xdg/make-path "gnus" 'cache :directory))
+    (gnus-directory (xdg/make-path "gnus/News" 'cache :directory))
+    (gnus-cache-directory (xdg/make-path "gnus/News/cache" 'cache :directory))
+    (gnus-kill-files-directory (xdg/make-path "gnus/News" 'cache :directory))
+    (gnus-article-save-directory (xdg/make-path "gnus/News" 'cache :directory))
+    (gnus-init-file (xdg/make-path "gnus/.gnus" 'cache))
+    (gnus-startup-file (xdg/make-path "gnus/.newsrc" 'cache))
+    :config
+    (add-to-list 'recentf-exclude (format "%s.*\\'" gnus-directory)))
+      #+end_src
+
+Set all mail-boxes as secondary select methods using the following template.
+Set corresponding smtp addresses.
+#+begin_src emacs-lisp :tangle no
+  (use-package gnus
+    :ensure nil
+    :after message
+    :custom
+    (gnus-secondary-select-methods
+     '((nnimap "work"
+               (nnimap-address "<username>@<work-mailbox>.org")
+               (nnimap-user "<username>")
+               (nnimap-server-port "imaps")
+               (nnimap-stream ssl)
+               (nnir-search-engine imap)
+               (nnmail-expiry-target "nnimap+work:Trash")
+               (nnmail-expiry-wait 'immediate)))))
+#+end_src
+
+** Sendmail
+Set [[help:smtpmail-servers-requiring-authorization][smtpmail-servers-requiring-authorization]] to a regular expression such as ="smtp\\.gmail\\.com"=.
+#+begin_src emacs-lisp
+  (use-package smtpmail
+    :ensure nil
+    :after message
+    :custom
+    (message-send-mail-function #'smtpmail-send-it)
+    (send-mail-function #'smtpmail-send-it)
+    (message-send-mail-function #'smtpmail-send-it)
+    :hook
+    (message-send . mml-secure-message-sign-pgpmime))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (use-package smtpmail
+    :ensure nil
+    :after message
+    :custom
+    gnus-posting-styles
+    '(("work" (address "<username>@<work-mailbox>.org"))))
+#+end_src
+
+*** Org mime
+#+begin_src emacs-lisp
+  (use-package org-mime
+    :commands (org-mime-confirm-when-no-multipart
+               org-mime-edit-mail-in-org-mode)
+    :defer 20
+    :general
+    (pspmacs/leader-keys
+      :keymaps '(org-mode-map)
+      "<h"  '(:ignore t :wk "tmlize")
+      "<hb" '(org-mime-org-buffer-htmlize :wk "uffer")
+      "<hs" '(org-mime-org-subtree-htmlize :wk "ubtree"))
+
+    (pspmacs/leader-keys
+      :keymaps '(org-mode-map)
+      ;; NEXT: add as send-mail hook
+      "<h"  '(:ignore t :wk "tmlize")
+      "<hh" '(org-mime-htmlize :wk "this"))
+
+    :custom
+    (org-mime-export-options
+     '(:section-numbers nil :with-author nil :with-toc nil))
+    (org-mime-library 'mml)
+
+    :hook
+    (message-send . org-mime-confirm-when-no-multipart)
+    (org-mime-html . (lambda ()
+                       (org-mime-change-element-style
+                        "pre"
+                        (string-join
+                         '("color: #959a9f"
+                           "background-color: #000307"
+                           "padding: 0.5em;")
+                         "; ")))))
 #+end_src
 
 * native Emacs settings

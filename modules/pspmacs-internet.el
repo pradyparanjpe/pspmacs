@@ -83,44 +83,6 @@
   :hook (gptel-post-stream . gptel-auto-scroll)
   :config (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
-(use-package org-mime
-  :when pspmacs/mu4e-load-path
-  :commands (org-mime-confirm-when-no-multipart
-             org-mime-edit-mail-in-org-mode)
-  :defer 20
-  :general
-  (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
-    "oe" '(org-mime-edit-mail-in-org-mode :wk "dit")
-    "<h" '(:ignore t :wk "tmlize")
-    "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
-
-  (pspmacs/leader-keys
-    :keymaps '(org-mode-map mu4e-compose-mode-map)
-    ;; NEXT: add as send-mail hook
-    "<h"  '(:ignore t :wk "tmlize")
-    "<hh" '(org-mime-htmlize :wk "this"))
-
-  (pspmacs/leader-keys
-    :keymaps '(org-mode-map)
-    "<h"  '(:ignore t :wk "tmlize")
-    "<hb" '(org-mime-org-buffer-htmlize :wk "uffer")
-    "<hs" '(org-mime-org-subtree-htmlize :wk "ubtree"))
-
-  :custom
-  (org-mime-export-options
-   '(:section-numbers nil :with-author nil :with-toc nil))
-  (org-mime-library 'mml)
-
-  :hook
-  (org-mime-html . (lambda ()
-                     (org-mime-change-element-style
-                      "pre"
-                      (string-join
-                       '("color: #959a9f"
-                         "background-color: #000307"
-                         "padding: 0.5em;")
-                       "; ")))))
-
 (use-package mu4e
   :when pspmacs/mu4e-load-path
   :ensure nil
@@ -134,10 +96,17 @@
     "<u" '(mu4e-update-mail-and-index :wk "pdate")
     "<c" '(mu4e-compose-new :wk "ompose"))
 
-  :init
-  (customize-set-variable 'message-send-mail-function 'smtpmail-send-it)
-  (customize-set-variable 'smtpmail-servers-requiring-authorization
-                          "smtp\\.gmail\\.com")
+  (pspmacs/leader-keys :keymaps 'mu4e-compose-mode-map
+    "oe" '(org-mime-edit-mail-in-org-mode :wk "dit")
+    "<h" '(:ignore t :wk "tmlize")
+    "<-" '(org-mime-revert-to-plain-text-mail :wk "revert"))
+
+  (pspmacs/leader-keys
+    :keymaps '(mu4e-compose-mode-map)
+    ;; NEXT: add as send-mail hook
+    "<h"  '(:ignore t :wk "tmlize")
+    "<hh" '(org-mime-htmlize :wk "this"))
+
   :custom
   (mu4e-notification-support t)
   (mu4e-modeline-support t)
@@ -151,9 +120,7 @@
   (mu4e-update-interval (* 1 60 60))
 
   :hook
-  ((mu4e-compose-mode . display-fill-column-indicator-mode)
-   (message-send . mml-secure-message-sign-pgpmime)
-   (message-send . org-mime-confirm-when-no-multipart))
+  (mu4e-compose-mode . display-fill-column-indicator-mode)
 
   :config
   (mu4e t)
@@ -186,6 +153,62 @@
           "** Created: %:date-timestamp-inactive"
           "")
        "\n")))))
+
+(use-package gnus
+  :custom
+  (gnus-select-method '(nnnil nil))
+  (gnus-home-directory (xdg/make-path "gnus" 'cache :directory))
+  (gnus-directory (xdg/make-path "gnus/News" 'cache :directory))
+  (gnus-cache-directory (xdg/make-path "gnus/News/cache" 'cache :directory))
+  (gnus-kill-files-directory (xdg/make-path "gnus/News" 'cache :directory))
+  (gnus-article-save-directory (xdg/make-path "gnus/News" 'cache :directory))
+  (gnus-init-file (xdg/make-path "gnus/.gnus" 'cache))
+  (gnus-startup-file (xdg/make-path "gnus/.newsrc" 'cache))
+  :config
+  (add-to-list 'recentf-exclude (format "%s.*\\'" gnus-directory)))
+
+(use-package smtpmail
+  :ensure nil
+  :after message
+  :custom
+  (message-send-mail-function #'smtpmail-send-it)
+  (send-mail-function #'smtpmail-send-it)
+  (message-send-mail-function #'smtpmail-send-it)
+  :hook
+  (message-send . mml-secure-message-sign-pgpmime))
+
+(use-package org-mime
+  :commands (org-mime-confirm-when-no-multipart
+             org-mime-edit-mail-in-org-mode)
+  :defer 20
+  :general
+  (pspmacs/leader-keys
+    :keymaps '(org-mode-map)
+    "<h"  '(:ignore t :wk "tmlize")
+    "<hb" '(org-mime-org-buffer-htmlize :wk "uffer")
+    "<hs" '(org-mime-org-subtree-htmlize :wk "ubtree"))
+
+  (pspmacs/leader-keys
+    :keymaps '(org-mode-map)
+    ;; NEXT: add as send-mail hook
+    "<h"  '(:ignore t :wk "tmlize")
+    "<hh" '(org-mime-htmlize :wk "this"))
+
+  :custom
+  (org-mime-export-options
+   '(:section-numbers nil :with-author nil :with-toc nil))
+  (org-mime-library 'mml)
+
+  :hook
+  (message-send . org-mime-confirm-when-no-multipart)
+  (org-mime-html . (lambda ()
+                     (org-mime-change-element-style
+                      "pre"
+                      (string-join
+                       '("color: #959a9f"
+                         "background-color: #000307"
+                         "padding: 0.5em;")
+                       "; ")))))
 
 (use-package emacs
   :custom
