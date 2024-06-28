@@ -17,6 +17,7 @@ pages:
   - rm -rf public
   - echo "Exporting to html..."
   - mkdir -p "docs/"
+  - apk add gnupg coreutils gcc make autoconf git curl zip npm ripgrep stow emacs
   - emacs --batch --no-init-file --load publish.el --funcall "pspmacs/publish-all"
   - mv docs public
   artifacts:

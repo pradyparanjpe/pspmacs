@@ -49,6 +49,7 @@ If not found, error is *NOT* thrown.
 
 ** 40: Programming
 - [[file:pspmacs-programming.org][programming]]
+- [[file:pspmacs-shell.org][shell]]
 - [[file:pspmacs-python.org][python]]
 - [[file:pspmacs-emacs-lisp.org][emacs-lisp]]
 - [[file:pspmacs-ess-R.org][ess-R]]
@@ -72,6 +73,7 @@ If not found, error is *NOT* thrown.
     (20 . (editing-enhancement data-vis note))
     (30 . (project-management integration version-control))
     (40 . (programming
+           shell
            python
            emacs-lisp
            ess-R

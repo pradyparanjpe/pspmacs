@@ -3,6 +3,7 @@
   (20 . (editing-enhancement data-vis note))
   (30 . (project-management integration version-control))
   (40 . (programming
+         shell
          python
          emacs-lisp
          ess-R

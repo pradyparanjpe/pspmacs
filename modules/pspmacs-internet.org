@@ -245,7 +245,7 @@ Integrate mu4e with org-mode
 
 ** Gnus
 If [[*Mu][Mu4e]] is not enabled, we shall use the Gnus to read directly from the mail server.
-Corresponding settings should be *private* and loaded appropriately from local or private [[file:~/.emacs.d/README.org::*Inheritance principle][work-tree]].
+Corresponding settings should be *private* and loaded appropriately from local or private [[file:~/.emacs.d/README.org::#inheritance][work-tree]].
 
 #+begin_src emacs-lisp
   (use-package gnus

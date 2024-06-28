@@ -219,13 +219,6 @@
   :hook
   ((eglot-managed-mode . flymake-mode)))
 
-(use-package flymake-shellcheck
-  :commands flymake-shellcheck-load
-  :custom
-  (flymake-shellcheck-allow-external-files t)
-  :hook
-  (sh-mode . flymake-shellcheck-load))
-
 (use-package eldoc
   :general
   (pspmacs/local-leader-keys

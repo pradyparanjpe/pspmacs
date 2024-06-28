@@ -43,6 +43,13 @@
     :hook ((prog-mode . rainbow-delimiters-mode)))
 #+end_src
 
+* Editorconfig
+#+begin_src emacs-lisp
+  (use-package editorconfig
+    :config
+    (editorconfig-mode 1))
+#+end_src
+
 * Whitespace
 #+begin_src emacs-lisp
   (use-package whitespace

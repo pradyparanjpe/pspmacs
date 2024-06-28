@@ -1,0 +1,79 @@
+#+title: pspmacs-python
+#+PROPERTY: header-args :tangle pspmacs-shell.el :mkdirp t :results no :eval no
+#+auto_tangle: t
+
+* Bash
+Language server protocol: eglot
+Install =bash language server= (requirement)
+#+begin_src bash :tangle no
+  $ npm install bash-language-server
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package sh-script
+    :config
+    (add-to-list
+     'eglot-server-programs
+     '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+
+    :hook
+    (sh-mode . eglot-ensure)
+    (bash-ts-mode . eglot-ensure))
+#+end_src
+
+* Bash Completion
+#+begin_src emacs-lisp
+  (use-package bash-completion
+    :hook
+    (eshell-mode . completion-at-point-functions)
+    (eshell-mode . bash-completion-capf-nonexclusive))
+#+end_src
+
+* Flymake
+Integration
+** Shell
+#+begin_src emacs-lisp
+  (use-package flymake-shell
+    :hook
+    (sh-set-shell . flymake-shell-load))
+#+end_src
+
+** Shellcheck
+Install =shellcheck= (Requirement)
+#+begin_src bash :tangle no
+  $ npm install shellcheck
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package flymake-shellcheck
+    :commands flymake-shellcheck-load
+    :custom
+    (flymake-shellcheck-allow-external-files t)
+    :hook
+    (sh-mode . flymake-shellcheck-load))
+#+end_src
+
+** Shfmt
+Install [[https://github.com/mvdan/sh][shfmt]] (requirement).
+#+begin_src emacs-lisp
+  (use-package shfmt
+    :general
+    (pspmacs/local-leader-keys
+      :keymaps 'sh-mode-map
+      "Lf" '(:ignore t :wk "ormat")
+      "Lff" '(shfmt :wk "script")
+      "Lfb" '(shfmt-buffer :wk "uffer"))
+
+    :custom
+    (shfmt-arguments '("-i 2" "-mn" "-kp" "-sr" "-ci" "-bn"))
+
+    :hook
+    (sh-mode . shfmt-on-save-mode))
+#+end_src
+
+* Inherit from private and local
+ #+begin_src emacs-lisp
+
+   (pspmacs/load-inherit)
+   ;;; pspmacs-shell.el ends here
+#+end_src

@@ -28,6 +28,7 @@
 
   ;;; Code:
 #+end_src
+
 * Corfu
 - Completions
 #+begin_src emacs-lisp
@@ -260,13 +261,6 @@ Tree-sitter should ideally be compiled with Emacs.
     (python-flymake-command '("flake8" "-"))
     :hook
     ((eglot-managed-mode . flymake-mode)))
-
-  (use-package flymake-shellcheck
-    :commands flymake-shellcheck-load
-    :custom
-    (flymake-shellcheck-allow-external-files t)
-    :hook
-    (sh-mode . flymake-shellcheck-load))
 #+end_src
 
 * Emacs/eldoc
