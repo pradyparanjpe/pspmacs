@@ -57,14 +57,17 @@ ${XDG_STATE_HOME:-${HOME}/.local/state}/emacs"
                     xdg/emacs-state-directory))
   (make-directory (eval xdg-base) t))
 
-(defun xdg/make-path (var &optional base)
+(defun xdg/make-path (var &optional base as-directory)
   "Generate xdg/emacs path.
 
-Construct path for VAR relative to xdg/emacs-BASE-directory.  BASE can be
-data [default], config, cache, state."
-  (convert-standard-filename
-   (expand-file-name
-    var (eval (intern (format "xdg/emacs-%s-directory" (or base "data")))))))
+Construct path for VAR relative to xdg/emacs-BASE-directory.
+BASE can be data [default], config, cache, state.
+When AS-DIRECTORY is non-nil, return as directory."
+  (let ((path (convert-standard-filename
+               (expand-file-name
+                var (eval (intern (format "xdg/emacs-%s-directory"
+                                          (or base "data"))))))))
+    (if as-directory (file-name-as-directory path) path)))
 
 (defun locate-user-emacs-file (new-name &optional old-name)
   "This function overwrites Emacs-native function.
