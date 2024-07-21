@@ -24,19 +24,21 @@
 
 (use-package which-key
   :after evil
-  :vc (which-key :url "https://www.github.com/pradyparanjpe/emacs-which-key.git")
   :init
   (which-key-mode)
   :custom
   (which-key-separator "")
   (which-key-prefix-prefix "")
-  (which-key-special-keys '(("SPC"       . "␣")
-                            ("TAB"       . "↹")
-                            ("RET"       . "⏎")
-                            ("ESC"       . "⎋")
-                            ("backspace" . "⌫")
-                            ("DEL"       . "⌦")))
+  (which-key-allow-multiple-replacements t)
   :config
+  (dolist (special '(("SPC"       . "␣")
+                     ("TAB"       . "↹")
+                     ("RET"       . "⏎")
+                     ("ESC"       . "⎋")
+                     ("backspace" . "⌫")
+                     ("DEL"       . "⌦")))
+    (add-to-list 'which-key-replacement-alist
+                 `((,(car special) . nil) . (,(cdr special) . nil))))
   (which-key-setup-minibuffer))
 
 (pspmacs/load-inherit)

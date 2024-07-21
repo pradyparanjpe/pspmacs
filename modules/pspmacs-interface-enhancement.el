@@ -28,11 +28,56 @@
   :config
   (gcmh-mode 1))
 
+(use-package evil
+  :demand t
+  :init
+  (setq
+   ;; allow scroll up with 'C-u'
+   evil-want-C-u-scroll t
+   ;; allow scroll down with 'C-d'
+   evil-want-C-d-scroll t
+   ;; necessary for evil collection
+   evil-want-integration t
+   evil-want-keybinding nil
+   ;; fixes weird tab behaviour
+   evil-want-C-i-jump nil)
+
+  :custom
+  (evil-search-module 'isearch)
+  (evil-split-window-below t)
+  (evil-vsplit-window-right t)
+  (evil-undo-system 'undo-tree)
+
+  :config
+  ;; following need to be \\='set\\=', cannot be customized
+  (setq
+   evil-normal-state-cursor '(box "#ff9f00")
+   evil-insert-state-cursor '((bar . 3) "#00cf6f")
+   evil-visual-state-cursor '(box "#009fff")
+   evil-replace-state-cursor '(box "#ffff00")
+   evil-operator-state-cursor '(box "#ff009f")
+   evil-motion-state-cursor '(box "#3fffff")
+   evil-emacs-state-cursor '(box "#bfbfbf"))
+
+  (evil-mode t) ;; globally enable evil mode
+
+  ;; default mode: normal
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+
+  ;; default mode: insert
+  (evil-set-initial-state 'eshell-mode 'insert)
+  (evil-set-initial-state 'magit-diff-mode 'insert))
+
 (use-package general
+  :after evil
   :demand t
   :config
   (general-evil-setup)
   ;; integrate general with evil
+
+  ;; Mask some evil bindings
+  (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
+  (general-define-key :keymaps 'evil-insert-state-map "C-k" nil)
 
   (general-create-definer pspmacs/leader-keys
     :states '(normal insert visual emacs)
@@ -197,7 +242,7 @@
                 (switch-to-buffer (other-buffer (current-buffer) 1)))
               :wk "🔀")
     "b-" '(pspmacs/switch-to-minibuffer :wk "▭")
-    "bd" '(kill-this-buffer :wk "😵")
+    "bd" '(kill-current-buffer :wk "😵")
     "bm" '((lambda () (interactive)
              (switch-to-buffer (get-buffer-create messages-buffer-name)))
            :wk "💬")
@@ -336,7 +381,20 @@
     "w TAB" '(other-window :wk ":Back ◎")
     "w=" '(balance-windows-area :wk ":Balance")
     "wD" '(kill-buffer-and-window :wk "el & buf")
-    "w C-d" '(delete-other-windows :wk "😵 rest"))
+    "w C-d" '(delete-other-windows :wk "😵 rest")
+    "wd" '(evil-window-delete :wk "😵")
+    "wH" '(evil-window-move-far-left :wk "←←←")
+    "wh" '(evil-window-left :wk "← ◎")
+    "wJ" '(evil-window-move-very-bottom :wk "↓↓↓")
+    "wj" '(evil-window-down :wk "↓ ◎")
+    "wK" '(evil-window-move-very-top :wk "↑↑↑")
+    "wk" '(evil-window-up :wk "↑ ◎")
+    "wL" '(evil-window-move-far-right :wk "→→→")
+    "wl" '(evil-window-right :wk "→ ◎")
+    "wn" '(evil-window-next :wk "ext ◎")
+    "wp" '(evil-window-prev :wk "rev ◎")
+    "ws" '(evil-window-split :wk "-split-")
+    "wv" '(evil-window-vsplit :wk "spl|it"))
 
   ;; Scratch buffers and mode-toggles
   (let* ((mode-toggle-binding nil)
@@ -365,10 +423,10 @@
 (use-package pspmacs/startpage
   :ensure nil
   :commands pspmacs/startpage-set-up
-  :config
   :general
   (pspmacs/leader-keys
     "bh" '(pspmacs/startpage-show :wk "🏠")))
+
 (pspmacs/startpage-set-up)
 
 (use-package helpful
@@ -447,55 +505,6 @@
      ;; eat as a popup
      "^\\*eat.*\\*$"
      eat-mode)))
-
-(use-package evil
-  :general
-  ;; window navigations
-  (pspmacs/leader-keys
-    "wd" '(evil-window-delete :wk "😵")
-    "wH" '(evil-window-move-far-left :wk "←←←")
-    "wh" '(evil-window-left :wk "← ◎")
-    "wJ" '(evil-window-move-very-bottom :wk "↓↓↓")
-    "wj" '(evil-window-down :wk "↓ ◎")
-    "wK" '(evil-window-move-very-top :wk "↑↑↑")
-    "wk" '(evil-window-up :wk "↑ ◎")
-    "wL" '(evil-window-move-far-right :wk "→→→")
-    "wl" '(evil-window-right :wk "→ ◎")
-    "wn" '(evil-window-next :wk "ext ◎")
-    "wp" '(evil-window-prev :wk "rev ◎")
-    "ws" '(evil-window-split :wk "-split-")
-    "wv" '(evil-window-vsplit :wk "spl|it"))
-  (general-define-key :keymaps 'evil-motion-state-map "RET" nil)
-  (general-define-key :keymaps 'evil-insert-state-map "C-k" nil)
-  :demand t
-  :init
-  (setq
-   ;; allow scroll up with 'C-u'
-   evil-want-C-u-scroll t
-   ;; allow scroll down with 'C-d'
-   evil-want-C-d-scroll t
-   ;; necessary for evil collection
-   evil-want-integration t
-   evil-want-keybinding nil
-   ;; fixes weird tab behaviour
-   evil-want-C-i-jump nil)
-  :custom
-  (evil-search-module 'isearch)
-  (evil-split-window-below t)
-  (evil-vsplit-window-right t)
-  (evil-undo-system 'undo-tree)
-
-  :config
-  (setq evil-normal-state-cursor '(box "orange"))
-  (setq evil-insert-state-cursor '((bar . 3) "green"))
-  (setq evil-visual-state-cursor '(box "light blue"))
-  (setq evil-replace-state-cursor '(box "yellow"))
-  (evil-mode t) ;; globally enable evil mode
-  ;; default mode: normal
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  ;; default mode: insert
-  (evil-set-initial-state 'eshell-mode 'insert)
-  (evil-set-initial-state 'magit-diff-mode 'insert))
 
 (use-package evil-collection ;; evilifies a bunch of things
   :after evil

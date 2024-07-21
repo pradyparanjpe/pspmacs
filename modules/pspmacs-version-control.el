@@ -30,13 +30,17 @@
 
 (use-package magit
   :after transient
+  :init
+  (setq magit-define-global-key-bindings nil)
   :general
   (pspmacs/leader-keys
    "g" '(:ignore t :wk "it")
    "gb" '(magit-blame :wk "lame")
+   "gl" '(magit-log :wk "og")
+   "gm" '(magit-dispatch :wk "enu")
+   "gM" '(magit-file-dispatch :wk "enu (file)")
    "gs" '(magit-status :wk "tatus")
-   "gS" '(magit-status-here :wk "tatus here")
-   "gl" '(magit-log :wk "og"))
+   "gS" '(magit-status-here :wk "tatus here"))
   (general-nmap
     :keymaps '(magit-status-mode-map
                magit-stash-mode-map

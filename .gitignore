@@ -54,6 +54,7 @@ default.el
 
 # local-emacs-config directory
 local.d/
+local.d
 
 # byte-compilation files
 *.elc
@@ -101,21 +102,29 @@ async-byte-compile-log-file
 async-bytecomp.log
 
 # Evil-Tutor cache
+.tutor
 .tutor/
 
 # eww bookmarks
 eww-bookmarks
 
+# curl requests cookies cache
+request
+request/
+
 # emms history
+emms
 emms/
 
 # multisession (emoji)
+multisession
 multisession/
 
 # auto-package-update
 .last-package-update-day
 
 # emojis are added to directory 'auto'
+auto
 auto/
 
 # Emacs local settings

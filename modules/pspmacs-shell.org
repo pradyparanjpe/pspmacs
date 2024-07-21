@@ -11,6 +11,7 @@ Install =bash language server= (requirement)
 
 #+begin_src emacs-lisp
   (use-package sh-script
+    :after eglot
     :config
     (add-to-list
      'eglot-server-programs
@@ -72,8 +73,8 @@ Install [[https://github.com/mvdan/sh][shfmt]] (requirement).
 #+end_src
 
 * Inherit from private and local
- #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 
-   (pspmacs/load-inherit)
-   ;;; pspmacs-shell.el ends here
+  (pspmacs/load-inherit)
+  ;;; pspmacs-shell.el ends here
 #+end_src

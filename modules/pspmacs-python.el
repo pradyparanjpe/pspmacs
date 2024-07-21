@@ -67,19 +67,28 @@
   :config
   (require 'numpydoc))
 
+(use-package code-cells
+  :custom
+  (code-cells-convert-ipynb-style
+   '(("pandoc" "--to" "ipynb" "--from" "org")
+     ("pandoc" "--to" "org" "--from" "ipynb")
+     org-mode)))
+
 (use-package jupyter
+  :init
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   (add-to-list 'org-babel-load-languages '(jupyter . t)))
   :general
   (pspmacs/leader-keys
     "'i" '(jupyter-run-repl :wk "py"))
   :custom
   (org-babel-default-header-args:jupyter-python '((:pandoc . t)
+                                                  (:eval . "yes")
                                                   (:async . "yes")
                                                   (:session . "py")
                                                   (:kernel . "python3")))
   :config
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   (add-to-list 'org-babel-load-languages '(jupyter . t)))
   (org-babel-jupyter-override-src-block "python"))
 
 (use-package pyvenv-auto

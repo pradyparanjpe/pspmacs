@@ -244,9 +244,6 @@
   :custom-face (color-fci-overflow ((default (:background "#ffffff"))))
   :hook (display-fill-column-indicator-mode . color-fci-mode))
 
-(use-package origami
-  :hook ((prog-mode . origami-mode)))
-
 (use-package semantic
   :demand t)
 (mapc (lambda (x)

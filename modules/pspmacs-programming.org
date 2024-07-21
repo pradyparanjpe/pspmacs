@@ -301,10 +301,14 @@ Color it
 #+end_src
 
 * gregsexton/origami
-#+begin_src emacs-lisp
+Origami prevents daemon mode.
+We have already [[https://github.com/gregsexton/origami.el/issues/120][reported this issue]].
+#+begin_src emacs-lisp :tangle no :export no
   (use-package origami
+    :disabled t
     :hook ((prog-mode . origami-mode)))
 #+end_src
+
 * Semantics
 #+begin_src emacs-lisp
   (use-package semantic

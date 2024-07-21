@@ -122,20 +122,48 @@
 #+end_src
 
 * emacs-jupyter/jupyter
+[[https://github.com/emacs-jupyter/jupyter][This blog]] was quite helpful in configuring Jupyter's ipynb.
+Additionally, the jupyter directory must contain a file with appropriate modification for default jupyter args.
+#+NAME: .dir-locals.el
+#+begin_src lisp-data :tangle no
+  ((org-mode
+    . ((org-babel-default-header-args:jupyter-python
+        . ((:pandoc . t)
+           (:eval . "yes")
+           (:async . "yes")
+           (:session . "my-session")
+           (:kernel . "local-kernel"))))))
+#+end_src
+
+** Code-cells
+Code-cells provide conversions between ipynb and org-mode.
+Dependency: [[https://pandoc.org][pandoc]]
+#+begin_src emacs-lisp
+  (use-package code-cells
+    :custom
+    (code-cells-convert-ipynb-style
+     '(("pandoc" "--to" "ipynb" "--from" "org")
+       ("pandoc" "--to" "org" "--from" "ipynb")
+       org-mode)))
+#+end_src
+
+** Jupyter Notebook interface
 #+begin_src emacs-lisp
   (use-package jupyter
+    :init
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     (add-to-list 'org-babel-load-languages '(jupyter . t)))
     :general
     (pspmacs/leader-keys
       "'i" '(jupyter-run-repl :wk "py"))
     :custom
     (org-babel-default-header-args:jupyter-python '((:pandoc . t)
+                                                    (:eval . "yes")
                                                     (:async . "yes")
                                                     (:session . "py")
                                                     (:kernel . "python3")))
     :config
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     (add-to-list 'org-babel-load-languages '(jupyter . t)))
     (org-babel-jupyter-override-src-block "python"))
 #+end_src
 

@@ -1,4 +1,5 @@
 (use-package sh-script
+  :after eglot
   :config
   (add-to-list
    'eglot-server-programs

@@ -33,20 +33,13 @@
   (editorconfig-mode 1))
 
 (use-package whitespace
-  ;; gratefully borrowed from
-  ;; https://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/
   :custom
   (whitespace-display-mappings
-   ;; all numbers are Unicode codepoint in decimal.
-   ;; try (insert-char 182 ) to see it
-   '(
-     ;; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-     (space-mark 32 [183] [46])
-     ;; 10 LINE FEED
+   '((space-mark 32 [183] [46])
      (newline-mark 10 [182 10])
-     ;; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
      (tab-mark 9 [187 9] [9655 9] [92 9])))
   (whitespace-style '(face tabs trailing tab-mark))
+
   :config
   (set-face-attribute 'whitespace-tab nil
                       :background "#f0f0f0"
@@ -56,6 +49,7 @@
                       :background "#ffffff"
                       :foreground "#183bc8"
                       :weight 'normal)
+
   :hook
   ((prog-mode org-mode) . whitespace-mode))
 

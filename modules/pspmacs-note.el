@@ -87,7 +87,7 @@
     ">"   '(org-demote-subtree :wk ":Demote subtree")
     "<"   '(org-promote-subtree :wk ":Promote subtree")
 
-    "["   '(:ignore t :wk ":Checkboxes")
+    "["   '(:ignore t :wk "X]boxes")
     "[]"  '(pspmacs/org-put-checkboxes :wk ":Here")
     "[*"  '(pspmacs/org-put-checkboxes-recursively :wk ":All")
     "[!"  '(:ignore t :wk ":Remove")
